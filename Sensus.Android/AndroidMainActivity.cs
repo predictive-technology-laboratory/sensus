@@ -104,17 +104,8 @@ namespace Sensus.Android
             _serviceConnection = new AndroidSensusServiceConnection();
             _serviceConnection.ServiceConnected += (o, e) =>
             {
-                // it's happened that the service is created / started after the service helper is disposed:  https://insights.xamarin.com/app/Sensus-Production/issues/46
-                // binding to the service in such a situation can result in a null service helper within the binder. if the service helper was disposed, then the goal is 
-                // to close down sensus. so finish the activity.
-                if (e.Binder.SensusServiceHelper == null)
-                {
-                    Finish();
-                    return;
-                }
-
                 // tell the service to finish this activity when it is stopped
-                e.Binder.ServiceStopAction = Finish;
+                e.Binder.OnServiceStop = Finish;
 
                 // signal the activity that the service has been bound
                 _serviceBindWait.Set();
@@ -225,7 +216,7 @@ namespace Sensus.Android
             // finish a destroyed activity if/when the service stops.
             if (_serviceConnection.Binder != null)
             {
-                _serviceConnection.Binder.ServiceStopAction = null;
+                _serviceConnection.Binder.OnServiceStop = null;
             }
         }
 

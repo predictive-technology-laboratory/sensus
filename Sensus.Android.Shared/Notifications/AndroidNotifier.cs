@@ -41,34 +41,34 @@ namespace Sensus.Android.Notifications
         }
 
         public const int FOREGROUND_SERVICE_NOTIFICATION_ID = 1;
-        public const string NOTIFICATION_ACTION_PAUSE = "NOTIFICATION-ACTION-PAUSE";
-        public const string NOTIFICATION_ACTION_RESUME = "NOTIFICATION-ACTION-RESUME";
+        public const string FOREGROUND_SERVICE_NOTIFICATION_ACTION_PAUSE = "NOTIFICATION-ACTION-PAUSE";
+        public const string FOREGROUND_SERVICE_NOTIFICATION_ACTION_RESUME = "NOTIFICATION-ACTION-RESUME";
 
         private NotificationManager _notificationManager;
         private Notification.Builder _foregroundServiceNotificationBuilder;
-        private ForegroundServiceNotificationActionReceiver _notificationActionReceiver;
+        private ForegroundServiceNotificationActionReceiver _foregroundServiceNotificationActionReceiver;
 
         public AndroidNotifier()
         {
             _notificationManager = Application.Context.GetSystemService(global::Android.Content.Context.NotificationService) as NotificationManager;
 
             // register the notification action receiver
-            _notificationActionReceiver = new ForegroundServiceNotificationActionReceiver();
-            IntentFilter notificationActionIntentFilter = new IntentFilter();
-            notificationActionIntentFilter.AddAction(NOTIFICATION_ACTION_PAUSE);
-            notificationActionIntentFilter.AddAction(NOTIFICATION_ACTION_RESUME);
-            notificationActionIntentFilter.AddCategory(Intent.CategoryDefault);
-            Application.Context.RegisterReceiver(_notificationActionReceiver, notificationActionIntentFilter);
+            _foregroundServiceNotificationActionReceiver = new ForegroundServiceNotificationActionReceiver();
+            IntentFilter foregroundServiceNotificationActionIntentFilter = new IntentFilter();
+            foregroundServiceNotificationActionIntentFilter.AddAction(FOREGROUND_SERVICE_NOTIFICATION_ACTION_PAUSE);
+            foregroundServiceNotificationActionIntentFilter.AddAction(FOREGROUND_SERVICE_NOTIFICATION_ACTION_RESUME);
+            foregroundServiceNotificationActionIntentFilter.AddCategory(Intent.CategoryDefault);
+            Application.Context.RegisterReceiver(_foregroundServiceNotificationActionReceiver, foregroundServiceNotificationActionIntentFilter);
 
             // create notification builder for the foreground service and set initial content
             PendingIntent mainActivityPendingIntent = PendingIntent.GetActivity(Application.Context, 0, new Intent(Application.Context, typeof(AndroidMainActivity)), 0);
-            _foregroundServiceNotificationBuilder = CreateNotificationBuilder(Application.Context, AndroidNotifier.SensusNotificationChannel.ForegroundService)
+            _foregroundServiceNotificationBuilder = CreateNotificationBuilder(AndroidNotifier.SensusNotificationChannel.ForegroundService)
                                                         .SetSmallIcon(Resource.Drawable.ic_launcher)
                                                         .SetContentIntent(mainActivityPendingIntent)
                                                         .SetOngoing(true);
         }
 
-        public Notification.Builder CreateNotificationBuilder(global::Android.Content.Context context, SensusNotificationChannel channel)
+        public Notification.Builder CreateNotificationBuilder(SensusNotificationChannel channel)
         {
             global::Android.Net.Uri notificationSoundURI = RingtoneManager.GetDefaultUri(RingtoneType.Notification);
 
@@ -86,7 +86,7 @@ namespace Sensus.Android.Notifications
 #if __ANDROID_26__
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
-                NotificationManager notificationManager = context.GetSystemService(global::Android.Content.Context.NotificationService) as NotificationManager;
+                NotificationManager notificationManager = Application.Context.GetSystemService(global::Android.Content.Context.NotificationService) as NotificationManager;
 
                 string channelId = channel.ToString();
 
@@ -112,13 +112,13 @@ namespace Sensus.Android.Notifications
                     notificationManager.CreateNotificationChannel(notificationChannel);
                 }
 
-                builder = new Notification.Builder(context, channelId);
+                builder = new Notification.Builder(Application.Context, channelId);
             }
             else
 #endif
             {
 #pragma warning disable 618
-                builder = new Notification.Builder(context);
+                builder = new Notification.Builder(Application.Context);
 
                 if (silent)
                 {
@@ -241,14 +241,13 @@ namespace Sensus.Android.Notifications
                     notificationChannel = SensusNotificationChannel.Silent;
                 }
 
-                Notification.Builder notificationBuilder = CreateNotificationBuilder(Application.Context, notificationChannel)
-                    .SetContentTitle(title)
-                    .SetContentText(message)
-                    .SetSmallIcon(Resource.Drawable.ic_launcher)
-                    .SetContentIntent(notificationPendingIntent)
-                    .SetAutoCancel(true)
-                    .SetOngoing(false);
-
+                Notification.Builder notificationBuilder = CreateNotificationBuilder(notificationChannel)
+                                                               .SetContentTitle(title)
+                                                               .SetContentText(message)
+                                                               .SetSmallIcon(Resource.Drawable.ic_launcher)
+                                                               .SetContentIntent(notificationPendingIntent)
+                                                               .SetAutoCancel(true)
+                                                               .SetOngoing(false);
                 if (badgeNumber != null)
                 {
                     notificationBuilder.SetNumber(badgeNumber.Value);
@@ -321,20 +320,20 @@ namespace Sensus.Android.Notifications
                     int numPausableProtocols = serviceHelper.RegisteredProtocols.Count(protocol => protocol.State == ProtocolState.Running && protocol.AllowPause);
                     if (numPausableProtocols > 0)
                     {
-                        Intent actionIntent = new Intent(NOTIFICATION_ACTION_PAUSE);
-                        PendingIntent actionPendingIntent = PendingIntent.GetBroadcast(Application.Context, 0, actionIntent, PendingIntentFlags.CancelCurrent);
-                        string actionTitle = "Pause " + numPausableProtocols + " " + (numPausableProtocols == 1 ? "study" : "studies") + ".";
-                        _foregroundServiceNotificationBuilder.AddAction(new Notification.Action(Resource.Drawable.ic_media_pause_light, actionTitle, actionPendingIntent));  // note that notification actions no longer display the icon
+                        Intent pauseActionIntent = new Intent(FOREGROUND_SERVICE_NOTIFICATION_ACTION_PAUSE);
+                        PendingIntent pauseActionPendingIntent = PendingIntent.GetBroadcast(Application.Context, 0, pauseActionIntent, PendingIntentFlags.CancelCurrent);
+                        string pauseActionTitle = "Pause " + numPausableProtocols + " " + (numPausableProtocols == 1 ? "study" : "studies") + ".";
+                        _foregroundServiceNotificationBuilder.AddAction(new Notification.Action(Resource.Drawable.ic_media_pause_light, pauseActionTitle, pauseActionPendingIntent));  // note that notification actions no longer display the icon
                     }
 
                     // add resume action
                     int numPausedStudies = serviceHelper.RegisteredProtocols.Count(protocol => protocol.State == ProtocolState.Paused);
                     if (numPausedStudies > 0)
                     {
-                        Intent actionIntent = new Intent(NOTIFICATION_ACTION_RESUME);
-                        PendingIntent actionPendingIntent = PendingIntent.GetBroadcast(Application.Context, 0, actionIntent, PendingIntentFlags.CancelCurrent);
-                        string actionTitle = "Resume " + numPausedStudies + " " + (numPausedStudies == 1 ? "study" : "studies") + ".";
-                        _foregroundServiceNotificationBuilder.AddAction(new Notification.Action(Resource.Drawable.ic_media_play_light, actionTitle, actionPendingIntent));  // note that notification actions no longer display the icon
+                        Intent resumeActionIntent = new Intent(FOREGROUND_SERVICE_NOTIFICATION_ACTION_RESUME);
+                        PendingIntent resumeActionPendingIntent = PendingIntent.GetBroadcast(Application.Context, 0, resumeActionIntent, PendingIntentFlags.CancelCurrent);
+                        string resumeActionTitle = "Resume " + numPausedStudies + " " + (numPausedStudies == 1 ? "study" : "studies") + ".";
+                        _foregroundServiceNotificationBuilder.AddAction(new Notification.Action(Resource.Drawable.ic_media_play_light, resumeActionTitle, resumeActionPendingIntent));  // note that notification actions no longer display the icon
                     }
                 }
             }
@@ -349,7 +348,7 @@ namespace Sensus.Android.Notifications
         {
             UpdateForegroundServiceNotificationBuilder();
 
-            (Application.Context.GetSystemService(Application.NotificationService) as NotificationManager).Notify(FOREGROUND_SERVICE_NOTIFICATION_ID, BuildForegroundServiceNotification());
+            (Application.Context.GetSystemService(global::Android.Content.Context.NotificationService) as NotificationManager).Notify(FOREGROUND_SERVICE_NOTIFICATION_ID, BuildForegroundServiceNotification());
         }
     }
 }

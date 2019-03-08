@@ -50,8 +50,6 @@ namespace Sensus.Android
             if (_binder != null)
             {
                 ServiceDisconnected?.Invoke(this, new AndroidServiceConnectedEventArgs(_binder));
-
-                _binder.SensusServiceHelper = null;
             }
         }
     }

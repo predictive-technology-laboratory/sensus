@@ -13,13 +13,12 @@
 // limitations under the License.
 
 using Android.Content;
-using Sensus.Android.Notifications;
 using Sensus.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Sensus.Android
+namespace Sensus.Android.Notifications
 {
     [BroadcastReceiver]
     public class ForegroundServiceNotificationActionReceiver : BroadcastReceiver
@@ -39,7 +38,7 @@ namespace Sensus.Android
                 // service helper will be null for a time when the app is starting up
                 if (serviceHelper != null)
                 {
-                    if (intent.Action == AndroidNotifier.NOTIFICATION_ACTION_PAUSE)
+                    if (intent.Action == AndroidNotifier.FOREGROUND_SERVICE_NOTIFICATION_ACTION_PAUSE)
                     {
                         List<Protocol> pausableProtocols = serviceHelper.RegisteredProtocols.Where(protocol => protocol.AllowPause).ToList();
 
@@ -48,7 +47,7 @@ namespace Sensus.Android
                             await pausableProtocol.PauseAsync();
                         }
                     }
-                    else if (intent.Action == AndroidNotifier.NOTIFICATION_ACTION_RESUME)
+                    else if (intent.Action == AndroidNotifier.FOREGROUND_SERVICE_NOTIFICATION_ACTION_RESUME)
                     {
                         foreach (Protocol protocol in serviceHelper.RegisteredProtocols)
                         {

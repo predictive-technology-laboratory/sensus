@@ -35,27 +35,26 @@ using Sensus.Android.Tests;
 namespace Sensus.Android
 {
     /// <summary>
-    /// Android sensus service. Manages background running of Sensus. This is a hybrid service (http://developer.android.com/guide/components/services.html), in that
-    /// it is started by the Sensus activity to run indefinitely, but the activity also binds to it to manage the Sensus system (e.g., creating protocols, starting
-    /// and stopping them, etc.). For now, nobody other than the Sensus activity can interact with the service (Exported = false). Perhaps we'll allow this in the future
-    /// to support integration with other apps.
+    /// Android sensus service. This is a [hybrid service](http://developer.android.com/guide/components/services.html), as it
+    /// is started by the Sensus activity to run indefinitely, and the activity also binds to it. This service runs in the foreground. 
+    /// For now, no components other than the Sensus activity can interact with the service, as the service is not exported.
     /// </summary>
-    [Service(Exported = false, Label = "Runs the Sensus mobile sensing application.")]
+    [Service(Exported = false, Label = "Runs the SensusMobile sensing application.")]
     public class AndroidSensusService : Service
     {
-        public const string STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN = "STOP-SERVICE-IF-NO-PROTOCOLS-SHOULD-RUN";
+        public const string KEY_STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN = "STOP-SERVICE-IF-NO-PROTOCOLS-SHOULD-RUN";
 
         public static Intent GetIntent() => new Intent(Application.Context, typeof(AndroidSensusService));
 
         /// <summary>
         /// Starts the service.
         /// </summary>
+        /// <param name="stopServiceIfNoProtocolsShouldRun">If set to <c>true</c> stop service if no <see cref="Protocol"/> should run.</param>
         /// <returns>The service intent.</returns>
-        /// <param name="stopServiceIfNoProtocolsShouldRun">If set to <c>true</c> stop service if no protocols should run.</param>
         public static Intent Start(bool stopServiceIfNoProtocolsShouldRun)
         {
             Intent serviceIntent = GetIntent();
-            serviceIntent.PutExtra(STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN, stopServiceIfNoProtocolsShouldRun);
+            serviceIntent.PutExtra(KEY_STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN, stopServiceIfNoProtocolsShouldRun);
 
             // after android 26, starting a foreground service requires the use of StartForegroundService rather than StartService.
             // in either case, the service itself will call StartForeground after it has started. more info:  
@@ -153,7 +152,7 @@ namespace Sensus.Android
                 // if the service started but there are no protocols that should be running, then stop the app now. there is no 
                 // reason for the app to be running in this situation, and the user will likely be annoyed at the presence of the 
                 // foreground service notification.
-                if (intent != null && intent.GetBooleanExtra(STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN, false) && serviceHelper.RunningProtocolIds.Count == 0)
+                if (intent != null && intent.GetBooleanExtra(KEY_STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN, false) && serviceHelper.RunningProtocolIds.Count == 0)
                 {
                     serviceHelper.Logger.Log("Started service without running protocols. Stopping service now.", LoggingLevel.Normal, GetType());
                     Stop();
@@ -204,7 +203,7 @@ namespace Sensus.Android
 
         public override IBinder OnBind(Intent intent)
         {
-            AndroidSensusServiceBinder binder = new AndroidSensusServiceBinder(SensusServiceHelper.Get() as AndroidSensusServiceHelper);
+            AndroidSensusServiceBinder binder = new AndroidSensusServiceBinder();
 
             lock (_bindings)
             {
@@ -229,7 +228,7 @@ namespace Sensus.Android
                 {
                     try
                     {
-                        binding.ServiceStopAction?.Invoke();
+                        binding.OnServiceStop?.Invoke();
                     }
                     catch (Exception ex)
                     {

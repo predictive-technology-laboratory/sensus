@@ -158,17 +158,7 @@ namespace Sensus.Android
         {
             get
             {
-                // we should always have a service. if we do not, assume the worst -- that we're on the main thread. this will hopefully
-                // produce an error report back at xamarin insights.
-                if (Application.Context == null)
-                {
-                    return true;
-                }
-                // if we have a service, compare the current thread's looper to the main thread's looper
-                else
-                {
-                    return Looper.MyLooper() == Application.Context.MainLooper;
-                }
+                return Looper.MyLooper() == Application.Context.MainLooper;
             }
         }
 
@@ -176,7 +166,7 @@ namespace Sensus.Android
         {
             get
             {
-                return Application.Context?.PackageManager.GetPackageInfo(Application.Context.PackageName, PackageInfoFlags.Activities).VersionName ?? null;
+                return Application.Context.PackageManager.GetPackageInfo(Application.Context.PackageName, PackageInfoFlags.Activities).VersionName ?? null;
             }
         }
 
