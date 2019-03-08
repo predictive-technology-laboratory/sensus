@@ -81,14 +81,6 @@ namespace Sensus.Tests.Classes
 
         public override string PushNotificationToken => throw new NotImplementedException();
 
-        protected override bool IsOnMainThread
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
         public override Task<bool> DisableBluetoothAsync(bool reenable, bool lowEnergy, string rationale)
         {
             throw new NotImplementedException();

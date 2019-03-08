@@ -94,11 +94,6 @@ namespace Sensus.iOS
             }
         }
 
-        protected override bool IsOnMainThread
-        {
-            get { return NSThread.IsMain; }
-        }
-
         public override string Version
         {
             get

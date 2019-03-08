@@ -263,7 +263,14 @@ namespace Sensus.Android
             }
             catch (Exception)
             { }
-            
+
+            try
+            {
+                (SensusContext.Current.Notifier as AndroidNotifier).OnDestroy();
+            }
+            catch (Exception)
+            { }
+
             // do this last so that we don't dispose the service and its system services too early.
             base.OnDestroy();
         }

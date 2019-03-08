@@ -414,9 +414,6 @@ namespace Sensus
         public abstract string OperatingSystem { get; }
 
         [JsonIgnore]
-        protected abstract bool IsOnMainThread { get; }
-
-        [JsonIgnore]
         public abstract string Version { get; }
 
         [JsonIgnore]

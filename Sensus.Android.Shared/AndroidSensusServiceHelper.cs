@@ -154,14 +154,6 @@ namespace Sensus.Android
             }
         }
 
-        protected override bool IsOnMainThread
-        {
-            get
-            {
-                return Looper.MyLooper() == Application.Context.MainLooper;
-            }
-        }
-
         public override string Version
         {
             get

@@ -292,7 +292,7 @@ namespace Sensus.Android.Notifications
             {
                 int numRunningStudies = serviceHelper.RegisteredProtocols.Count(protocol => protocol.State == ProtocolState.Running);
 
-                _foregroundServiceNotificationBuilder.SetContentTitle("You are enrolled in " + numRunningStudies + " " + (numRunningStudies == 1 ? "study" : "studies") + ".");
+                _foregroundServiceNotificationBuilder.SetContentTitle("You are participating in " + numRunningStudies + " " + (numRunningStudies == 1 ? "study" : "studies") + ".");
 
                 string contentText = "";
 
@@ -349,6 +349,11 @@ namespace Sensus.Android.Notifications
             UpdateForegroundServiceNotificationBuilder();
 
             (Application.Context.GetSystemService(global::Android.Content.Context.NotificationService) as NotificationManager).Notify(FOREGROUND_SERVICE_NOTIFICATION_ID, BuildForegroundServiceNotification());
+        }
+
+        public void OnDestroy()
+        {
+            Application.Context.UnregisterReceiver(_foregroundServiceNotificationActionReceiver);
         }
     }
 }
