@@ -83,10 +83,9 @@
   
   <h1 id="Sensus_Android_AndroidSensusService" data-uid="Sensus.Android.AndroidSensusService" class="text-break">Class AndroidSensusService
   </h1>
-  <div class="markdown level0 summary"><p>Android sensus service. Manages background running of Sensus. This is a hybrid service (<a href="http://developer.android.com/guide/components/services.html">http://developer.android.com/guide/components/services.html</a>), in that
-it is started by the Sensus activity to run indefinitely, but the activity also binds to it to manage the Sensus system (e.g., creating protocols, starting
-and stopping them, etc.). For now, nobody other than the Sensus activity can interact with the service (Exported = false). Perhaps we&apos;ll allow this in the future
-to support integration with other apps.</p>
+  <div class="markdown level0 summary"><p>Android sensus service. This is a <a href="http://developer.android.com/guide/components/services.html">hybrid service</a>, as it
+is started by the Sensus activity to run indefinitely, and the activity also binds to it. This service runs in the foreground. 
+For now, no components other than the Sensus activity can interact with the service, as the service is not exported.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -116,84 +115,12 @@ to support integration with other apps.</p>
   </h3>
   
   
-  <h4 id="Sensus_Android_AndroidSensusService_FOREGROUND_SERVICE_NOTIFICATION_ID" data-uid="Sensus.Android.AndroidSensusService.FOREGROUND_SERVICE_NOTIFICATION_ID">FOREGROUND_SERVICE_NOTIFICATION_ID</h4>
+  <h4 id="Sensus_Android_AndroidSensusService_KEY_STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN" data-uid="Sensus.Android.AndroidSensusService.KEY_STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN">KEY_STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const int FOREGROUND_SERVICE_NOTIFICATION_ID = 1</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Int32</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <h4 id="Sensus_Android_AndroidSensusService_FROM_ON_BOOT_KEY" data-uid="Sensus.Android.AndroidSensusService.FROM_ON_BOOT_KEY">FROM_ON_BOOT_KEY</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const string FROM_ON_BOOT_KEY = &quot;from-on-boot&quot;</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <h4 id="Sensus_Android_AndroidSensusService_NOTIFICATION_ACTION_PAUSE" data-uid="Sensus.Android.AndroidSensusService.NOTIFICATION_ACTION_PAUSE">NOTIFICATION_ACTION_PAUSE</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const string NOTIFICATION_ACTION_PAUSE = &quot;NOTIFICATION-ACTION-PAUSE&quot;</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <h4 id="Sensus_Android_AndroidSensusService_NOTIFICATION_ACTION_RESUME" data-uid="Sensus.Android.AndroidSensusService.NOTIFICATION_ACTION_RESUME">NOTIFICATION_ACTION_RESUME</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const string NOTIFICATION_ACTION_RESUME = &quot;NOTIFICATION-ACTION-RESUME&quot;</code></pre>
+    <pre><code class="lang-csharp hljs">public const string KEY_STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN = &quot;STOP-SERVICE-IF-NO-PROTOCOLS-SHOULD-RUN&quot;</code></pre>
   </div>
   <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -212,6 +139,31 @@ to support integration with other apps.</p>
   </table>
   <h3 id="methods">Methods
   </h3>
+  
+  
+  <a id="Sensus_Android_AndroidSensusService_GetIntent_" data-uid="Sensus.Android.AndroidSensusService.GetIntent*"></a>
+  <h4 id="Sensus_Android_AndroidSensusService_GetIntent" data-uid="Sensus.Android.AndroidSensusService.GetIntent">GetIntent()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Intent GetIntent()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Android.Content.Intent</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
   <a id="Sensus_Android_AndroidSensusService_OnBind_" data-uid="Sensus.Android.AndroidSensusService.OnBind*"></a>
@@ -328,23 +280,14 @@ to support integration with other apps.</p>
   </table>
   
   
-  <a id="Sensus_Android_AndroidSensusService_ReissueForegroundServiceNotification_" data-uid="Sensus.Android.AndroidSensusService.ReissueForegroundServiceNotification*"></a>
-  <h4 id="Sensus_Android_AndroidSensusService_ReissueForegroundServiceNotification" data-uid="Sensus.Android.AndroidSensusService.ReissueForegroundServiceNotification">ReissueForegroundServiceNotification()</h4>
-  <div class="markdown level1 summary"></div>
+  <a id="Sensus_Android_AndroidSensusService_Start_" data-uid="Sensus.Android.AndroidSensusService.Start*"></a>
+  <h4 id="Sensus_Android_AndroidSensusService_Start_System_Boolean_" data-uid="Sensus.Android.AndroidSensusService.Start(System.Boolean)">Start(Boolean)</h4>
+  <div class="markdown level1 summary"><p>Starts the service.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void ReissueForegroundServiceNotification()</code></pre>
-  </div>
-  
-  
-  <a id="Sensus_Android_AndroidSensusService_StartService_" data-uid="Sensus.Android.AndroidSensusService.StartService*"></a>
-  <h4 id="Sensus_Android_AndroidSensusService_StartService_Android_Content_Context_System_Boolean_" data-uid="Sensus.Android.AndroidSensusService.StartService(Android.Content.Context,System.Boolean)">StartService(Context, Boolean)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Intent StartService(Context context, bool fromOnBoot)</code></pre>
+    <pre><code class="lang-csharp hljs">public static Intent Start(bool stopServiceIfNoProtocolsShouldRun)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -357,14 +300,10 @@ to support integration with other apps.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">Android.Content.Context</span></td>
-        <td><span class="parametername">context</span></td>
-        <td></td>
-      </tr>
-      <tr>
         <td><span class="xref">System.Boolean</span></td>
-        <td><span class="parametername">fromOnBoot</span></td>
-        <td></td>
+        <td><span class="parametername">stopServiceIfNoProtocolsShouldRun</span></td>
+        <td><p>If set to <code>true</code> stop service if no <a class="xref" href="Sensus.Protocol.html">Protocol</a> should run.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -379,7 +318,8 @@ to support integration with other apps.</p>
     <tbody>
       <tr>
         <td><span class="xref">Android.Content.Intent</span></td>
-        <td></td>
+        <td><p>The service intent.</p>
+</td>
       </tr>
     </tbody>
   </table>

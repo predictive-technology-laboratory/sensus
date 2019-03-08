@@ -126,32 +126,114 @@
   
   
   <a id="Sensus_Android_Notifications_AndroidNotifier__ctor_" data-uid="Sensus.Android.Notifications.AndroidNotifier.#ctor*"></a>
-  <h4 id="Sensus_Android_Notifications_AndroidNotifier__ctor_Sensus_Android_AndroidSensusService_" data-uid="Sensus.Android.Notifications.AndroidNotifier.#ctor(Sensus.Android.AndroidSensusService)">AndroidNotifier(AndroidSensusService)</h4>
+  <h4 id="Sensus_Android_Notifications_AndroidNotifier__ctor" data-uid="Sensus.Android.Notifications.AndroidNotifier.#ctor">AndroidNotifier()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public AndroidNotifier(AndroidSensusService service)</code></pre>
+    <pre><code class="lang-csharp hljs">public AndroidNotifier()</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
+  <h3 id="fields">Fields
+  </h3>
+  
+  
+  <h4 id="Sensus_Android_Notifications_AndroidNotifier_FOREGROUND_SERVICE_NOTIFICATION_ACTION_PAUSE" data-uid="Sensus.Android.Notifications.AndroidNotifier.FOREGROUND_SERVICE_NOTIFICATION_ACTION_PAUSE">FOREGROUND_SERVICE_NOTIFICATION_ACTION_PAUSE</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string FOREGROUND_SERVICE_NOTIFICATION_ACTION_PAUSE = &quot;NOTIFICATION-ACTION-PAUSE&quot;</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
       <tr>
         <th>Type</th>
-        <th>Name</th>
         <th>Description</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.Android.AndroidSensusService.html">AndroidSensusService</a></td>
-        <td><span class="parametername">service</span></td>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="Sensus_Android_Notifications_AndroidNotifier_FOREGROUND_SERVICE_NOTIFICATION_ACTION_RESUME" data-uid="Sensus.Android.Notifications.AndroidNotifier.FOREGROUND_SERVICE_NOTIFICATION_ACTION_RESUME">FOREGROUND_SERVICE_NOTIFICATION_ACTION_RESUME</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string FOREGROUND_SERVICE_NOTIFICATION_ACTION_RESUME = &quot;NOTIFICATION-ACTION-RESUME&quot;</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="Sensus_Android_Notifications_AndroidNotifier_FOREGROUND_SERVICE_NOTIFICATION_ID" data-uid="Sensus.Android.Notifications.AndroidNotifier.FOREGROUND_SERVICE_NOTIFICATION_ID">FOREGROUND_SERVICE_NOTIFICATION_ID</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int FOREGROUND_SERVICE_NOTIFICATION_ID = 1</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h3 id="methods">Methods
   </h3>
+  
+  
+  <a id="Sensus_Android_Notifications_AndroidNotifier_BuildForegroundServiceNotification_" data-uid="Sensus.Android.Notifications.AndroidNotifier.BuildForegroundServiceNotification*"></a>
+  <h4 id="Sensus_Android_Notifications_AndroidNotifier_BuildForegroundServiceNotification" data-uid="Sensus.Android.Notifications.AndroidNotifier.BuildForegroundServiceNotification">BuildForegroundServiceNotification()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Notification BuildForegroundServiceNotification()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Android.App.Notification</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   
   
   <a id="Sensus_Android_Notifications_AndroidNotifier_CancelNotification_" data-uid="Sensus.Android.Notifications.AndroidNotifier.CancelNotification*"></a>
@@ -184,12 +266,12 @@
   
   
   <a id="Sensus_Android_Notifications_AndroidNotifier_CreateNotificationBuilder_" data-uid="Sensus.Android.Notifications.AndroidNotifier.CreateNotificationBuilder*"></a>
-  <h4 id="Sensus_Android_Notifications_AndroidNotifier_CreateNotificationBuilder_Android_Content_Context_Sensus_Android_Notifications_AndroidNotifier_SensusNotificationChannel_" data-uid="Sensus.Android.Notifications.AndroidNotifier.CreateNotificationBuilder(Android.Content.Context,Sensus.Android.Notifications.AndroidNotifier.SensusNotificationChannel)">CreateNotificationBuilder(Context, AndroidNotifier.SensusNotificationChannel)</h4>
+  <h4 id="Sensus_Android_Notifications_AndroidNotifier_CreateNotificationBuilder_Sensus_Android_Notifications_AndroidNotifier_SensusNotificationChannel_" data-uid="Sensus.Android.Notifications.AndroidNotifier.CreateNotificationBuilder(Sensus.Android.Notifications.AndroidNotifier.SensusNotificationChannel)">CreateNotificationBuilder(AndroidNotifier.SensusNotificationChannel)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Notification.Builder CreateNotificationBuilder(Context context, AndroidNotifier.SensusNotificationChannel channel)</code></pre>
+    <pre><code class="lang-csharp hljs">public Notification.Builder CreateNotificationBuilder(AndroidNotifier.SensusNotificationChannel channel)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -201,11 +283,6 @@
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td><span class="xref">Android.Content.Context</span></td>
-        <td><span class="parametername">context</span></td>
-        <td></td>
-      </tr>
       <tr>
         <td><a class="xref" href="Sensus.Android.Notifications.AndroidNotifier.SensusNotificationChannel.html">AndroidNotifier.SensusNotificationChannel</a></td>
         <td><span class="parametername">channel</span></td>
@@ -302,6 +379,37 @@
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_IssueNotificationAsync_System_String_System_String_System_String_System_Boolean_Sensus_Protocol_System_Nullable_System_Int32__Sensus_Notifications_DisplayPage_">Notifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable&lt;Int32&gt;, DisplayPage)</a></div>
+  
+  
+  <a id="Sensus_Android_Notifications_AndroidNotifier_OnDestroy_" data-uid="Sensus.Android.Notifications.AndroidNotifier.OnDestroy*"></a>
+  <h4 id="Sensus_Android_Notifications_AndroidNotifier_OnDestroy" data-uid="Sensus.Android.Notifications.AndroidNotifier.OnDestroy">OnDestroy()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void OnDestroy()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Android_Notifications_AndroidNotifier_ReissueForegroundServiceNotification_" data-uid="Sensus.Android.Notifications.AndroidNotifier.ReissueForegroundServiceNotification*"></a>
+  <h4 id="Sensus_Android_Notifications_AndroidNotifier_ReissueForegroundServiceNotification" data-uid="Sensus.Android.Notifications.AndroidNotifier.ReissueForegroundServiceNotification">ReissueForegroundServiceNotification()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void ReissueForegroundServiceNotification()</code></pre>
+  </div>
+  
+  
+  <a id="Sensus_Android_Notifications_AndroidNotifier_UpdateForegroundServiceNotificationBuilder_" data-uid="Sensus.Android.Notifications.AndroidNotifier.UpdateForegroundServiceNotificationBuilder*"></a>
+  <h4 id="Sensus_Android_Notifications_AndroidNotifier_UpdateForegroundServiceNotificationBuilder" data-uid="Sensus.Android.Notifications.AndroidNotifier.UpdateForegroundServiceNotificationBuilder">UpdateForegroundServiceNotificationBuilder()</h4>
+  <div class="markdown level1 summary"><p>Updates the foreground service notification builder, so that it reflects the enrollment status and participation level of the user.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateForegroundServiceNotificationBuilder()</code></pre>
+  </div>
 </article>
           </div>
           

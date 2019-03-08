@@ -718,30 +718,24 @@ references:
   commentId: Overload:Sensus.Android.AndroidSensusService.#ctor
   fullName: Sensus.Android.AndroidSensusService.AndroidSensusService
   nameWithType: AndroidSensusService.AndroidSensusService
-- uid: Sensus.Android.AndroidSensusService.FOREGROUND_SERVICE_NOTIFICATION_ID
-  name: FOREGROUND_SERVICE_NOTIFICATION_ID
-  href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_FOREGROUND_SERVICE_NOTIFICATION_ID
-  commentId: F:Sensus.Android.AndroidSensusService.FOREGROUND_SERVICE_NOTIFICATION_ID
-  fullName: Sensus.Android.AndroidSensusService.FOREGROUND_SERVICE_NOTIFICATION_ID
-  nameWithType: AndroidSensusService.FOREGROUND_SERVICE_NOTIFICATION_ID
-- uid: Sensus.Android.AndroidSensusService.FROM_ON_BOOT_KEY
-  name: FROM_ON_BOOT_KEY
-  href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_FROM_ON_BOOT_KEY
-  commentId: F:Sensus.Android.AndroidSensusService.FROM_ON_BOOT_KEY
-  fullName: Sensus.Android.AndroidSensusService.FROM_ON_BOOT_KEY
-  nameWithType: AndroidSensusService.FROM_ON_BOOT_KEY
-- uid: Sensus.Android.AndroidSensusService.NOTIFICATION_ACTION_PAUSE
-  name: NOTIFICATION_ACTION_PAUSE
-  href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_NOTIFICATION_ACTION_PAUSE
-  commentId: F:Sensus.Android.AndroidSensusService.NOTIFICATION_ACTION_PAUSE
-  fullName: Sensus.Android.AndroidSensusService.NOTIFICATION_ACTION_PAUSE
-  nameWithType: AndroidSensusService.NOTIFICATION_ACTION_PAUSE
-- uid: Sensus.Android.AndroidSensusService.NOTIFICATION_ACTION_RESUME
-  name: NOTIFICATION_ACTION_RESUME
-  href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_NOTIFICATION_ACTION_RESUME
-  commentId: F:Sensus.Android.AndroidSensusService.NOTIFICATION_ACTION_RESUME
-  fullName: Sensus.Android.AndroidSensusService.NOTIFICATION_ACTION_RESUME
-  nameWithType: AndroidSensusService.NOTIFICATION_ACTION_RESUME
+- uid: Sensus.Android.AndroidSensusService.GetIntent
+  name: GetIntent()
+  href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_GetIntent
+  commentId: M:Sensus.Android.AndroidSensusService.GetIntent
+  fullName: Sensus.Android.AndroidSensusService.GetIntent()
+  nameWithType: AndroidSensusService.GetIntent()
+- uid: Sensus.Android.AndroidSensusService.GetIntent*
+  name: GetIntent
+  href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_GetIntent_
+  commentId: Overload:Sensus.Android.AndroidSensusService.GetIntent
+  fullName: Sensus.Android.AndroidSensusService.GetIntent
+  nameWithType: AndroidSensusService.GetIntent
+- uid: Sensus.Android.AndroidSensusService.KEY_STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN
+  name: KEY_STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN
+  href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_KEY_STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN
+  commentId: F:Sensus.Android.AndroidSensusService.KEY_STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN
+  fullName: Sensus.Android.AndroidSensusService.KEY_STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN
+  nameWithType: AndroidSensusService.KEY_STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN
 - uid: Sensus.Android.AndroidSensusService.OnBind(Android.Content.Intent)
   name: OnBind(Intent)
   href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_OnBind_Android_Content_Intent_
@@ -790,30 +784,18 @@ references:
   commentId: Overload:Sensus.Android.AndroidSensusService.OnStartCommand
   fullName: Sensus.Android.AndroidSensusService.OnStartCommand
   nameWithType: AndroidSensusService.OnStartCommand
-- uid: Sensus.Android.AndroidSensusService.ReissueForegroundServiceNotification
-  name: ReissueForegroundServiceNotification()
-  href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_ReissueForegroundServiceNotification
-  commentId: M:Sensus.Android.AndroidSensusService.ReissueForegroundServiceNotification
-  fullName: Sensus.Android.AndroidSensusService.ReissueForegroundServiceNotification()
-  nameWithType: AndroidSensusService.ReissueForegroundServiceNotification()
-- uid: Sensus.Android.AndroidSensusService.ReissueForegroundServiceNotification*
-  name: ReissueForegroundServiceNotification
-  href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_ReissueForegroundServiceNotification_
-  commentId: Overload:Sensus.Android.AndroidSensusService.ReissueForegroundServiceNotification
-  fullName: Sensus.Android.AndroidSensusService.ReissueForegroundServiceNotification
-  nameWithType: AndroidSensusService.ReissueForegroundServiceNotification
-- uid: Sensus.Android.AndroidSensusService.StartService(Android.Content.Context,System.Boolean)
-  name: StartService(Context, Boolean)
-  href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_StartService_Android_Content_Context_System_Boolean_
-  commentId: M:Sensus.Android.AndroidSensusService.StartService(Android.Content.Context,System.Boolean)
-  fullName: Sensus.Android.AndroidSensusService.StartService(Android.Content.Context, System.Boolean)
-  nameWithType: AndroidSensusService.StartService(Context, Boolean)
-- uid: Sensus.Android.AndroidSensusService.StartService*
-  name: StartService
-  href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_StartService_
-  commentId: Overload:Sensus.Android.AndroidSensusService.StartService
-  fullName: Sensus.Android.AndroidSensusService.StartService
-  nameWithType: AndroidSensusService.StartService
+- uid: Sensus.Android.AndroidSensusService.Start(System.Boolean)
+  name: Start(Boolean)
+  href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_Start_System_Boolean_
+  commentId: M:Sensus.Android.AndroidSensusService.Start(System.Boolean)
+  fullName: Sensus.Android.AndroidSensusService.Start(System.Boolean)
+  nameWithType: AndroidSensusService.Start(Boolean)
+- uid: Sensus.Android.AndroidSensusService.Start*
+  name: Start
+  href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_Start_
+  commentId: Overload:Sensus.Android.AndroidSensusService.Start
+  fullName: Sensus.Android.AndroidSensusService.Start
+  nameWithType: AndroidSensusService.Start
 - uid: Sensus.Android.AndroidSensusService.Stop
   name: Stop()
   href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_Stop
@@ -832,36 +814,24 @@ references:
   commentId: T:Sensus.Android.AndroidSensusServiceBinder
   fullName: Sensus.Android.AndroidSensusServiceBinder
   nameWithType: AndroidSensusServiceBinder
-- uid: Sensus.Android.AndroidSensusServiceBinder.#ctor(Sensus.Android.AndroidSensusServiceHelper)
-  name: AndroidSensusServiceBinder(AndroidSensusServiceHelper)
-  href: api/Sensus.Android.AndroidSensusServiceBinder.html#Sensus_Android_AndroidSensusServiceBinder__ctor_Sensus_Android_AndroidSensusServiceHelper_
-  commentId: M:Sensus.Android.AndroidSensusServiceBinder.#ctor(Sensus.Android.AndroidSensusServiceHelper)
-  fullName: Sensus.Android.AndroidSensusServiceBinder.AndroidSensusServiceBinder(Sensus.Android.AndroidSensusServiceHelper)
-  nameWithType: AndroidSensusServiceBinder.AndroidSensusServiceBinder(AndroidSensusServiceHelper)
+- uid: Sensus.Android.AndroidSensusServiceBinder.#ctor
+  name: AndroidSensusServiceBinder()
+  href: api/Sensus.Android.AndroidSensusServiceBinder.html#Sensus_Android_AndroidSensusServiceBinder__ctor
+  commentId: M:Sensus.Android.AndroidSensusServiceBinder.#ctor
+  fullName: Sensus.Android.AndroidSensusServiceBinder.AndroidSensusServiceBinder()
+  nameWithType: AndroidSensusServiceBinder.AndroidSensusServiceBinder()
 - uid: Sensus.Android.AndroidSensusServiceBinder.#ctor*
   name: AndroidSensusServiceBinder
   href: api/Sensus.Android.AndroidSensusServiceBinder.html#Sensus_Android_AndroidSensusServiceBinder__ctor_
   commentId: Overload:Sensus.Android.AndroidSensusServiceBinder.#ctor
   fullName: Sensus.Android.AndroidSensusServiceBinder.AndroidSensusServiceBinder
   nameWithType: AndroidSensusServiceBinder.AndroidSensusServiceBinder
-- uid: Sensus.Android.AndroidSensusServiceBinder.SensusServiceHelper
-  name: SensusServiceHelper
-  href: api/Sensus.Android.AndroidSensusServiceBinder.html#Sensus_Android_AndroidSensusServiceBinder_SensusServiceHelper
-  commentId: P:Sensus.Android.AndroidSensusServiceBinder.SensusServiceHelper
-  fullName: Sensus.Android.AndroidSensusServiceBinder.SensusServiceHelper
-  nameWithType: AndroidSensusServiceBinder.SensusServiceHelper
-- uid: Sensus.Android.AndroidSensusServiceBinder.SensusServiceHelper*
-  name: SensusServiceHelper
-  href: api/Sensus.Android.AndroidSensusServiceBinder.html#Sensus_Android_AndroidSensusServiceBinder_SensusServiceHelper_
-  commentId: Overload:Sensus.Android.AndroidSensusServiceBinder.SensusServiceHelper
-  fullName: Sensus.Android.AndroidSensusServiceBinder.SensusServiceHelper
-  nameWithType: AndroidSensusServiceBinder.SensusServiceHelper
-- uid: Sensus.Android.AndroidSensusServiceBinder.ServiceStopAction
-  name: ServiceStopAction
-  href: api/Sensus.Android.AndroidSensusServiceBinder.html#Sensus_Android_AndroidSensusServiceBinder_ServiceStopAction
-  commentId: F:Sensus.Android.AndroidSensusServiceBinder.ServiceStopAction
-  fullName: Sensus.Android.AndroidSensusServiceBinder.ServiceStopAction
-  nameWithType: AndroidSensusServiceBinder.ServiceStopAction
+- uid: Sensus.Android.AndroidSensusServiceBinder.OnServiceStop
+  name: OnServiceStop
+  href: api/Sensus.Android.AndroidSensusServiceBinder.html#Sensus_Android_AndroidSensusServiceBinder_OnServiceStop
+  commentId: F:Sensus.Android.AndroidSensusServiceBinder.OnServiceStop
+  fullName: Sensus.Android.AndroidSensusServiceBinder.OnServiceStop
+  nameWithType: AndroidSensusServiceBinder.OnServiceStop
 - uid: Sensus.Android.AndroidSensusServiceBootStarter
   name: AndroidSensusServiceBootStarter
   href: api/Sensus.Android.AndroidSensusServiceBootStarter.html
@@ -1096,18 +1066,6 @@ references:
   commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.IsCharging
   fullName: Sensus.Android.AndroidSensusServiceHelper.IsCharging
   nameWithType: AndroidSensusServiceHelper.IsCharging
-- uid: Sensus.Android.AndroidSensusServiceHelper.IsOnMainThread
-  name: IsOnMainThread
-  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_IsOnMainThread
-  commentId: P:Sensus.Android.AndroidSensusServiceHelper.IsOnMainThread
-  fullName: Sensus.Android.AndroidSensusServiceHelper.IsOnMainThread
-  nameWithType: AndroidSensusServiceHelper.IsOnMainThread
-- uid: Sensus.Android.AndroidSensusServiceHelper.IsOnMainThread*
-  name: IsOnMainThread
-  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_IsOnMainThread_
-  commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.IsOnMainThread
-  fullName: Sensus.Android.AndroidSensusServiceHelper.IsOnMainThread
-  nameWithType: AndroidSensusServiceHelper.IsOnMainThread
 - uid: Sensus.Android.AndroidSensusServiceHelper.KeepDeviceAwake
   name: KeepDeviceAwake()
   href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_KeepDeviceAwake
@@ -1198,18 +1156,6 @@ references:
   commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.RegisterWithNotificationHubAsync
   fullName: Sensus.Android.AndroidSensusServiceHelper.RegisterWithNotificationHubAsync
   nameWithType: AndroidSensusServiceHelper.RegisterWithNotificationHubAsync
-- uid: Sensus.Android.AndroidSensusServiceHelper.ReissueForegroundServiceNotification
-  name: ReissueForegroundServiceNotification()
-  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_ReissueForegroundServiceNotification
-  commentId: M:Sensus.Android.AndroidSensusServiceHelper.ReissueForegroundServiceNotification
-  fullName: Sensus.Android.AndroidSensusServiceHelper.ReissueForegroundServiceNotification()
-  nameWithType: AndroidSensusServiceHelper.ReissueForegroundServiceNotification()
-- uid: Sensus.Android.AndroidSensusServiceHelper.ReissueForegroundServiceNotification*
-  name: ReissueForegroundServiceNotification
-  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_ReissueForegroundServiceNotification_
-  commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.ReissueForegroundServiceNotification
-  fullName: Sensus.Android.AndroidSensusServiceHelper.ReissueForegroundServiceNotification
-  nameWithType: AndroidSensusServiceHelper.ReissueForegroundServiceNotification
 - uid: Sensus.Android.AndroidSensusServiceHelper.RequestNewPushNotificationToken
   name: RequestNewPushNotificationToken()
   href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_RequestNewPushNotificationToken
@@ -1273,18 +1219,6 @@ references:
   commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.SetFocusedMainActivity
   fullName: Sensus.Android.AndroidSensusServiceHelper.SetFocusedMainActivity
   nameWithType: AndroidSensusServiceHelper.SetFocusedMainActivity
-- uid: Sensus.Android.AndroidSensusServiceHelper.SetService(Sensus.Android.AndroidSensusService)
-  name: SetService(AndroidSensusService)
-  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_SetService_Sensus_Android_AndroidSensusService_
-  commentId: M:Sensus.Android.AndroidSensusServiceHelper.SetService(Sensus.Android.AndroidSensusService)
-  fullName: Sensus.Android.AndroidSensusServiceHelper.SetService(Sensus.Android.AndroidSensusService)
-  nameWithType: AndroidSensusServiceHelper.SetService(AndroidSensusService)
-- uid: Sensus.Android.AndroidSensusServiceHelper.SetService*
-  name: SetService
-  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_SetService_
-  commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.SetService
-  fullName: Sensus.Android.AndroidSensusServiceHelper.SetService
-  nameWithType: AndroidSensusServiceHelper.SetService
 - uid: Sensus.Android.AndroidSensusServiceHelper.ShareFileAsync(System.String,System.String,System.String)
   name: ShareFileAsync(String, String, String)
   href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_ShareFileAsync_System_String_System_String_System_String_
@@ -1297,18 +1231,6 @@ references:
   commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.ShareFileAsync
   fullName: Sensus.Android.AndroidSensusServiceHelper.ShareFileAsync
   nameWithType: AndroidSensusServiceHelper.ShareFileAsync
-- uid: Sensus.Android.AndroidSensusServiceHelper.StopAndroidSensusService
-  name: StopAndroidSensusService()
-  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_StopAndroidSensusService
-  commentId: M:Sensus.Android.AndroidSensusServiceHelper.StopAndroidSensusService
-  fullName: Sensus.Android.AndroidSensusServiceHelper.StopAndroidSensusService()
-  nameWithType: AndroidSensusServiceHelper.StopAndroidSensusService()
-- uid: Sensus.Android.AndroidSensusServiceHelper.StopAndroidSensusService*
-  name: StopAndroidSensusService
-  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_StopAndroidSensusService_
-  commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.StopAndroidSensusService
-  fullName: Sensus.Android.AndroidSensusServiceHelper.StopAndroidSensusService
-  nameWithType: AndroidSensusServiceHelper.StopAndroidSensusService
 - uid: Sensus.Android.AndroidSensusServiceHelper.TextToSpeechAsync(System.String)
   name: TextToSpeechAsync(String)
   href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_TextToSpeechAsync_System_String_
@@ -1432,12 +1354,12 @@ references:
   commentId: T:Sensus.Android.AndroidTextToSpeech
   fullName: Sensus.Android.AndroidTextToSpeech
   nameWithType: AndroidTextToSpeech
-- uid: Sensus.Android.AndroidTextToSpeech.#ctor(Sensus.Android.AndroidSensusService)
-  name: AndroidTextToSpeech(AndroidSensusService)
-  href: api/Sensus.Android.AndroidTextToSpeech.html#Sensus_Android_AndroidTextToSpeech__ctor_Sensus_Android_AndroidSensusService_
-  commentId: M:Sensus.Android.AndroidTextToSpeech.#ctor(Sensus.Android.AndroidSensusService)
-  fullName: Sensus.Android.AndroidTextToSpeech.AndroidTextToSpeech(Sensus.Android.AndroidSensusService)
-  nameWithType: AndroidTextToSpeech.AndroidTextToSpeech(AndroidSensusService)
+- uid: Sensus.Android.AndroidTextToSpeech.#ctor
+  name: AndroidTextToSpeech()
+  href: api/Sensus.Android.AndroidTextToSpeech.html#Sensus_Android_AndroidTextToSpeech__ctor
+  commentId: M:Sensus.Android.AndroidTextToSpeech.#ctor
+  fullName: Sensus.Android.AndroidTextToSpeech.AndroidTextToSpeech()
+  nameWithType: AndroidTextToSpeech.AndroidTextToSpeech()
 - uid: Sensus.Android.AndroidTextToSpeech.#ctor*
   name: AndroidTextToSpeech
   href: api/Sensus.Android.AndroidTextToSpeech.html#Sensus_Android_AndroidTextToSpeech__ctor_
@@ -1810,36 +1732,6 @@ references:
   commentId: Overload:Sensus.Android.Context.AndroidSensusContext.SymmetricEncryption
   fullName: Sensus.Android.Context.AndroidSensusContext.SymmetricEncryption
   nameWithType: AndroidSensusContext.SymmetricEncryption
-- uid: Sensus.Android.ForegroundServiceNotificationActionReceiver
-  name: ForegroundServiceNotificationActionReceiver
-  href: api/Sensus.Android.ForegroundServiceNotificationActionReceiver.html
-  commentId: T:Sensus.Android.ForegroundServiceNotificationActionReceiver
-  fullName: Sensus.Android.ForegroundServiceNotificationActionReceiver
-  nameWithType: ForegroundServiceNotificationActionReceiver
-- uid: Sensus.Android.ForegroundServiceNotificationActionReceiver.#ctor
-  name: ForegroundServiceNotificationActionReceiver()
-  href: api/Sensus.Android.ForegroundServiceNotificationActionReceiver.html#Sensus_Android_ForegroundServiceNotificationActionReceiver__ctor
-  commentId: M:Sensus.Android.ForegroundServiceNotificationActionReceiver.#ctor
-  fullName: Sensus.Android.ForegroundServiceNotificationActionReceiver.ForegroundServiceNotificationActionReceiver()
-  nameWithType: ForegroundServiceNotificationActionReceiver.ForegroundServiceNotificationActionReceiver()
-- uid: Sensus.Android.ForegroundServiceNotificationActionReceiver.#ctor*
-  name: ForegroundServiceNotificationActionReceiver
-  href: api/Sensus.Android.ForegroundServiceNotificationActionReceiver.html#Sensus_Android_ForegroundServiceNotificationActionReceiver__ctor_
-  commentId: Overload:Sensus.Android.ForegroundServiceNotificationActionReceiver.#ctor
-  fullName: Sensus.Android.ForegroundServiceNotificationActionReceiver.ForegroundServiceNotificationActionReceiver
-  nameWithType: ForegroundServiceNotificationActionReceiver.ForegroundServiceNotificationActionReceiver
-- uid: Sensus.Android.ForegroundServiceNotificationActionReceiver.OnReceive(Android.Content.Context,Android.Content.Intent)
-  name: OnReceive(Context, Intent)
-  href: api/Sensus.Android.ForegroundServiceNotificationActionReceiver.html#Sensus_Android_ForegroundServiceNotificationActionReceiver_OnReceive_Android_Content_Context_Android_Content_Intent_
-  commentId: M:Sensus.Android.ForegroundServiceNotificationActionReceiver.OnReceive(Android.Content.Context,Android.Content.Intent)
-  fullName: Sensus.Android.ForegroundServiceNotificationActionReceiver.OnReceive(Android.Content.Context, Android.Content.Intent)
-  nameWithType: ForegroundServiceNotificationActionReceiver.OnReceive(Context, Intent)
-- uid: Sensus.Android.ForegroundServiceNotificationActionReceiver.OnReceive*
-  name: OnReceive
-  href: api/Sensus.Android.ForegroundServiceNotificationActionReceiver.html#Sensus_Android_ForegroundServiceNotificationActionReceiver_OnReceive_
-  commentId: Overload:Sensus.Android.ForegroundServiceNotificationActionReceiver.OnReceive
-  fullName: Sensus.Android.ForegroundServiceNotificationActionReceiver.OnReceive
-  nameWithType: ForegroundServiceNotificationActionReceiver.OnReceive
 - uid: Sensus.Android.Notifications
   name: Sensus.Android.Notifications
   href: api/Sensus.Android.Notifications.html
@@ -1852,18 +1744,30 @@ references:
   commentId: T:Sensus.Android.Notifications.AndroidNotifier
   fullName: Sensus.Android.Notifications.AndroidNotifier
   nameWithType: AndroidNotifier
-- uid: Sensus.Android.Notifications.AndroidNotifier.#ctor(Sensus.Android.AndroidSensusService)
-  name: AndroidNotifier(AndroidSensusService)
-  href: api/Sensus.Android.Notifications.AndroidNotifier.html#Sensus_Android_Notifications_AndroidNotifier__ctor_Sensus_Android_AndroidSensusService_
-  commentId: M:Sensus.Android.Notifications.AndroidNotifier.#ctor(Sensus.Android.AndroidSensusService)
-  fullName: Sensus.Android.Notifications.AndroidNotifier.AndroidNotifier(Sensus.Android.AndroidSensusService)
-  nameWithType: AndroidNotifier.AndroidNotifier(AndroidSensusService)
+- uid: Sensus.Android.Notifications.AndroidNotifier.#ctor
+  name: AndroidNotifier()
+  href: api/Sensus.Android.Notifications.AndroidNotifier.html#Sensus_Android_Notifications_AndroidNotifier__ctor
+  commentId: M:Sensus.Android.Notifications.AndroidNotifier.#ctor
+  fullName: Sensus.Android.Notifications.AndroidNotifier.AndroidNotifier()
+  nameWithType: AndroidNotifier.AndroidNotifier()
 - uid: Sensus.Android.Notifications.AndroidNotifier.#ctor*
   name: AndroidNotifier
   href: api/Sensus.Android.Notifications.AndroidNotifier.html#Sensus_Android_Notifications_AndroidNotifier__ctor_
   commentId: Overload:Sensus.Android.Notifications.AndroidNotifier.#ctor
   fullName: Sensus.Android.Notifications.AndroidNotifier.AndroidNotifier
   nameWithType: AndroidNotifier.AndroidNotifier
+- uid: Sensus.Android.Notifications.AndroidNotifier.BuildForegroundServiceNotification
+  name: BuildForegroundServiceNotification()
+  href: api/Sensus.Android.Notifications.AndroidNotifier.html#Sensus_Android_Notifications_AndroidNotifier_BuildForegroundServiceNotification
+  commentId: M:Sensus.Android.Notifications.AndroidNotifier.BuildForegroundServiceNotification
+  fullName: Sensus.Android.Notifications.AndroidNotifier.BuildForegroundServiceNotification()
+  nameWithType: AndroidNotifier.BuildForegroundServiceNotification()
+- uid: Sensus.Android.Notifications.AndroidNotifier.BuildForegroundServiceNotification*
+  name: BuildForegroundServiceNotification
+  href: api/Sensus.Android.Notifications.AndroidNotifier.html#Sensus_Android_Notifications_AndroidNotifier_BuildForegroundServiceNotification_
+  commentId: Overload:Sensus.Android.Notifications.AndroidNotifier.BuildForegroundServiceNotification
+  fullName: Sensus.Android.Notifications.AndroidNotifier.BuildForegroundServiceNotification
+  nameWithType: AndroidNotifier.BuildForegroundServiceNotification
 - uid: Sensus.Android.Notifications.AndroidNotifier.CancelNotification(System.String)
   name: CancelNotification(String)
   href: api/Sensus.Android.Notifications.AndroidNotifier.html#Sensus_Android_Notifications_AndroidNotifier_CancelNotification_System_String_
@@ -1876,18 +1780,36 @@ references:
   commentId: Overload:Sensus.Android.Notifications.AndroidNotifier.CancelNotification
   fullName: Sensus.Android.Notifications.AndroidNotifier.CancelNotification
   nameWithType: AndroidNotifier.CancelNotification
-- uid: Sensus.Android.Notifications.AndroidNotifier.CreateNotificationBuilder(Android.Content.Context,Sensus.Android.Notifications.AndroidNotifier.SensusNotificationChannel)
-  name: CreateNotificationBuilder(Context, AndroidNotifier.SensusNotificationChannel)
-  href: api/Sensus.Android.Notifications.AndroidNotifier.html#Sensus_Android_Notifications_AndroidNotifier_CreateNotificationBuilder_Android_Content_Context_Sensus_Android_Notifications_AndroidNotifier_SensusNotificationChannel_
-  commentId: M:Sensus.Android.Notifications.AndroidNotifier.CreateNotificationBuilder(Android.Content.Context,Sensus.Android.Notifications.AndroidNotifier.SensusNotificationChannel)
-  fullName: Sensus.Android.Notifications.AndroidNotifier.CreateNotificationBuilder(Android.Content.Context, Sensus.Android.Notifications.AndroidNotifier.SensusNotificationChannel)
-  nameWithType: AndroidNotifier.CreateNotificationBuilder(Context, AndroidNotifier.SensusNotificationChannel)
+- uid: Sensus.Android.Notifications.AndroidNotifier.CreateNotificationBuilder(Sensus.Android.Notifications.AndroidNotifier.SensusNotificationChannel)
+  name: CreateNotificationBuilder(AndroidNotifier.SensusNotificationChannel)
+  href: api/Sensus.Android.Notifications.AndroidNotifier.html#Sensus_Android_Notifications_AndroidNotifier_CreateNotificationBuilder_Sensus_Android_Notifications_AndroidNotifier_SensusNotificationChannel_
+  commentId: M:Sensus.Android.Notifications.AndroidNotifier.CreateNotificationBuilder(Sensus.Android.Notifications.AndroidNotifier.SensusNotificationChannel)
+  fullName: Sensus.Android.Notifications.AndroidNotifier.CreateNotificationBuilder(Sensus.Android.Notifications.AndroidNotifier.SensusNotificationChannel)
+  nameWithType: AndroidNotifier.CreateNotificationBuilder(AndroidNotifier.SensusNotificationChannel)
 - uid: Sensus.Android.Notifications.AndroidNotifier.CreateNotificationBuilder*
   name: CreateNotificationBuilder
   href: api/Sensus.Android.Notifications.AndroidNotifier.html#Sensus_Android_Notifications_AndroidNotifier_CreateNotificationBuilder_
   commentId: Overload:Sensus.Android.Notifications.AndroidNotifier.CreateNotificationBuilder
   fullName: Sensus.Android.Notifications.AndroidNotifier.CreateNotificationBuilder
   nameWithType: AndroidNotifier.CreateNotificationBuilder
+- uid: Sensus.Android.Notifications.AndroidNotifier.FOREGROUND_SERVICE_NOTIFICATION_ACTION_PAUSE
+  name: FOREGROUND_SERVICE_NOTIFICATION_ACTION_PAUSE
+  href: api/Sensus.Android.Notifications.AndroidNotifier.html#Sensus_Android_Notifications_AndroidNotifier_FOREGROUND_SERVICE_NOTIFICATION_ACTION_PAUSE
+  commentId: F:Sensus.Android.Notifications.AndroidNotifier.FOREGROUND_SERVICE_NOTIFICATION_ACTION_PAUSE
+  fullName: Sensus.Android.Notifications.AndroidNotifier.FOREGROUND_SERVICE_NOTIFICATION_ACTION_PAUSE
+  nameWithType: AndroidNotifier.FOREGROUND_SERVICE_NOTIFICATION_ACTION_PAUSE
+- uid: Sensus.Android.Notifications.AndroidNotifier.FOREGROUND_SERVICE_NOTIFICATION_ACTION_RESUME
+  name: FOREGROUND_SERVICE_NOTIFICATION_ACTION_RESUME
+  href: api/Sensus.Android.Notifications.AndroidNotifier.html#Sensus_Android_Notifications_AndroidNotifier_FOREGROUND_SERVICE_NOTIFICATION_ACTION_RESUME
+  commentId: F:Sensus.Android.Notifications.AndroidNotifier.FOREGROUND_SERVICE_NOTIFICATION_ACTION_RESUME
+  fullName: Sensus.Android.Notifications.AndroidNotifier.FOREGROUND_SERVICE_NOTIFICATION_ACTION_RESUME
+  nameWithType: AndroidNotifier.FOREGROUND_SERVICE_NOTIFICATION_ACTION_RESUME
+- uid: Sensus.Android.Notifications.AndroidNotifier.FOREGROUND_SERVICE_NOTIFICATION_ID
+  name: FOREGROUND_SERVICE_NOTIFICATION_ID
+  href: api/Sensus.Android.Notifications.AndroidNotifier.html#Sensus_Android_Notifications_AndroidNotifier_FOREGROUND_SERVICE_NOTIFICATION_ID
+  commentId: F:Sensus.Android.Notifications.AndroidNotifier.FOREGROUND_SERVICE_NOTIFICATION_ID
+  fullName: Sensus.Android.Notifications.AndroidNotifier.FOREGROUND_SERVICE_NOTIFICATION_ID
+  nameWithType: AndroidNotifier.FOREGROUND_SERVICE_NOTIFICATION_ID
 - uid: Sensus.Android.Notifications.AndroidNotifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.DisplayPage)
   name: IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable<Int32>, DisplayPage)
   href: api/Sensus.Android.Notifications.AndroidNotifier.html#Sensus_Android_Notifications_AndroidNotifier_IssueNotificationAsync_System_String_System_String_System_String_System_Boolean_Sensus_Protocol_System_Nullable_System_Int32__Sensus_Notifications_DisplayPage_
@@ -1903,6 +1825,30 @@ references:
   commentId: Overload:Sensus.Android.Notifications.AndroidNotifier.IssueNotificationAsync
   fullName: Sensus.Android.Notifications.AndroidNotifier.IssueNotificationAsync
   nameWithType: AndroidNotifier.IssueNotificationAsync
+- uid: Sensus.Android.Notifications.AndroidNotifier.OnDestroy
+  name: OnDestroy()
+  href: api/Sensus.Android.Notifications.AndroidNotifier.html#Sensus_Android_Notifications_AndroidNotifier_OnDestroy
+  commentId: M:Sensus.Android.Notifications.AndroidNotifier.OnDestroy
+  fullName: Sensus.Android.Notifications.AndroidNotifier.OnDestroy()
+  nameWithType: AndroidNotifier.OnDestroy()
+- uid: Sensus.Android.Notifications.AndroidNotifier.OnDestroy*
+  name: OnDestroy
+  href: api/Sensus.Android.Notifications.AndroidNotifier.html#Sensus_Android_Notifications_AndroidNotifier_OnDestroy_
+  commentId: Overload:Sensus.Android.Notifications.AndroidNotifier.OnDestroy
+  fullName: Sensus.Android.Notifications.AndroidNotifier.OnDestroy
+  nameWithType: AndroidNotifier.OnDestroy
+- uid: Sensus.Android.Notifications.AndroidNotifier.ReissueForegroundServiceNotification
+  name: ReissueForegroundServiceNotification()
+  href: api/Sensus.Android.Notifications.AndroidNotifier.html#Sensus_Android_Notifications_AndroidNotifier_ReissueForegroundServiceNotification
+  commentId: M:Sensus.Android.Notifications.AndroidNotifier.ReissueForegroundServiceNotification
+  fullName: Sensus.Android.Notifications.AndroidNotifier.ReissueForegroundServiceNotification()
+  nameWithType: AndroidNotifier.ReissueForegroundServiceNotification()
+- uid: Sensus.Android.Notifications.AndroidNotifier.ReissueForegroundServiceNotification*
+  name: ReissueForegroundServiceNotification
+  href: api/Sensus.Android.Notifications.AndroidNotifier.html#Sensus_Android_Notifications_AndroidNotifier_ReissueForegroundServiceNotification_
+  commentId: Overload:Sensus.Android.Notifications.AndroidNotifier.ReissueForegroundServiceNotification
+  fullName: Sensus.Android.Notifications.AndroidNotifier.ReissueForegroundServiceNotification
+  nameWithType: AndroidNotifier.ReissueForegroundServiceNotification
 - uid: Sensus.Android.Notifications.AndroidNotifier.SensusNotificationChannel
   name: AndroidNotifier.SensusNotificationChannel
   href: api/Sensus.Android.Notifications.AndroidNotifier.SensusNotificationChannel.html
@@ -1939,6 +1885,18 @@ references:
   commentId: F:Sensus.Android.Notifications.AndroidNotifier.SensusNotificationChannel.value__
   fullName: Sensus.Android.Notifications.AndroidNotifier.SensusNotificationChannel.value__
   nameWithType: AndroidNotifier.SensusNotificationChannel.value__
+- uid: Sensus.Android.Notifications.AndroidNotifier.UpdateForegroundServiceNotificationBuilder
+  name: UpdateForegroundServiceNotificationBuilder()
+  href: api/Sensus.Android.Notifications.AndroidNotifier.html#Sensus_Android_Notifications_AndroidNotifier_UpdateForegroundServiceNotificationBuilder
+  commentId: M:Sensus.Android.Notifications.AndroidNotifier.UpdateForegroundServiceNotificationBuilder
+  fullName: Sensus.Android.Notifications.AndroidNotifier.UpdateForegroundServiceNotificationBuilder()
+  nameWithType: AndroidNotifier.UpdateForegroundServiceNotificationBuilder()
+- uid: Sensus.Android.Notifications.AndroidNotifier.UpdateForegroundServiceNotificationBuilder*
+  name: UpdateForegroundServiceNotificationBuilder
+  href: api/Sensus.Android.Notifications.AndroidNotifier.html#Sensus_Android_Notifications_AndroidNotifier_UpdateForegroundServiceNotificationBuilder_
+  commentId: Overload:Sensus.Android.Notifications.AndroidNotifier.UpdateForegroundServiceNotificationBuilder
+  fullName: Sensus.Android.Notifications.AndroidNotifier.UpdateForegroundServiceNotificationBuilder
+  nameWithType: AndroidNotifier.UpdateForegroundServiceNotificationBuilder
 - uid: Sensus.Android.Notifications.FirebaseNotificationService
   name: FirebaseNotificationService
   href: api/Sensus.Android.Notifications.FirebaseNotificationService.html
@@ -1999,6 +1957,36 @@ references:
   commentId: Overload:Sensus.Android.Notifications.FirebaseRegistrationService.OnTokenRefresh
   fullName: Sensus.Android.Notifications.FirebaseRegistrationService.OnTokenRefresh
   nameWithType: FirebaseRegistrationService.OnTokenRefresh
+- uid: Sensus.Android.Notifications.ForegroundServiceNotificationActionReceiver
+  name: ForegroundServiceNotificationActionReceiver
+  href: api/Sensus.Android.Notifications.ForegroundServiceNotificationActionReceiver.html
+  commentId: T:Sensus.Android.Notifications.ForegroundServiceNotificationActionReceiver
+  fullName: Sensus.Android.Notifications.ForegroundServiceNotificationActionReceiver
+  nameWithType: ForegroundServiceNotificationActionReceiver
+- uid: Sensus.Android.Notifications.ForegroundServiceNotificationActionReceiver.#ctor
+  name: ForegroundServiceNotificationActionReceiver()
+  href: api/Sensus.Android.Notifications.ForegroundServiceNotificationActionReceiver.html#Sensus_Android_Notifications_ForegroundServiceNotificationActionReceiver__ctor
+  commentId: M:Sensus.Android.Notifications.ForegroundServiceNotificationActionReceiver.#ctor
+  fullName: Sensus.Android.Notifications.ForegroundServiceNotificationActionReceiver.ForegroundServiceNotificationActionReceiver()
+  nameWithType: ForegroundServiceNotificationActionReceiver.ForegroundServiceNotificationActionReceiver()
+- uid: Sensus.Android.Notifications.ForegroundServiceNotificationActionReceiver.#ctor*
+  name: ForegroundServiceNotificationActionReceiver
+  href: api/Sensus.Android.Notifications.ForegroundServiceNotificationActionReceiver.html#Sensus_Android_Notifications_ForegroundServiceNotificationActionReceiver__ctor_
+  commentId: Overload:Sensus.Android.Notifications.ForegroundServiceNotificationActionReceiver.#ctor
+  fullName: Sensus.Android.Notifications.ForegroundServiceNotificationActionReceiver.ForegroundServiceNotificationActionReceiver
+  nameWithType: ForegroundServiceNotificationActionReceiver.ForegroundServiceNotificationActionReceiver
+- uid: Sensus.Android.Notifications.ForegroundServiceNotificationActionReceiver.OnReceive(Android.Content.Context,Android.Content.Intent)
+  name: OnReceive(Context, Intent)
+  href: api/Sensus.Android.Notifications.ForegroundServiceNotificationActionReceiver.html#Sensus_Android_Notifications_ForegroundServiceNotificationActionReceiver_OnReceive_Android_Content_Context_Android_Content_Intent_
+  commentId: M:Sensus.Android.Notifications.ForegroundServiceNotificationActionReceiver.OnReceive(Android.Content.Context,Android.Content.Intent)
+  fullName: Sensus.Android.Notifications.ForegroundServiceNotificationActionReceiver.OnReceive(Android.Content.Context, Android.Content.Intent)
+  nameWithType: ForegroundServiceNotificationActionReceiver.OnReceive(Context, Intent)
+- uid: Sensus.Android.Notifications.ForegroundServiceNotificationActionReceiver.OnReceive*
+  name: OnReceive
+  href: api/Sensus.Android.Notifications.ForegroundServiceNotificationActionReceiver.html#Sensus_Android_Notifications_ForegroundServiceNotificationActionReceiver_OnReceive_
+  commentId: Overload:Sensus.Android.Notifications.ForegroundServiceNotificationActionReceiver.OnReceive
+  fullName: Sensus.Android.Notifications.ForegroundServiceNotificationActionReceiver.OnReceive
+  nameWithType: ForegroundServiceNotificationActionReceiver.OnReceive
 - uid: Sensus.Android.Probes
   name: Sensus.Android.Probes
   href: api/Sensus.Android.Probes.html
@@ -24003,6 +23991,18 @@ references:
   commentId: Overload:Sensus.Datum.Id
   fullName: Sensus.Datum.Id
   nameWithType: Datum.Id
+- uid: Sensus.Datum.LocalOffsetFromUTC
+  name: LocalOffsetFromUTC
+  href: api/Sensus.Datum.html#Sensus_Datum_LocalOffsetFromUTC
+  commentId: P:Sensus.Datum.LocalOffsetFromUTC
+  fullName: Sensus.Datum.LocalOffsetFromUTC
+  nameWithType: Datum.LocalOffsetFromUTC
+- uid: Sensus.Datum.LocalOffsetFromUTC*
+  name: LocalOffsetFromUTC
+  href: api/Sensus.Datum.html#Sensus_Datum_LocalOffsetFromUTC_
+  commentId: Overload:Sensus.Datum.LocalOffsetFromUTC
+  fullName: Sensus.Datum.LocalOffsetFromUTC
+  nameWithType: Datum.LocalOffsetFromUTC
 - uid: Sensus.Datum.OperatingSystem
   name: OperatingSystem
   href: api/Sensus.Datum.html#Sensus_Datum_OperatingSystem
@@ -25779,18 +25779,6 @@ references:
   commentId: Overload:Sensus.iOS.iOSSensusServiceHelper.IsCharging
   fullName: Sensus.iOS.iOSSensusServiceHelper.IsCharging
   nameWithType: iOSSensusServiceHelper.IsCharging
-- uid: Sensus.iOS.iOSSensusServiceHelper.IsOnMainThread
-  name: IsOnMainThread
-  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_IsOnMainThread
-  commentId: P:Sensus.iOS.iOSSensusServiceHelper.IsOnMainThread
-  fullName: Sensus.iOS.iOSSensusServiceHelper.IsOnMainThread
-  nameWithType: iOSSensusServiceHelper.IsOnMainThread
-- uid: Sensus.iOS.iOSSensusServiceHelper.IsOnMainThread*
-  name: IsOnMainThread
-  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_IsOnMainThread_
-  commentId: Overload:Sensus.iOS.iOSSensusServiceHelper.IsOnMainThread
-  fullName: Sensus.iOS.iOSSensusServiceHelper.IsOnMainThread
-  nameWithType: iOSSensusServiceHelper.IsOnMainThread
 - uid: Sensus.iOS.iOSSensusServiceHelper.OperatingSystem
   name: OperatingSystem
   href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_OperatingSystem
@@ -46551,18 +46539,6 @@ references:
   commentId: Overload:Sensus.SensusServiceHelper.IsCharging
   fullName: Sensus.SensusServiceHelper.IsCharging
   nameWithType: SensusServiceHelper.IsCharging
-- uid: Sensus.SensusServiceHelper.IsOnMainThread
-  name: IsOnMainThread
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_IsOnMainThread
-  commentId: P:Sensus.SensusServiceHelper.IsOnMainThread
-  fullName: Sensus.SensusServiceHelper.IsOnMainThread
-  nameWithType: SensusServiceHelper.IsOnMainThread
-- uid: Sensus.SensusServiceHelper.IsOnMainThread*
-  name: IsOnMainThread
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_IsOnMainThread_
-  commentId: Overload:Sensus.SensusServiceHelper.IsOnMainThread
-  fullName: Sensus.SensusServiceHelper.IsOnMainThread
-  nameWithType: SensusServiceHelper.IsOnMainThread
 - uid: Sensus.SensusServiceHelper.IssuePendingSurveysNotificationAsync(Sensus.Notifications.PendingSurveyNotificationMode,Sensus.Protocol)
   name: IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode, Protocol)
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_IssuePendingSurveysNotificationAsync_Sensus_Notifications_PendingSurveyNotificationMode_Sensus_Protocol_
