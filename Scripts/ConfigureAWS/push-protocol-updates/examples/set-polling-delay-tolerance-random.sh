@@ -3,17 +3,17 @@
 if [[ $# -ne 1 ]]
 then
     echo ""
-    echo "Purpose:  Sets the before/after delay tolerance values of polling probes"
-    echo "          to a random value with a given maximum, picking a value of 0"
-    echo "          half of the time. Reads devices from standard input."
+    echo "Purpose:  Sets the before/after delay tolerance values of all polling probes"
+    echo "          to a random value with a given maximum, picking a value of 0 half"
+    echo "          of the time. Reads devices from standard input."
     echo ""
-    echo "Usage:  ./set-delay-tolerance-random.sh [MAX]"
+    echo "Usage:  set-polling-delay-tolerance-random.sh [MAX]"
     echo ""
     echo "  [MAX]:  The maximum tolerance (milliseconds)."
     echo ""
     echo "Example:  Set the before/after delay tolerance to somewhere in [0,30] minutes:"
     echo ""
-    echo "  ./list-devices.sh BUCKET | ./set-delay-tolerance-random.sh $((1000*60*30))"
+    echo "  ./list-devices.sh BUCKET | ./set-polling-delay-tolerance-random.sh $((1000*60*30))"
     echo ""
     exit 1
 fi
@@ -32,4 +32,4 @@ then
     after=$before
 fi
 
-cat - | ./set-delay-tolerance.sh $before $after
+cat - | ./set-polling-delay-tolerance.sh $before $after
