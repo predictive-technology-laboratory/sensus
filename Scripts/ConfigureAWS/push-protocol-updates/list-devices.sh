@@ -7,7 +7,7 @@ then
     echo ""
     echo "Usage:  ./list-devices.sh [BUCKET]"
     echo ""
-    echo "  [BUCKET]:  Name of S3 bucket to list devices for."
+    echo "  [BUCKET]:  Name of S3 bucket for which to list devices."
     exit 1
 fi
 

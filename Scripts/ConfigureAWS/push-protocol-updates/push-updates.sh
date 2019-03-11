@@ -27,7 +27,6 @@ do
     
     current_time_seconds=$(date +%s)
     push_notification_file=$(mktemp)
-    push_notification_id=
 
     echo \
 "{"\

@@ -30,83 +30,88 @@ else
 fi
 
 # set up directory names
+push_notifications_dir="push-notifications"
 requests_dir="requests"
 tokens_dir="tokens"
 
 # set up s3 paths
-s3_path="s3://$1/push-notifications"
-s3_requests_path="$s3_path/$requests_dir"
-s3_tokens_path="$s3_path/$tokens_dir"
+s3_notifications_path="s3://$1/$push_notifications_dir"
+s3_requests_path="$s3_notifications_path/$requests_dir"
+s3_tokens_path="$s3_notifications_path/$tokens_dir"
 
 # set up local paths
-local_path="$1-push-notifications"
-local_requests_path="$local_path/$requests_dir"
-local_tokens_path="$local_path/$tokens_dir"
+local_notifications_path="$1-$push_notifications_dir"
+local_requests_path="$local_notifications_path/$requests_dir"
+local_tokens_path="$local_notifications_path/$tokens_dir"
 
 # sync notifications from s3 to local, deleting anything local that doesn't exist s3.
-echo -e "\n************* DOWNLOADING PNRS FROM S3 *************"
-mkdir -p $local_path
-aws s3 sync $s3_path $local_path --delete --exact-timestamps  # need the --exact-timestamps because the token files can be updated 
-                                                                     # to be the same size and will not come down otherwise.
+echo -e "\n************* DOWNLOADING REQUESTS FROM S3 *************"
+mkdir -p $local_notifications_path
+aws s3 sync $s3_notifications_path $local_notifications_path --delete --exact-timestamps  # need the --exact-timestamps because 
+                                                                                          # the token files can be updated but 
+                                                                                          # remain the same size.
 
-# get push notification requests reverse sorted by creation time. we're going to process the most recently created notifications first.
+# get push notification requests reverse sorted by creation time. we're going to 
+# process the most recently created requests first.
 file_list=$(mktemp)
-for n in $(ls $local_requests_path)
+for local_request_path in $(ls $local_requests_path)
 do
-    sort_time=$(jq -r '."creation-time"' $n)
-    echo "$sort_time $n"
+    sort_time=$(jq -r '."creation-time"' $local_request_path)
+    echo "$sort_time $local_request_path"
 
-# reverse sort by the creation time (newest creations first) and output the second field (path)
+# reverse sort by the creation time (newest first) and output the path
 done | sort -n -r -k1 | cut -f2 -d " " > $file_list
 
-# get shared access signature
+# get shared access signature for azure endpoint
 sas=$(node get-sas.js $2 $3 $4)
 
 # process push notification requests
 declare -A processed_ids
-echo -e "\n\n************* PROCESSING PNRs *************"
+echo -e "\n\n************* PROCESSING REQUESTS *************"
 while read n
 do
+    s3_request_path="$s3_requests_path/$(basename $local_request_path)"
+
     # check if the request file is empty. this could be caused by a failed/interrupted 
     # file transfer to s3. it could also be the result of sensus zeroing out PNRs that 
     # need to be cancelled.
-    if [ -s $n ]
+    if [ -s $local_request_path ]
     then
-	echo -e "Processing $n ..."
+	echo -e "Processing $local_request_path"
     else
-	echo "Empty request $n. Deleting file..."
-	aws s3 rm "$s3_requests_path/$(basename $n)" &
-	rm $n
+	echo "Empty request $local_request_path. Deleting file."
+	aws s3 rm $s3_request_path &
+	rm $local_request_path
 	echo ""
 	continue
     fi
 
     # extract JSON field values that we'll be using below. use -r to return 
     # unquoted/unescaped string values rather than quoted/escaped JSON strings.
-    device=$(jq -r '.device' $n)
-    format=$(jq -r '.format' $n)
-    time=$(jq -r '.time' $n)
+    device=$(jq -r '.device' $local_request_path)
+    format=$(jq -r '.format' $local_request_path)
+    time=$(jq -r '.time' $local_request_path)
 
     # extract other JSON field values. we'll use these to form JSON, so retain
     # the values in their quoted/escaped forms.
-    id=$(jq '.id' $n)
-    protocol=$(jq '.protocol' $n)
-    title=$(jq '.title' $n)
-    body=$(jq '.body' $n)
-    sound=$(jq '.sound' $n)
-    command=$(jq '.command' $n)
+    id=$(jq '.id' $local_request_path)
+    protocol=$(jq '.protocol' $local_request_path)
+    title=$(jq '.title' $local_request_path)
+    body=$(jq '.body' $local_request_path)
+    sound=$(jq '.sound' $local_request_path)
+    command=$(jq '.command' $local_request_path)
 
     # check whether we've already processed the push notification id.
-    id_value=$(jq -r '.id' $n)
+    id_value=$(jq -r '.id' $local_request_path)
     if [[ ${processed_ids[$id_value]} ]]
     then
-	echo "Obsolete request identifier $id_value (time $time). Deleting file..."
-	aws s3 rm "$s3_requests_path/$(basename $n)" &
-	rm $n
+	echo "Obsolete request identifier $id_value (time $time). Deleting file."
+	aws s3 rm $s3_request_path &
+	rm $local_request_path
 	echo ""
 	continue
     else
-	echo "New request identifier:  $id_value (time $time)."
+	echo "New request identifier $id_value (time $time)."
 	processed_ids[$id_value]=1
     fi
 	
@@ -130,8 +135,8 @@ do
     if [ "$seconds_until_delivery" -le "$seconds_in_day" ]
     then
 	echo "Push notification has failed for a day. Deleting it."
-	aws s3 rm "$s3_requests_path/$(basename $n)" &
-	rm $n
+	aws s3 rm $s3_request_path &
+	rm $local_request_path
 	echo ""
 	continue
     fi
@@ -141,16 +146,16 @@ do
     then
 
 	# get the token for the device
-	protocol_value=$(jq -r '.protocol' $n)
+	protocol_value=$(jq -r '.protocol' $local_request_path)
 	token_json=$(cat "$local_tokens_path/${device}:${protocol_value}.json")
 	token=$(echo $token_json | jq -r '.token')
 
-	# might not have a token, in cases where we failed to upload it or cleared it when stopping the protocol.
+	# might not have a token (e.g., in cases where we failed to upload it or cleared it when stopping the protocol)
 	if [[ "$token" = "" ]]
 	then
 	    echo "No token found. Assuming the PNR is stale and should be deleted."
-	    aws s3 rm "$s3_requests_path/$(basename $n)" &
-	    rm $n
+	    aws s3 rm $s3_request_path &
+	    rm $local_request_path
 	    echo ""
 	    continue
 	fi
@@ -158,7 +163,7 @@ do
 	# the backend key is the file name without the extension. this value
 	# is used by the app upon receipt to delete the push notification
 	# request from the s3 bucket.
-	backend_key=$(basename $n ".json")
+	backend_key=$(basename $local_request_path ".json")
 
 	# get data payload depending on platform
 	# 
@@ -173,7 +178,7 @@ do
 "{"\
 "\"command\":$command,"\
 "\"id\":$id,"\
-"\"backend-key\":$backend_key,"\
+"\"backend-key\":\"$backend_key\","\
 "\"protocol\":$protocol,"\
 "\"title\":$title,"\
 "\"body\":$body,"\
@@ -198,7 +203,7 @@ do
 "},"\
 "\"command\":$command,"\
 "\"id\":$id,"\
-"\"backend-key\":$backend_key,"\
+"\"backend-key\":\"$backend_key\","\
 "\"protocol\":$protocol"\
 "}"
 
