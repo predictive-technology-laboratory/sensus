@@ -318,12 +318,14 @@ namespace Sensus.Callbacks
         /// <param name="callback">Callback.</param>
         private async Task RequestRemoteInvocationAsync(ScheduledCallback callback)
         {
-            // remote invocation only makes sense for ios at this time. local invocation is sufficient for android.
+
 #if __IOS__
+            // remote invocation only makes sense for ios at this time. local invocation is sufficient for android.
             await SensusContext.Current.Notifier.SendPushNotificationRequestAsync(GetPushNotificationRequest(callback), CancellationToken.None);
 #else
             await Task.CompletedTask;
 #endif
+
         }
 
         public void TestHealth()
@@ -406,7 +408,7 @@ namespace Sensus.Callbacks
                 CancelLocalInvocation(callback);
 
                 // delete the push notification
-                await SensusContext.Current.Notifier.DeletePushNotificationRequestAsync(GetPushNotificationRequest(callback), CancellationToken.None);
+                await SensusContext.Current.Notifier.DeletePushNotificationRequestAsync(callback.PushNotificationBackendKey, callback.Protocol, CancellationToken.None);
 
                 SensusServiceHelper.Get().Logger.Log("Unscheduled callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
             }
@@ -423,17 +425,17 @@ namespace Sensus.Callbacks
             {
                 try
                 {
-                    // the command id does not include the invocation ID, as any newer invocation IDs makes others obsolete.
-                    string commandId = SENSUS_CALLBACK_KEY + "|" + SensusServiceHelper.Get().DeviceId + "|" + callback.Id;
+                    // the id does not include the invocation ID, as any newer invocation IDs makes others obsolete.
+                    string id = SENSUS_CALLBACK_KEY + "|" + SensusServiceHelper.Get().DeviceId + "|" + callback.Id;
 
                     // the full command includes the invocation ID
-                    string command = commandId + "|" + callback.InvocationId;
+                    string command = id + "|" + callback.InvocationId;
 
-                    return new PushNotificationRequest(callback.Protocol, "", "", "", command, commandId, callback.NextExecution.Value);
+                    return new PushNotificationRequest(id, callback.Protocol, "", "", "", command, callback.NextExecution.Value, SensusServiceHelper.Get().DeviceId, PushNotificationRequest.LocalFormat, callback.PushNotificationBackendKey);
                 }
                 catch (Exception ex)
                 {
-                    SensusException.Report("Exception while getting push notification request:  " + ex.Message, ex);
+                    SensusException.Report("Exception while getting push notification request for scheduled callback:  " + ex.Message, ex);
                 }
             }
 

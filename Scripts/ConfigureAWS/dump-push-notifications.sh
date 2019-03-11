@@ -20,14 +20,14 @@ for n in $(ls $notifications_dir/*.json)
 do
     # parse out data fields
     device=$(jq -r '.device' $n)
-    protocol=$(jq '.protocol' $n)  # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
-    title=$(jq '.title' $n)        # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
-    body=$(jq '.body' $n)          # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
-    sound=$(jq '.sound' $n)        # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
-    command=$(jq '.command' $n)    # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
-    id=$(jq '.id' $n)              # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
+    protocol=$(jq '.protocol' $n)
+    title=$(jq '.title' $n)      
+    body=$(jq '.body' $n)        
+    sound=$(jq '.sound' $n)      
+    command=$(jq '.command' $n)  
+    id=$(jq '.id' $n)            
     format=$(jq -r '.format' $n)
-    time=$(jq -r '.time' $n)       # the value indicates unix time in seconds
+    time=$(jq -r '.time' $n)     
 
     # at the device no later than the desired time. thus, if the desired time precedes the current time OR if the
     # desired time precedes the next cron run time, go ahead and send the push notification. in addition, there will

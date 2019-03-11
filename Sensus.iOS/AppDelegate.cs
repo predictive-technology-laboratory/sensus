@@ -268,6 +268,7 @@ namespace Sensus.iOS
                 string protocolId;
                 string id;
                 string command;
+                Guid backendKey;
                 string sound;
                 string body;
                 string title;
@@ -278,6 +279,7 @@ namespace Sensus.iOS
                     protocolId = (userInfo[new NSString("protocol")] as NSString).ToString();
                     id = (userInfo[new NSString("id")] as NSString).ToString();
                     command = (userInfo[new NSString("command")] as NSString).ToString();
+                    backendKey = new Guid((userInfo[new NSString("backend-key")] as NSString).ToString();
                 }
                 catch (Exception ex)
                 {
@@ -308,7 +310,7 @@ namespace Sensus.iOS
                 }
 
                 // wait for the push notification to be processed
-                await SensusContext.Current.Notifier.ProcessReceivedPushNotificationAsync(protocolId, id, title, body, sound, command, cancellationTokenSource.Token);
+                await SensusContext.Current.Notifier.ProcessReceivedPushNotificationAsync(protocolId, id, title, body, sound, command, backendKey, cancellationTokenSource.Token);
             }
             catch (Exception processingException)
             {

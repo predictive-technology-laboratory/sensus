@@ -29,19 +29,30 @@ else
     trap "{ rm -f $lockfile; printf \"Finished \"; date; }" EXIT
 fi
 
+# set up directory names
+requests_dir="requests"
+tokens_dir="tokens"
+
+# set up s3 paths
+s3_path="s3://$1/push-notifications"
+s3_requests_path="$s3_path/$requests_dir"
+s3_tokens_path="$s3_path/$tokens_dir"
+
+# set up local paths
+local_path="$1-push-notifications"
+local_requests_path="$local_path/$requests_dir"
+local_tokens_path="$local_path/$tokens_dir"
+
 # sync notifications from s3 to local, deleting anything local that doesn't exist s3.
 echo -e "\n************* DOWNLOADING PNRS FROM S3 *************"
-s3_path="s3://$1/push-notifications"
-notifications_dir="$1-push-notifications"
-mkdir -p $notifications_dir
-aws s3 sync $s3_path $notifications_dir --delete --exact-timestamps  # need the --exact-timestamps because the token files can be updated 
+mkdir -p $local_path
+aws s3 sync $s3_path $local_path --delete --exact-timestamps  # need the --exact-timestamps because the token files can be updated 
                                                                      # to be the same size and will not come down otherwise.
 
-# get push notifications reverse sorted by creation time. we're going to process the most recently created notifications first.
+# get push notification requests reverse sorted by creation time. we're going to process the most recently created notifications first.
 file_list=$(mktemp)
-for n in $(ls $notifications_dir/*.json)
+for n in $(ls $local_requests_path)
 do
-
     sort_time=$(jq -r '."creation-time"' $n)
     echo "$sort_time $n"
 
@@ -52,69 +63,51 @@ done | sort -n -r -k1 | cut -f2 -d " " > $file_list
 sas=$(node get-sas.js $2 $3 $4)
 
 # process push notification requests
-declare -A processed_command_ids
+declare -A processed_ids
 echo -e "\n\n************* PROCESSING PNRs *************"
 while read n
 do
-
-    # check if file is empty. this could be caused by a failed/interrupted file transfer to s3, and it could
-    # also be the result of sensus zeroing out PNRs that need to be cancelled.
+    # check if the request file is empty. this could be caused by a failed/interrupted 
+    # file transfer to s3. it could also be the result of sensus zeroing out PNRs that 
+    # need to be cancelled.
     if [ -s $n ]
     then
 	echo -e "Processing $n ..."
     else
 	echo "Empty request $n. Deleting file..."
-	aws s3 rm "$s3_path/$(basename $n)" &
+	aws s3 rm "$s3_requests_path/$(basename $n)" &
 	rm $n
 	echo ""
 	continue
     fi
 
-    # parse out data fields
+    # extract JSON field values that we'll be using below. use -r to return 
+    # unquoted/unescaped string values rather than quoted/escaped JSON strings.
     device=$(jq -r '.device' $n)
-    protocol=$(jq '.protocol' $n)  # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
-    title=$(jq '.title' $n)        # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
-    body=$(jq '.body' $n)          # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
-    sound=$(jq '.sound' $n)        # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
-    command=$(jq '.command' $n)    # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
-    command_id=$(jq -r '.["command-id"]' $n)  # pull out the raw JSON value, as we only use is for tracking processed commands. must use the bracketed syntax to prevent the dash from being interpreted as a subtraction.
-    id=$(jq '.id' $n)              # retain JSON rather than using raw, as we'll use the value in JSON below and there might be escape characters.
     format=$(jq -r '.format' $n)
-    time=$(jq -r '.time' $n)       # the value indicates unix time in seconds.
+    time=$(jq -r '.time' $n)
 
-    # previously, we did not send an explicit command-id field. instead, we were able to 
-    # hack it out of the command because at that time we were only sending callback commands
-    # in which the command id comprised everything but the final invocation identifier.
-    # but now we wish to send other kinds of commands that do not have this format, making
-    # it necessary to explicitly provide a command-id field. for backwards compatibility,
-    # if no command-id field is passed to us then revert to the hacking approach.
-    if [[ $command_id = "" ]]
-    then
-        # if this is a push notification command, check if we've already sent a push notification 
-        # for the command id (everything except for the invocation ID). we're processing the
-        # push notification requests with newest times first, so if we have already processed the
-        # command id then we can safely ignore all others as they are older and obsolete.
-	command_id=${command%|*}     # strip the invocation ID
-	command_id=${command_id#\"}  # strip the leading double-quote (retained above)
-	command_id=${command_id%\"}  # strip the trailing double-quote (retained above)
-    fi
+    # extract other JSON field values. we'll use these to form JSON, so retain
+    # the values in their quoted/escaped forms.
+    id=$(jq '.id' $n)
+    protocol=$(jq '.protocol' $n)
+    title=$(jq '.title' $n)
+    body=$(jq '.body' $n)
+    sound=$(jq '.sound' $n)
+    command=$(jq '.command' $n)
 
-    # check for a command id and whether we've already processed it
-    if [[ $command_id = "" ]]
+    # check whether we've already processed the push notification id.
+    id_value=$(jq -r '.id' $n)
+    if [[ ${processed_ids[$id_value]} ]]
     then
-	echo "No command id found."
+	echo "Obsolete request identifier $id_value (time $time). Deleting file..."
+	aws s3 rm "$s3_requests_path/$(basename $n)" &
+	rm $n
+	echo ""
+	continue
     else
-	if [[ ${processed_command_ids[$command_id]} ]]
-	then
-	    echo "Obsolete command id $command_id (time $time). Deleting file..."
-	    aws s3 rm "$s3_path/$(basename $n)" &
-	    rm $n
-	    echo ""
-	    continue
-	else
-	    echo "New command id:  $command_id (time $time)."
-	    processed_command_ids[$command_id]=1
-	fi
+	echo "New request identifier:  $id_value (time $time)."
+	processed_ids[$id_value]=1
     fi
 	
     # the cron scheduler runs periodically. we're going to be proactive and try to ensure that push notifications 
@@ -137,7 +130,7 @@ do
     if [ "$seconds_until_delivery" -le "$seconds_in_day" ]
     then
 	echo "Push notification has failed for a day. Deleting it."
-	aws s3 rm "$s3_path/$(basename $n)" &
+	aws s3 rm "$s3_requests_path/$(basename $n)" &
 	rm $n
 	echo ""
 	continue
@@ -147,21 +140,25 @@ do
     if [ "$seconds_until_delivery" -le 0 ]
     then
 
-	# get the token for the device, which is stored in a file named as device:protocol (be sure to trim the 
-	# leading/trailing quotes from the protocol)
-	protocol_id=${protocol%\"}
-	protocol_id=${protocol_id#\"}
-	token=$(cat "$notifications_dir/${device}:${protocol_id}")
+	# get the token for the device
+	protocol_value=$(jq -r '.protocol' $n)
+	token_json=$(cat "$local_tokens_path/${device}:${protocol_value}.json")
+	token=$(echo $token_json | jq -r '.token')
 
 	# might not have a token, in cases where we failed to upload it or cleared it when stopping the protocol.
 	if [[ "$token" = "" ]]
 	then
 	    echo "No token found. Assuming the PNR is stale and should be deleted."
-	    aws s3 rm "$s3_path/$(basename $n)" &
+	    aws s3 rm "$s3_requests_path/$(basename $n)" &
 	    rm $n
 	    echo ""
 	    continue
 	fi
+
+	# the backend key is the file name without the extension. this value
+	# is used by the app upon receipt to delete the push notification
+	# request from the s3 bucket.
+	backend_key=$(basename $n ".json")
 
 	# get data payload depending on platform
 	# 
@@ -176,6 +173,7 @@ do
 "{"\
 "\"command\":$command,"\
 "\"id\":$id,"\
+"\"backend-key\":$backend_key,"\
 "\"protocol\":$protocol,"\
 "\"title\":$title,"\
 "\"body\":$body,"\
@@ -200,6 +198,7 @@ do
 "},"\
 "\"command\":$command,"\
 "\"id\":$id,"\
+"\"backend-key\":$backend_key,"\
 "\"protocol\":$protocol"\
 "}"
 
