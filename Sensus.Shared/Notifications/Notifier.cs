@@ -102,7 +102,7 @@ namespace Sensus.Notifications
                 return;
             }
 
-            // if the PNR targets the current device and the protocol isn't listening, the don't send the request. this 
+            // if the PNR targets the current device but the protocol isn't listening, then don't send the request. this 
             // will eliminate unnecessary network traffic and prevent invalid PNRs from accumulating in the backend.
             if (request.DeviceId == SensusServiceHelper.Get().DeviceId)
             {
@@ -443,13 +443,6 @@ namespace Sensus.Notifications
 
         public async Task DeletePushNotificationRequestAsync(Guid backendKey, Protocol protocol, CancellationToken cancellationToken)
         {
-            // bail if backend key or protocol are null. we need each of these to attempt the delete and subsequent retries.
-            if (backendKey == null)
-            {
-                SensusException.Report("Received null PNR backend key to delete.");
-                return;
-            }
-
             if (protocol == null)
             {
                 SensusException.Report("Received null PNR protocol.");

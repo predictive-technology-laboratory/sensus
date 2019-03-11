@@ -420,9 +420,9 @@ namespace Sensus.DataStores.Remote
 
                 // get the token JSON payload
                 PushNotificationRequestFormat localFormat = PushNotificationRequest.LocalFormat;
-                string localFormatIdentifier = PushNotificationRequest.GetAzureFormatIdentifier(localFormat);
+                string localFormatAzureIdentifier = PushNotificationRequest.GetAzureFormatIdentifier(localFormat);
                 byte[] tokenBytes = Encoding.UTF8.GetBytes("{" +
-                                                             "\"format\":" + JsonConvert.ToString(localFormatIdentifier) + "," +
+                                                             "\"format\":" + JsonConvert.ToString(localFormatAzureIdentifier) + "," +
                                                              "\"token\":" + JsonConvert.ToString(token) +
                                                            "}");
                                                             
@@ -486,7 +486,7 @@ namespace Sensus.DataStores.Remote
                 // send an empty data stream to clear the request. we don't have delete access.
                 s3 = await CreateS3ClientAsync();
 
-                await PutAsync(s3, new MemoryStream(), GetPushNotificationRequestKey(backendKey), "text/plain", cancellationToken);
+                await PutAsync(s3, new MemoryStream(), GetPushNotificationRequestKey(backendKey), "application/json", cancellationToken);
             }
             finally
             {
