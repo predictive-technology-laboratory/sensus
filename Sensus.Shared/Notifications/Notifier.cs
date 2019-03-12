@@ -129,6 +129,15 @@ namespace Sensus.Notifications
 
         public async Task ProcessReceivedPushNotificationAsync(string protocolId, string id, string title, string body, string sound, string command, Guid backendKey, CancellationToken cancellationToken)
         {
+            // every push notification should have an ID
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                SensusException.Report("Push notification ID is missing or blank.");
+                return;
+            }
+
+            SensusServiceHelper.Get().Logger.Log("Processing push notification " + id, LoggingLevel.Normal, GetType());
+
             // every push notification should target a protocol
             Protocol protocol = null;
             try

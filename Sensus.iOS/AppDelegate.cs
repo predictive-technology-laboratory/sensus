@@ -279,7 +279,7 @@ namespace Sensus.iOS
                     protocolId = (userInfo[new NSString("protocol")] as NSString).ToString();
                     id = (userInfo[new NSString("id")] as NSString).ToString();
                     command = (userInfo[new NSString("command")] as NSString).ToString();
-                    backendKey = new Guid((userInfo[new NSString("backend-key")] as NSString).ToString();
+                    backendKey = new Guid((userInfo[new NSString("backend-key")] as NSString).ToString());
                 }
                 catch (Exception ex)
                 {
