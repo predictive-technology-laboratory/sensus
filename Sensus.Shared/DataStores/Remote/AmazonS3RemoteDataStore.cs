@@ -130,6 +130,7 @@ namespace Sensus.DataStores.Remote
         private string _pinnedPublicKey;
         private int _putCount;
         private int _successfulPutCount;
+        private Dictionary<string, bool> _updateDownloading;
 
         /// <summary>
         /// The AWS region in which <see cref="Bucket"/> resides (e.g., us-east-2).
@@ -315,6 +316,7 @@ namespace Sensus.DataStores.Remote
             _pinnedServiceURL = null;
             _pinnedPublicKey = null;
             _putCount = _successfulPutCount = 0;
+            _updateDownloading = new Dictionary<string, bool>();
         }
 
         public override async Task StartAsync()
@@ -646,13 +648,27 @@ namespace Sensus.DataStores.Remote
 
         public override async Task<string> GetProtocolUpdatesAsync(string identifier, CancellationToken cancellationToken)
         {
+            // only let one caller at a time download the update associated with the identifier
+            bool proceed;
+
+            lock (_updateDownloading)
+            {
+                proceed = _updateDownloading.TryAdd(identifier, true);
+            }
+
+            if (!proceed)
+            {
+                return null;
+            }
+
+            // download the updates
             AmazonS3Client s3 = null;
 
             try
             {
                 s3 = await CreateS3ClientAsync();
 
-                Stream responseStream = (await s3.GetObjectAsync(_bucket, PROTOCOL_UPDATES_DIRECTORY + "/" + identifier, cancellationToken)).ResponseStream;
+                Stream responseStream = (await s3.GetObjectAsync(_bucket, GetProtocolUpdatesKey(identifier), cancellationToken)).ResponseStream;
 
                 string protocolUpdatesJSON;
                 using (StreamReader reader = new StreamReader(responseStream))
@@ -660,12 +676,47 @@ namespace Sensus.DataStores.Remote
                     protocolUpdatesJSON = reader.ReadToEnd().Trim();
                 }
 
+                // if we got updates, delete the update file from the backend to prevent duplicate processing. the
+                // next caller with the same identifier will get an empty updates JSON string. the update won't be
+                // processed again until a new protocol update is submitted to the backend.
+                if (!string.IsNullOrWhiteSpace(protocolUpdatesJSON))
+                {
+                    await DeleteProtocolUpdatesAsync(identifier, cancellationToken);
+                }
+
                 return protocolUpdatesJSON;
+            }
+            finally
+            {
+                lock (_updateDownloading)
+                {
+                    _updateDownloading.Remove(identifier);
+                }
+
+                DisposeS3(s3);
+            }
+        }
+
+        private async Task DeleteProtocolUpdatesAsync(string identifier, CancellationToken cancellationToken)
+        {
+            AmazonS3Client s3 = null;
+
+            try
+            {
+                // send an empty data stream to clear the updates file. we don't have delete access.
+                s3 = await CreateS3ClientAsync();
+
+                await PutAsync(s3, new MemoryStream(), GetProtocolUpdatesKey(identifier), "application/json", cancellationToken);
             }
             finally
             {
                 DisposeS3(s3);
             }
+        }
+
+        private string GetProtocolUpdatesKey(string identifier)
+        {
+            return PROTOCOL_UPDATES_DIRECTORY + "/" + identifier;
         }
 
         private void DisposeS3(AmazonS3Client s3)

@@ -71,7 +71,9 @@ namespace Sensus.Callbacks
 
                 await RequestLocalInvocationAsync(callback);
 
+#if __IOS__
                 await RequestRemoteInvocationAsync(callback);
+#endif
             }
             else
             {
@@ -289,7 +291,9 @@ namespace Sensus.Callbacks
 
                                 await RequestLocalInvocationAsync(callback);
 
+#if __IOS__
                                 await RequestRemoteInvocationAsync(callback);
+#endif
                             }
                             else
                             {
@@ -309,24 +313,52 @@ namespace Sensus.Callbacks
             }
         }
 
+#if __IOS__
         /// <summary>
         /// Requests remote invocation for a <see cref="ScheduledCallback"/>, to be delivered in parallel with the 
-        /// local invocation loop (e.g., via the Android alarm manager and iOS local notification center). Only one of
-        /// these (the remote or local) will ultimately be allowed to run -- whichever arrives first.
+        /// local invocation loop on iOS. Only one of these (the remote or local) will ultimately be allowed to 
+        /// run -- whichever arrives first.
         /// </summary>
         /// <returns>Task.</returns>
         /// <param name="callback">Callback.</param>
         private async Task RequestRemoteInvocationAsync(ScheduledCallback callback)
         {
-
-#if __IOS__
-            // remote invocation only makes sense for ios at this time. local invocation is sufficient for android.
             await SensusContext.Current.Notifier.SendPushNotificationRequestAsync(GetPushNotificationRequest(callback), CancellationToken.None);
-#else
-            await Task.CompletedTask;
-#endif
-
         }
+
+        private async Task CancelRemoteInvocationAsync(ScheduledCallback callback)
+        {            
+            await SensusContext.Current.Notifier.DeletePushNotificationRequestAsync(callback.PushNotificationBackendKey, callback.Protocol, CancellationToken.None);
+        }
+
+        private PushNotificationRequest GetPushNotificationRequest(ScheduledCallback callback)
+        {
+            // not all callbacks are associated with a protocol (e.g., the app-level health test). because push notifications are
+            // currently tied to the remote data store of the protocol, we don't currently provide PNR support for such callbacks.
+            // on race conditions, it might be the case that the system attempts to schedule a duplicate callback. if this happens
+            // the duplicate will not be assigned a next execution, and the system will try to unschedule/delete it. skip such
+            // callbacks below.
+            if (callback.Protocol != null && callback.NextExecution.HasValue)
+            {
+                try
+                {
+                    // the id does not include the invocation ID, as any newer invocation IDs makes others obsolete.
+                    string id = SENSUS_CALLBACK_KEY + "|" + SensusServiceHelper.Get().DeviceId + "|" + callback.Id;
+
+                    // the full command includes the invocation ID
+                    string command = id + "|" + callback.InvocationId;
+
+                    return new PushNotificationRequest(id, callback.Protocol, "", "", "", command, callback.NextExecution.Value, SensusServiceHelper.Get().DeviceId, PushNotificationRequest.LocalFormat, callback.PushNotificationBackendKey);
+                }
+                catch (Exception ex)
+                {
+                    SensusException.Report("Exception while getting push notification request for scheduled callback:  " + ex.Message, ex);
+                }
+            }
+
+            return null;
+        }
+#endif
 
         public void TestHealth()
         {
@@ -404,42 +436,16 @@ namespace Sensus.Callbacks
                 // remove from the scheduler
                 _idCallback.TryRemove(callback.Id, out ScheduledCallback removedCallback);
 
-                // tell the current platform cancel its hook into the system's callback system
                 CancelLocalInvocation(callback);
 
-                // delete the push notification
-                await SensusContext.Current.Notifier.DeletePushNotificationRequestAsync(callback.PushNotificationBackendKey, callback.Protocol, CancellationToken.None);
+#if __IOS__
+                await CancelRemoteInvocationAsync(callback);
+#else
+                await Task.CompletedTask;
+#endif
 
                 SensusServiceHelper.Get().Logger.Log("Unscheduled callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
             }
-        }
-
-        private PushNotificationRequest GetPushNotificationRequest(ScheduledCallback callback)
-        {
-            // not all callbacks are associated with a protocol (e.g., the app-level health test). because push notifications are
-            // currently tied to the remote data store of the protocol, we don't currently provide PNR support for such callbacks.
-            // on race conditions, it might be the case that the system attempts to schedule a duplicate callback. if this happens
-            // the duplicate will not be assigned a next execution, and the system will try to unschedule/delete it. skip such
-            // callbacks below.
-            if (callback.Protocol != null && callback.NextExecution.HasValue)
-            {
-                try
-                {
-                    // the id does not include the invocation ID, as any newer invocation IDs makes others obsolete.
-                    string id = SENSUS_CALLBACK_KEY + "|" + SensusServiceHelper.Get().DeviceId + "|" + callback.Id;
-
-                    // the full command includes the invocation ID
-                    string command = id + "|" + callback.InvocationId;
-
-                    return new PushNotificationRequest(id, callback.Protocol, "", "", "", command, callback.NextExecution.Value, SensusServiceHelper.Get().DeviceId, PushNotificationRequest.LocalFormat, callback.PushNotificationBackendKey);
-                }
-                catch (Exception ex)
-                {
-                    SensusException.Report("Exception while getting push notification request for scheduled callback:  " + ex.Message, ex);
-                }
-            }
-
-            return null;
         }
     }
 }

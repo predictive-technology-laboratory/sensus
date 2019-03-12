@@ -54,7 +54,7 @@ aws s3 sync $s3_notifications_path $local_notifications_path --delete --exact-ti
 # get push notification requests reverse sorted by creation time. we're going to 
 # process the most recently created requests first.
 file_list=$(mktemp)
-for local_request_path in $(ls $local_requests_path)
+for local_request_path in $(find $local_requests_path/*.json)
 do
     sort_time=$(jq -r '."creation-time"' $local_request_path)
     echo "$sort_time $local_request_path"
@@ -68,7 +68,7 @@ sas=$(node get-sas.js $2 $3 $4)
 # process push notification requests
 declare -A processed_ids
 echo -e "\n\n************* PROCESSING REQUESTS *************"
-while read n
+while read local_request_path
 do
     s3_request_path="$s3_requests_path/$(basename $local_request_path)"
 

@@ -28,7 +28,7 @@ random=$(echo "scale=4; $RANDOM / 32767" | bc)
 if (( $(echo "$random >= 0.5" | bc) ))
 then
     random=$(echo "scale=4; $RANDOM / 32767" | bc)
-    before=$(echo "scale=2; $random * $max_delay" | bc)
+    before=$(echo "($random * $max_delay + 0.5) / 1" | bc)
     after=$before
 fi
 

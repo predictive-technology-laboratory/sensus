@@ -129,12 +129,6 @@ namespace Sensus.Callbacks
         /// <value><c>true</c> if batched; otherwise, <c>false</c>.</value>
         public bool Batched { get; set; }
 
-        /// <summary>
-        /// Gets or sets the push notification backend key.
-        /// </summary>
-        /// <value>The push notification backend key.</value>
-        public Guid PushNotificationBackendKey { get; set; }
-
 #if __IOS__
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="T:Sensus.Callbacks.ScheduledCallback"/> is silent. Silent 
@@ -146,6 +140,13 @@ namespace Sensus.Callbacks
         /// </summary>
         /// <value><c>true</c> if silent; otherwise, <c>false</c>.</value>
         public bool Silent { get { return UserNotificationMessage == null; } }
+
+        /// <summary>
+        /// Gets or sets the push notification backend key. Only used in iOS, which uses push notifications to run
+        /// each <see cref="T:Sensus.Callbacks.ScheduledCallback"/>.
+        /// </summary>
+        /// <value>The push notification backend key.</value>
+        public Guid PushNotificationBackendKey { get; set; } = Guid.NewGuid();
 #endif
 
         /// <summary>
@@ -156,7 +157,6 @@ namespace Sensus.Callbacks
             Canceller = new CancellationTokenSource();
             DisplayPage = DisplayPage.None;
             State = ScheduledCallbackState.Created;
-            PushNotificationBackendKey = Guid.NewGuid();
         }
 
         /// <summary>

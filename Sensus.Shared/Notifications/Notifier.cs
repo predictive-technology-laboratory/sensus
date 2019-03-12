@@ -52,17 +52,10 @@ namespace Sensus.Notifications
         /// </summary>
         private List<Tuple<Guid, string>> _pushNotificationBackendKeysProtocolIdsToDelete;
 
-        /// <summary>
-        /// Track push notification identifiers that have already been processed, in order to
-        /// prevent duplicate processing.
-        /// </summary>
-        private List<string> _processedPushNotificationIds;
-
         public Notifier()
         {
             _pushNotificationRequestsToSend = new List<PushNotificationRequest>();
             _pushNotificationBackendKeysProtocolIdsToDelete = new List<Tuple<Guid, string>>();
-            _processedPushNotificationIds = new List<string>();
         }
 
         public abstract Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, int? badgeNumber, DisplayPage displayPage);
@@ -136,34 +129,6 @@ namespace Sensus.Notifications
 
         public async Task ProcessReceivedPushNotificationAsync(string protocolId, string id, string title, string body, string sound, string command, Guid backendKey, CancellationToken cancellationToken)
         {
-            // every push notification should have an ID
-            if (string.IsNullOrWhiteSpace(id))
-            {
-                throw new Exception("Push notification ID is missing or blank.");
-            }
-
-            // don't process the same push notification multiple times. it is possible for PNs with the same
-            // id to accumulate in the native PN (e.g., when 
-            lock (_processedPushNotificationIds)
-            {
-                if (_processedPushNotificationIds.Contains(id))
-                {
-                    SensusServiceHelper.Get().Logger.Log("Already processed push notification " + id + ". Ignoring.", LoggingLevel.Normal, GetType());
-                }
-                else
-                {
-                    SensusServiceHelper.Get().Logger.Log("Processing push notification " + id, LoggingLevel.Normal, GetType());
-
-                    _processedPushNotificationIds.Add(id);
-
-                    // don't let list of processed push notification ids grow unboundedly
-                    while (_processedPushNotificationIds.Count > 500)
-                    {
-                        _processedPushNotificationIds.RemoveAt(0);
-                    }
-                }
-            }
-
             // every push notification should target a protocol
             Protocol protocol = null;
             try
@@ -303,8 +268,29 @@ namespace Sensus.Notifications
                 #region update protocol
                 else if (commandParts.First() == PushNotificationRequest.COMMAND_UPDATE_PROTOCOL)
                 {
-                    // retrieve and process the protocol updates
-                    string protocolUpdatesJSON = await protocol.RemoteDataStore.GetProtocolUpdatesAsync(commandParts[1], cancellationToken);
+                    string updatesIdentifier = commandParts[1];
+
+                    SensusServiceHelper.Get().Logger.Log("Attempting to apply updates with identifier " + updatesIdentifier, LoggingLevel.Normal, GetType());
+
+                    // retrieve updates
+                    string protocolUpdatesJSON = null;
+                    try
+                    {
+                        protocolUpdatesJSON = await protocol.RemoteDataStore.GetProtocolUpdatesAsync(updatesIdentifier, cancellationToken);
+
+                        // the update might have been deleted from a previous call or by the backend itself
+                        if (string.IsNullOrWhiteSpace(protocolUpdatesJSON))
+                        {
+                            throw new Exception("Empty updates JSON.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Exception while getting protocol updates:  " + ex.Message, LoggingLevel.Normal, GetType());
+                        return;
+                    }
+
+                    // apply updates
                     JObject protocolUpdates = JObject.Parse(protocolUpdatesJSON);
                     bool restartProtocol = false;
                     List<Probe> updatedProbesToRestart = new List<Probe>();
@@ -316,7 +302,7 @@ namespace Sensus.Notifications
                             string propertyTypeName = protocolUpdate.Value<string>("property-type");
                             string propertyName = protocolUpdate.Value<string>("property-name");
                             string targetTypeName = protocolUpdate.Value<string>("target-type");
-                            string valueString = protocolUpdate.Value<string>("value");
+                            string newValueString = protocolUpdate.Value<string>("value");
 
                             // get property type
                             Type propertyType;
@@ -344,23 +330,23 @@ namespace Sensus.Notifications
                             }
 
                             // if the value is JSON, then assume it is a reference type.
-                            object valueObject = null;
-                            if (valueString.IsValidJsonObject())
+                            object newValueObject = null;
+                            if (newValueString.IsValidJsonObject())
                             {
-                                valueObject = JsonConvert.DeserializeObject(valueString);
+                                newValueObject = JsonConvert.DeserializeObject(newValueString);
                             }
                             // otherwise, assume it is a value type.
                             else
                             {
                                 // watch out for nullable value types when converting the string to its value type
                                 Type baseType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
-                                valueObject = Convert.ChangeType(valueString, baseType);
+                                newValueObject = Convert.ChangeType(newValueString, baseType);
                             }
 
                             // update the protocol and request restart
                             if (targetType == typeof(Protocol))
                             {
-                                property.SetValue(protocol, valueObject);
+                                property.SetValue(protocol, newValueObject);
                                 restartProtocol = true;
                             }
                             else if (targetType.GetAncestorTypes(false).Last() == typeof(Probe))
@@ -370,16 +356,27 @@ namespace Sensus.Notifications
                                 {
                                     if (probe.GetType().GetAncestorTypes(false).Any(ancestorType => ancestorType == targetType))
                                     {
-                                        property.SetValue(probe, valueObject);
-
-                                        // if the probe is running, then mark it for restarting
-                                        if (probe.Running && !updatedProbesToRestart.Contains(probe))
+                                        // don't set the new value if it matches the current value
+                                        object currentValueObject = property.GetValue(probe);
+                                        if (newValueObject.Equals(currentValueObject))
                                         {
-                                            updatedProbesToRestart.Add(probe);
+                                            SensusServiceHelper.Get().Logger.Log("Current and new values match. Not updating probe.", LoggingLevel.Normal, GetType());
                                         }
+                                        else
+                                        {
+                                            property.SetValue(probe, newValueObject);
 
-                                        // record the update as a datum in the data store, so that we can analyze results of updates retrospectively.
-                                        protocol.LocalDataStore.WriteDatum(new ProtocolUpdateDatum(DateTimeOffset.UtcNow, propertyTypeName, propertyName, targetTypeName, valueString), cancellationToken);
+                                            if (probe.Running || probe.Enabled)
+                                            {
+                                                if (!updatedProbesToRestart.Contains(probe))
+                                                {
+                                                    updatedProbesToRestart.Add(probe);
+                                                }
+                                            }
+
+                                            // record the update as a datum in the data store, so that we can analyze results of updates retrospectively.
+                                            protocol.LocalDataStore.WriteDatum(new ProtocolUpdateDatum(DateTimeOffset.UtcNow, propertyTypeName, propertyName, targetTypeName, newValueString), cancellationToken);
+                                        }
                                     }
                                 }
                             }
@@ -388,7 +385,7 @@ namespace Sensus.Notifications
                                 throw new Exception("Unrecognized update target type:  " + targetType.FullName);
                             }
 
-                            SensusServiceHelper.Get().Logger.Log("Updated protocol:  " + propertyTypeName + "." + propertyName + " for each " + targetTypeName + " = " + valueString, LoggingLevel.Normal, GetType());
+                            SensusServiceHelper.Get().Logger.Log("Updated protocol:  " + propertyTypeName + "." + propertyName + " for each " + targetTypeName + " = " + newValueString, LoggingLevel.Normal, GetType());
                         }
                         catch (Exception updateException)
                         {
@@ -396,22 +393,26 @@ namespace Sensus.Notifications
                         }
                     }
 
+                    bool notifyUser = false;
+
                     // restart the protocol if needed. this will have the side-effect of restarting all probes and saving the app state.
                     if (restartProtocol)
                     {
                         await protocol.StopAsync();
                         await protocol.StartAsync(cancellationToken);
+                        notifyUser = true;
                     }
                     else
                     {
                         // restart individual probes to take on updated settings
-                        SensusServiceHelper.Get().Logger.Log("Restarting updated probes following push notification.", LoggingLevel.Normal, GetType());
-
+                        SensusServiceHelper.Get().Logger.Log("Restarting " + updatedProbesToRestart.Count + " updated probe(s) following push notification updates.", LoggingLevel.Normal, GetType());
+                        bool probeRestarted = false;
                         foreach (Probe probeToRestart in updatedProbesToRestart)
                         {
                             try
                             {
                                 await probeToRestart.RestartAsync();
+                                probeRestarted = true;
                             }
                             catch (Exception ex)
                             {
@@ -419,15 +420,22 @@ namespace Sensus.Notifications
                             }
                         }
 
-                        await SensusServiceHelper.Get().SaveAsync();
+                        if (probeRestarted)
+                        {
+                            await SensusServiceHelper.Get().SaveAsync();
+                            notifyUser = true;
+                        }
                     }
 
                     // let the user know what happened if requested
-                    JObject userNotification = protocolUpdates.Value<JObject>("user-notification");
-                    if (userNotification != null)
+                    if (notifyUser)
                     {
-                        string message = userNotification.Value<string>("message");
-                        await IssueNotificationAsync("Study Updated", "Your study has been updated" + (string.IsNullOrWhiteSpace(message) ? "." : ":  " + message.Trim()), SensusServiceHelper.PROTOCOL_UPDATED_NOTIFICATION_ID, true, protocol, null, DisplayPage.None);
+                        JObject userNotification = protocolUpdates.Value<JObject>("user-notification");
+                        if (userNotification != null)
+                        {
+                            string message = userNotification.Value<string>("message");
+                            await IssueNotificationAsync("Study Updated", "Your study has been updated" + (string.IsNullOrWhiteSpace(message) ? "." : ":  " + message.Trim()), SensusServiceHelper.PROTOCOL_UPDATED_NOTIFICATION_ID, true, protocol, null, DisplayPage.None);
+                        }
                     }
                 }
                 #endregion
