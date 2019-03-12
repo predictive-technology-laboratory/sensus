@@ -154,7 +154,7 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
                 return;
             }
 
-            var ids = new[] { id };
+            string[] ids = new string[] { id };
             UNUserNotificationCenter.Current.RemoveDeliveredNotifications(ids);
             UNUserNotificationCenter.Current.RemovePendingNotificationRequests(ids);
         }

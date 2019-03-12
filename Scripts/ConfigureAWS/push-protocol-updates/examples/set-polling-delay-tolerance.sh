@@ -3,16 +3,16 @@
 if [[ $# -ne 2 ]]
 then
     echo ""
-    echo "Purpose:  Sets the before/after delay tolerance on polling probes. Reads devices from standard input."
+    echo "Purpose:  Sets the before/after delay tolerance on all polling probes. Reads devices from standard input."
     echo ""
-    echo "Usage:  ./set-delay-tolerance.sh [BEFORE] [AFTER]"
+    echo "Usage:  ./set-polling-delay-tolerance.sh [BEFORE] [AFTER]"
     echo ""
     echo "  [BEFORE]:  The before tolerance (milliseconds)."
     echo "   [AFTER]:  The after tolerance (milliseconds)."
     echo ""
     echo "Example:  Set the before tolerance to 30 seconds and the after tolerance to 60 seconds:"
     echo ""
-    echo "  ./list-devices.sh BUCKET | ./set-delay-tolerance 30000 60000"
+    echo "  ./list-devices.sh BUCKET | ./set-polling-delay-tolerance.sh 30000 60000"
     echo ""
     exit 1
 fi

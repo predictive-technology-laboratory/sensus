@@ -140,6 +140,13 @@ namespace Sensus.Callbacks
         /// </summary>
         /// <value><c>true</c> if silent; otherwise, <c>false</c>.</value>
         public bool Silent { get { return UserNotificationMessage == null; } }
+
+        /// <summary>
+        /// Gets or sets the push notification backend key. Only used in iOS, which uses push notifications to run
+        /// each <see cref="T:Sensus.Callbacks.ScheduledCallback"/>.
+        /// </summary>
+        /// <value>The push notification backend key.</value>
+        public Guid PushNotificationBackendKey { get; set; } = Guid.NewGuid();
 #endif
 
         /// <summary>

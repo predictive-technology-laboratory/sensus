@@ -109,7 +109,6 @@ rm tmp
 scp -i $pemFileName send-push-notifications.sh ec2-user@$publicIP:~/
 ssh -i $pemFileName ec2-user@$publicIP "chmod +x send-push-notifications.sh"
 scp -i $pemFileName get-sas.js ec2-user@$publicIP:~/
-scp -i $pemFileName dump-push-notifications.sh ec2-user@$publicIP:~/
 scp -i $pemFileName -r push-protocol-updates/* ec2-user@$publicIP:~/
 ssh -i $pemFileName ec2-user@$publicIP "chmod +x dump-push-notifications.sh"
 ssh -i $pemFileName ec2-user@$publicIP "sudo yum -y install jq"

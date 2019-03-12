@@ -10,4 +10,4 @@ then
     exit 1
 fi
 
-echo "{\"property-type\" : \"$1\", \"property-name\" : \"$2\", \"target-type\" : \"$3\", \"value\" : $4}"
+echo "{\"property-type\" : \"$1\", \"property-name\" : \"$2\", \"target-type\" : \"$3\", \"value\" : \"$4\"}"

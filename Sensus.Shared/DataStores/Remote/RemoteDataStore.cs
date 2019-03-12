@@ -416,17 +416,9 @@ namespace Sensus.DataStores.Remote
         /// Deletes the push notification request.
         /// </summary>
         /// <returns>Task</returns>
-        /// <param name="request">Request.</param>
+        /// <param name="backendKey">Backend key</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        public abstract Task DeletePushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken);
-
-        /// <summary>
-        /// Deletes the push notifiation request.
-        /// </summary>
-        /// <returns>Task</returns>
-        /// <param name="id">Push notification request identifier (see <see cref="PushNotificationRequest.Id"/>).</param>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        public abstract Task DeletePushNotificationRequestAsync(string id, CancellationToken cancellationToken);
+        public abstract Task DeletePushNotificationRequestAsync(Guid backendKey, CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the key (identifier) value for a <see cref="Datum"/>. Used within <see cref="WriteDatumAsync"/> and <see cref="GetDatumAsync"/>.

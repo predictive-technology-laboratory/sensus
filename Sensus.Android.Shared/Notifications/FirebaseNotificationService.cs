@@ -64,8 +64,9 @@ namespace Sensus.Android.Notifications
                 string body = message.Data["body"];
                 string sound = message.Data["sound"];
                 string command = message.Data["command"];
+                Guid backendKey = new Guid(message.Data["backend-key"]);
 
-                await SensusContext.Current.Notifier.ProcessReceivedPushNotificationAsync(protocolId, id, title, body, sound, command, CancellationToken.None);
+                await SensusContext.Current.Notifier.ProcessReceivedPushNotificationAsync(protocolId, id, title, body, sound, command, backendKey, CancellationToken.None);
             }
             catch (Exception ex)
             {
