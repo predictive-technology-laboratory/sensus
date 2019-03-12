@@ -78,12 +78,7 @@ namespace Sensus.DataStores.Remote
             return Task.CompletedTask;
         }
 
-        public override Task DeletePushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
-        }
-
-        public override Task DeletePushNotificationRequestAsync(string id, CancellationToken cancellationToken)
+        public override Task DeletePushNotificationRequestAsync(Guid backendKey, CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
         }

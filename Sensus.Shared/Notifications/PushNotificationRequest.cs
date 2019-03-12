@@ -31,15 +31,18 @@ namespace Sensus.Notifications
         /// Gets the local format used by the device for push notifications.
         /// </summary>
         /// <returns>The local format.</returns>
-        private static PushNotificationRequestFormat GetLocalFormat()
+        public static PushNotificationRequestFormat LocalFormat
         {
+            get
+            {
 #if __ANDROID__
-            return PushNotificationRequestFormat.FirebaseCloudMessaging;
+                return PushNotificationRequestFormat.FirebaseCloudMessaging;
 #elif __IOS__
-            return PushNotificationRequestFormat.ApplePushNotificationService;
+                return PushNotificationRequestFormat.ApplePushNotificationService;
 #else
 #error "Unrecognized platform."
 #endif
+            }
         }
 
         /// <summary>
@@ -127,15 +130,10 @@ namespace Sensus.Notifications
         private string _body;
         private string _sound;
         private string _command;
-        private string _commandId;
         private PushNotificationRequestFormat _format;
         private DateTimeOffset _creationTime;
         private DateTimeOffset _notificationTime;
-
-        public string Id
-        {
-            get { return _id; }
-        }
+        private Guid _backendKey;
 
         public string DeviceId
         {
@@ -145,6 +143,11 @@ namespace Sensus.Notifications
         public Protocol Protocol
         {
             get { return _protocol; }
+        }
+
+        public Guid BackendKey
+        {
+            get { return _backendKey; }
         }
 
         public string JSON
@@ -159,7 +162,6 @@ namespace Sensus.Notifications
                            "\"body\":" + JsonConvert.ToString(_body) + "," +
                            "\"sound\":" + JsonConvert.ToString(_sound) + "," +
                            "\"command\":" + JsonConvert.ToString(_command) + "," +
-                           "\"command-id\":" + JsonConvert.ToString(_commandId) + "," +
                            "\"format\":" + JsonConvert.ToString(GetAzureFormatIdentifier(_format)) + "," +
                            "\"creation-time\":" + _creationTime.ToUnixTimeSeconds() + "," +
                            "\"time\":" + _notificationTime.ToUnixTimeSeconds() +
@@ -167,48 +169,28 @@ namespace Sensus.Notifications
             }
         }
 
-        public PushNotificationRequest(Protocol protocol, string title, string body, string sound, string command, string commandId, DateTimeOffset notificationTime, string deviceId, PushNotificationRequestFormat format)
+        public PushNotificationRequest(string id,
+                                       Protocol protocol,
+                                       string title,
+                                       string body,
+                                       string sound,
+                                       string command,
+                                       DateTimeOffset notificationTime,
+                                       string deviceId,
+                                       PushNotificationRequestFormat format,
+                                       Guid backendKey)
         {
-            _id = Guid.NewGuid().ToString();
-            _protocol = protocol;
+            _id = id;
+            _protocol = protocol ?? throw new ArgumentNullException(nameof(protocol));
             _title = title;
             _body = body;
             _sound = sound;
             _command = command;
-            _commandId = commandId;
-            _creationTime = DateTimeOffset.UtcNow;
             _notificationTime = notificationTime;
             _deviceId = deviceId;
             _format = format;
-
-            if (protocol == null)
-            {
-                throw new ArgumentNullException(nameof(protocol));
-            }
-        }
-
-        public PushNotificationRequest(Protocol protocol, string title, string body, string sound, string command, string commandId, DateTimeOffset time)
-            : this(protocol, title, body, sound, command, commandId, time, SensusServiceHelper.Get().DeviceId, GetLocalFormat())
-        {
-        }
-
-        public override bool Equals(object obj)
-        {
-            PushNotificationRequest other = obj as PushNotificationRequest;
-
-            if (other == null)
-            {
-                return false;
-            }
-            else
-            {
-                return _id == other.Id;
-            }
-        }
-
-        public override int GetHashCode()
-        {
-            return _id.GetHashCode();
+            _creationTime = DateTimeOffset.UtcNow;
+            _backendKey = backendKey;
         }
     }
 }

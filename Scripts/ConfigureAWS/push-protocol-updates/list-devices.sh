@@ -7,18 +7,15 @@ then
     echo ""
     echo "Usage:  ./list-devices.sh [BUCKET]"
     echo ""
+    echo "  [BUCKET]:  Name of S3 bucket for which to list devices."
     exit 1
 fi
 
-for token_file in $(ls "$1-push-notifications")
+for token_path in $(find $1-push-notifications/tokens/*.json)
 do
-    filename=$(basename -- "$token_file")
-    extension="${filename##*.}"
-    filename="${filename%.*}"
-    if [[ $extension != "json" ]]
-    then
-	device_id=$(echo $filename | cut -f1 -d ":")
-	protocol_id=$(echo $filename | cut -f2 -d ":")
-	echo -e "$1\t$device_id\t$protocol_id"
-    fi
+    device_id_protocol_id=$(basename "$token_path" ".json")
+    device_id=$(echo $device_id_protocol_id | cut -f1 -d ":")
+    protocol_id=$(echo $device_id_protocol_id | cut -f2 -d ":")
+    format=$(jq -r '.format' $token_path)
+    echo -e "$1\t$device_id\t$protocol_id\t$format"
 done

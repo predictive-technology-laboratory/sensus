@@ -101,6 +101,16 @@ namespace Sensus.DataStores.Remote
         public const string PUSH_NOTIFICATIONS_DIRECTORY = "push-notifications";
 
         /// <summary>
+        /// The push notifications tokens directory.
+        /// </summary>
+        public const string PUSH_NOTIFICATIONS_TOKENS_DIRECTORY = PUSH_NOTIFICATIONS_DIRECTORY + "/tokens";
+
+        /// <summary>
+        /// The push notifications requests directory.
+        /// </summary>
+        public const string PUSH_NOTIFICATIONS_REQUESTS_DIRECTORY = PUSH_NOTIFICATIONS_DIRECTORY + "/requests";
+
+        /// <summary>
         /// The adaptive EMA policies directory.
         /// </summary>
         public const string ADAPTIVE_EMA_POLICIES_DIRECTORY = "adaptive-ema-policies";
@@ -120,6 +130,7 @@ namespace Sensus.DataStores.Remote
         private string _pinnedPublicKey;
         private int _putCount;
         private int _successfulPutCount;
+        private Dictionary<string, bool> _updateDownloading;
 
         /// <summary>
         /// The AWS region in which <see cref="Bucket"/> resides (e.g., us-east-2).
@@ -305,6 +316,7 @@ namespace Sensus.DataStores.Remote
             _pinnedServiceURL = null;
             _pinnedPublicKey = null;
             _putCount = _successfulPutCount = 0;
+            _updateDownloading = new Dictionary<string, bool>();
         }
 
         public override async Task StartAsync()
@@ -406,12 +418,19 @@ namespace Sensus.DataStores.Remote
 
             try
             {
-                // send the token
                 s3 = await CreateS3ClientAsync();
-                byte[] tokenBytes = Encoding.UTF8.GetBytes(token);
+
+                // get the token JSON payload
+                PushNotificationRequestFormat localFormat = PushNotificationRequest.LocalFormat;
+                string localFormatAzureIdentifier = PushNotificationRequest.GetAzureFormatIdentifier(localFormat);
+                byte[] tokenBytes = Encoding.UTF8.GetBytes("{" +
+                                                             "\"format\":" + JsonConvert.ToString(localFormatAzureIdentifier) + "," +
+                                                             "\"token\":" + JsonConvert.ToString(token) +
+                                                           "}");
+                                                            
                 MemoryStream dataStream = new MemoryStream(tokenBytes);
 
-                await PutAsync(s3, dataStream, GetPushNotificationTokenKey(), "text/plain", cancellationToken);
+                await PutAsync(s3, dataStream, GetPushNotificationTokenKey(), "application/json", cancellationToken);
             }
             finally
             {
@@ -428,7 +447,7 @@ namespace Sensus.DataStores.Remote
                 // send an empty data stream to clear the token. we don't have delete access.
                 s3 = await CreateS3ClientAsync();
 
-                await PutAsync(s3, new MemoryStream(), GetPushNotificationTokenKey(), "text/plain", cancellationToken);
+                await PutAsync(s3, new MemoryStream(), GetPushNotificationTokenKey(), "application/json", cancellationToken);
             }
             finally
             {
@@ -439,7 +458,7 @@ namespace Sensus.DataStores.Remote
         private string GetPushNotificationTokenKey()
         {
             // the key is device- and protocol-specific, providing us a way to quickly disable all PNs (i.e., by clearing the token file).
-            return PUSH_NOTIFICATIONS_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId + ":" + Protocol.Id;
+            return PUSH_NOTIFICATIONS_TOKENS_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId + ":" + Protocol.Id + ".json";
         }
 
         public override async Task SendPushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
@@ -452,7 +471,7 @@ namespace Sensus.DataStores.Remote
                 byte[] requestJsonBytes = Encoding.UTF8.GetBytes(request.JSON);
                 MemoryStream dataStream = new MemoryStream(requestJsonBytes);
 
-                await PutAsync(s3, dataStream, GetPushNotificationRequestKey(request), "application/json", cancellationToken);
+                await PutAsync(s3, dataStream, GetPushNotificationRequestKey(request.BackendKey), "application/json", cancellationToken);
             }
             finally
             {
@@ -460,12 +479,7 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        public override async Task DeletePushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
-        {
-            await DeletePushNotificationRequestAsync(request.Id, cancellationToken);
-        }
-
-        public override async Task DeletePushNotificationRequestAsync(string id, CancellationToken cancellationToken)
+        public override async Task DeletePushNotificationRequestAsync(Guid backendKey, CancellationToken cancellationToken)
         {
             AmazonS3Client s3 = null;
 
@@ -474,7 +488,7 @@ namespace Sensus.DataStores.Remote
                 // send an empty data stream to clear the request. we don't have delete access.
                 s3 = await CreateS3ClientAsync();
 
-                await PutAsync(s3, new MemoryStream(), GetPushNotificationRequestKey(id), "text/plain", cancellationToken);
+                await PutAsync(s3, new MemoryStream(), GetPushNotificationRequestKey(backendKey), "application/json", cancellationToken);
             }
             finally
             {
@@ -482,14 +496,9 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        private string GetPushNotificationRequestKey(PushNotificationRequest request)
+        private string GetPushNotificationRequestKey(Guid backendKey)
         {
-            return GetPushNotificationRequestKey(request.Id);
-        }
-
-        private string GetPushNotificationRequestKey(string pushNotificationRequestId)
-        {
-            return PUSH_NOTIFICATIONS_DIRECTORY + "/" + pushNotificationRequestId + ".json";
+            return PUSH_NOTIFICATIONS_REQUESTS_DIRECTORY + "/" + backendKey + ".json";
         }
 
         private async Task PutAsync(AmazonS3Client s3, Stream stream, string key, string contentType, CancellationToken cancellationToken, bool allowRetry = true)
@@ -639,13 +648,27 @@ namespace Sensus.DataStores.Remote
 
         public override async Task<string> GetProtocolUpdatesAsync(string identifier, CancellationToken cancellationToken)
         {
+            // only let one caller at a time download the update associated with the identifier
+            bool proceed;
+
+            lock (_updateDownloading)
+            {
+                proceed = _updateDownloading.TryAdd(identifier, true);
+            }
+
+            if (!proceed)
+            {
+                return null;
+            }
+
+            // download the updates
             AmazonS3Client s3 = null;
 
             try
             {
                 s3 = await CreateS3ClientAsync();
 
-                Stream responseStream = (await s3.GetObjectAsync(_bucket, PROTOCOL_UPDATES_DIRECTORY + "/" + identifier, cancellationToken)).ResponseStream;
+                Stream responseStream = (await s3.GetObjectAsync(_bucket, GetProtocolUpdatesKey(identifier), cancellationToken)).ResponseStream;
 
                 string protocolUpdatesJSON;
                 using (StreamReader reader = new StreamReader(responseStream))
@@ -653,12 +676,47 @@ namespace Sensus.DataStores.Remote
                     protocolUpdatesJSON = reader.ReadToEnd().Trim();
                 }
 
+                // if we got updates, delete the update file from the backend to prevent duplicate processing. the
+                // next caller with the same identifier will get an empty updates JSON string. the update won't be
+                // processed again until a new protocol update is submitted to the backend.
+                if (!string.IsNullOrWhiteSpace(protocolUpdatesJSON))
+                {
+                    await DeleteProtocolUpdatesAsync(identifier, cancellationToken);
+                }
+
                 return protocolUpdatesJSON;
+            }
+            finally
+            {
+                lock (_updateDownloading)
+                {
+                    _updateDownloading.Remove(identifier);
+                }
+
+                DisposeS3(s3);
+            }
+        }
+
+        private async Task DeleteProtocolUpdatesAsync(string identifier, CancellationToken cancellationToken)
+        {
+            AmazonS3Client s3 = null;
+
+            try
+            {
+                // send an empty data stream to clear the updates file. we don't have delete access.
+                s3 = await CreateS3ClientAsync();
+
+                await PutAsync(s3, new MemoryStream(), GetProtocolUpdatesKey(identifier), "application/json", cancellationToken);
             }
             finally
             {
                 DisposeS3(s3);
             }
+        }
+
+        private string GetProtocolUpdatesKey(string identifier)
+        {
+            return PROTOCOL_UPDATES_DIRECTORY + "/" + identifier;
         }
 
         private void DisposeS3(AmazonS3Client s3)
