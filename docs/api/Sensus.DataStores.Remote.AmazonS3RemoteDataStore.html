@@ -305,6 +305,56 @@ with the following command, where <code>BUCKET</code> corresponds to the Sensus 
       </tr>
     </tbody>
   </table>
+  
+  
+  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_PUSH_NOTIFICATIONS_REQUESTS_DIRECTORY" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.PUSH_NOTIFICATIONS_REQUESTS_DIRECTORY">PUSH_NOTIFICATIONS_REQUESTS_DIRECTORY</h4>
+  <div class="markdown level1 summary"><p>The push notifications requests directory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string PUSH_NOTIFICATIONS_REQUESTS_DIRECTORY = &quot;push-notifications/requests&quot;</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_PUSH_NOTIFICATIONS_TOKENS_DIRECTORY" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.PUSH_NOTIFICATIONS_TOKENS_DIRECTORY">PUSH_NOTIFICATIONS_TOKENS_DIRECTORY</h4>
+  <div class="markdown level1 summary"><p>The push notifications tokens directory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string PUSH_NOTIFICATIONS_TOKENS_DIRECTORY = &quot;push-notifications/tokens&quot;</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="properties">Properties
   </h3>
   
@@ -561,12 +611,12 @@ public string Region { get; set; }</code></pre>
   
   
   <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_DeletePushNotificationRequestAsync_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DeletePushNotificationRequestAsync*"></a>
-  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_DeletePushNotificationRequestAsync_Sensus_Notifications_PushNotificationRequest_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DeletePushNotificationRequestAsync(Sensus.Notifications.PushNotificationRequest,System.Threading.CancellationToken)">DeletePushNotificationRequestAsync(PushNotificationRequest, CancellationToken)</h4>
+  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_DeletePushNotificationRequestAsync_System_Guid_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DeletePushNotificationRequestAsync(System.Guid,System.Threading.CancellationToken)">DeletePushNotificationRequestAsync(Guid, CancellationToken)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override Task DeletePushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task DeletePushNotificationRequestAsync(Guid backendKey, CancellationToken cancellationToken)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -579,8 +629,8 @@ public string Region { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.Notifications.PushNotificationRequest.html">PushNotificationRequest</a></td>
-        <td><span class="parametername">request</span></td>
+        <td><span class="xref">System.Guid</span></td>
+        <td><span class="parametername">backendKey</span></td>
         <td></td>
       </tr>
       <tr>
@@ -606,56 +656,7 @@ public string Region { get; set; }</code></pre>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_DeletePushNotificationRequestAsync_Sensus_Notifications_PushNotificationRequest_System_Threading_CancellationToken_">RemoteDataStore.DeletePushNotificationRequestAsync(PushNotificationRequest, CancellationToken)</a></div>
-  
-  
-  <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_DeletePushNotificationRequestAsync_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DeletePushNotificationRequestAsync*"></a>
-  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_DeletePushNotificationRequestAsync_System_String_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DeletePushNotificationRequestAsync(System.String,System.Threading.CancellationToken)">DeletePushNotificationRequestAsync(String, CancellationToken)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override Task DeletePushNotificationRequestAsync(string id, CancellationToken cancellationToken)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">id</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Threading.CancellationToken</span></td>
-        <td><span class="parametername">cancellationToken</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_DeletePushNotificationRequestAsync_System_String_System_Threading_CancellationToken_">RemoteDataStore.DeletePushNotificationRequestAsync(String, CancellationToken)</a></div>
+  <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_DeletePushNotificationRequestAsync_System_Guid_System_Threading_CancellationToken_">RemoteDataStore.DeletePushNotificationRequestAsync(Guid, CancellationToken)</a></div>
   
   
   <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_DeletePushNotificationTokenAsync_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.DeletePushNotificationTokenAsync*"></a>

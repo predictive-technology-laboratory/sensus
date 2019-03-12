@@ -459,13 +459,13 @@ public int WriteTimeoutMinutes { get; set; }</code></pre>
   
   
   <a id="Sensus_DataStores_Remote_RemoteDataStore_DeletePushNotificationRequestAsync_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.DeletePushNotificationRequestAsync*"></a>
-  <h4 id="Sensus_DataStores_Remote_RemoteDataStore_DeletePushNotificationRequestAsync_Sensus_Notifications_PushNotificationRequest_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.DeletePushNotificationRequestAsync(Sensus.Notifications.PushNotificationRequest,System.Threading.CancellationToken)">DeletePushNotificationRequestAsync(PushNotificationRequest, CancellationToken)</h4>
+  <h4 id="Sensus_DataStores_Remote_RemoteDataStore_DeletePushNotificationRequestAsync_System_Guid_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.DeletePushNotificationRequestAsync(System.Guid,System.Threading.CancellationToken)">DeletePushNotificationRequestAsync(Guid, CancellationToken)</h4>
   <div class="markdown level1 summary"><p>Deletes the push notification request.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract Task DeletePushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract Task DeletePushNotificationRequestAsync(Guid backendKey, CancellationToken cancellationToken)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -478,60 +478,9 @@ public int WriteTimeoutMinutes { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.Notifications.PushNotificationRequest.html">PushNotificationRequest</a></td>
-        <td><span class="parametername">request</span></td>
-        <td><p>Request.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Threading.CancellationToken</span></td>
-        <td><span class="parametername">cancellationToken</span></td>
-        <td><p>Cancellation token.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>Task</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_DataStores_Remote_RemoteDataStore_DeletePushNotificationRequestAsync_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.DeletePushNotificationRequestAsync*"></a>
-  <h4 id="Sensus_DataStores_Remote_RemoteDataStore_DeletePushNotificationRequestAsync_System_String_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.DeletePushNotificationRequestAsync(System.String,System.Threading.CancellationToken)">DeletePushNotificationRequestAsync(String, CancellationToken)</h4>
-  <div class="markdown level1 summary"><p>Deletes the push notifiation request.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract Task DeletePushNotificationRequestAsync(string id, CancellationToken cancellationToken)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">id</span></td>
-        <td><p>Push notification request identifier (see <a class="xref" href="Sensus.Notifications.PushNotificationRequest.html#Sensus_Notifications_PushNotificationRequest_Id">Id</a>).</p>
+        <td><span class="xref">System.Guid</span></td>
+        <td><span class="parametername">backendKey</span></td>
+        <td><p>Backend key</p>
 </td>
       </tr>
       <tr>
