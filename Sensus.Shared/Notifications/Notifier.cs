@@ -132,8 +132,7 @@ namespace Sensus.Notifications
             // every push notification should have an ID
             if (string.IsNullOrWhiteSpace(id))
             {
-                SensusException.Report("Push notification ID is missing or blank.");
-                return;
+                throw new Exception("Push notification ID is missing or blank.");
             }
 
             SensusServiceHelper.Get().Logger.Log("Processing push notification " + id, LoggingLevel.Normal, GetType());
