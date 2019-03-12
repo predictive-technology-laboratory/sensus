@@ -251,15 +251,16 @@ namespace Sensus.Notifications
                     string callbackId = commandParts[2];
                     string invocationId = commandParts[3];
 
-                    // cancel any local notification associated with the callback (e.g., the notification 
-                    // that prompts for polling readings). this only applies to ios, as there are no such
-                    // notifications on android. furthermore, we need to do this before servicing the 
-                    // callback below, as the servicing routines will typically schedule a new poll with
-                    // new local/remote notifications. if we cancel the notification after servicing, 
-                    // we will end up cancelling the new notification rather than the current one (found
-                    // this out the hard way!).
 #if __IOS__
-                    SensusContext.Current.Notifier.CancelNotification(callbackId);
+                    // cancel any previously delivered local notifications for the callback. we do not need to cancel
+                    // any pending notifications, as they will either (a) be canceled if the callback is non-repeating
+                    // or (b) be replaced if the callback is repeating and gets rescheduled. furthermore, there is a 
+                    // race condition on app activation in which the callback is updated, run, and rescheduled, after
+                    // which the push notification is delivered and is processed. cancelling the newly rescheduled
+                    // pending local push notification at this point will terminate the local invocation loop, and the 
+                    // callback command at this point will contain an invalid invocation ID causing it to not be 
+                    // rescheduled). thus, both local and remote invocation will terminate and the probe will halt.
+                    UserNotifications.UNUserNotificationCenter.Current.RemoveDeliveredNotifications(new[] { callbackId });
 #endif
 
                     await SensusContext.Current.CallbackScheduler.ServiceCallbackFromPushNotificationAsync(callbackId, invocationId, cancellationToken);
@@ -355,7 +356,14 @@ namespace Sensus.Notifications
                             if (targetType == typeof(Protocol))
                             {
                                 property.SetValue(protocol, newValueObject);
-                                restartProtocol = true;
+
+                                // restart the protocol if it is starting, running, or paused (other than stopping or stopped)
+                                if (protocol.State == ProtocolState.Starting ||
+                                    protocol.State == ProtocolState.Running ||
+                                    protocol.State == ProtocolState.Paused)
+                                {
+                                    restartProtocol = true;
+                                }
                             }
                             else if (targetType.GetAncestorTypes(false).Last() == typeof(Probe))
                             {

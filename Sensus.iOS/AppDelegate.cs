@@ -175,6 +175,13 @@ namespace Sensus.iOS
                         notificationsAuthorized = grantedError.Item1;
                     }
 
+                    // reset the badge number before starting. it appears that badge numbers from previous installations
+                    // and instantiations of the app hang around.
+                    if (notificationsAuthorized)
+                    {
+                        UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
+                    }
+
                     // ensure service helper is running. it is okay to call the following line multiple times, as repeats have no effect.
                     // per apple guidelines, sensus will run without notifications being authorized above, but the user's ability to 
                     // participate will certainly be reduced, as they won't be made aware of probe requests, surveys, etc.

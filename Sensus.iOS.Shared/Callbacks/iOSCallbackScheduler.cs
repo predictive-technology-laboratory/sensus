@@ -145,7 +145,6 @@ namespace Sensus.iOS.Callbacks
             });
 
             // raise callback but don't notify user since we would have already done so when the notification was delivered to the notification tray.
-            // furthermore, there's nothing to do if the callback thinks we can sleep, since ios does not provide wake-locks like android.
             await RaiseCallbackAsync(callback, invocationId, false);
 
             // end the background task
