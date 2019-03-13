@@ -23,7 +23,7 @@ namespace Sensus.Notifications
     /// class represents push notification requests submitted to the <see cref="DataStores.Remote.RemoteDataStore"/> for processing by the 
     /// push notification backend. See the 
     /// [example](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS/example-notification-request.json)
-    /// for the format of such requests. See the constant fields in this class for more information on commands that may be sent to Sensus.
+    /// for the format of such requests.
     /// </summary>
     public class PushNotificationRequest
     {
@@ -67,69 +67,13 @@ namespace Sensus.Notifications
             }
         }
 
-        /// <summary>
-        /// Instruct Sensus to update the policy running within the <see cref="Probes.User.Scripts.ScriptProbe.Agent"/>. 
-        /// Upon receipt of this command, Sensus will fetch the policy from the <see cref="DataStores.Remote.RemoteDataStore"/>
-        /// via <see cref="DataStores.Remote.RemoteDataStore.GetScriptAgentPolicyAsync(System.Threading.CancellationToken)"/>. 
-        /// The content of the returned JSON file will be passed to 
-        /// <see cref="Probes.User.Scripts.IScriptProbeAgent.SetPolicyAsync(string)"/>. See 
-        /// <see cref="DataStores.Remote.RemoteDataStore.GetScriptAgentPolicyAsync(System.Threading.CancellationToken)"/> for 
-        /// information about this JSON file.
-        /// </summary>
-        public const string COMMAND_UPDATE_SCRIPT_AGENT_POLICY = "UPDATE-EMA-POLICY";
-
-        /// <summary>
-        /// Instruct Sensus to retrieve and set <see cref="Protocol"/> updates. Following this value should be a pipe
-        /// followed by the update identifier. For example:
-        /// 
-        /// ```
-        /// UPDATE-PROTOCOL|XXXX
-        /// ````
-        /// 
-        /// Where `XXXX` is the update identifier. Upon receipt of this command, Sensus will fetch <see cref="Protocol"/> updates from
-        /// the <see cref="DataStores.Remote.RemoteDataStore"/> via 
-        /// <see cref="DataStores.Remote.RemoteDataStore.GetProtocolUpdatesAsync(string, System.Threading.CancellationToken)"/>. In the case of a 
-        /// <see cref="DataStores.Remote.AmazonS3RemoteDataStore"/>, Sensus will get the S3 object at `BUCKET/protocol-updates/XXXX`, 
-        /// where `BUCKET` is the bucket and `XXXX` is the update identifier. If one wishes to deliver this command, then one should first 
-        /// upload the protocol updates file to this S3 location and then issue the push notification request with the above command. The 
-        /// format of the protocol updates file is shown in the
-        /// [example](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS/example-protocol-updates.json). 
-        /// 
-        /// The fields in this file are as follows:
-        /// 
-        /// <ul>
-        ///   <ul>
-        ///   <li>
-        ///   `property-type`:  The fully qualified name of the type defining the property to be updated. For example, 
-        ///   [`Sensus.Probes.PollingProbe`](xref:Sensus.Probes.PollingProbe) contains properties that govern the behavior of all polling-style probes.
-        ///   </li>
-        ///   <li>
-        ///   `property-name`:  The name of the property within the type indicated by `property-type` that should be set. For example, 
-        ///   [`Sensus.Probes.PollingProbe.PollingSleepDurationMS`](xref:Sensus.Probes.PollingProbe.PollingSleepDurationMS) determines how long the 
-        ///   <see cref="Probes.PollingProbe"/> will sleep between taking successive readings.
-        ///   </li>
-        ///   <li>
-        ///   `target-type`:  The fully qualified name of the type whose instances should be updated. For example, a value of 
-        ///   [`Sensus.Probes.Location.PollingLocationProbe`](xref:Sensus.Probes.Location.PollingLocationProbe) would update the property indicated 
-        ///   with the previous fields for just the <see cref="Probes.Location.PollingLocationProbe"/>, whereas a value of 
-        ///   [`Sensus.Probes.PollingProbe`](xref:Sensus.Probes.PollingProbe) would update the property for all probes that inherit from 
-        ///   <see cref="Probes.PollingProbe"/>.
-        ///   </li>
-        ///   <li>
-        ///   `value`:  Quoted string of the new value to be set for the above property and target objects.
-        ///   </li>
-        ///   </ul>
-        /// </ul>
-        /// </summary>
-        public const string COMMAND_UPDATE_PROTOCOL = "UPDATE-PROTOCOL";
-
         private string _id;
         private string _deviceId;
         private Protocol _protocol;
         private string _title;
         private string _body;
         private string _sound;
-        private string _command;
+        private Update _update;
         private PushNotificationRequestFormat _format;
         private DateTimeOffset _creationTime;
         private DateTimeOffset _notificationTime;
@@ -157,11 +101,11 @@ namespace Sensus.Notifications
                 return "{" +
                            "\"id\":" + JsonConvert.ToString(_id) + "," +
                            "\"device\":" + JsonConvert.ToString(_deviceId) + "," +
-                           "\"protocol\":" + JsonConvert.ToString(_protocol.Id) + "," +
-                           "\"title\":" + JsonConvert.ToString(_title) + "," +
-                           "\"body\":" + JsonConvert.ToString(_body) + "," +
-                           "\"sound\":" + JsonConvert.ToString(_sound) + "," +
-                           "\"command\":" + JsonConvert.ToString(_command) + "," +
+                           (_protocol == null ? "" : "\"protocol\":" + JsonConvert.ToString(_protocol.Id) + ",") +
+                           (_title == null ? "" : "\"title\":" + JsonConvert.ToString(_title) + ",") +
+                           (_body == null ? "" : "\"body\":" + JsonConvert.ToString(_body) + ",") +
+                           (_sound == null ? "" : "\"sound\":" + JsonConvert.ToString(_sound) + ",") +
+                           (_update == null ? "" : "\"update\":" + _update.JSON + ",") +
                            "\"format\":" + JsonConvert.ToString(GetAzureFormatIdentifier(_format)) + "," +
                            "\"creation-time\":" + _creationTime.ToUnixTimeSeconds() + "," +
                            "\"time\":" + _notificationTime.ToUnixTimeSeconds() +
@@ -170,27 +114,27 @@ namespace Sensus.Notifications
         }
 
         public PushNotificationRequest(string id,
+                                       string deviceId,
                                        Protocol protocol,
                                        string title,
                                        string body,
                                        string sound,
-                                       string command,
-                                       DateTimeOffset notificationTime,
-                                       string deviceId,
+                                       Update update,
                                        PushNotificationRequestFormat format,
+                                       DateTimeOffset notificationTime,
                                        Guid backendKey)
         {
             _id = id;
+            _deviceId = deviceId;
             _protocol = protocol ?? throw new ArgumentNullException(nameof(protocol));
             _title = title;
             _body = body;
             _sound = sound;
-            _command = command;
-            _notificationTime = notificationTime;
-            _deviceId = deviceId;
+            _update = update;
             _format = format;
-            _creationTime = DateTimeOffset.UtcNow;
+            _notificationTime = notificationTime;
             _backendKey = backendKey;
+            _creationTime = DateTimeOffset.UtcNow;
         }
     }
 }

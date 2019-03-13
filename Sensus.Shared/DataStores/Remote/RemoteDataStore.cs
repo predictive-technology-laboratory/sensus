@@ -357,19 +357,11 @@ namespace Sensus.DataStores.Remote
         }
 
         /// <summary>
-        /// Gets the script agent policy from the <see cref="RemoteDataStore"/>. See concrete class implementation for details.
+        /// Gets <see cref="Update"/>s for the current device.
         /// </summary>
-        /// <returns>The script agent policy.</returns>
+        /// <returns>The updates</returns>
         /// <param name="cancellationToken">Cancellation token.</param>
-        public abstract Task<string> GetScriptAgentPolicyAsync(CancellationToken cancellationToken);
-
-        /// <summary>
-        /// Gets the protocol updates.
-        /// </summary>
-        /// <returns>The protocol updates.</returns>
-        /// <param name="identifier">Update identifier.</param>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        public abstract Task<string> GetProtocolUpdatesAsync(string identifier, CancellationToken cancellationToken);
+        public abstract Task<List<Update>> GetUpdatesAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Writes a stream of <see cref="Datum"/> objects.

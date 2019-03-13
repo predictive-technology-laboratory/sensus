@@ -21,14 +21,7 @@
             "Action": [
                 "s3:GetObject"
             ],
-            "Resource": "arn:aws:s3:::bucketName/adaptive-ema-policies/*"
-        },
-	{
-            "Effect": "Allow",
-            "Action": [
-                "s3:GetObject"
-            ],
-            "Resource": "arn:aws:s3:::bucketName/protocol-updates/*"
+            "Resource": "arn:aws:s3:::bucketName/push-notifications/updates/*"
         }
     ]
 }

@@ -93,17 +93,7 @@ namespace Sensus.DataStores.Remote
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Not implemented. Will always throw an <see cref="Exception"/>.
-        /// </summary>
-        /// <returns>The script agent policy.</returns>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        public override Task<string> GetScriptAgentPolicyAsync(CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Task<string> GetProtocolUpdatesAsync(string identifier, CancellationToken cancellationToken)
+        public override Task<List<Update>> GetUpdatesAsync(CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

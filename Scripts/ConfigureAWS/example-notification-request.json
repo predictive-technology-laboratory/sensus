@@ -1,12 +1,36 @@
+
+Use the following request format to send a message directly to a device. The
+title and body should be relatively short, as push notification payloads must
+be only a few KBs.
+
 {
   "id": "0ed96702-f316-4d3a-a63f-fd1da511180b",
   "device": "7D0AB854-6FF4-4DF5-A970-CAFE81E18B30",
   "protocol": "9870b48d-4a0f-46e9-bda9-bfd52241a913",
-  "title": "",
-  "body": "",
-  "sound": "",
-  "command": "",
+  "title": "XXXX",
+  "body": "XXXX",
+  "sound": "default",
   "format": "apple",
   "creation-time":  1533831164,
   "time": 1534831164
 }
+
+Use the following request format to deliver updates of arbitrary size to 
+a device. Note that each update must identify a protocol to which the update
+should be delivered. This format does not permit a title, body, or sound. See
+the documentation for Sensus.Notifications.Update for more information.
+
+{
+  "id": "0ed96702-f316-4d3a-a63f-fd1da511180b",
+  "device": "7D0AB854-6FF4-4DF5-A970-CAFE81E18B30",
+  "format": "apple",
+  "creation-time":  1533831164,
+  "time": 1534831164,
+  "update":
+  {
+    "type":"XXXX"
+    "protocol":"9870b48d-4a0f-46e9-bda9-bfd52241a913",
+    "content":XXXX"
+  }
+}
+ 
