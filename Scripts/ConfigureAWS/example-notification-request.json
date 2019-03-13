@@ -28,9 +28,9 @@ the documentation for Sensus.Notifications.Update for more information.
   "time": 1534831164,
   "update":
   {
-    "type":"XXXX"
-    "protocol":"9870b48d-4a0f-46e9-bda9-bfd52241a913",
-    "content":XXXX"
+    "type": "XXXX",
+    "protocol": "9870b48d-4a0f-46e9-bda9-bfd52241a913",
+    "content": "XXXX"
   }
 }
  
