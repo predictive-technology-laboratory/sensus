@@ -14,15 +14,18 @@
 
 namespace Sensus.Notifications
 {
-    public enum UpdateType
+    /// <summary>
+    /// Types of <see cref="PushNotificationUpdate"/> that can be sent via push notification to Sensus.
+    /// </summary>
+    public enum PushNotificationUpdateType
     {
         /// <summary>
-        /// The <see cref="Update.Content"/> value contains a new policy for the <see cref="Probes.User.Scripts.IScriptProbeAgent"/>.
+        /// The <see cref="PushNotificationUpdate.Content"/> value contains a new policy for the <see cref="Probes.User.Scripts.IScriptProbeAgent"/>.
         /// </summary>
         SurveyAgentPolicy,
 
         /// <summary>
-        /// The <see cref="Update.Content"/> contains new settings for the <see cref="Protocol"/>. These new settings have the following fields:
+        /// The <see cref="PushNotificationUpdate.Content"/> contains new settings for the <see cref="Protocol"/>. These new settings have the following fields:
         /// 
         /// <ul>
         ///   <ul>
@@ -47,7 +50,13 @@ namespace Sensus.Notifications
         ///   </li>
         ///   </ul>
         /// </ul>
+        /// 
         /// </summary>
-        Protocol
+        Protocol,
+
+        /// <summary>
+        /// The <see cref="PushNotificationUpdate.Content"/> value contains information about a <see cref="Callbacks.ScheduledCallback"/> that needs to run.
+        /// </summary>
+        Callback
     }
 }

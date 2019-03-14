@@ -17,7 +17,7 @@ using Newtonsoft.Json.Converters;
 
 namespace Sensus.Notifications
 {
-    public class Update
+    public class PushNotificationUpdate
     {
         /// <summary>
         /// Update type.
@@ -25,7 +25,7 @@ namespace Sensus.Notifications
         /// <value>The type.</value>
         [JsonProperty(PropertyName = "type")]
         [JsonConverter(typeof(StringEnumConverter))]
-        public UpdateType Type { get; set; }
+        public PushNotificationUpdateType Type { get; set; }
 
         /// <summary>
         /// Identifier of <see cref="Protocol"/> to apply update to.
@@ -42,7 +42,7 @@ namespace Sensus.Notifications
         public string Content { get; set; }
 
         /// <summary>
-        /// Gets the JSON for the current <see cref="Update"/>.
+        /// Gets the JSON for the current <see cref="PushNotificationUpdate"/>.
         /// </summary>
         /// <value>The JSON.</value>
         [JsonIgnore]

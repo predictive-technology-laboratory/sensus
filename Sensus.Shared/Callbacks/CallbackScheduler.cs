@@ -23,6 +23,7 @@ using Sensus.Exceptions;
 using Sensus.Extensions;
 using Sensus.Notifications;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace Sensus.Callbacks
 {
@@ -333,12 +334,19 @@ namespace Sensus.Callbacks
                 try
                 {
                     // the id does not include the invocation ID, as any newer invocation IDs makes others obsolete.
-                    string id = SENSUS_CALLBACK_KEY + "|" + SensusServiceHelper.Get().DeviceId + "|" + callback.Id;
+                    string id = SENSUS_CALLBACK_KEY + "-" + SensusServiceHelper.Get().DeviceId + "-" + callback.Id;
 
-                    // the full command includes the invocation ID
-                    string command = id + "|" + callback.InvocationId;
+                    PushNotificationUpdate update = new PushNotificationUpdate
+                    {
+                        Type = PushNotificationUpdateType.Callback,
+                        ProtocolId = callback.Protocol.Id,
+                        Content = JsonConvert.ToString("{" +
+                                                           "\"callback-id\":" + JsonConvert.ToString(callback.Id) + "," +
+                                                           "\"invocation-id\":" + JsonConvert.ToString(callback.InvocationId) +
+                                                       "}")
+                    };
 
-                    PushNotificationRequest request = new PushNotificationRequest(id, callback.Protocol, "", "", "", command, callback.NextExecution.Value, SensusServiceHelper.Get().DeviceId, PushNotificationRequest.LocalFormat, callback.PushNotificationBackendKey);
+                    PushNotificationRequest request = new PushNotificationRequest(id, SensusServiceHelper.Get().DeviceId, callback.Protocol, "", "", "", update, PushNotificationRequest.LocalFormat, callback.NextExecution.Value, callback.PushNotificationBackendKey);
 
                     await SensusContext.Current.Notifier.SendPushNotificationRequestAsync(request, CancellationToken.None);
                 }

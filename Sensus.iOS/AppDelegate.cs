@@ -274,7 +274,6 @@ namespace Sensus.iOS
 
                 string protocolId;
                 string id;
-                string command;
                 Guid backendKey;
                 string sound;
                 string body;

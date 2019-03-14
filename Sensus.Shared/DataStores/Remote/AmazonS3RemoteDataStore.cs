@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using Sensus.Extensions;
 using Sensus.Notifications;
 using Sensus.Authentication;
+using Newtonsoft.Json.Linq;
 
 namespace Sensus.DataStores.Remote
 {
@@ -111,9 +112,9 @@ namespace Sensus.DataStores.Remote
         public const string PUSH_NOTIFICATIONS_REQUESTS_DIRECTORY = PUSH_NOTIFICATIONS_DIRECTORY + "/requests";
 
         /// <summary>
-        /// The updates directory.
+        /// The push notifications updates directory.
         /// </summary>
-        public const string UPDATES_DIRECTORY = PUSH_NOTIFICATIONS_DIRECTORY + "/updates";
+        public const string PUSH_NOTIFICATIONS_UPDATES_DIRECTORY = PUSH_NOTIFICATIONS_DIRECTORY + "/updates";
 
         private string _region;
         private string _bucket;
@@ -125,6 +126,10 @@ namespace Sensus.DataStores.Remote
         private string _pinnedPublicKey;
         private int _putCount;
         private int _successfulPutCount;
+        private int _deleteCount;
+        private int _successfulDeleteCount;
+        private int _listCount;
+        private int _successfulListCount;
         private bool _downloadingUpdates;
         private readonly object _downloadingUpdatesLocker = new object();
 
@@ -312,7 +317,8 @@ namespace Sensus.DataStores.Remote
             _pinnedServiceURL = null;
             _pinnedPublicKey = null;
             _putCount = _successfulPutCount = 0;
-            _downloadingUpdates = new Dictionary<string, bool>();
+            _deleteCount = _successfulDeleteCount = 0;
+            _listCount = _successfulListCount = 0;
         }
 
         public override async Task StartAsync()
@@ -440,10 +446,9 @@ namespace Sensus.DataStores.Remote
 
             try
             {
-                // send an empty data stream to clear the token. we don't have delete access.
                 s3 = await CreateS3ClientAsync();
 
-                await PutAsync(s3, new MemoryStream(), GetPushNotificationTokenKey(), "application/json", cancellationToken);
+                await DeleteAsync(s3, GetPushNotificationTokenKey(), cancellationToken);
             }
             finally
             {
@@ -480,10 +485,9 @@ namespace Sensus.DataStores.Remote
 
             try
             {
-                // send an empty data stream to clear the request. we don't have delete access.
                 s3 = await CreateS3ClientAsync();
 
-                await PutAsync(s3, new MemoryStream(), GetPushNotificationRequestKey(backendKey), "application/json", cancellationToken);
+                await DeleteAsync(s3, GetPushNotificationRequestKey(backendKey), cancellationToken);
             }
             finally
             {
@@ -496,7 +500,7 @@ namespace Sensus.DataStores.Remote
             return PUSH_NOTIFICATIONS_REQUESTS_DIRECTORY + "/" + backendKey + ".json";
         }
 
-        private async Task PutAsync(AmazonS3Client s3, Stream stream, string key, string contentType, CancellationToken cancellationToken, bool allowRetry = true)
+        private async Task PutAsync(AmazonS3Client s3, Stream stream, string key, string contentType, CancellationToken cancellationToken)
         {
             try
             {
@@ -519,46 +523,92 @@ namespace Sensus.DataStores.Remote
                 }
                 else
                 {
-                    throw new Exception("Bad status code:  " + putStatus);
-                }
-            }
-            catch (AmazonS3Exception s3Exception)
-            {
-                // retry the put if the credentials were invalid. might just need new ones.
-                if ((s3Exception.ErrorCode == "InvalidAccessKeyId" ||
-                     s3Exception.ErrorCode == "SignatureDoesNotMatch" ||
-                     s3Exception.ErrorCode == "InvalidToken") && allowRetry && Protocol.AuthenticationService != null)
-                {
-                    AmazonS3Client retryS3 = null;
-
-                    try
-                    {
-                        retryS3 = await CreateS3ClientAsync();
-                        stream.Position = 0;
-                        await PutAsync(retryS3, stream, key, contentType, cancellationToken, false);
-                    }
-                    catch (Exception retryException)
-                    {
-                        // there's probably something wrong with the authentication service. report the exception
-                        // and throw it back to the caller. we throw just like we do for other exceptions caught
-                        // in the current method.
-                        string message = "The credentials from the S3 credentials service failed.";
-                        SensusException.Report(message, retryException);
-                        throw retryException;
-                    }
-                    finally
-                    {
-                        DisposeS3(retryS3);
-                    }
-                }
-                else
-                {
-                    throw s3Exception;
+                    throw new Exception(putStatus.ToString());
                 }
             }
             catch (Exception ex)
             {
-                string message = "Failed to write data stream to Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message;
+                string message = "Failed to write stream to Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message;
+                SensusServiceHelper.Get().Logger.Log(message + " " + ex.Message, LoggingLevel.Normal, GetType());
+                throw new Exception(message, ex);
+            }
+        }
+
+        private async Task<List<string>> ListKeysAsync(AmazonS3Client s3, string prefix)
+        {
+            try
+            {
+                ++_listCount;
+
+                List<string> keys = new List<string>();
+
+                ListObjectsV2Request listRequest = new ListObjectsV2Request
+                {
+                    BucketName = _bucket,
+                    MaxKeys = 100,
+                    Prefix = prefix
+                };
+
+                ListObjectsV2Response listResponse;
+
+                do
+                {
+                    listResponse = await s3.ListObjectsV2Async(listRequest);
+
+                    if (listResponse.HttpStatusCode == HttpStatusCode.OK)
+                    {
+                        _successfulListCount++;
+                    }
+                    else
+                    {
+                        throw new Exception(listResponse.HttpStatusCode.ToString());
+                    }
+
+                    foreach (S3Object s3Object in listResponse.S3Objects)
+                    {
+                        keys.Add(s3Object.Key);
+                    }
+
+                    listRequest.ContinuationToken = listResponse.NextContinuationToken;
+                }
+                while (listResponse.IsTruncated);
+
+                return keys;
+            }
+            catch (Exception ex)
+            {
+                string message = "Failed to list keys in Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message;
+                SensusServiceHelper.Get().Logger.Log(message + " " + ex.Message, LoggingLevel.Normal, GetType());
+                throw new Exception(message, ex);
+            }
+        }
+
+        private async Task DeleteAsync(AmazonS3Client s3, string key, CancellationToken cancellationToken)
+        {
+            try
+            {
+                _deleteCount++;
+
+                DeleteObjectRequest deleteRequest = new DeleteObjectRequest
+                {
+                    BucketName = _bucket,
+                    Key = key
+                };
+
+                HttpStatusCode deleteStatus = (await s3.DeleteObjectAsync(deleteRequest, cancellationToken)).HttpStatusCode;
+
+                if (deleteStatus == HttpStatusCode.OK)
+                {
+                    _successfulDeleteCount++;
+                }
+                else
+                {
+                    throw new Exception(deleteStatus.ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                string message = "Failed to delete key from Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message;
                 SensusServiceHelper.Get().Logger.Log(message + " " + ex.Message, LoggingLevel.Normal, GetType());
                 throw new Exception(message, ex);
             }
@@ -600,9 +650,9 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        public override async Task<List<Update>> GetUpdatesAsync(CancellationToken cancellationToken)
+        public override async Task<List<PushNotificationUpdate>> GetUpdatesAsync(CancellationToken cancellationToken)
         {
-            List<Update> updates = new List<Update>();
+            List<PushNotificationUpdate> updates = new List<PushNotificationUpdate>();
 
             // only let one caller at a time download the updates
             lock (_downloadingUpdatesLocker)
@@ -616,7 +666,6 @@ namespace Sensus.DataStores.Remote
                 }
             }
 
-            // download the updates
             AmazonS3Client s3 = null;
 
             try
@@ -624,6 +673,37 @@ namespace Sensus.DataStores.Remote
                 s3 = await CreateS3ClientAsync();
 
                 // list, download, and delete updates
+                foreach (string updateKey in await ListKeysAsync(s3, PUSH_NOTIFICATIONS_UPDATES_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId))
+                {
+                    try
+                    {
+                        GetObjectResponse getResponse = await s3.GetObjectAsync(_bucket, updateKey, cancellationToken);
+
+                        if (getResponse.HttpStatusCode == HttpStatusCode.OK)
+                        {
+                            await s3.DeleteObjectAsync(_bucket, updateKey, cancellationToken);
+
+                            string updatesJSON;
+                            using (StreamReader reader = new StreamReader(getResponse.ResponseStream))
+                            {
+                                updatesJSON = reader.ReadToEnd().Trim();
+                            }
+
+                            foreach (JObject update in JArray.Parse(updatesJSON))
+                            {
+                                updates.Add(update.ToObject<PushNotificationUpdate>());
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception(getResponse.HttpStatusCode.ToString());
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Exception while getting update object:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                }
 
                 return updates;
             }
@@ -693,7 +773,9 @@ namespace Sensus.DataStores.Remote
             string eventName = TrackedEvent.Health + ":" + GetType().Name;
             Dictionary<string, string> properties = new Dictionary<string, string>
             {
-                { "Put Success", Convert.ToString(_successfulPutCount.RoundToWholePercentageOf(_putCount, 5)) }
+                { "Put Success", Convert.ToString(_successfulPutCount.RoundToWholePercentageOf(_putCount, 5)) },
+                { "Delete Success", Convert.ToString(_successfulDeleteCount.RoundToWholePercentageOf(_deleteCount, 5)) },
+                { "List Success", Convert.ToString(_successfulListCount.RoundToWholePercentageOf(_listCount, 5)) }
             };
 
             Analytics.TrackEvent(eventName, properties);

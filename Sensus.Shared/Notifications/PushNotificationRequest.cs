@@ -73,7 +73,7 @@ namespace Sensus.Notifications
         private string _title;
         private string _body;
         private string _sound;
-        private Update _update;
+        private PushNotificationUpdate _update;
         private PushNotificationRequestFormat _format;
         private DateTimeOffset _creationTime;
         private DateTimeOffset _notificationTime;
@@ -119,7 +119,7 @@ namespace Sensus.Notifications
                                        string title,
                                        string body,
                                        string sound,
-                                       Update update,
+                                       PushNotificationUpdate update,
                                        PushNotificationRequestFormat format,
                                        DateTimeOffset notificationTime,
                                        Guid backendKey)

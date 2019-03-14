@@ -357,11 +357,11 @@ namespace Sensus.DataStores.Remote
         }
 
         /// <summary>
-        /// Gets <see cref="Update"/>s for the current device.
+        /// Gets <see cref="PushNotificationUpdate"/>s for the current device.
         /// </summary>
         /// <returns>The updates</returns>
         /// <param name="cancellationToken">Cancellation token.</param>
-        public abstract Task<List<Update>> GetUpdatesAsync(CancellationToken cancellationToken);
+        public abstract Task<List<PushNotificationUpdate>> GetUpdatesAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Writes a stream of <see cref="Datum"/> objects.

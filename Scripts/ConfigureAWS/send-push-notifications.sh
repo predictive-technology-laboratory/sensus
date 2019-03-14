@@ -186,6 +186,7 @@ aws s3 sync $s3_notifications_path $local_notifications_path --delete --exact-ti
 local_request_path_list=$(mktemp)
 for local_request_path in $(find $local_requests_path/*.json)
 do
+
     sort_time=$(jq -r '."creation-time"' $local_request_path)
     echo "$sort_time $local_request_path"
 
@@ -337,6 +338,7 @@ aws s3 sync $local_updates_path $s3_updates_path
 echo -e "\n************* SENDING PUSH NOTIFICATION TO EACH DEVICE WITH AN UPDATE *************"
 for device_dir in $(find $local_updates_path -mindepth 1 -maxdepth 1 -not -empty -type d)
 do
+
     device=$(basename $device_dir)
     format=$(get_device_format $local_tokens_path $device)
     token=$(get_device_token $local_tokens_path $device)

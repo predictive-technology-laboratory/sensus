@@ -93,7 +93,7 @@ namespace Sensus.DataStores.Remote
             throw new NotImplementedException();
         }
 
-        public override Task<List<Update>> GetUpdatesAsync(CancellationToken cancellationToken)
+        public override Task<List<PushNotificationUpdate>> GetUpdatesAsync(CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

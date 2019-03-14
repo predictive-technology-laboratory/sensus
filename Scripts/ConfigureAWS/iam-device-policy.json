@@ -11,17 +11,16 @@
         },
 	{
             "Effect": "Allow",
-            "Action": [
-                "s3:GetObject"
-            ],
-            "Resource": "arn:aws:s3:::bucketName/*ParticipationRewardDatum/*"
+            "Action": "s3:GetObject",
+            "Resource": [
+                "arn:aws:s3:::bucketName/*ParticipationRewardDatum/*",
+		"arn:aws:s3:::bucketName/push-notifications/updates/*"
+	    ]
         },
 	{
             "Effect": "Allow",
-            "Action": [
-                "s3:GetObject"
-            ],
-            "Resource": "arn:aws:s3:::bucketName/push-notifications/updates/*"
+            "Action": "s3:DeleteObject",
+            "Resource": "arn:aws:s3:::bucketName/push-notifications/*
         }
     ]
 }

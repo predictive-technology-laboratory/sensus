@@ -127,341 +127,341 @@ namespace Sensus.Notifications
             }
         }
 
-        public async Task ProcessReceivedPushNotificationAsync(string protocolId, string id, string title, string body, string sound, string command, Guid backendKey, CancellationToken cancellationToken)
+        public async Task ProcessReceivedPushNotificationAsync(PushNotification pushNotification, CancellationToken cancellationToken)
         {
-            // every push notification should have an ID
-            if (string.IsNullOrWhiteSpace(id))
+            if (string.IsNullOrWhiteSpace(pushNotification.Id))
             {
                 throw new Exception("Push notification ID is missing or blank.");
             }
 
-            SensusServiceHelper.Get().Logger.Log("Processing push notification " + id, LoggingLevel.Normal, GetType());
+            SensusServiceHelper.Get().Logger.Log("Processing push notification " + pushNotification.Id, LoggingLevel.Normal, GetType());
 
-            // every push notification should target a protocol
-            Protocol protocol = null;
-            try
+            if (pushNotification.Update.GetValueOrDefault())
             {
-                protocol = SensusServiceHelper.Get().RegisteredProtocols.Single(p => p.Id == protocolId);
-            }
-            catch (Exception ex)
-            {
-                // it's possible for the user to delete the protocol but to continue receiving push notifications. ignore them and return.
-                SensusServiceHelper.Get().Logger.Log("Failed to get protocol " + protocolId + " for push notification:  " + ex.Message, LoggingLevel.Normal, GetType());
-                return;
-            }
-
-            // delete the push notification request from the backend. it used to be that the backend deleted push notification 
-            // requests after they were delivered; however, this isn't a good idea because deliveries sometimes fail...maybe 
-            // the device has no internet connection, maybe the push service is down or fails, etc. in such cases, it used to 
-            // be that the push notification would never be retried. by waiting for the push notification to arrive and having 
-            // the app delete the request, we ensure that any such failures will cause the push notification to be retried.
-            try
-            {
-                await DeletePushNotificationRequestAsync(backendKey, protocol, cancellationToken);
-            }
-            catch (Exception ex)
-            {
-                // report the failure but do not return from the method. we can still hopefully execute the
-                // push notification request. the backend will eventually retry the push notification, which
-                // should be ignored by the app or filtered out by the backend prior to delivery.
-                SensusException.Report("Failed to delete push notification from backend:  " + ex.Message, ex);
-            }
-
-            // check if the targeted protocol is stopped but should be running. this can happen if the app dies while the 
-            // protocol is running (e.g., due to system killing it or an exception) and is subsequently restarted (e.g., 
-            // due to resource pressure alleviation or the arrival of a push notification). attempt to start the protocol.
-            if (protocol.State == ProtocolState.Stopped && SensusServiceHelper.Get().RunningProtocolIds.Contains(protocol.Id))
-            {
-                SensusServiceHelper.Get().Logger.Log("Push notification targets a protocol that is stopped but should be running. Starting protocol.", LoggingLevel.Normal, GetType());
-
-#if __IOS__
-                // starting the protocol can be time consuming and run afoul of ios push notification processing 
-                // constraints. start a background task and let the time consuming aspects of app startup 
-                // (e.g., scheduling callbacks for script runs) take care of monitoring the background time remaining.
-                nint protocolStartTaskId = -1;
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                List<PushNotificationUpdate> updates = null;
+                try
                 {
-                    SensusServiceHelper.Get().Logger.Log("Starting background task for protocol start on push notification.", LoggingLevel.Normal, GetType());
 
-                    protocolStartTaskId = UIKit.UIApplication.SharedApplication.BeginBackgroundTask(() =>
-                    {
-                        // can't think of anything to do if we run out of time. report the error.
-                        SensusException.Report("Ran out of background time when starting protocol for push notification.");
-                    });
-                });
-#endif
-
-                // all is lost if we cannot start the protocol. so don't pass the cancellation token to StartAsync.
-                await protocol.StartAsync(CancellationToken.None);
-
-#if __IOS__
-                // end the ios background task.
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-                {
-                    UIKit.UIApplication.SharedApplication.EndBackgroundTask(protocolStartTaskId);
-
-                    SensusServiceHelper.Get().Logger.Log("Ended background task for protocol start on push notification.", LoggingLevel.Normal, GetType());
-                });
-#endif
-            }
-
-            // if the protocol is not running and never will be, then we have nothing to do. we explicitly attempt to 
-            // prevent such notifications from coming through by unregistering from hubs that lack running/scheduled 
-            // protocols and clearing the token from the backend; however, there may be race conditions (e.g., stopping 
-            // the protocol just before the arrival of a push notification, or receiving an old push notification while
-            // the protocol is starting up) that allow a push notification to be delivered to us nonetheless. if the 
-            // protocol is not running but is scheduled to start in the future, then allow it as the push notification 
-            // could be the start command itself.
-            if (protocol.State != ProtocolState.Running && !protocol.StartIsScheduled)
-            {
-                SensusServiceHelper.Get().Logger.Log("Protocol targeted by push notification is not currently running and is not scheduled to run.", LoggingLevel.Normal, GetType());
-                return;
-            }
-
-#if __ANDROID__
-            // if there is user-targeted information, display the notification. this only applies to android because 
-            // push notifications are automatically displayed on iOS when the app is in the background. when the
-            // app is in the foreground it doesn't make sense to display the notification.
-            try
-            {
-                if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(body))
-                {
-                    await IssueNotificationAsync(title, body, id, !string.IsNullOrWhiteSpace(sound), protocol, null, DisplayPage.None);
                 }
-            }
-            catch (Exception ex)
-            {
-                SensusException.Report("Exception while notifying from push notification:  " + ex.Message, ex);
-            }
+                catch(Exception ex)
+                {
+
+                }
+
+                foreach (PushNotificationUpdate update in updates)
+                {
+                    if (update.Type == PushNotificationUpdateType.Callback)
+                    {
+                        JObject content = JObject.Parse(update.Content);
+
+                        string callbackId = content.Value<string>("callback-id");
+                        string invocationId = content.Value<string>("invocation-id");
+
+#if __IOS__
+                        // cancel any previously delivered local notifications for the callback. we do not need to cancel
+                        // any pending notifications, as they will either (a) be canceled if the callback is non-repeating
+                        // or (b) be replaced if the callback is repeating and gets rescheduled. furthermore, there is a 
+                        // race condition on app activation in which the callback is updated, run, and rescheduled, after
+                        // which the push notification is delivered and is processed. cancelling the newly rescheduled
+                        // pending local push notification at this point will terminate the local invocation loop, and the 
+                        // callback command at this point will contain an invalid invocation ID causing it to not be 
+                        // rescheduled). thus, both local and remote invocation will terminate and the probe will halt.
+                        UserNotifications.UNUserNotificationCenter.Current.RemoveDeliveredNotifications(new[] { callbackId });
 #endif
 
-            // process push notification command if there is one
-            string[] commandParts = command.Split(new char[] { '|' });
-
-            if (commandParts.Length > 0)
-            {
-                #region callback push notification
-                if (commandParts.First() == CallbackScheduler.SENSUS_CALLBACK_KEY)
-                {
-                    if (commandParts.Length != 4)
-                    {
-                        throw new Exception("Invalid push notification callback command format:  " + command);
+                        await SensusContext.Current.CallbackScheduler.ServiceCallbackFromPushNotificationAsync(callbackId, invocationId, cancellationToken);
                     }
-
-                    string callbackId = commandParts[2];
-                    string invocationId = commandParts[3];
-
-#if __IOS__
-                    // cancel any previously delivered local notifications for the callback. we do not need to cancel
-                    // any pending notifications, as they will either (a) be canceled if the callback is non-repeating
-                    // or (b) be replaced if the callback is repeating and gets rescheduled. furthermore, there is a 
-                    // race condition on app activation in which the callback is updated, run, and rescheduled, after
-                    // which the push notification is delivered and is processed. cancelling the newly rescheduled
-                    // pending local push notification at this point will terminate the local invocation loop, and the 
-                    // callback command at this point will contain an invalid invocation ID causing it to not be 
-                    // rescheduled). thus, both local and remote invocation will terminate and the probe will halt.
-                    UserNotifications.UNUserNotificationCenter.Current.RemoveDeliveredNotifications(new[] { callbackId });
-#endif
-
-                    await SensusContext.Current.CallbackScheduler.ServiceCallbackFromPushNotificationAsync(callbackId, invocationId, cancellationToken);
-                }
-                #endregion
-
-                #region update script agent policy
-                else if (commandParts.First() == PushNotificationRequest.COMMAND_UPDATE_SCRIPT_AGENT_POLICY)
-                {
-                    await protocol.UpdateScriptAgentPolicyAsync(cancellationToken);
-                }
-                #endregion
-
-                #region update protocol
-                else if (commandParts.First() == PushNotificationRequest.COMMAND_UPDATE_PROTOCOL)
-                {
-                    string updatesIdentifier = commandParts[1];
-
-                    SensusServiceHelper.Get().Logger.Log("Attempting to apply updates with identifier " + updatesIdentifier, LoggingLevel.Normal, GetType());
-
-                    // retrieve updates
-                    string protocolUpdatesJSON = null;
-                    try
+                    else if (update.Type == PushNotificationUpdateType.Protocol)
                     {
-                        protocolUpdatesJSON = await protocol.RemoteDataStore.GetProtocolUpdatesAsync(updatesIdentifier, cancellationToken);
 
-                        // the update might have been deleted from a previous call or by the backend itself
-                        if (string.IsNullOrWhiteSpace(protocolUpdatesJSON))
+                    }
+                    else if (update.Type == PushNotificationUpdateType.SurveyAgentPolicy)
+                    {
+                        await protocol.UpdateScriptAgentPolicyAsync(cancellationToken);
+                    }
+                }
+                // process push notification command if there is one
+                string[] commandParts = command.Split(new char[] { '|' });
+
+                if (commandParts.Length > 0)
+                {
+
+                    #region update script agent policy
+                    else if (commandParts.First() == PushNotificationRequest.COMMAND_UPDATE_SCRIPT_AGENT_POLICY)
+                    {
+
+                    }
+                    #endregion
+
+                    #region update protocol
+                    else if (commandParts.First() == PushNotificationRequest.COMMAND_UPDATE_PROTOCOL)
+                    {
+
+
+                        // apply updates
+                        JObject protocolUpdates = JObject.Parse(protocolUpdatesJSON);
+                        bool restartProtocol = false;
+                        List<Probe> updatedProbesToRestart = new List<Probe>();
+                        foreach (JObject protocolUpdate in protocolUpdates.Value<JArray>("updates"))
                         {
-                            throw new Exception("Empty updates JSON.");
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Exception while getting protocol updates:  " + ex.Message, LoggingLevel.Normal, GetType());
-                        return;
-                    }
-
-                    // apply updates
-                    JObject protocolUpdates = JObject.Parse(protocolUpdatesJSON);
-                    bool restartProtocol = false;
-                    List<Probe> updatedProbesToRestart = new List<Probe>();
-                    foreach (JObject protocolUpdate in protocolUpdates.Value<JArray>("updates"))
-                    {
-                        // catch any exceptions so that we process all updates
-                        try
-                        {
-                            string propertyTypeName = protocolUpdate.Value<string>("property-type");
-                            string propertyName = protocolUpdate.Value<string>("property-name");
-                            string targetTypeName = protocolUpdate.Value<string>("target-type");
-                            string newValueString = protocolUpdate.Value<string>("value");
-
-                            // get property type
-                            Type propertyType;
+                            // catch any exceptions so that we process all updates
                             try
                             {
-                                propertyType = Assembly.GetExecutingAssembly().GetType(propertyTypeName, true);
-                            }
-                            catch (Exception ex)
-                            {
-                                throw new Exception("Exception while getting property type (" + propertyTypeName + "):  " + ex.Message, ex);
-                            }
+                                string propertyTypeName = protocolUpdate.Value<string>("property-type");
+                                string propertyName = protocolUpdate.Value<string>("property-name");
+                                string targetTypeName = protocolUpdate.Value<string>("target-type");
+                                string newValueString = protocolUpdate.Value<string>("value");
 
-                            // get property
-                            PropertyInfo property = propertyType.GetProperty(propertyName);
-
-                            // get target type
-                            Type targetType;
-                            try
-                            {
-                                targetType = Assembly.GetExecutingAssembly().GetType(targetTypeName, true);
-                            }
-                            catch (Exception ex)
-                            {
-                                throw new Exception("Exception while getting target type (" + targetTypeName + "):  " + ex.Message, ex);
-                            }
-
-                            // if the value is JSON, then assume it is a reference type.
-                            object newValueObject = null;
-                            if (newValueString.IsValidJsonObject())
-                            {
-                                newValueObject = JsonConvert.DeserializeObject(newValueString);
-                            }
-                            // otherwise, assume it is a value type.
-                            else
-                            {
-                                // watch out for nullable value types when converting the string to its value type
-                                Type baseType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
-                                newValueObject = Convert.ChangeType(newValueString, baseType);
-                            }
-
-                            // update the protocol and request restart
-                            if (targetType == typeof(Protocol))
-                            {
-                                property.SetValue(protocol, newValueObject);
-
-                                // restart the protocol if it is starting, running, or paused (other than stopping or stopped)
-                                if (protocol.State == ProtocolState.Starting ||
-                                    protocol.State == ProtocolState.Running ||
-                                    protocol.State == ProtocolState.Paused)
+                                // get property type
+                                Type propertyType;
+                                try
                                 {
-                                    restartProtocol = true;
+                                    propertyType = Assembly.GetExecutingAssembly().GetType(propertyTypeName, true);
                                 }
-                            }
-                            else if (targetType.GetAncestorTypes(false).Last() == typeof(Probe))
-                            {
-                                // update each probe derived from the target type
-                                foreach (Probe probe in protocol.Probes)
+                                catch (Exception ex)
                                 {
-                                    if (probe.GetType().GetAncestorTypes(false).Any(ancestorType => ancestorType == targetType))
+                                    throw new Exception("Exception while getting property type (" + propertyTypeName + "):  " + ex.Message, ex);
+                                }
+
+                                // get property
+                                PropertyInfo property = propertyType.GetProperty(propertyName);
+
+                                // get target type
+                                Type targetType;
+                                try
+                                {
+                                    targetType = Assembly.GetExecutingAssembly().GetType(targetTypeName, true);
+                                }
+                                catch (Exception ex)
+                                {
+                                    throw new Exception("Exception while getting target type (" + targetTypeName + "):  " + ex.Message, ex);
+                                }
+
+                                // if the value is JSON, then assume it is a reference type.
+                                object newValueObject = null;
+                                if (newValueString.IsValidJsonObject())
+                                {
+                                    newValueObject = JsonConvert.DeserializeObject(newValueString);
+                                }
+                                // otherwise, assume it is a value type.
+                                else
+                                {
+                                    // watch out for nullable value types when converting the string to its value type
+                                    Type baseType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+                                    newValueObject = Convert.ChangeType(newValueString, baseType);
+                                }
+
+                                // update the protocol and request restart
+                                if (targetType == typeof(Protocol))
+                                {
+                                    property.SetValue(protocol, newValueObject);
+
+                                    // restart the protocol if it is starting, running, or paused (other than stopping or stopped)
+                                    if (protocol.State == ProtocolState.Starting ||
+                                        protocol.State == ProtocolState.Running ||
+                                        protocol.State == ProtocolState.Paused)
                                     {
-                                        // don't set the new value if it matches the current value
-                                        object currentValueObject = property.GetValue(probe);
-                                        if (newValueObject.Equals(currentValueObject))
+                                        restartProtocol = true;
+                                    }
+                                }
+                                else if (targetType.GetAncestorTypes(false).Last() == typeof(Probe))
+                                {
+                                    // update each probe derived from the target type
+                                    foreach (Probe probe in protocol.Probes)
+                                    {
+                                        if (probe.GetType().GetAncestorTypes(false).Any(ancestorType => ancestorType == targetType))
                                         {
-                                            SensusServiceHelper.Get().Logger.Log("Current and new values match. Not updating probe.", LoggingLevel.Normal, GetType());
-                                        }
-                                        else
-                                        {
-                                            property.SetValue(probe, newValueObject);
-
-                                            if (probe.Running || probe.Enabled)
+                                            // don't set the new value if it matches the current value
+                                            object currentValueObject = property.GetValue(probe);
+                                            if (newValueObject.Equals(currentValueObject))
                                             {
-                                                if (!updatedProbesToRestart.Contains(probe))
-                                                {
-                                                    updatedProbesToRestart.Add(probe);
-                                                }
+                                                SensusServiceHelper.Get().Logger.Log("Current and new values match. Not updating probe.", LoggingLevel.Normal, GetType());
                                             }
+                                            else
+                                            {
+                                                property.SetValue(probe, newValueObject);
 
-                                            // record the update as a datum in the data store, so that we can analyze results of updates retrospectively.
-                                            protocol.LocalDataStore.WriteDatum(new ProtocolUpdateDatum(DateTimeOffset.UtcNow, propertyTypeName, propertyName, targetTypeName, newValueString), cancellationToken);
+                                                if (probe.Running || probe.Enabled)
+                                                {
+                                                    if (!updatedProbesToRestart.Contains(probe))
+                                                    {
+                                                        updatedProbesToRestart.Add(probe);
+                                                    }
+                                                }
+
+                                                // record the update as a datum in the data store, so that we can analyze results of updates retrospectively.
+                                                protocol.LocalDataStore.WriteDatum(new ProtocolUpdateDatum(DateTimeOffset.UtcNow, propertyTypeName, propertyName, targetTypeName, newValueString), cancellationToken);
+                                            }
                                         }
                                     }
                                 }
-                            }
-                            else
-                            {
-                                throw new Exception("Unrecognized update target type:  " + targetType.FullName);
-                            }
+                                else
+                                {
+                                    throw new Exception("Unrecognized update target type:  " + targetType.FullName);
+                                }
 
-                            SensusServiceHelper.Get().Logger.Log("Updated protocol:  " + propertyTypeName + "." + propertyName + " for each " + targetTypeName + " = " + newValueString, LoggingLevel.Normal, GetType());
-                        }
-                        catch (Exception updateException)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Exception while processing protocol update:  " + updateException.Message, LoggingLevel.Normal, GetType());
-                        }
-                    }
-
-                    bool notifyUser = false;
-
-                    // restart the protocol if needed. this will have the side-effect of restarting all probes and saving the app state.
-                    if (restartProtocol)
-                    {
-                        await protocol.StopAsync();
-                        await protocol.StartAsync(cancellationToken);
-                        notifyUser = true;
-                    }
-                    else
-                    {
-                        // restart individual probes to take on updated settings
-                        SensusServiceHelper.Get().Logger.Log("Restarting " + updatedProbesToRestart.Count + " updated probe(s) following push notification updates.", LoggingLevel.Normal, GetType());
-                        bool probeRestarted = false;
-                        foreach (Probe probeToRestart in updatedProbesToRestart)
-                        {
-                            try
-                            {
-                                await probeToRestart.RestartAsync();
-                                probeRestarted = true;
+                                SensusServiceHelper.Get().Logger.Log("Updated protocol:  " + propertyTypeName + "." + propertyName + " for each " + targetTypeName + " = " + newValueString, LoggingLevel.Normal, GetType());
                             }
-                            catch (Exception ex)
+                            catch (Exception updateException)
                             {
-                                SensusServiceHelper.Get().Logger.Log("Exception while restarting probe following push notification update:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                SensusServiceHelper.Get().Logger.Log("Exception while processing protocol update:  " + updateException.Message, LoggingLevel.Normal, GetType());
                             }
                         }
 
-                        if (probeRestarted)
+                        bool notifyUser = false;
+
+                        // restart the protocol if needed. this will have the side-effect of restarting all probes and saving the app state.
+                        if (restartProtocol)
                         {
-                            await SensusServiceHelper.Get().SaveAsync();
+                            await protocol.StopAsync();
+                            await protocol.StartAsync(cancellationToken);
                             notifyUser = true;
                         }
-                    }
-
-                    // let the user know what happened if requested
-                    if (notifyUser)
-                    {
-                        JObject userNotification = protocolUpdates.Value<JObject>("user-notification");
-                        if (userNotification != null)
+                        else
                         {
-                            string message = userNotification.Value<string>("message");
-                            await IssueNotificationAsync("Study Updated", "Your study has been updated" + (string.IsNullOrWhiteSpace(message) ? "." : ":  " + message.Trim()), SensusServiceHelper.PROTOCOL_UPDATED_NOTIFICATION_ID, true, protocol, null, DisplayPage.None);
+                            // restart individual probes to take on updated settings
+                            SensusServiceHelper.Get().Logger.Log("Restarting " + updatedProbesToRestart.Count + " updated probe(s) following push notification updates.", LoggingLevel.Normal, GetType());
+                            bool probeRestarted = false;
+                            foreach (Probe probeToRestart in updatedProbesToRestart)
+                            {
+                                try
+                                {
+                                    await probeToRestart.RestartAsync();
+                                    probeRestarted = true;
+                                }
+                                catch (Exception ex)
+                                {
+                                    SensusServiceHelper.Get().Logger.Log("Exception while restarting probe following push notification update:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                }
+                            }
+
+                            if (probeRestarted)
+                            {
+                                await SensusServiceHelper.Get().SaveAsync();
+                                notifyUser = true;
+                            }
+                        }
+
+                        // let the user know what happened if requested
+                        if (notifyUser)
+                        {
+                            JObject userNotification = protocolUpdates.Value<JObject>("user-notification");
+                            if (userNotification != null)
+                            {
+                                string message = userNotification.Value<string>("message");
+                                await IssueNotificationAsync("Study Updated", "Your study has been updated" + (string.IsNullOrWhiteSpace(message) ? "." : ":  " + message.Trim()), SensusServiceHelper.PROTOCOL_UPDATED_NOTIFICATION_ID, true, protocol, null, DisplayPage.None);
+                            }
                         }
                     }
-                }
-                #endregion
+                    #endregion
 
-                #region unrecognized command
-                else
-                {
-                    throw new Exception("Unrecognized push notification command prefix:  " + commandParts.First());
+                    #region unrecognized command
+                    else
+                    {
+                        throw new Exception("Unrecognized push notification command prefix:  " + commandParts.First());
+                    }
+                    #endregion
                 }
-                #endregion
+            }
+            else
+            {
+                // every push notification should target a protocol
+                Protocol protocol = null;
+                try
+                {
+                    protocol = SensusServiceHelper.Get().RegisteredProtocols.Single(p => p.Id == protocolId);
+                }
+                catch (Exception ex)
+                {
+                    // it's possible for the user to delete the protocol but to continue receiving push notifications. ignore them and return.
+                    SensusServiceHelper.Get().Logger.Log("Failed to get protocol " + protocolId + " for push notification:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    return;
+                }
+
+                // delete the push notification request from the backend. it used to be that the backend deleted push notification 
+                // requests after they were delivered; however, this isn't a good idea because deliveries sometimes fail...maybe 
+                // the device has no internet connection, maybe the push service is down or fails, etc. in such cases, it used to 
+                // be that the push notification would never be retried. by waiting for the push notification to arrive and having 
+                // the app delete the request, we ensure that any such failures will cause the push notification to be retried.
+                try
+                {
+                    await DeletePushNotificationRequestAsync(backendKey, protocol, cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    // report the failure but do not return from the method. we can still hopefully execute the
+                    // push notification request. the backend will eventually retry the push notification, which
+                    // should be ignored by the app or filtered out by the backend prior to delivery.
+                    SensusException.Report("Failed to delete push notification from backend:  " + ex.Message, ex);
+                }
+
+                // check if the targeted protocol is stopped but should be running. this can happen if the app dies while the 
+                // protocol is running (e.g., due to system killing it or an exception) and is subsequently restarted (e.g., 
+                // due to resource pressure alleviation or the arrival of a push notification). attempt to start the protocol.
+                if (protocol.State == ProtocolState.Stopped && SensusServiceHelper.Get().RunningProtocolIds.Contains(protocol.Id))
+                {
+                    SensusServiceHelper.Get().Logger.Log("Push notification targets a protocol that is stopped but should be running. Starting protocol.", LoggingLevel.Normal, GetType());
+
+#if __IOS__
+                    // starting the protocol can be time consuming and run afoul of ios push notification processing 
+                    // constraints. start a background task and let the time consuming aspects of app startup 
+                    // (e.g., scheduling callbacks for script runs) take care of monitoring the background time remaining.
+                    nint protocolStartTaskId = -1;
+                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Starting background task for protocol start on push notification.", LoggingLevel.Normal, GetType());
+
+                        protocolStartTaskId = UIKit.UIApplication.SharedApplication.BeginBackgroundTask(() =>
+                        {
+                            // can't think of anything to do if we run out of time. report the error.
+                            SensusException.Report("Ran out of background time when starting protocol for push notification.");
+                        });
+                    });
+#endif
+
+                    // all is lost if we cannot start the protocol. so don't pass the cancellation token to StartAsync.
+                    await protocol.StartAsync(CancellationToken.None);
+
+#if __IOS__
+                    // end the ios background task.
+                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+                    {
+                        UIKit.UIApplication.SharedApplication.EndBackgroundTask(protocolStartTaskId);
+
+                        SensusServiceHelper.Get().Logger.Log("Ended background task for protocol start on push notification.", LoggingLevel.Normal, GetType());
+                    });
+#endif
+                }
+
+                // if the protocol is not running and never will be, then we have nothing to do. we explicitly attempt to 
+                // prevent such notifications from coming through by unregistering from hubs that lack running/scheduled 
+                // protocols and clearing the token from the backend; however, there may be race conditions (e.g., stopping 
+                // the protocol just before the arrival of a push notification, or receiving an old push notification while
+                // the protocol is starting up) that allow a push notification to be delivered to us nonetheless. if the 
+                // protocol is not running but is scheduled to start in the future, then allow it as the push notification 
+                // could be the start command itself.
+                if (protocol.State != ProtocolState.Running && !protocol.StartIsScheduled)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Protocol targeted by push notification is not currently running and is not scheduled to run.", LoggingLevel.Normal, GetType());
+                    return;
+                }
+
+#if __ANDROID__
+                // if there is user-targeted information, display the notification. this only applies to android because 
+                // push notifications are automatically displayed on iOS when the app is in the background. when the
+                // app is in the foreground it doesn't make sense to display the notification.
+                try
+                {
+                    if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(body))
+                    {
+                        await IssueNotificationAsync(title, body, id, !string.IsNullOrWhiteSpace(sound), protocol, null, DisplayPage.None);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SensusException.Report("Exception while notifying from push notification:  " + ex.Message, ex);
+                }
+#endif
             }
         }
 
