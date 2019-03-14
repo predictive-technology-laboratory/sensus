@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using Sensus;
+//using Sensus;
 using Sensus.Probes.User.Scripts;
 using Sensus.Probes.Location;
 using Sensus.Probes.Movement;
@@ -30,8 +30,13 @@ namespace Sensus
         public double alpha = 0.01;
         public double gamma = 0.2;
         public double lambda = 0.1;
-        public double initEpsilon = 0.1;
+        public double initEpsilon = 0.9;
         public double decayEpsilon = 0.999;
+        public double distThresh = 300;
+        public double timeThresh = 1800;
+        public int minPts = 1;
+        public double eps_cl = 300;
+
         public Dictionary<string, double> Rewards = new Dictionary<string, double>
         {
             { "Submitted", 1 },
@@ -48,7 +53,7 @@ namespace Sensus
         public int CurrentSurveyIndex = -1;
         public TimeSpan minIntervalBtwSurvey = TimeSpan.FromMinutes(10);
         public TimeSpan windowSize = TimeSpan.FromMinutes(30);
-        public TimeSpan surveyWindowSize = TimeSpan.FromHours(1);
+        public TimeSpan surveyWindowSize = TimeSpan.FromHours(2);
         public TimeSpan startTime = TimeSpan.FromHours(9);
         public TimeSpan endTime = TimeSpan.FromHours(21);
         public List<TimeSpan> surveyDecisionPoints = new List<TimeSpan>();
@@ -165,34 +170,42 @@ namespace Sensus
 
         public bool ChooseAction()
         {
-            //qValue
-            //public Dictionary<string, Dictionary<string, double>> qValue;
-            //public string[] actions = new string[] { "Delivered", "Deferred" };
-            double max_action_values = -100000;
-            int max_action_values_index = 0;
-            int counter = 0;
-            foreach(string a in actions)
-            {
-                Dictionary<string, double> coefs = qValue[a];
-                double ev = 0;
-                foreach(string k in coefs.Keys.ToArray())
-                {
-                    ev += state[k] * coefs[k];
-                }
-                if (max_action_values < ev)
-                {
-                    max_action_values = ev;
-                    max_action_values_index = counter;
-                }
-                counter++;
-            }
-
-            string chosen_action = actions[max_action_values_index];
-
+            //epsilon greedy
+            double randomNum = new Random().NextDouble();
             bool delivery = false;
-            if (chosen_action == "Deliveded")
+
+            if(randomNum <= parameters["epsilon"])
             {
                 delivery = true;
+            }
+            else
+            {
+                double max_action_values = -100000;
+                int max_action_values_index = 0;
+                int counter = 0;
+                foreach (string a in actions)
+                {
+                    Dictionary<string, double> coefs = qValue[a];
+                    double ev = 0;
+                    foreach (string k in coefs.Keys.ToArray())
+                    {
+                        ev += state[k] * coefs[k];
+                    }
+                    if (max_action_values < ev)
+                    {
+                        max_action_values = ev;
+                        max_action_values_index = counter;
+                    }
+                    counter++;
+                }
+
+                string chosen_action = actions[max_action_values_index];
+
+
+                if (chosen_action == "Delivered")
+                {
+                    delivery = true;
+                }
             }
 
             return (delivery);
@@ -297,11 +310,42 @@ namespace Sensus
             DateTimeOffset? deferralTime = null;
             bool delivery;
 
-            ////initiate the policy parameters
-            //if (parameters.Count == 0)
-            //{
+            //initiate the policy parameters
+            if (parameters.Count == 0)
+            {
+                parameters["alpha"] = alpha;
+                parameters["gamma"] = gamma;
+                parameters["lambda"] = lambda;
+                parameters["initEpsilon"] = initEpsilon;
+                parameters["decayEpsilon"] = decayEpsilon;
+                parameters["distThresh"] = distThresh;
+                parameters["timeThresh"] = timeThresh;
+                parameters["minPts"] = minPts;
+                parameters["eps_cl"] = eps_cl;
+                parameters["epsilon"] = initEpsilon;
+            }
 
-            //}
+            //initiate qValue
+            if (qValue.Count == 0)
+            {
+                foreach (string a in actions)
+                {
+                    Dictionary<string, double> q = new Dictionary<string,double>();
+                    foreach(string f in stateFeatures)
+                    {
+                        if(f.Contains("dis_"))
+                        {
+                            q.Add(f+"_unknown", 0);
+                        }
+                        else
+                        {
+                            q.Add(f, 0);
+                        }
+
+                    }
+                    qValue.Add(a, q);
+                }
+            }
 
             if (surveyDecisionPoints.Count == 0)
             {
@@ -450,11 +494,11 @@ namespace Sensus
         /// <param name="state">State.</param>
         public Task ObserveAsync(IScript script, ScriptState state)
         {
-            if(script.Id == SurveyId)
-            {
+            //if(script.Id == SurveyId)
+            //{
 
 
-            }
+            //}
 
 
             return Task.CompletedTask;

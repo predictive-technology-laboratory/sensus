@@ -12,12 +12,49 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 using System;
+using System.Threading.Tasks;
+
 namespace Sensus.Probes.User.Scripts
 {
-    public class SimpleScriptProbeAgent
+    public class SimpleScriptProbeAgent : IScriptProbeAgent
     {
         public SimpleScriptProbeAgent()
         {
+        }
+
+        public string Description => throw new NotImplementedException();
+
+        public string Id => throw new NotImplementedException();
+
+        public TimeSpan? DeliveryInterval => throw new NotImplementedException();
+
+        public TimeSpan? DeliveryIntervalToleranceBefore => throw new NotImplementedException();
+
+        public TimeSpan? DeliveryIntervalToleranceAfter => throw new NotImplementedException();
+
+        public Task<Tuple<bool, DateTimeOffset?>> DeliverSurveyNowAsync(IScript script)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task InitializeAsync(ISensusServiceHelper sensusServiceHelper, IProtocol protocol)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task ObserveAsync(IDatum datum)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task ObserveAsync(IScript script, ScriptState state)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SetPolicyAsync(string policyJSON)
+        {
+            throw new NotImplementedException();
         }
     }
 }

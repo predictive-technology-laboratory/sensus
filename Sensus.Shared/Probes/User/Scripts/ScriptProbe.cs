@@ -228,7 +228,7 @@ namespace Sensus.Probes.User.Scripts
         {
             _scriptRunners = new ObservableCollection<ScriptRunner>();
 
-            _agent = new S1ScriptProbeAgent();
+            _agent = new SimpleScriptProbeAgent();// new S1ScriptProbeAgent();
 
         }
 
