@@ -34,6 +34,7 @@ using Sensus.Encryption;
 using System.Threading;
 using System.Threading.Tasks;
 using Sensus.iOS.Notifications;
+using Sensus.Notifications;
 
 namespace Sensus.iOS
 {
@@ -272,51 +273,25 @@ namespace Sensus.iOS
                     SensusServiceHelper.Get().Logger.Log("Cancelled token for remote notification processing due to iOS background time limit:  " + processingTimeLimit, LoggingLevel.Normal, GetType());
                 });
 
-                string protocolId;
-                string id;
-                Guid backendKey;
-                string sound;
-                string body;
-                string title;
+                NSDictionary aps = userInfo[new NSString("aps")] as NSDictionary;
+                NSDictionary alert = aps[new NSString("alert")] as NSDictionary;
 
-                // extract push notification information
-                try
+                PushNotification pushNotification = new PushNotification
                 {
-                    protocolId = (userInfo[new NSString("protocol")] as NSString).ToString();
-                    id = (userInfo[new NSString("id")] as NSString).ToString();
-                    command = (userInfo[new NSString("command")] as NSString).ToString();
-                    backendKey = new Guid((userInfo[new NSString("backend-key")] as NSString).ToString());
-                }
-                catch (Exception ex)
+                    Id = (userInfo[new NSString("id")] as NSString).ToString(),
+                    ProtocolId = (userInfo[new NSString("protocol")] as NSString).ToString(),
+                    Update = (userInfo[new NSString("update")] as NSNumber).BoolValue,
+                    Title = (alert[new NSString("title")] as NSString).ToString(),
+                    Body = (alert[new NSString("body")] as NSString).ToString(),
+                    Sound = (aps[new NSString("sound")] as NSString).ToString()
+                };
+
+                if (userInfo.TryGetValue(new NSString("backend-key"), out NSObject backendKey))
                 {
-                    throw new Exception("Exception while extracting push notification information:  " + ex.Message);
+                    pushNotification.BackendKey = new Guid((backendKey as NSString).ToString());
                 }
 
-                try
-                {
-                    NSDictionary aps = userInfo[new NSString("aps")] as NSDictionary;
-                    sound = (aps[new NSString("sound")] as NSString).ToString();
-                    NSDictionary alert = aps[new NSString("alert")] as NSDictionary;
-                    body = (alert[new NSString("body")] as NSString).ToString();
-                    title = (alert[new NSString("title")] as NSString).ToString();
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception("Exception while extracting notification from APS object:  " + ex.Message);
-                }
-
-                if (SensusContext.Current == null)
-                {
-                    throw new NullReferenceException("Null context");
-                }
-
-                if (SensusContext.Current.Notifier == null)
-                {
-                    throw new NullReferenceException("Null notifier");
-                }
-
-                // wait for the push notification to be processed
-                await SensusContext.Current.Notifier.ProcessReceivedPushNotificationAsync(protocolId, id, title, body, sound, command, backendKey, cancellationTokenSource.Token);
+                await SensusContext.Current.Notifier.ProcessReceivedPushNotificationAsync(pushNotification, cancellationTokenSource.Token);
             }
             catch (Exception processingException)
             {

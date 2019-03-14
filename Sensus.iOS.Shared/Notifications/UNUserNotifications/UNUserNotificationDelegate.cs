@@ -16,6 +16,7 @@ using System;
 using Foundation;
 using Sensus.Context;
 using Sensus.iOS.Callbacks;
+using Sensus.Notifications;
 using UserNotifications;
 
 namespace Sensus.iOS.Notifications.UNUserNotifications
@@ -34,13 +35,6 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
 
             SensusServiceHelper.Get().Logger.Log("Notification delivered:  " + (identifier ?? "[null identifier]"), LoggingLevel.Normal, GetType());
 
-            // long story:  app is backgrounded, and multiple non-silent sensus notifications appear in the iOS tray. the user taps one of these, which
-            // dismisses the tapped notification and brings up sensus. upon activation sensus then updates and reissues all notifications. these reissued
-            // notifications will come directly to the app as long as it's in the foreground. the original notifications that were in the iOS notification
-            // tray will still be there, despite the fact that the notifications have been sent to the app via the current method. short story:  we need to 
-            // cancel each notification as it comes in to remove it from the notification center.
-            SensusContext.Current.Notifier.CancelNotification(identifier);
-
             // if the notification is for a callback, service the callback and do not show the notification.
             NSDictionary notificationInfo = notification?.Request?.Content?.UserInfo;
             iOSCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as iOSCallbackScheduler;
@@ -49,21 +43,21 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
                 await callbackScheduler.ServiceCallbackAsync(notificationInfo);
                 completionHandler?.Invoke(UNNotificationPresentationOptions.None);
             }
-            else if (identifier == SensusServiceHelper.PENDING_SURVEY_TEXT_NOTIFICATION_ID)
+            else if (identifier == Notifier.PENDING_SURVEY_TEXT_NOTIFICATION_ID)
             {
                 completionHandler?.Invoke(UNNotificationPresentationOptions.Alert | UNNotificationPresentationOptions.Badge | UNNotificationPresentationOptions.Sound);
             }
-            else if (identifier == SensusServiceHelper.PENDING_SURVEY_BADGE_NOTIFICATION_ID)
+            else if (identifier == Notifier.PENDING_SURVEY_BADGE_NOTIFICATION_ID)
             {
                 completionHandler?.Invoke(UNNotificationPresentationOptions.Badge);
             }
-            else if (identifier == SensusServiceHelper.PROTOCOL_UPDATED_NOTIFICATION_ID)
+            else if (identifier == Notifier.PROTOCOL_UPDATED_NOTIFICATION_ID)
             {
                 completionHandler?.Invoke(UNNotificationPresentationOptions.Alert | UNNotificationPresentationOptions.Sound);
             }
             else
             {
-                completionHandler?.Invoke(UNNotificationPresentationOptions.None);
+                completionHandler?.Invoke(UNNotificationPresentationOptions.Alert | UNNotificationPresentationOptions.Badge | UNNotificationPresentationOptions.Sound);
             }
         }
 

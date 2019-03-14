@@ -13,6 +13,8 @@
 // limitations under the License.
 
 using System;
+using System.Linq;
+using System.Threading;
 
 namespace Sensus.Notifications
 {
@@ -37,7 +39,7 @@ namespace Sensus.Notifications
         /// Gets or sets whether Sensus should check for updates.
         /// </summary>
         /// <value>The update.</value>
-        public bool? Update { get; set; }
+        public bool Update { get; set; }
 
         /// <summary>
         /// Gets or sets the backend key for the push notification request.
@@ -62,5 +64,21 @@ namespace Sensus.Notifications
         /// </summary>
         /// <value>The sound.</value>
         public string Sound { get; set; }
+
+        public Protocol GetProtocol()
+        {
+            Protocol protocol = null;
+
+            try
+            {
+                protocol = SensusServiceHelper.Get().RegisteredProtocols.Single(p => p.Id == ProtocolId);
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Failed to get protocol " + ProtocolId + " for push notification:  " + ex.Message, LoggingLevel.Normal, GetType());
+            }
+
+            return protocol;
+        }
     }
 }

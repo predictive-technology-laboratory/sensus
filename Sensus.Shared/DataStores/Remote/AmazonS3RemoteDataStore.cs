@@ -30,6 +30,7 @@ using Sensus.Extensions;
 using Sensus.Notifications;
 using Sensus.Authentication;
 using Newtonsoft.Json.Linq;
+using System.Linq;
 
 namespace Sensus.DataStores.Remote
 {
@@ -116,6 +117,11 @@ namespace Sensus.DataStores.Remote
         /// </summary>
         public const string PUSH_NOTIFICATIONS_UPDATES_DIRECTORY = PUSH_NOTIFICATIONS_DIRECTORY + "/updates";
 
+        /// <summary>
+        /// The adaptive EMA policies directory.
+        /// </summary>
+        public const string ADAPTIVE_EMA_POLICIES_DIRECTORY = "adaptive-ema-policies";
+
         private string _region;
         private string _bucket;
         private string _folder;
@@ -126,10 +132,6 @@ namespace Sensus.DataStores.Remote
         private string _pinnedPublicKey;
         private int _putCount;
         private int _successfulPutCount;
-        private int _deleteCount;
-        private int _successfulDeleteCount;
-        private int _listCount;
-        private int _successfulListCount;
         private bool _downloadingUpdates;
         private readonly object _downloadingUpdatesLocker = new object();
 
@@ -317,8 +319,6 @@ namespace Sensus.DataStores.Remote
             _pinnedServiceURL = null;
             _pinnedPublicKey = null;
             _putCount = _successfulPutCount = 0;
-            _deleteCount = _successfulDeleteCount = 0;
-            _listCount = _successfulListCount = 0;
         }
 
         public override async Task StartAsync()
@@ -534,12 +534,10 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        private async Task<List<string>> ListKeysAsync(AmazonS3Client s3, string prefix)
+        private async Task<List<string>> ListKeysAsync(AmazonS3Client s3, string prefix, bool mostRecentlyModifiedFirst)
         {
             try
             {
-                ++_listCount;
-
                 List<string> keys = new List<string>();
 
                 ListObjectsV2Request listRequest = new ListObjectsV2Request
@@ -555,16 +553,19 @@ namespace Sensus.DataStores.Remote
                 {
                     listResponse = await s3.ListObjectsV2Async(listRequest);
 
-                    if (listResponse.HttpStatusCode == HttpStatusCode.OK)
-                    {
-                        _successfulListCount++;
-                    }
-                    else
+                    if (listResponse.HttpStatusCode != HttpStatusCode.OK)
                     {
                         throw new Exception(listResponse.HttpStatusCode.ToString());
                     }
 
-                    foreach (S3Object s3Object in listResponse.S3Objects)
+                    List<S3Object> s3Objects = listResponse.S3Objects;
+
+                    if (mostRecentlyModifiedFirst)
+                    {
+                        s3Objects.Sort((a, b) => b.LastModified.CompareTo(a.LastModified));
+                    }
+
+                    foreach (S3Object s3Object in s3Objects)
                     {
                         keys.Add(s3Object.Key);
                     }
@@ -587,21 +588,9 @@ namespace Sensus.DataStores.Remote
         {
             try
             {
-                _deleteCount++;
+                HttpStatusCode deleteStatus = (await s3.DeleteObjectAsync(_bucket, key, cancellationToken)).HttpStatusCode;
 
-                DeleteObjectRequest deleteRequest = new DeleteObjectRequest
-                {
-                    BucketName = _bucket,
-                    Key = key
-                };
-
-                HttpStatusCode deleteStatus = (await s3.DeleteObjectAsync(deleteRequest, cancellationToken)).HttpStatusCode;
-
-                if (deleteStatus == HttpStatusCode.OK)
-                {
-                    _successfulDeleteCount++;
-                }
-                else
+                if (deleteStatus != HttpStatusCode.OK)
                 {
                     throw new Exception(deleteStatus.ToString());
                 }
@@ -652,14 +641,14 @@ namespace Sensus.DataStores.Remote
 
         public override async Task<List<PushNotificationUpdate>> GetUpdatesAsync(CancellationToken cancellationToken)
         {
-            List<PushNotificationUpdate> updates = new List<PushNotificationUpdate>();
+            Dictionary<Guid, PushNotificationUpdate> idUpdate = new Dictionary<Guid, PushNotificationUpdate>();
 
             // only let one caller at a time download the updates
             lock (_downloadingUpdatesLocker)
             {
                 if (_downloadingUpdates)
                 {
-                    return updates;
+                    return idUpdate.Values.ToList();
                 }
                 {
                     _downloadingUpdates = true;
@@ -672,8 +661,8 @@ namespace Sensus.DataStores.Remote
             {
                 s3 = await CreateS3ClientAsync();
 
-                // list, download, and delete updates
-                foreach (string updateKey in await ListKeysAsync(s3, PUSH_NOTIFICATIONS_UPDATES_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId))
+
+                foreach (string updateKey in await ListKeysAsync(s3, PUSH_NOTIFICATIONS_UPDATES_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId, true))
                 {
                     try
                     {
@@ -681,7 +670,7 @@ namespace Sensus.DataStores.Remote
 
                         if (getResponse.HttpStatusCode == HttpStatusCode.OK)
                         {
-                            await s3.DeleteObjectAsync(_bucket, updateKey, cancellationToken);
+                            await DeleteAsync(s3, updateKey, cancellationToken);
 
                             string updatesJSON;
                             using (StreamReader reader = new StreamReader(getResponse.ResponseStream))
@@ -689,9 +678,10 @@ namespace Sensus.DataStores.Remote
                                 updatesJSON = reader.ReadToEnd().Trim();
                             }
 
-                            foreach (JObject update in JArray.Parse(updatesJSON))
+                            foreach (JObject updateObject in JArray.Parse(updatesJSON))
                             {
-                                updates.Add(update.ToObject<PushNotificationUpdate>());
+                                PushNotificationUpdate update = updateObject.ToObject<PushNotificationUpdate>();
+                                idUpdate.TryAdd(update.Id, update);
                             }
                         }
                         else
@@ -705,7 +695,7 @@ namespace Sensus.DataStores.Remote
                     }
                 }
 
-                return updates;
+                return idUpdate.Values.ToList();
             }
             finally
             {
@@ -718,7 +708,24 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        private async Task DeleteUpdateAsync(string key, CancellationToken cancellationToken)
+        /// <summary>
+        /// Gets the policy for the <see cref="Probes.User.Scripts.IScriptProbeAgent"/> from the current <see cref="AmazonS3RemoteDataStore"/>. 
+        /// This method will download the policy JSON file from the following location:
+        ///  
+        /// ```
+        /// BUCKET/DIRECTORY/DEVICE
+        /// ```
+        /// 
+        /// where `BUCKET` is <see cref="Bucket"/>, `DIRECTORY` is the value of <see cref="ADAPTIVE_EMA_POLICIES_DIRECTORY"/>, and
+        /// `DEVICE` is the identifier of the current device as returned by <see cref="SensusServiceHelper.DeviceId"/>. This is the same device 
+        /// identifier used within all <see cref="Datum"/> objects generated by the current device. This is also the same device identifier 
+        /// stored in all JSON objects written to the <see cref="AmazonS3RemoteDataStore"/>. To provide a policy JSON file, write the policy 
+        /// JSON content to the above S3 location. The content of this S3 location will be read and delivered to the 
+        /// <see cref="Probes.User.Scripts.IScriptProbeAgent"/> via <see cref="Probes.User.Scripts.IScriptProbeAgent.SetPolicyAsync(string)"/>.
+        /// </summary>
+        /// <returns>The script agent policy.</returns>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public override async Task<string> GetScriptAgentPolicyAsync(CancellationToken cancellationToken)
         {
             AmazonS3Client s3 = null;
 
@@ -726,7 +733,15 @@ namespace Sensus.DataStores.Remote
             {
                 s3 = await CreateS3ClientAsync();
 
-                throw new NotImplementedException("delete")
+                Stream responseStream = (await s3.GetObjectAsync(_bucket, ADAPTIVE_EMA_POLICIES_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId, cancellationToken)).ResponseStream;
+
+                string policyJSON;
+                using (StreamReader reader = new StreamReader(responseStream))
+                {
+                    policyJSON = reader.ReadToEnd().Trim();
+                }
+
+                return policyJSON;
             }
             finally
             {
@@ -773,9 +788,7 @@ namespace Sensus.DataStores.Remote
             string eventName = TrackedEvent.Health + ":" + GetType().Name;
             Dictionary<string, string> properties = new Dictionary<string, string>
             {
-                { "Put Success", Convert.ToString(_successfulPutCount.RoundToWholePercentageOf(_putCount, 5)) },
-                { "Delete Success", Convert.ToString(_successfulDeleteCount.RoundToWholePercentageOf(_deleteCount, 5)) },
-                { "List Success", Convert.ToString(_successfulListCount.RoundToWholePercentageOf(_listCount, 5)) }
+                { "Put Success", Convert.ToString(_successfulPutCount.RoundToWholePercentageOf(_putCount, 5)) }
             };
 
             Analytics.TrackEvent(eventName, properties);

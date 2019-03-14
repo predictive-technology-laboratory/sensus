@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -19,6 +20,14 @@ namespace Sensus.Notifications
 {
     public class PushNotificationUpdate
     {
+        /// <summary>
+        /// Gets or sets the identifier. If multiple <see cref="PushNotificationUpdate"/>s have the same <see cref="Id"/>, then
+        /// the one created most recently will be applied.
+        /// </summary>
+        /// <value>The identifier.</value>
+        [JsonProperty(PropertyName = "id")]
+        public Guid Id { get; set; }
+
         /// <summary>
         /// Update type.
         /// </summary>
@@ -51,6 +60,7 @@ namespace Sensus.Notifications
             get
             {
                 return "{" +
+                           "\"id\":" + JsonConvert.ToString(Id) + "," +
                            "\"type\":" + JsonConvert.ToString(Type) + "," +
                            "\"protocol\":" + JsonConvert.ToString(ProtocolId) + "," +
                            "\"content\":" + JsonConvert.ToString(Content) +
