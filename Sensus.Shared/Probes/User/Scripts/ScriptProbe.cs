@@ -26,6 +26,7 @@ using System.Reflection;
 using Sensus.Callbacks;
 using Sensus.Exceptions;
 using Sensus.Context;
+using Newtonsoft.Json.Linq;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -113,9 +114,9 @@ namespace Sensus.Probes.User.Scripts
 #endif
 
                         // set the agent's policy if we previously received one (e.g., via push notification)
-                        if (!string.IsNullOrWhiteSpace(AgentPolicyJSON))
+                        if (AgentPolicy != null)
                         {
-                            _agent.SetPolicyAsync(AgentPolicyJSON).Wait();
+                            _agent.SetPolicyAsync(AgentPolicy).Wait();
                         }
                     }
                     catch (Exception ex)
@@ -140,10 +141,10 @@ namespace Sensus.Probes.User.Scripts
         public string AgentId { get; set; }
 
         /// <summary>
-        /// Gets or sets the agent policy JSON.
+        /// Gets or sets the agent policy.
         /// </summary>
         /// <value>The agent policy JSON.</value>
-        public string AgentPolicyJSON { get; set; }
+        public JObject AgentPolicy { get; set; }
 
         public ObservableCollection<ScriptRunner> ScriptRunners
         {

@@ -101,7 +101,7 @@ namespace Sensus.Notifications
                 return "{" +
                            "\"id\":" + JsonConvert.ToString(_id) + "," +
                            "\"device\":" + JsonConvert.ToString(_deviceId) + "," +
-                           (_protocol == null ? "" : "\"protocol\":" + JsonConvert.ToString(_protocol.Id) + ",") +
+                           "\"protocol\":" + JsonConvert.ToString(_protocol.Id) + "," +
                            (_title == null ? "" : "\"title\":" + JsonConvert.ToString(_title) + ",") +
                            (_body == null ? "" : "\"body\":" + JsonConvert.ToString(_body) + ",") +
                            (_sound == null ? "" : "\"sound\":" + JsonConvert.ToString(_sound) + ",") +
@@ -119,7 +119,6 @@ namespace Sensus.Notifications
                                        string title,
                                        string body,
                                        string sound,
-                                       PushNotificationUpdate update,
                                        PushNotificationRequestFormat format,
                                        DateTimeOffset notificationTime,
                                        Guid backendKey)
@@ -130,11 +129,22 @@ namespace Sensus.Notifications
             _title = title;
             _body = body;
             _sound = sound;
-            _update = update;
             _format = format;
             _notificationTime = notificationTime;
             _backendKey = backendKey;
             _creationTime = DateTimeOffset.UtcNow;
+        }
+
+        public PushNotificationRequest(string id,
+                                       string deviceId,
+                                       Protocol protocol,
+                                       PushNotificationUpdate update,
+                                       PushNotificationRequestFormat format,
+                                       DateTimeOffset notificationTime,
+                                       Guid backendKey)
+            : this(id, deviceId, protocol, null, null, null, format, notificationTime, backendKey)
+        {
+            _update = update;
         }
     }
 }

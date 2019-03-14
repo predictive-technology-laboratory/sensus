@@ -60,6 +60,7 @@ using Sensus.iOS.Probes.User.Health;
 #if __ANDROID__
 using Sensus.Android;
 using Microsoft.AppCenter.Analytics;
+using Newtonsoft.Json.Linq;
 #endif
 
 namespace Sensus
@@ -2620,12 +2621,12 @@ namespace Sensus
 
         public async Task UpdateScriptAgentPolicyAsync(CancellationToken cancellationToken)
         {
-            string policyJSON = await RemoteDataStore.GetScriptAgentPolicyAsync(cancellationToken);
+            JObject policy = await RemoteDataStore.GetScriptAgentPolicyAsync(cancellationToken);
 
-            await UpdateScriptAgentPolicyAsync(policyJSON);
+            await UpdateScriptAgentPolicyAsync(policy);
         }
 
-        public async Task UpdateScriptAgentPolicyAsync(string policyJSON)
+        public async Task UpdateScriptAgentPolicyAsync(JObject policy)
         {
             if (TryGetProbe(typeof(ScriptProbe), out Probe probe))
             {
@@ -2633,10 +2634,10 @@ namespace Sensus
 
                 if (scriptProbe?.Agent != null)
                 {
-                    await scriptProbe.Agent.SetPolicyAsync(policyJSON);
+                    await scriptProbe.Agent.SetPolicyAsync(policy);
 
                     // save policy within app state (agent itself is not serialized)
-                    scriptProbe.AgentPolicyJSON = policyJSON;
+                    scriptProbe.AgentPolicy = policy;
                     await SensusServiceHelper.Get().SaveAsync();
                 }
             }

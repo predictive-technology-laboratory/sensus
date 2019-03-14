@@ -51,10 +51,6 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
             {
                 completionHandler?.Invoke(UNNotificationPresentationOptions.Badge);
             }
-            else if (identifier == Notifier.PROTOCOL_UPDATED_NOTIFICATION_ID)
-            {
-                completionHandler?.Invoke(UNNotificationPresentationOptions.Alert | UNNotificationPresentationOptions.Sound);
-            }
             else
             {
                 completionHandler?.Invoke(UNNotificationPresentationOptions.Alert | UNNotificationPresentationOptions.Badge | UNNotificationPresentationOptions.Sound);

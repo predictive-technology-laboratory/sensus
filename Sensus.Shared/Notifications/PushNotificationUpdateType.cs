@@ -25,7 +25,7 @@ namespace Sensus.Notifications
         SurveyAgentPolicy,
 
         /// <summary>
-        /// The <see cref="PushNotificationUpdate.Content"/> contains new settings for the <see cref="Protocol"/>. These new settings have the following fields:
+        /// The <see cref="PushNotificationUpdate.Content"/> value contains new settings for the <see cref="Protocol"/>. These new settings have the following fields:
         /// 
         /// <ul>
         ///   <ul>

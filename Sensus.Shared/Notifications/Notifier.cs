@@ -37,7 +37,6 @@ namespace Sensus.Notifications
     {
         public const string PENDING_SURVEY_TEXT_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-TEXT-NOTIFICATION";
         public const string PENDING_SURVEY_BADGE_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-BADGE-NOTIFICATION";
-        public const string PROTOCOL_UPDATED_NOTIFICATION_ID = "SENSUS-PROTOCOL-UPDATED-NOTIFICATION";
         public const string DISPLAY_PAGE_KEY = "SENSUS-DISPLAY-PAGE";
 
         private List<PushNotificationRequest> _pushNotificationRequestsToSend;
@@ -258,15 +257,15 @@ namespace Sensus.Notifications
                         {
                             bool restartProtocol = false;
                             List<Probe> updatedProbesToRestart = new List<Probe>();
-                            foreach (JObject protocolUpdate in update.Content.Value<JArray>("updates"))
+                            foreach (JObject updateObject in update.Content.Value<JArray>("updates"))
                             {
                                 // catch any exceptions so that we process all updates
                                 try
                                 {
-                                    string propertyTypeName = protocolUpdate.Value<string>("property-type");
-                                    string propertyName = protocolUpdate.Value<string>("property-name");
-                                    string targetTypeName = protocolUpdate.Value<string>("target-type");
-                                    string newValueString = protocolUpdate.Value<string>("value");
+                                    string propertyTypeName = updateObject.Value<string>("property-type");
+                                    string propertyName = updateObject.Value<string>("property-name");
+                                    string targetTypeName = updateObject.Value<string>("target-type");
+                                    string newValueString = updateObject.Value<string>("value");
 
                                     // get property type
                                     Type propertyType;
@@ -401,17 +400,18 @@ namespace Sensus.Notifications
                             // let the user know what happened if requested
                             if (notifyUser)
                             {
-                                JObject userNotification = update.Content.Value<JObject>("user-notification");
-                                if (userNotification != null)
+                                JObject userNotificationObject = update.Content.Value<JObject>("user-notification");
+
+                                if (userNotificationObject != null)
                                 {
-                                    string message = userNotification.Value<string>("message");
-                                    await IssueNotificationAsync("Study Updated", "Your study has been updated" + (string.IsNullOrWhiteSpace(message) ? "." : ":  " + message.Trim()), PROTOCOL_UPDATED_NOTIFICATION_ID, true, protocol, null, DisplayPage.None);
+                                    string message = userNotificationObject.Value<string>("message");
+                                    await IssueNotificationAsync("Study Updated", "Your study has been updated" + (string.IsNullOrWhiteSpace(message) ? "." : ":  " + message.Trim()), update.Id.ToString(), true, protocol, null, DisplayPage.None);
                                 }
                             }
                         }
                         else if (update.Type == PushNotificationUpdateType.SurveyAgentPolicy)
                         {
-                            await protocol.UpdateScriptAgentPolicyAsync(update.Content.ToString());
+                            await protocol.UpdateScriptAgentPolicyAsync(update.Content);
                         }
                     }
                     catch (Exception ex)

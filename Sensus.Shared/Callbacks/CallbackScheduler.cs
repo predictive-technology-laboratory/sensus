@@ -21,10 +21,7 @@ using Microsoft.AppCenter.Analytics;
 using Sensus.Context;
 using Sensus.Exceptions;
 using Sensus.Extensions;
-using Sensus.Notifications;
 using System.Linq;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Sensus.Callbacks
 {

@@ -14,12 +14,11 @@
 
 using System;
 using System.Linq;
-using System.Threading;
 
 namespace Sensus.Notifications
 {
     /// <summary>
-    /// A received push notification.
+    /// A push notification.
     /// </summary>
     public class PushNotification
     {
