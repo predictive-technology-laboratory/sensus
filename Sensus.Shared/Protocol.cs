@@ -2620,14 +2620,19 @@ namespace Sensus
 
         public async Task UpdateScriptAgentPolicyAsync(CancellationToken cancellationToken)
         {
+            string policyJSON = await RemoteDataStore.GetScriptAgentPolicyAsync(cancellationToken);
+
+            await UpdateScriptAgentPolicyAsync(policyJSON);
+        }
+
+        public async Task UpdateScriptAgentPolicyAsync(string policyJSON)
+        {
             if (TryGetProbe(typeof(ScriptProbe), out Probe probe))
             {
                 ScriptProbe scriptProbe = probe as ScriptProbe;
 
                 if (scriptProbe?.Agent != null)
                 {
-                    // retrieve and set the policy
-                    string policyJSON = await RemoteDataStore.GetScriptAgentPolicyAsync(cancellationToken);
                     await scriptProbe.Agent.SetPolicyAsync(policyJSON);
 
                     // save policy within app state (agent itself is not serialized)

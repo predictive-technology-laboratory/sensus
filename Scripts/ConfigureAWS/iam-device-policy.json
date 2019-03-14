@@ -21,7 +21,7 @@
 	{
             "Effect": "Allow",
             "Action": "s3:DeleteObject",
-            "Resource": "arn:aws:s3:::bucketName/push-notifications/*
+            "Resource": "arn:aws:s3:::bucketName/push-notifications/*"
         }
     ]
 }

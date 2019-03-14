@@ -301,6 +301,16 @@ do
 	    echo -e "[\n" > $new_updates_path
 	fi
 
+	# add the id to the update object
+	update_type=$(echo $update | jq ".type")
+	update_content=$(echo $update | jq ".content")
+	update=\
+"{"\
+"\"id\":$id,"\
+"\"type\":$update_type,"\
+"\"content\":$update_content"\
+"}"
+
 	echo "  $update" >> $new_updates_path
 
 	# delete the request, as we're going to upload the updates file to s3

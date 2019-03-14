@@ -24,6 +24,7 @@ using Sensus.Extensions;
 using Sensus.Notifications;
 using System.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Sensus.Callbacks
 {
@@ -339,11 +340,10 @@ namespace Sensus.Callbacks
                     PushNotificationUpdate update = new PushNotificationUpdate
                     {
                         Type = PushNotificationUpdateType.Callback,
-                        ProtocolId = callback.Protocol.Id,
-                        Content = JsonConvert.ToString("{" +
-                                                           "\"callback-id\":" + JsonConvert.ToString(callback.Id) + "," +
-                                                           "\"invocation-id\":" + JsonConvert.ToString(callback.InvocationId) +
-                                                       "}")
+                        Content = JObject.Parse("{" +
+                                                    "\"callback-id\":" + JsonConvert.ToString(callback.Id) + "," +
+                                                    "\"invocation-id\":" + JsonConvert.ToString(callback.InvocationId) +
+                                                "}")
                     };
 
                     PushNotificationRequest request = new PushNotificationRequest(id, SensusServiceHelper.Get().DeviceId, callback.Protocol, "", "", "", update, PushNotificationRequest.LocalFormat, callback.NextExecution.Value, callback.PushNotificationBackendKey);

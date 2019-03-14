@@ -235,12 +235,10 @@ namespace Sensus.Notifications
                 {
                     try
                     {
-                        JObject updateContent = JObject.Parse(update.Content);
-
                         if (update.Type == PushNotificationUpdateType.Callback)
                         {
-                            string callbackId = updateContent.Value<string>("callback-id");
-                            string invocationId = updateContent.Value<string>("invocation-id");
+                            string callbackId = update.Content.Value<string>("callback-id");
+                            string invocationId = update.Content.Value<string>("invocation-id");
 
 #if __IOS__
                             // cancel any previously delivered local notifications for the callback. we do not need to cancel
@@ -260,7 +258,7 @@ namespace Sensus.Notifications
                         {
                             bool restartProtocol = false;
                             List<Probe> updatedProbesToRestart = new List<Probe>();
-                            foreach (JObject protocolUpdate in updateContent.Value<JArray>("updates"))
+                            foreach (JObject protocolUpdate in update.Content.Value<JArray>("updates"))
                             {
                                 // catch any exceptions so that we process all updates
                                 try
@@ -403,7 +401,7 @@ namespace Sensus.Notifications
                             // let the user know what happened if requested
                             if (notifyUser)
                             {
-                                JObject userNotification = updateContent.Value<JObject>("user-notification");
+                                JObject userNotification = update.Content.Value<JObject>("user-notification");
                                 if (userNotification != null)
                                 {
                                     string message = userNotification.Value<string>("message");
@@ -413,7 +411,7 @@ namespace Sensus.Notifications
                         }
                         else if (update.Type == PushNotificationUpdateType.SurveyAgentPolicy)
                         {
-                            await protocol.UpdateScriptAgentPolicyAsync(cancellationToken);
+                            await protocol.UpdateScriptAgentPolicyAsync(update.Content.ToString());
                         }
                     }
                     catch (Exception ex)
