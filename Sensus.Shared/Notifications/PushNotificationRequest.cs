@@ -24,7 +24,7 @@ namespace Sensus.Notifications
     /// class represents push notification requests submitted to the <see cref="DataStores.Remote.RemoteDataStore"/> for processing by the 
     /// push notification backend. See the 
     /// [example](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS/example-notification-request.json)
-    /// for the format of such requests.
+    /// for the JSON format of such requests.
     /// </summary>
     public class PushNotificationRequest
     {
@@ -114,6 +114,22 @@ namespace Sensus.Notifications
             }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:Sensus.Notifications.PushNotificationRequest"/> class. The
+        /// intent of this instance will be to deliver user-targeted information to the device in the form of a 
+        /// notification with a message title, body, etc.
+        /// </summary>
+        /// <param name="id">Identifier of the request. To update a previously issued request, submit a new request
+        /// with the same identifier.</param>
+        /// <param name="deviceId">Identifier of target device.</param>
+        /// <param name="protocol">Target protocol.</param>
+        /// <param name="title">Title.</param>
+        /// <param name="body">Body.</param>
+        /// <param name="sound">Sound.</param>
+        /// <param name="format">Format.</param>
+        /// <param name="notificationTime">Time to deliver the notification.</param>
+        /// <param name="backendKey">Backend storage key. It is reasonable to supply a new <see cref="Guid"/> for each
+        /// <see cref="PushNotificationRequest"/> instance.</param>
         public PushNotificationRequest(string id,
                                        string deviceId,
                                        Protocol protocol,
@@ -136,6 +152,20 @@ namespace Sensus.Notifications
             _creationTime = DateTimeOffset.UtcNow;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:Sensus.Notifications.PushNotificationRequest"/> class. The 
+        /// intent of this instance will be to deliver a <see cref="PushNotificationUpdate"/> to the app. This update
+        /// does not necessarily have any user-targeted content.
+        /// </summary>
+        /// <param name="id">Identifier of the request. To update a previously issued request, submit a new request
+        /// with the same identifier.</param>
+        /// <param name="deviceId">Identifier of target device.</param>
+        /// <param name="protocol">Target protocol.</param>
+        /// <param name="update">Update.</param>
+        /// <param name="format">Format.</param>
+        /// <param name="notificationTime">Time to deliver the notification.</param>
+        /// <param name="backendKey">Backend storage key. It is reasonable to supply a new <see cref="Guid"/> for each
+        /// <see cref="PushNotificationRequest"/> instance.</param>
         public PushNotificationRequest(string id,
                                        string deviceId,
                                        Protocol protocol,

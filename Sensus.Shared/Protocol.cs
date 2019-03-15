@@ -1350,6 +1350,13 @@ namespace Sensus
         public bool AllowPause { get; set; } = false;
 
         /// <summary>
+        /// Whether or not to allow the user to request a test push notification.
+        /// </summary>
+        /// <value><c>true</c> if allow test push notification; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Allow Test Push:  ", true, 49)]
+        public bool AllowTestPushNotification { get; set; } = false;
+
+        /// <summary>
         /// The current event identifier for tagging. See [this article](xref:tagging_mode) for more information.
         /// </summary>
         /// <value>The tag identifier.</value>

@@ -369,7 +369,7 @@ namespace Sensus.DataStores.Remote
         /// </summary>
         /// <returns>The updates</returns>
         /// <param name="cancellationToken">Cancellation token.</param>
-        public abstract Task<List<PushNotificationUpdate>> GetUpdatesAsync(CancellationToken cancellationToken);
+        public abstract Task<List<PushNotificationUpdate>> GetPushNotificationUpdatesAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Writes a stream of <see cref="Datum"/> objects.

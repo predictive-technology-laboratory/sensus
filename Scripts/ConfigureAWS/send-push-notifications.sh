@@ -293,7 +293,7 @@ do
         # request from the s3 bucket.
 	backend_key=$(basename $local_request_path ".json")
 
-	push_via_azure $format "false" $id $backend_key $protocol $title $body $sound $token
+	push_via_azure $format "false" $id $backend_key $protocol "$title" "$body" $sound $token
 
     # otherwise pack the update into a per-device updates file to be delivered at the end
     else

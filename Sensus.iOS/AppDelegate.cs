@@ -280,7 +280,7 @@ namespace Sensus.iOS
                 {
                     Id = (userInfo[new NSString("id")] as NSString).ToString(),
                     ProtocolId = (userInfo[new NSString("protocol")] as NSString).ToString(),
-                    Update = (userInfo[new NSString("update")] as NSNumber).BoolValue,
+                    Update = bool.Parse((userInfo[new NSString("update")] as NSString).ToString()),
                     Title = (alert[new NSString("title")] as NSString).ToString(),
                     Body = (alert[new NSString("body")] as NSString).ToString(),
                     Sound = (aps[new NSString("sound")] as NSString).ToString()

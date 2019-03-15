@@ -641,7 +641,7 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        public override async Task<List<PushNotificationUpdate>> GetUpdatesAsync(CancellationToken cancellationToken)
+        public override async Task<List<PushNotificationUpdate>> GetPushNotificationUpdatesAsync(CancellationToken cancellationToken)
         {
             Dictionary<string, PushNotificationUpdate> idUpdate = new Dictionary<string, PushNotificationUpdate>();
 
@@ -650,8 +650,9 @@ namespace Sensus.DataStores.Remote
             {
                 if (_downloadingUpdates)
                 {
-                    return idUpdate.Values.ToList();
+                    throw new Exception("Push notification updates are being downloaded on another thread.");
                 }
+                else
                 {
                     _downloadingUpdates = true;
                 }
@@ -695,6 +696,8 @@ namespace Sensus.DataStores.Remote
                         SensusServiceHelper.Get().Logger.Log("Exception while getting update object:  " + ex.Message, LoggingLevel.Normal, GetType());
                     }
                 }
+
+                SensusServiceHelper.Get().Logger.Log("Retrieved " + idUpdate.Count + " update(s).", LoggingLevel.Normal, GetType());
 
                 return idUpdate.Values.ToList();
             }

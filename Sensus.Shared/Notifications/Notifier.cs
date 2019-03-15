@@ -223,11 +223,12 @@ namespace Sensus.Notifications
                 List<PushNotificationUpdate> updates = null;
                 try
                 {
-                    updates = await protocol.RemoteDataStore.GetUpdatesAsync(cancellationToken);
+                    updates = await protocol.RemoteDataStore.GetPushNotificationUpdatesAsync(cancellationToken);
                 }
                 catch (Exception ex)
                 {
                     SensusServiceHelper.Get().Logger.Log("Exception while getting push notification updates:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    return;
                 }
 
                 foreach (PushNotificationUpdate update in updates)
@@ -420,6 +421,10 @@ namespace Sensus.Notifications
                     }
                 }
             }
+#if __ANDROID__
+            // push notifications with user-targeted information (title, body, sound) are automatically displayed on iOS, regardles
+            // of whether the app is in the foreground or background. this differs from android, where we must explicitly issue
+            // the notification.
             else
             {
                 try
@@ -434,6 +439,7 @@ namespace Sensus.Notifications
                     SensusException.Report("Exception while notifying from push notification:  " + ex.Message, ex);
                 }
             }
+#endif
         }
 
         public async Task DeletePushNotificationRequestAsync(Guid backendKey, Protocol protocol, CancellationToken cancellationToken)
@@ -467,18 +473,11 @@ namespace Sensus.Notifications
 
         private void AddPushNotificationRequestToSend(PushNotificationRequest pushNotificationRequest)
         {
-            // hang on to the push notification for sending in the future, e.g., when internet is restored.
             lock (_pushNotificationRequestsToSend)
             {
-                int currIndex = _pushNotificationRequestsToSend.IndexOf(pushNotificationRequest);
-
-                if (currIndex < 0)
+                if (!_pushNotificationRequestsToSend.Any(p => p.BackendKey == pushNotificationRequest.BackendKey))
                 {
                     _pushNotificationRequestsToSend.Add(pushNotificationRequest);
-                }
-                else
-                {
-                    _pushNotificationRequestsToSend[currIndex] = pushNotificationRequest;
                 }
             }
         }

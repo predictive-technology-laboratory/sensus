@@ -337,8 +337,11 @@ namespace Sensus.Callbacks
             {
                 try
                 {
-                    // the id does not include the invocation ID, as any newer invocation IDs makes others obsolete.
-                    string id = SENSUS_CALLBACK_KEY + "-" + SensusServiceHelper.Get().DeviceId + "-" + callback.Id;
+                    // the request id must differentiate the current device. furthermore, it needs to identify the
+                    // request as one for a callback. lastly, it needs to identify the particular callback that it
+                    // targets. the id does not include the callback invocation, as any newer requests for the 
+                    // callback should obsolete older requests.
+                    string id = SensusServiceHelper.Get().DeviceId + "." + SENSUS_CALLBACK_KEY + "." + callback.Id;
 
                     PushNotificationUpdate update = new PushNotificationUpdate
                     {

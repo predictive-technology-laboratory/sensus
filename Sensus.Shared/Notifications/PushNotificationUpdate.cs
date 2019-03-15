@@ -53,7 +53,7 @@ namespace Sensus.Notifications
             get
             {
                 return JObject.Parse("{" +
-                                         "\"type\":" + JsonConvert.ToString(Type) + "," +
+                                         "\"type\":" + JsonConvert.ToString(Type.ToString()) + "," +
                                          "\"content\":" + Content.ToString(Formatting.None) +
                                      "}");
             }
