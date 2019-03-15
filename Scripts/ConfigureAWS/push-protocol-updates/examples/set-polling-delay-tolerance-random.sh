@@ -4,8 +4,7 @@ if [[ $# -ne 1 ]]
 then
     echo ""
     echo "Purpose:  Sets the before/after delay tolerance values of all polling probes"
-    echo "          to a random value with a given maximum, picking a value of 0 half"
-    echo "          of the time. Reads devices from standard input."
+    echo "          to a random value with a given maximum. Reads devices from standard input."
     echo ""
     echo "Usage:  set-polling-delay-tolerance-random.sh [MAX]"
     echo ""
@@ -20,16 +19,8 @@ fi
 
 max_delay=$1
 
-before=0
-after=0
-
 random=$(echo "scale=4; $RANDOM / 32767" | bc)
-
-if (( $(echo "$random >= 0.5" | bc) ))
-then
-    random=$(echo "scale=4; $RANDOM / 32767" | bc)
-    before=$(echo "($random * $max_delay + 0.5) / 1" | bc)
-    after=$before
-fi
+before=$(echo "($random * $max_delay + 0.5) / 1" | bc)
+after=$before
 
 cat - | ./set-polling-delay-tolerance.sh $before $after
