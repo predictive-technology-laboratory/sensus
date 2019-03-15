@@ -19,6 +19,7 @@ using Firebase.Messaging;
 using Sensus.Context;
 using Sensus.Exceptions;
 using System.Threading;
+using Sensus.Notifications;
 
 namespace Sensus.Android.Notifications
 {
@@ -57,16 +58,24 @@ namespace Sensus.Android.Notifications
                 // interrupting any execution requested by the push notification. the service 
                 serviceHelper.KeepDeviceAwake();
 
-                // extract push notification information
-                string protocolId = message.Data["protocol"];
-                string id = message.Data["id"];
-                string title = message.Data["title"];
-                string body = message.Data["body"];
-                string sound = message.Data["sound"];
-                string command = message.Data["command"];
-                Guid backendKey = new Guid(message.Data["backend-key"]);
+                PushNotification pushNotification = new PushNotification
+                {
+                    Id = message.Data["id"],
+                    ProtocolId = message.Data["protocol"],
+                    Update = bool.Parse(message.Data["update"]),
+                    Title = message.Data["title"],
+                    Body = message.Data["body"],
+                    Sound = message.Data["sound"]
+                };
 
-                await SensusContext.Current.Notifier.ProcessReceivedPushNotificationAsync(protocolId, id, title, body, sound, command, backendKey, CancellationToken.None);
+                // guid might be blank
+                string guidString = message.Data["backend-key"];
+                if (!string.IsNullOrWhiteSpace(guidString))
+                {
+                    pushNotification.BackendKey = new Guid(guidString);
+                }
+
+                await SensusContext.Current.Notifier.ProcessReceivedPushNotificationAsync(pushNotification, CancellationToken.None);
             }
             catch (Exception ex)
             {

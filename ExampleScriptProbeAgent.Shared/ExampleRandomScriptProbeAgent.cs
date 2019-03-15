@@ -122,11 +122,10 @@ namespace ExampleScriptProbeAgent
         /// <summary>
         /// Sets the policy.
         /// </summary>
-        /// <param name="policyJSON">Policy json.</param>
-        public Task SetPolicyAsync(string policyJSON)
+        /// <param name="policy">Policy.</param>
+        public Task SetPolicyAsync(JObject policy)
         {
-            JObject policyObject = JObject.Parse(policyJSON);
-            _deliveryProbability = (double)policyObject.GetValue("p");
+            _deliveryProbability = (double)policy.GetValue("p");
 
             _sensusServiceHelper?.Logger.Log("Script agent policy set:  p=" + _deliveryProbability, LoggingLevel.Normal, GetType());
 

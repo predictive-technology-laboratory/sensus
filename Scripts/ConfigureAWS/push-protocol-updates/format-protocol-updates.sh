@@ -10,7 +10,7 @@ then
     exit 1
 fi
 
-echo -n "{\"updates\" : ["
+echo -n "{\"settings\":["
 
 first_update=true
 
@@ -26,4 +26,4 @@ do
     first_update=false
 done
 
-echo "], \"user-notification\" : { \"message\" : \"$1\" } }"
+echo "],\"user-notification\":{\"message\":\"$1\"}}"

@@ -274,6 +274,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\WebRequestExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\PendingSurveyNotificationMode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolUpdateDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotificationUpdate.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotificationUpdateType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotification.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />

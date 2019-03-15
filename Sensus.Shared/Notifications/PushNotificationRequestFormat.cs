@@ -16,7 +16,14 @@ namespace Sensus.Notifications
 {
     public enum PushNotificationRequestFormat
     {
+        /// <summary>
+        /// Google's Firebase platform (formerly known as Google Cloud Messaging).
+        /// </summary>
         FirebaseCloudMessaging,
+
+        /// <summary>
+        /// Apple's Push Notification Service.
+        /// </summary>
         ApplePushNotificationService
     }
 }

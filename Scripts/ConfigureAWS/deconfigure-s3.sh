@@ -8,44 +8,44 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
-iamWriteOnlyUserName="$1-write-only-user"
-iamWriteOnlyGroupName="$1-write-only-group"
+iamDeviceUserName="$1-device-user"
+iamDeviceGroupName="$1-device-group"
 
-# remove write-only user from write-only group
-echo "Removing write-only user from write-only group..."
-aws iam remove-user-from-group --user-name $iamWriteOnlyUserName --group-name $iamWriteOnlyGroupName
+# remove device user from device group
+echo "Removing device user from device group..."
+aws iam remove-user-from-group --user-name $iamDeviceUserName --group-name $iamDeviceGroupName
 if [ $? -ne 0 ]; then
-    echo "Failed to remove write-only user from write-only group."
+    echo "Failed to remove device user from device group."
 fi
 
-# delete access keys for write-only user
-echo "Deleting access keys from write-only user..."
-accessKeyIDs=$(aws iam list-access-keys --user-name $iamWriteOnlyUserName --query "AccessKeyMetadata[].AccessKeyId" --output text | tr '\t' '\n')
+# delete access keys for device user
+echo "Deleting access keys from device user..."
+accessKeyIDs=$(aws iam list-access-keys --user-name $iamDeviceUserName --query "AccessKeyMetadata[].AccessKeyId" --output text | tr '\t' '\n')
 for accessKeyID in $accessKeyIDs
 do
-    aws iam delete-access-key --access-key $accessKeyID --user-name $iamWriteOnlyUserName
+    aws iam delete-access-key --access-key $accessKeyID --user-name $iamDeviceUserName
     if [ $? -ne 0 ]; then
 	echo "Failed to delete access key."
     fi
 done
 
-# delete write-only user
-echo "Deleting write-only IAM user..."
-aws iam delete-user --user-name $iamWriteOnlyUserName
+# delete device user
+echo "Deleting device IAM user..."
+aws iam delete-user --user-name $iamDeviceUserName
 if [ $? -ne 0 ]; then
-    echo "Failed to delete write-only IAM user."
+    echo "Failed to delete device IAM user."
 fi
 
-# delete write-only group policy
-echo "Deleting write-only IAM group policy..."
-aws iam delete-group-policy --group-name $iamWriteOnlyGroupName --policy-name "${iamWriteOnlyGroupName}-policy"
+# delete device group policy
+echo "Deleting device IAM group policy..."
+aws iam delete-group-policy --group-name $iamDeviceGroupName --policy-name "${iamDeviceGroupName}-policy"
 if [ $? -ne 0 ]; then
-    echo "Failed to delete write-only IAM group policy."
+    echo "Failed to delete device IAM group policy."
 fi
 
-# delete write-only group
+# delete device group
 echo "Deleting IAM group..."
-aws iam delete-group --group-name $iamWriteOnlyGroupName
+aws iam delete-group --group-name $iamDeviceGroupName
 if [ $? -ne 0 ]; then
-    echo "Failed to delete write-only IAM group."
+    echo "Failed to delete device IAM group."
 fi

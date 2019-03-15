@@ -50,6 +50,7 @@ using Sensus.UI;
 using Sensus.Exceptions;
 using Sensus.Extensions;
 using Plugin.Geolocator.Abstractions;
+using Newtonsoft.Json.Linq;
 
 #if __IOS__
 using HealthKit;
@@ -1349,6 +1350,13 @@ namespace Sensus
         public bool AllowPause { get; set; } = false;
 
         /// <summary>
+        /// Whether or not to allow the user to request a test push notification.
+        /// </summary>
+        /// <value><c>true</c> if allow test push notification; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Allow Test Push:  ", true, 49)]
+        public bool AllowTestPushNotification { get; set; } = false;
+
+        /// <summary>
         /// The current event identifier for tagging. See [this article](xref:tagging_mode) for more information.
         /// </summary>
         /// <value>The tag identifier.</value>
@@ -2620,18 +2628,23 @@ namespace Sensus
 
         public async Task UpdateScriptAgentPolicyAsync(CancellationToken cancellationToken)
         {
+            JObject policy = await RemoteDataStore.GetScriptAgentPolicyAsync(cancellationToken);
+
+            await UpdateScriptAgentPolicyAsync(policy);
+        }
+
+        public async Task UpdateScriptAgentPolicyAsync(JObject policy)
+        {
             if (TryGetProbe(typeof(ScriptProbe), out Probe probe))
             {
                 ScriptProbe scriptProbe = probe as ScriptProbe;
 
                 if (scriptProbe?.Agent != null)
                 {
-                    // retrieve and set the policy
-                    string policyJSON = await RemoteDataStore.GetScriptAgentPolicyAsync(cancellationToken);
-                    await scriptProbe.Agent.SetPolicyAsync(policyJSON);
+                    await scriptProbe.Agent.SetPolicyAsync(policy);
 
                     // save policy within app state (agent itself is not serialized)
-                    scriptProbe.AgentPolicyJSON = policyJSON;
+                    scriptProbe.AgentPolicy = policy;
                     await SensusServiceHelper.Get().SaveAsync();
                 }
             }

@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using System.IO;
 using Sensus.Extensions;
 using Sensus.Notifications;
+using Newtonsoft.Json.Linq;
 
 namespace Sensus.DataStores.Remote
 {
@@ -93,17 +94,12 @@ namespace Sensus.DataStores.Remote
             throw new NotImplementedException();
         }
 
-        /// <summary>
-        /// Not implemented. Will always throw an <see cref="Exception"/>.
-        /// </summary>
-        /// <returns>The script agent policy.</returns>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        public override Task<string> GetScriptAgentPolicyAsync(CancellationToken cancellationToken)
+        public override Task<List<PushNotificationUpdate>> GetPushNotificationUpdatesAsync(CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        public override Task<string> GetProtocolUpdatesAsync(string identifier, CancellationToken cancellationToken)
+        public override Task<JObject> GetScriptAgentPolicyAsync(CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

@@ -57,9 +57,6 @@ namespace Sensus
         #region static members
         private static SensusServiceHelper SINGLETON;
         public const int PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS = 60;
-        public const string PENDING_SURVEY_TEXT_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-TEXT-NOTIFICATION";
-        public const string PENDING_SURVEY_BADGE_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-BADGE-NOTIFICATION";
-        public const string PROTOCOL_UPDATED_NOTIFICATION_ID = "SENSUS-PROTOCOL-UPDATED-NOTIFICATION";
 
         /// <summary>
         /// App Center key for Android app. To obtain this key, create a new Xamarin Android app within the Microsoft App Center. This
@@ -985,16 +982,16 @@ namespace Sensus
 
                     if (notificationMode == PendingSurveyNotificationMode.Badge)
                     {
-                        notificationId = PENDING_SURVEY_BADGE_NOTIFICATION_ID;
+                        notificationId = Notifier.PENDING_SURVEY_BADGE_NOTIFICATION_ID;
                     }
                     else if (notificationMode == PendingSurveyNotificationMode.BadgeText)
                     {
-                        notificationId = PENDING_SURVEY_TEXT_NOTIFICATION_ID;
+                        notificationId = Notifier.PENDING_SURVEY_TEXT_NOTIFICATION_ID;
                         alertUser = false;
                     }
                     else if (notificationMode == PendingSurveyNotificationMode.BadgeTextAlert)
                     {
-                        notificationId = PENDING_SURVEY_TEXT_NOTIFICATION_ID;
+                        notificationId = Notifier.PENDING_SURVEY_TEXT_NOTIFICATION_ID;
                         alertUser = true;
                     }
                     else
@@ -1010,8 +1007,8 @@ namespace Sensus
 
         public void CancelPendingSurveysNotification()
         {
-            SensusContext.Current.Notifier.CancelNotification(PENDING_SURVEY_TEXT_NOTIFICATION_ID);
-            SensusContext.Current.Notifier.CancelNotification(PENDING_SURVEY_BADGE_NOTIFICATION_ID);
+            SensusContext.Current.Notifier.CancelNotification(Notifier.PENDING_SURVEY_TEXT_NOTIFICATION_ID);
+            SensusContext.Current.Notifier.CancelNotification(Notifier.PENDING_SURVEY_BADGE_NOTIFICATION_ID);
 
 #if __IOS__
             // clear the budge -- must be done from UI thread

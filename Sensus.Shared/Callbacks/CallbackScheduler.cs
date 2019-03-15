@@ -21,8 +21,13 @@ using Microsoft.AppCenter.Analytics;
 using Sensus.Context;
 using Sensus.Exceptions;
 using Sensus.Extensions;
-using Sensus.Notifications;
 using System.Linq;
+
+#if __IOS__
+using Sensus.Notifications;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+#endif
 
 namespace Sensus.Callbacks
 {
@@ -332,19 +337,28 @@ namespace Sensus.Callbacks
             {
                 try
                 {
-                    // the id does not include the invocation ID, as any newer invocation IDs makes others obsolete.
-                    string id = SENSUS_CALLBACK_KEY + "|" + SensusServiceHelper.Get().DeviceId + "|" + callback.Id;
+                    // the request id must differentiate the current device. furthermore, it needs to identify the
+                    // request as one for a callback. lastly, it needs to identify the particular callback that it
+                    // targets. the id does not include the callback invocation, as any newer requests for the 
+                    // callback should obsolete older requests.
+                    string id = SensusServiceHelper.Get().DeviceId + "." + SENSUS_CALLBACK_KEY + "." + callback.Id;
 
-                    // the full command includes the invocation ID
-                    string command = id + "|" + callback.InvocationId;
+                    PushNotificationUpdate update = new PushNotificationUpdate
+                    {
+                        Type = PushNotificationUpdateType.Callback,
+                        Content = JObject.Parse("{" +
+                                                    "\"callback-id\":" + JsonConvert.ToString(callback.Id) + "," +
+                                                    "\"invocation-id\":" + JsonConvert.ToString(callback.InvocationId) +
+                                                "}")
+                    };
 
-                    PushNotificationRequest request = new PushNotificationRequest(id, callback.Protocol, "", "", "", command, callback.NextExecution.Value, SensusServiceHelper.Get().DeviceId, PushNotificationRequest.LocalFormat, callback.PushNotificationBackendKey);
+                    PushNotificationRequest request = new PushNotificationRequest(id, SensusServiceHelper.Get().DeviceId, callback.Protocol, update, PushNotificationRequest.LocalFormat, callback.NextExecution.Value, callback.PushNotificationBackendKey);
 
                     await SensusContext.Current.Notifier.SendPushNotificationRequestAsync(request, CancellationToken.None);
                 }
                 catch (Exception ex)
                 {
-                    SensusException.Report("Exception while getting push notification request for scheduled callback:  " + ex.Message, ex);
+                    SensusException.Report("Exception while sending push notification request for scheduled callback:  " + ex.Message, ex);
                 }
             }
         }

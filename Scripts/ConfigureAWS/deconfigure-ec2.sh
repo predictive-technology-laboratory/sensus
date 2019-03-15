@@ -8,46 +8,46 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
-iamReadOnlyUserName="$1-ro-user"
-iamReadOnlyGroupName="$1-ro-group"
+iamBackendUserName="$1-b-user"
+iamBackendGroupName="$1-b-group"
 
-# remove read-only user from read-only group
-echo "Removing read-only user from read-only group..."
-aws iam remove-user-from-group --user-name $iamReadOnlyUserName --group-name $iamReadOnlyGroupName
+# remove backend user from backend group
+echo "Removing backend user from backend group..."
+aws iam remove-user-from-group --user-name $iamBackendUserName --group-name $iamBackendGroupName
 if [ $? -ne 0 ]; then
-    echo "Failed to remove read-only user from read-only group."
+    echo "Failed to remove backend user from backend group."
 fi
 
-# delete access keys for read-only user
-echo "Deleting access keys from read-only user..."
-accessKeyIDs=$(aws iam list-access-keys --user-name $iamReadOnlyUserName --query "AccessKeyMetadata[].AccessKeyId" --output text | tr '\t' '\n')
+# delete access keys for backend user
+echo "Deleting access keys from backend user..."
+accessKeyIDs=$(aws iam list-access-keys --user-name $iamBackendUserName --query "AccessKeyMetadata[].AccessKeyId" --output text | tr '\t' '\n')
 for accessKeyID in $accessKeyIDs
 do
-    aws iam delete-access-key --access-key $accessKeyID --user-name $iamReadOnlyUserName
+    aws iam delete-access-key --access-key $accessKeyID --user-name $iamBackendUserName
     if [ $? -ne 0 ]; then
 	echo "Failed to delete access key."
     fi
 done
 
-# delete read-only user
-echo "Deleting read-only IAM user..."
-aws iam delete-user --user-name $iamReadOnlyUserName
+# delete backend user
+echo "Deleting backend IAM user..."
+aws iam delete-user --user-name $iamBackendUserName
 if [ $? -ne 0 ]; then
-    echo "Failed to delete read-only IAM user."
+    echo "Failed to delete backend IAM user."
 fi
 
-# delete read-only group policy
-echo "Deleting read-only IAM group policy..."
-aws iam delete-group-policy --group-name $iamReadOnlyGroupName --policy-name "${iamReadOnlyGroupName}-policy"
+# delete backend group policy
+echo "Deleting backend IAM group policy..."
+aws iam delete-group-policy --group-name $iamBackendGroupName --policy-name "${iamBackendGroupName}-policy"
 if [ $? -ne 0 ]; then
-    echo "Failed to delete read-only IAM group policy."
+    echo "Failed to delete backend IAM group policy."
 fi
 
-# delete read-only group
+# delete backend group
 echo "Deleting IAM group..."
-aws iam delete-group --group-name $iamReadOnlyGroupName
+aws iam delete-group --group-name $iamBackendGroupName
 if [ $? -ne 0 ]; then
-    echo "Failed to delete read-only IAM group."
+    echo "Failed to delete backend IAM group."
 fi
 
 # terminate instance

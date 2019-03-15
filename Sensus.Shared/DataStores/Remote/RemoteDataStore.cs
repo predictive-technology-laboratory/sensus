@@ -24,6 +24,7 @@ using Microsoft.AppCenter.Analytics;
 using System.Collections.Generic;
 using Sensus.Extensions;
 using Sensus.Notifications;
+using Newtonsoft.Json.Linq;
 
 namespace Sensus.DataStores.Remote
 {
@@ -361,15 +362,14 @@ namespace Sensus.DataStores.Remote
         /// </summary>
         /// <returns>The script agent policy.</returns>
         /// <param name="cancellationToken">Cancellation token.</param>
-        public abstract Task<string> GetScriptAgentPolicyAsync(CancellationToken cancellationToken);
+        public abstract Task<JObject> GetScriptAgentPolicyAsync(CancellationToken cancellationToken);
 
         /// <summary>
-        /// Gets the protocol updates.
+        /// Gets <see cref="PushNotificationUpdate"/>s for the current device.
         /// </summary>
-        /// <returns>The protocol updates.</returns>
-        /// <param name="identifier">Update identifier.</param>
+        /// <returns>The updates</returns>
         /// <param name="cancellationToken">Cancellation token.</param>
-        public abstract Task<string> GetProtocolUpdatesAsync(string identifier, CancellationToken cancellationToken);
+        public abstract Task<List<PushNotificationUpdate>> GetPushNotificationUpdatesAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Writes a stream of <see cref="Datum"/> objects.

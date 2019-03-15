@@ -22,6 +22,7 @@ using Sensus.UI.Inputs;
 using System.Threading.Tasks;
 using Sensus.Authentication;
 using System.Net;
+using Sensus.Notifications;
 
 #if __ANDROID__
 using Sensus.Android;
@@ -183,6 +184,11 @@ namespace Sensus.UI
                 {
                     actions.Remove("Start");
                     actions.Insert(0, "Cancel Scheduled Start");
+                }
+
+                if (selectedProtocol.State == ProtocolState.Running && selectedProtocol.AllowTestPushNotification)
+                {
+                    actions.Add("Request Test Push Notification");
                 }
 
                 actions.Add("Delete");
@@ -468,6 +474,19 @@ namespace Sensus.UI
                     if (await DisplayAlert("Ungroup " + selectedProtocol.Name + "?", "This protocol is currently grouped with the following other protocols:" + Environment.NewLine + Environment.NewLine + string.Concat(selectedProtocol.GroupedProtocols.Select(protocol => protocol.Name + Environment.NewLine)), "Ungroup", "Cancel"))
                     {
                         selectedProtocol.GroupedProtocols.Clear();
+                    }
+                }
+                else if (selectedAction == "Request Test Push Notification")
+                {
+                    try
+                    {
+                        PushNotificationRequest request = new PushNotificationRequest(SensusServiceHelper.Get().DeviceId + ".test", SensusServiceHelper.Get().DeviceId, selectedProtocol, "Test", "Your test push notification has been delivered.", "default", PushNotificationRequest.LocalFormat, DateTimeOffset.UtcNow, Guid.NewGuid());
+                        await SensusContext.Current.Notifier.SendPushNotificationRequestAsync(request, CancellationToken.None);
+                        await DisplayAlert("Pending", "Your test push notification was sent and is pending delivery. It should come back within 5 minutes.", "OK");
+                    }
+                    catch (Exception ex)
+                    {
+                        await DisplayAlert("Error", "Failed to send test push notification:  " + ex.Message, "OK");
                     }
                 }
                 else if (selectedAction == "Delete")
