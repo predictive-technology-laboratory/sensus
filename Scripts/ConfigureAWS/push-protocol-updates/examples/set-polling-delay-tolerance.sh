@@ -24,7 +24,7 @@ echo -e "$(./format-protocol-update.sh Sensus.Probes.PollingProbe DelayTolerance
         | ./format-protocol-updates.sh "Updated before/after tolerance to ${1} and ${2}." > $updates_file
 
 # push updates file to devices
-cat - | ./push-updates.sh $updates_file "polling-delay-tolerance"
+cat - | ./push-updates.sh "Protocol" $updates_file "polling-delay-tolerance"
 
 # clean up file
 rm $updates_file

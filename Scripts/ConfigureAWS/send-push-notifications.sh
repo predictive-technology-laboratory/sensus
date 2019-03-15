@@ -15,7 +15,16 @@ get_device_token() {
     local local_tokens_path=$1
     local device=$2
 
-    cat "$local_tokens_path/${device}.json" | jq -r '.token'	
+    cat "$local_tokens_path/${device}.json" | jq -r '.token'
+}
+
+get_device_protocol() {
+    
+    # extract arguments
+    local local_tokens_path=$1
+    local device=$2
+
+    cat "$local_tokens_path/${device}.json" | jq -r '.protocol'
 }
 
 push_via_azure () {
@@ -44,8 +53,8 @@ push_via_azure () {
 "{"\
 "\"id\":$id,"\
 "\"protocol\":\"$protocol\","\
-"\"backend-key\":\"$backend_key\","
-"\"update\":\"$update\","
+"\"backend-key\":\"$backend_key\","\
+"\"update\":\"$update\","\
 "\"title\":$title,"\
 "\"body\":$body,"\
 "\"sound\":$sound"\
@@ -59,8 +68,8 @@ push_via_azure () {
 "{"\
 "\"id\":$id,"\
 "\"protocol\":\"$protocol\","\
-"\"backend-key\":\"$backend_key\","
-"\"update\":\"$update\","
+"\"backend-key\":\"$backend_key\","\
+"\"update\":\"$update\","\
 "\"aps\":"\
 "{"\
 "\"content-available\":1,"\
@@ -153,7 +162,7 @@ local_updates_path="$local_notifications_path/$updates_dir"
 # create special directory for updates created by this run of the script
 new_updates_dir="new_updates"
 mkdir -p $new_updates_dir
-rm $new_updates_dir/*
+rm -rf $new_updates_dir/*
 
 # sync notifications from s3 to local, deleting anything local that doesn't exist s3.
 echo -e "\n************* DOWNLOADING REQUESTS FROM S3 *************"
@@ -259,6 +268,7 @@ do
 
     # proceed to next request if current delivery time has not arrived
     if (( "$seconds_until_delivery" > 0 ))
+    then
 	echo -e "Push notification will be delivered in $seconds_until_delivery seconds.\n"
 	continue
     fi
@@ -273,7 +283,7 @@ do
 
     # if the request does not have an update, then send it directly to the device. do 
     # not delete the request file in this case, as the app must do it to signal receipt.
-    if [[ $update = "" ]]
+    if [[ $update = null ]]
     then
 
 	echo "Pushing non-update notification."
@@ -283,7 +293,7 @@ do
         # request from the s3 bucket.
 	backend_key=$(basename $local_request_path ".json")
 
-	push_via_azure $format false $id $backend_key $protocol $title $body $sound $token
+	push_via_azure $format "false" $id $backend_key $protocol $title $body $sound $token
 
     # otherwise pack the update into a per-device updates file to be delivered at the end
     else
@@ -294,16 +304,16 @@ do
 	if [ -f $new_updates_path ]
 	then
 
-	    echo -e ",\n" >> $new_updates_path
+	    echo -e -n ",\n" >> $new_updates_path
 
 	# otherwise, start the update array.
 	else
-	    echo -e "[\n" > $new_updates_path
+	    echo -e -n "[\n" > $new_updates_path
 	fi
 
 	# add the id to the update object
 	update_type=$(echo $update | jq ".type")
-	update_content=$(echo $update | jq ".content")
+	update_content=$(echo $update | jq -c ".content")  # don't pretty-print -- we might have a lot of content over many lines
 	update=\
 "{"\
 "\"id\":$id,"\
@@ -311,7 +321,7 @@ do
 "\"content\":$update_content"\
 "}"
 
-	echo "  $update" >> $new_updates_path
+	echo -n "  $update" >> $new_updates_path
 
 	# delete the request, as we're going to upload the updates file to s3
 	delete_request $local_request_path "Packed request into updates file. Deleting the request."
@@ -337,9 +347,10 @@ do
 done
 
 # clear new updates
-rm $new_updates_dir/*
+rm -rf $new_updates_dir
 
-# sync local updates to S3 to make them available to the app
+# sync local updates to S3 to make them available to the app. if any of the updates
+# have duplicative ids, the app will take the most recent one of each identifier.
 echo -e "\n************* UPLOADING NEW UPDATES TO S3 *************"
 aws s3 sync $local_updates_path $s3_updates_path
 
@@ -350,8 +361,13 @@ do
 
     device=$(basename $device_dir)
     format=$(get_device_format $local_tokens_path $device)
+    protocol=$(get_device_protocol $local_tokens_path $device)
     token=$(get_device_token $local_tokens_path $device)
 
-    push_via_azure $format true $(uuidgen) "" $protocol '""' '""' '""' $token
+    echo $device
+
+    push_via_azure $format "true" "\"$(uuidgen)\"" "" $protocol '""' '""' '""' $token
 
 done
+
+echo ""

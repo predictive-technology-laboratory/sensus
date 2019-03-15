@@ -426,6 +426,8 @@ namespace Sensus.DataStores.Remote
                 PushNotificationRequestFormat localFormat = PushNotificationRequest.LocalFormat;
                 string localFormatAzureIdentifier = PushNotificationRequest.GetAzureFormatIdentifier(localFormat);
                 byte[] tokenBytes = Encoding.UTF8.GetBytes("{" +
+                                                             "\"device\":" + JsonConvert.ToString(SensusServiceHelper.Get().DeviceId) + "," + 
+                                                             "\"protocol\":" + JsonConvert.ToString(Protocol.Id) + "," + 
                                                              "\"format\":" + JsonConvert.ToString(localFormatAzureIdentifier) + "," +
                                                              "\"token\":" + JsonConvert.ToString(token) +
                                                            "}");
@@ -590,7 +592,7 @@ namespace Sensus.DataStores.Remote
             {
                 HttpStatusCode deleteStatus = (await s3.DeleteObjectAsync(_bucket, key, cancellationToken)).HttpStatusCode;
 
-                if (deleteStatus != HttpStatusCode.OK)
+                if (deleteStatus != HttpStatusCode.NoContent)
                 {
                     throw new Exception(deleteStatus.ToString());
                 }
@@ -641,7 +643,7 @@ namespace Sensus.DataStores.Remote
 
         public override async Task<List<PushNotificationUpdate>> GetUpdatesAsync(CancellationToken cancellationToken)
         {
-            Dictionary<Guid, PushNotificationUpdate> idUpdate = new Dictionary<Guid, PushNotificationUpdate>();
+            Dictionary<string, PushNotificationUpdate> idUpdate = new Dictionary<string, PushNotificationUpdate>();
 
             // only let one caller at a time download the updates
             lock (_downloadingUpdatesLocker)

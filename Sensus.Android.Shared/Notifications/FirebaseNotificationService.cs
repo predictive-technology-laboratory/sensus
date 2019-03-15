@@ -68,9 +68,11 @@ namespace Sensus.Android.Notifications
                     Sound = message.Data["sound"]
                 };
 
-                if (message.Data.TryGetValue("backend-key", out string backendKey))
+                // guid might be blank
+                string guidString = message.Data["backend-key"];
+                if (!string.IsNullOrWhiteSpace(guidString))
                 {
-                    pushNotification.BackendKey = new Guid(backendKey);
+                    pushNotification.BackendKey = new Guid(guidString);
                 }
 
                 await SensusContext.Current.Notifier.ProcessReceivedPushNotificationAsync(pushNotification, CancellationToken.None);

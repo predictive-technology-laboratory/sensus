@@ -29,7 +29,7 @@ echo -e "$(./format-protocol-update.sh Sensus.Probes.Probe Enabled $1 $enable)"\
         | ./format-protocol-updates.sh "$1 enabled:  ${enable}." > $updates_file
 
 # push updates file to devices
-cat - | ./push-updates.sh $updates_file "$1-enable-random"
+cat - | ./push-updates.sh "Protocol" $updates_file "$1-enable-random"
 
 # clean up file
 rm $updates_file

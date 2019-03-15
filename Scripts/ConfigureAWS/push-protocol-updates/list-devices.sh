@@ -11,11 +11,12 @@ then
     exit 1
 fi
 
-for token_path in $(find $1-push-notifications/tokens/*.json)
+bucket=$1
+
+for token_path in $(find ${bucket}-push-notifications/tokens/*.json)
 do
-    device_id_protocol_id=$(basename "$token_path" ".json")
-    device_id=$(echo $device_id_protocol_id | cut -f1 -d ":")
-    protocol_id=$(echo $device_id_protocol_id | cut -f2 -d ":")
-    format=$(jq -r '.format' $token_path)
-    echo -e "$1\t$device_id\t$protocol_id\t$format"
+    device=$(cat $token_path | jq -r '.device')
+    protocol=$(cat $token_path | jq -r '.protocol')
+    format=$(cat $token_path | jq -r '.format')
+    echo -e "$1\t$device\t$protocol\t$format"
 done

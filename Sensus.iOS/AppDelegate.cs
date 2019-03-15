@@ -286,9 +286,11 @@ namespace Sensus.iOS
                     Sound = (aps[new NSString("sound")] as NSString).ToString()
                 };
 
-                if (userInfo.TryGetValue(new NSString("backend-key"), out NSObject backendKey))
+                // guid might be blank
+                string guidString = (userInfo[new NSString("backend-key")] as NSString).ToString();
+                if (!string.IsNullOrWhiteSpace(guidString))
                 {
-                    pushNotification.BackendKey = new Guid((backendKey as NSString).ToString());
+                    pushNotification.BackendKey = new Guid(guidString);
                 }
 
                 await SensusContext.Current.Notifier.ProcessReceivedPushNotificationAsync(pushNotification, cancellationTokenSource.Token);

@@ -257,15 +257,15 @@ namespace Sensus.Notifications
                         {
                             bool restartProtocol = false;
                             List<Probe> updatedProbesToRestart = new List<Probe>();
-                            foreach (JObject updateObject in update.Content.Value<JArray>("updates"))
+                            foreach (JObject settingObject in update.Content.Value<JArray>("settings"))
                             {
-                                // catch any exceptions so that we process all updates
+                                // catch any exceptions so that we process all new settings
                                 try
                                 {
-                                    string propertyTypeName = updateObject.Value<string>("property-type");
-                                    string propertyName = updateObject.Value<string>("property-name");
-                                    string targetTypeName = updateObject.Value<string>("target-type");
-                                    string newValueString = updateObject.Value<string>("value");
+                                    string propertyTypeName = settingObject.Value<string>("property-type");
+                                    string propertyName = settingObject.Value<string>("property-name");
+                                    string targetTypeName = settingObject.Value<string>("target-type");
+                                    string newValueString = settingObject.Value<string>("value");
 
                                     // get property type
                                     Type propertyType;
@@ -405,7 +405,7 @@ namespace Sensus.Notifications
                                 if (userNotificationObject != null)
                                 {
                                     string message = userNotificationObject.Value<string>("message");
-                                    await IssueNotificationAsync("Study Updated", "Your study has been updated" + (string.IsNullOrWhiteSpace(message) ? "." : ":  " + message.Trim()), update.Id.ToString(), true, protocol, null, DisplayPage.None);
+                                    await IssueNotificationAsync("Study Updated", "Your study has been updated" + (string.IsNullOrWhiteSpace(message) ? "." : ":  " + message.Trim()), update.Id, true, protocol, null, DisplayPage.None);
                                 }
                             }
                         }
