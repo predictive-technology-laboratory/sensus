@@ -433,21 +433,20 @@ if not, what time instead it should be delivered. For example:</p>
   
   
   <a id="Sensus_Probes_User_Scripts_IScriptProbeAgent_SetPolicyAsync_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.SetPolicyAsync*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_IScriptProbeAgent_SetPolicyAsync_System_String_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.SetPolicyAsync(System.String)">SetPolicyAsync(String)</h4>
+  <h4 id="Sensus_Probes_User_Scripts_IScriptProbeAgent_SetPolicyAsync_Newtonsoft_Json_Linq_JObject_" data-uid="Sensus.Probes.User.Scripts.IScriptProbeAgent.SetPolicyAsync(Newtonsoft.Json.Linq.JObject)">SetPolicyAsync(JObject)</h4>
   <div class="markdown level1 summary"><p>Sets the survey policy of the current <a class="xref" href="Sensus.Probes.User.Scripts.IScriptProbeAgent.html">IScriptProbeAgent</a>. This method will be called in the following
 situations:</p>
 <ul>
-<li>When a push notification arrives instructing the app to update the policy.</li>
+<li>When a push notification arrives with a new policy.</li>
 <li>When the <a class="xref" href="Sensus.Probes.User.Scripts.IScriptProbeAgent.html">IScriptProbeAgent</a> itself instructs the app to update the policy, through a call to
 <a class="xref" href="Sensus.IProtocol.html#Sensus_IProtocol_UpdateScriptAgentPolicyAsync_System_Threading_CancellationToken_">UpdateScriptAgentPolicyAsync(CancellationToken)</a>.</li>
 </ul>
-<p>In any case, the current policy stored within the <a class="xref" href="Sensus.IProtocol.html">IProtocol</a>&apos;s remote data store will be fetched
-and the content of the policy will be passed to this method. See the remote data store class for more information.</p>
+<p>In any case, the new policy be passed to this method as a <span class="xref">Newtonsoft.Json.Linq.JObject</span>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Task SetPolicyAsync(string policyJSON)</code></pre>
+    <pre><code class="lang-csharp hljs">Task SetPolicyAsync(JObject policy)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -460,9 +459,9 @@ and the content of the policy will be passed to this method. See the remote data
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">policyJSON</span></td>
-        <td><p>Policy JSON.</p>
+        <td><span class="xref">Newtonsoft.Json.Linq.JObject</span></td>
+        <td><span class="parametername">policy</span></td>
+        <td><p>Policy.</p>
 </td>
       </tr>
     </tbody>

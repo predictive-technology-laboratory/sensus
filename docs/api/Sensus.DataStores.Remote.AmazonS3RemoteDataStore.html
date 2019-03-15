@@ -257,31 +257,6 @@ with the following command, where <code>BUCKET</code> corresponds to the Sensus 
   </table>
   
   
-  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_PROTOCOL_UPDATES_DIRECTORY" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.PROTOCOL_UPDATES_DIRECTORY">PROTOCOL_UPDATES_DIRECTORY</h4>
-  <div class="markdown level1 summary"><p>The protocol updates directory.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const string PROTOCOL_UPDATES_DIRECTORY = &quot;protocol-updates&quot;</code></pre>
-  </div>
-  <h5 class="fieldValue">Field Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
   <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_PUSH_NOTIFICATIONS_DIRECTORY" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.PUSH_NOTIFICATIONS_DIRECTORY">PUSH_NOTIFICATIONS_DIRECTORY</h4>
   <div class="markdown level1 summary"><p>The push notifications directory.</p>
 </div>
@@ -339,6 +314,31 @@ with the following command, where <code>BUCKET</code> corresponds to the Sensus 
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public const string PUSH_NOTIFICATIONS_TOKENS_DIRECTORY = &quot;push-notifications/tokens&quot;</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_PUSH_NOTIFICATIONS_UPDATES_DIRECTORY" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.PUSH_NOTIFICATIONS_UPDATES_DIRECTORY">PUSH_NOTIFICATIONS_UPDATES_DIRECTORY</h4>
+  <div class="markdown level1 summary"><p>The push notifications updates directory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string PUSH_NOTIFICATIONS_UPDATES_DIRECTORY = &quot;push-notifications/updates&quot;</code></pre>
   </div>
   <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -812,13 +812,13 @@ public string Region { get; set; }</code></pre>
   <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetDatumKey_Sensus_Datum_">RemoteDataStore.GetDatumKey(Datum)</a></div>
   
   
-  <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_GetProtocolUpdatesAsync_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetProtocolUpdatesAsync*"></a>
-  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_GetProtocolUpdatesAsync_System_String_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetProtocolUpdatesAsync(System.String,System.Threading.CancellationToken)">GetProtocolUpdatesAsync(String, CancellationToken)</h4>
+  <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_GetPushNotificationUpdatesAsync_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetPushNotificationUpdatesAsync*"></a>
+  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_GetPushNotificationUpdatesAsync_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetPushNotificationUpdatesAsync(System.Threading.CancellationToken)">GetPushNotificationUpdatesAsync(CancellationToken)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override Task&lt;string&gt; GetProtocolUpdatesAsync(string identifier, CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task&lt;List&lt;PushNotificationUpdate&gt;&gt; GetPushNotificationUpdatesAsync(CancellationToken cancellationToken)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -830,11 +830,6 @@ public string Region { get; set; }</code></pre>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">identifier</span></td>
-        <td></td>
-      </tr>
       <tr>
         <td><span class="xref">System.Threading.CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
@@ -852,31 +847,31 @@ public string Region { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.Notifications.PushNotificationUpdate.html">PushNotificationUpdate</a>&gt;&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetProtocolUpdatesAsync_System_String_System_Threading_CancellationToken_">RemoteDataStore.GetProtocolUpdatesAsync(String, CancellationToken)</a></div>
+  <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetPushNotificationUpdatesAsync_System_Threading_CancellationToken_">RemoteDataStore.GetPushNotificationUpdatesAsync(CancellationToken)</a></div>
   
   
   <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_GetScriptAgentPolicyAsync_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetScriptAgentPolicyAsync*"></a>
   <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_GetScriptAgentPolicyAsync_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetScriptAgentPolicyAsync(System.Threading.CancellationToken)">GetScriptAgentPolicyAsync(CancellationToken)</h4>
   <div class="markdown level1 summary"><p>Gets the policy for the <a class="xref" href="Sensus.Probes.User.Scripts.IScriptProbeAgent.html">IScriptProbeAgent</a> from the current <a class="xref" href="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">AmazonS3RemoteDataStore</a>. 
-This method will download the policy JSON file from the following location:</p>
+This method will download the policy JSON object from the following location:</p>
 <pre><code>BUCKET/DIRECTORY/DEVICE
-</code></pre><p>where BUCKET is <a class="xref" href="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Bucket">Bucket</a>, DIRECTORY is the value of <a class="xref" href="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_ADAPTIVE_EMA_POLICIES_DIRECTORY">ADAPTIVE_EMA_POLICIES_DIRECTORY</a>, and
-DEVICE is the identifier of the current device as returned by <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_DeviceId">DeviceId</a>. This is the same device 
+</code></pre><p>where <code>BUCKET</code> is <a class="xref" href="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Bucket">Bucket</a>, <code>DIRECTORY</code> is the value of <a class="xref" href="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_ADAPTIVE_EMA_POLICIES_DIRECTORY">ADAPTIVE_EMA_POLICIES_DIRECTORY</a>, and
+<code>DEVICE</code> is the identifier of the current device as returned by <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_DeviceId">DeviceId</a>. This is the same device 
 identifier used within all <a class="xref" href="Sensus.Datum.html">Datum</a> objects generated by the current device. This is also the same device identifier 
-stored in all JSON objects written to the <a class="xref" href="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">AmazonS3RemoteDataStore</a>. To provide a policy JSON file, write the policy 
-JSON content to the above S3 location. The content of this S3 location will be read and delivered to the 
-<a class="xref" href="Sensus.Probes.User.Scripts.IScriptProbeAgent.html">IScriptProbeAgent</a> via <a class="xref" href="Sensus.Probes.User.Scripts.IScriptProbeAgent.html#Sensus_Probes_User_Scripts_IScriptProbeAgent_SetPolicyAsync_System_String_">SetPolicyAsync(String)</a>.</p>
+stored in all JSON objects written to the <a class="xref" href="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">AmazonS3RemoteDataStore</a>. To provide a policy JSON object, write the policy 
+JSON object to the above S3 location. The content of this S3 location will be read, parsed as <span class="xref">Newtonsoft.Json.Linq.JObject</span>, and delivered to the 
+<a class="xref" href="Sensus.Probes.User.Scripts.IScriptProbeAgent.html">IScriptProbeAgent</a> via <a class="xref" href="Sensus.Probes.User.Scripts.IScriptProbeAgent.html#Sensus_Probes_User_Scripts_IScriptProbeAgent_SetPolicyAsync_Newtonsoft_Json_Linq_JObject_">SetPolicyAsync(JObject)</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override Task&lt;string&gt; GetScriptAgentPolicyAsync(CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task&lt;JObject&gt; GetScriptAgentPolicyAsync(CancellationToken cancellationToken)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -906,7 +901,7 @@ JSON content to the above S3 location. The content of this S3 location will be r
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">Newtonsoft.Json.Linq.JObject</span>&gt;</td>
         <td><p>The script agent policy.</p>
 </td>
       </tr>

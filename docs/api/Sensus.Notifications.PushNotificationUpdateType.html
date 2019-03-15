@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class PushNotificationRequestFormat
+    <title>Class PushNotificationUpdateType
    | Sensus Documentation </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class PushNotificationRequestFormat
+    <meta name="title" content="Class PushNotificationUpdateType
    | Sensus Documentation ">
     <meta name="generator" content="docfx 2.38.1.0">
     
@@ -78,35 +78,36 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Sensus.Notifications.PushNotificationRequestFormat">
+            <article class="content wrap" id="_content" data-uid="Sensus.Notifications.PushNotificationUpdateType">
   
   
-  <h1 id="Sensus_Notifications_PushNotificationRequestFormat" data-uid="Sensus.Notifications.PushNotificationRequestFormat" class="text-break">Class PushNotificationRequestFormat
+  <h1 id="Sensus_Notifications_PushNotificationUpdateType" data-uid="Sensus.Notifications.PushNotificationUpdateType" class="text-break">Class PushNotificationUpdateType
   </h1>
-  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 summary"><p>Types of <a class="xref" href="Sensus.Notifications.PushNotificationUpdate.html">PushNotificationUpdate</a> that can be sent via push notification to Sensus.</p>
+</div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
-    <div class="level1"><span class="xref">PushNotificationRequestFormat</span></div>
+    <div class="level1"><span class="xref">PushNotificationUpdateType</span></div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Notifications.html">Sensus.Notifications</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
-  <h5 id="Sensus_Notifications_PushNotificationRequestFormat_syntax">Syntax</h5>
+  <h5 id="Sensus_Notifications_PushNotificationUpdateType_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public sealed class PushNotificationRequestFormat : Enum</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class PushNotificationUpdateType : Enum</code></pre>
   </div>
   <h3 id="fields">Fields
   </h3>
   
   
-  <h4 id="Sensus_Notifications_PushNotificationRequestFormat_ApplePushNotificationService" data-uid="Sensus.Notifications.PushNotificationRequestFormat.ApplePushNotificationService">ApplePushNotificationService</h4>
-  <div class="markdown level1 summary"><p>Apple&apos;s Push Notification Service.</p>
+  <h4 id="Sensus_Notifications_PushNotificationUpdateType_Callback" data-uid="Sensus.Notifications.PushNotificationUpdateType.Callback">Callback</h4>
+  <div class="markdown level1 summary"><p>The <a class="xref" href="Sensus.Notifications.PushNotificationUpdate.html#Sensus_Notifications_PushNotificationUpdate_Content">Content</a> value contains information about a <a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a> that needs to run.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const PushNotificationRequestFormat ApplePushNotificationService</code></pre>
+    <pre><code class="lang-csharp hljs">public const PushNotificationUpdateType Callback</code></pre>
   </div>
   <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -118,20 +119,44 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.Notifications.PushNotificationRequestFormat.html">PushNotificationRequestFormat</a></td>
+        <td><a class="xref" href="Sensus.Notifications.PushNotificationUpdateType.html">PushNotificationUpdateType</a></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   
   
-  <h4 id="Sensus_Notifications_PushNotificationRequestFormat_FirebaseCloudMessaging" data-uid="Sensus.Notifications.PushNotificationRequestFormat.FirebaseCloudMessaging">FirebaseCloudMessaging</h4>
-  <div class="markdown level1 summary"><p>Google&apos;s Firebase platform (formerly known as Google Cloud Messaging).</p>
+  <h4 id="Sensus_Notifications_PushNotificationUpdateType_Protocol" data-uid="Sensus.Notifications.PushNotificationUpdateType.Protocol">Protocol</h4>
+  <div class="markdown level1 summary"><p>The <a class="xref" href="Sensus.Notifications.PushNotificationUpdate.html#Sensus_Notifications_PushNotificationUpdate_Content">Content</a> value contains new settings for the <a class="xref" href="Sensus.Notifications.PushNotificationUpdateType.html#Sensus_Notifications_PushNotificationUpdateType_Protocol">Protocol</a>. These new settings have the following fields:</p>
+<ul>
+<ul>
+<li>
+<code>property-type</code>:  The fully qualified name of the type defining the property to be updated. For example, 
+<a class="xref" href="Sensus.Probes.PollingProbe.html"><code>Sensus.Probes.PollingProbe</code></a> contains properties that govern the behavior of all polling-style probes.
+</li>
+<li>
+<code>property-name</code>:  The name of the property within the type indicated by <code>property-type</code> that should be set. For example, 
+<a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_PollingSleepDurationMS"><code>Sensus.Probes.PollingProbe.PollingSleepDurationMS</code></a> determines how long the 
+<a class="xref" href="Sensus.Probes.PollingProbe.html">PollingProbe</a> will sleep between taking successive readings.
+</li>
+<li>
+<code>target-type</code>:  The fully qualified name of the type whose instances should be updated. For example, a value of 
+<a class="xref" href="Sensus.Probes.Location.PollingLocationProbe.html"><code>Sensus.Probes.Location.PollingLocationProbe</code></a> would update the property indicated 
+with the previous fields for just the <a class="xref" href="Sensus.Probes.Location.PollingLocationProbe.html">PollingLocationProbe</a>, whereas a value of 
+<a class="xref" href="Sensus.Probes.PollingProbe.html"><code>Sensus.Probes.PollingProbe</code></a> would update the property for all probes that inherit from 
+<a class="xref" href="Sensus.Probes.PollingProbe.html">PollingProbe</a>.
+</li>
+<li>
+<code>value</code>:  Quoted string of the new value to be set for the above property and target objects.
+</li>
+</ul>
+</ul>
+
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const PushNotificationRequestFormat FirebaseCloudMessaging</code></pre>
+    <pre><code class="lang-csharp hljs">public const PushNotificationUpdateType Protocol</code></pre>
   </div>
   <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -143,14 +168,39 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.Notifications.PushNotificationRequestFormat.html">PushNotificationRequestFormat</a></td>
+        <td><a class="xref" href="Sensus.Notifications.PushNotificationUpdateType.html">PushNotificationUpdateType</a></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   
   
-  <h4 id="Sensus_Notifications_PushNotificationRequestFormat_value__" data-uid="Sensus.Notifications.PushNotificationRequestFormat.value__">value__</h4>
+  <h4 id="Sensus_Notifications_PushNotificationUpdateType_SurveyAgentPolicy" data-uid="Sensus.Notifications.PushNotificationUpdateType.SurveyAgentPolicy">SurveyAgentPolicy</h4>
+  <div class="markdown level1 summary"><p>The <a class="xref" href="Sensus.Notifications.PushNotificationUpdate.html#Sensus_Notifications_PushNotificationUpdate_Content">Content</a> value contains a new policy for the <a class="xref" href="Sensus.Probes.User.Scripts.IScriptProbeAgent.html">IScriptProbeAgent</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const PushNotificationUpdateType SurveyAgentPolicy</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Notifications.PushNotificationUpdateType.html">PushNotificationUpdateType</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="Sensus_Notifications_PushNotificationUpdateType_value__" data-uid="Sensus.Notifications.PushNotificationUpdateType.value__">value__</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>

@@ -483,6 +483,34 @@ public bool AllowTagging { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_Protocol_AllowTestPushNotification_" data-uid="Sensus.Protocol.AllowTestPushNotification*"></a>
+  <h4 id="Sensus_Protocol_AllowTestPushNotification" data-uid="Sensus.Protocol.AllowTestPushNotification">AllowTestPushNotification</h4>
+  <div class="markdown level1 summary"><p>Whether or not to allow the user to request a test push notification.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Allow Test Push:  &quot;, true, 49)]
+public bool AllowTestPushNotification { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> if allow test push notification; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Protocol_AllowViewData_" data-uid="Sensus.Protocol.AllowViewData*"></a>
   <h4 id="Sensus_Protocol_AllowViewData" data-uid="Sensus.Protocol.AllowViewData">AllowViewData</h4>
   <div class="markdown level1 summary"><p>Whether or not to allow the user to view data being collected by the <a class="xref" href="Sensus.Protocol.html">Protocol</a>.</p>
@@ -2967,6 +2995,48 @@ to show progress and prevent the user from interacting with the app until the <a
     <tbody>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_UpdateScriptAgentPolicyAsync_" data-uid="Sensus.Protocol.UpdateScriptAgentPolicyAsync*"></a>
+  <h4 id="Sensus_Protocol_UpdateScriptAgentPolicyAsync_Newtonsoft_Json_Linq_JObject_" data-uid="Sensus.Protocol.UpdateScriptAgentPolicyAsync(Newtonsoft.Json.Linq.JObject)">UpdateScriptAgentPolicyAsync(JObject)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task UpdateScriptAgentPolicyAsync(JObject policy)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Newtonsoft.Json.Linq.JObject</span></td>
+        <td><span class="parametername">policy</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
         <td></td>
       </tr>
     </tbody>

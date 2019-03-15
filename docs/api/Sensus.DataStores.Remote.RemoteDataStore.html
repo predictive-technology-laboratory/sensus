@@ -667,14 +667,14 @@ public int WriteTimeoutMinutes { get; set; }</code></pre>
   </table>
   
   
-  <a id="Sensus_DataStores_Remote_RemoteDataStore_GetProtocolUpdatesAsync_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.GetProtocolUpdatesAsync*"></a>
-  <h4 id="Sensus_DataStores_Remote_RemoteDataStore_GetProtocolUpdatesAsync_System_String_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.GetProtocolUpdatesAsync(System.String,System.Threading.CancellationToken)">GetProtocolUpdatesAsync(String, CancellationToken)</h4>
-  <div class="markdown level1 summary"><p>Gets the protocol updates.</p>
+  <a id="Sensus_DataStores_Remote_RemoteDataStore_GetPushNotificationUpdatesAsync_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.GetPushNotificationUpdatesAsync*"></a>
+  <h4 id="Sensus_DataStores_Remote_RemoteDataStore_GetPushNotificationUpdatesAsync_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.RemoteDataStore.GetPushNotificationUpdatesAsync(System.Threading.CancellationToken)">GetPushNotificationUpdatesAsync(CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Gets <a class="xref" href="Sensus.Notifications.PushNotificationUpdate.html">PushNotificationUpdate</a>s for the current device.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract Task&lt;string&gt; GetProtocolUpdatesAsync(string identifier, CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract Task&lt;List&lt;PushNotificationUpdate&gt;&gt; GetPushNotificationUpdatesAsync(CancellationToken cancellationToken)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -686,12 +686,6 @@ public int WriteTimeoutMinutes { get; set; }</code></pre>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">identifier</span></td>
-        <td><p>Update identifier.</p>
-</td>
-      </tr>
       <tr>
         <td><span class="xref">System.Threading.CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
@@ -710,8 +704,8 @@ public int WriteTimeoutMinutes { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.String</span>&gt;</td>
-        <td><p>The protocol updates.</p>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.Notifications.PushNotificationUpdate.html">PushNotificationUpdate</a>&gt;&gt;</td>
+        <td><p>The updates</p>
 </td>
       </tr>
     </tbody>
@@ -725,7 +719,7 @@ public int WriteTimeoutMinutes { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract Task&lt;string&gt; GetScriptAgentPolicyAsync(CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract Task&lt;JObject&gt; GetScriptAgentPolicyAsync(CancellationToken cancellationToken)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -755,7 +749,7 @@ public int WriteTimeoutMinutes { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">Newtonsoft.Json.Linq.JObject</span>&gt;</td>
         <td><p>The script agent policy.</p>
 </td>
       </tr>

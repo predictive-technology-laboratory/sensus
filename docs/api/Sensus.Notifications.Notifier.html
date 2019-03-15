@@ -137,6 +137,54 @@
       </tr>
     </tbody>
   </table>
+  
+  
+  <h4 id="Sensus_Notifications_Notifier_PENDING_SURVEY_BADGE_NOTIFICATION_ID" data-uid="Sensus.Notifications.Notifier.PENDING_SURVEY_BADGE_NOTIFICATION_ID">PENDING_SURVEY_BADGE_NOTIFICATION_ID</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string PENDING_SURVEY_BADGE_NOTIFICATION_ID = &quot;SENSUS-PENDING-SURVEY-BADGE-NOTIFICATION&quot;</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="Sensus_Notifications_Notifier_PENDING_SURVEY_TEXT_NOTIFICATION_ID" data-uid="Sensus.Notifications.Notifier.PENDING_SURVEY_TEXT_NOTIFICATION_ID">PENDING_SURVEY_TEXT_NOTIFICATION_ID</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string PENDING_SURVEY_TEXT_NOTIFICATION_ID = &quot;SENSUS-PENDING-SURVEY-TEXT-NOTIFICATION&quot;</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="methods">Methods
   </h3>
   
@@ -320,12 +368,12 @@
   
   
   <a id="Sensus_Notifications_Notifier_ProcessReceivedPushNotificationAsync_" data-uid="Sensus.Notifications.Notifier.ProcessReceivedPushNotificationAsync*"></a>
-  <h4 id="Sensus_Notifications_Notifier_ProcessReceivedPushNotificationAsync_System_String_System_String_System_String_System_String_System_String_System_String_System_Guid_System_Threading_CancellationToken_" data-uid="Sensus.Notifications.Notifier.ProcessReceivedPushNotificationAsync(System.String,System.String,System.String,System.String,System.String,System.String,System.Guid,System.Threading.CancellationToken)">ProcessReceivedPushNotificationAsync(String, String, String, String, String, String, Guid, CancellationToken)</h4>
+  <h4 id="Sensus_Notifications_Notifier_ProcessReceivedPushNotificationAsync_Sensus_Notifications_PushNotification_System_Threading_CancellationToken_" data-uid="Sensus.Notifications.Notifier.ProcessReceivedPushNotificationAsync(Sensus.Notifications.PushNotification,System.Threading.CancellationToken)">ProcessReceivedPushNotificationAsync(PushNotification, CancellationToken)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task ProcessReceivedPushNotificationAsync(string protocolId, string id, string title, string body, string sound, string command, Guid backendKey, CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task ProcessReceivedPushNotificationAsync(PushNotification pushNotification, CancellationToken cancellationToken)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -338,38 +386,8 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">protocolId</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">id</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">title</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">body</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">sound</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">command</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Guid</span></td>
-        <td><span class="parametername">backendKey</span></td>
+        <td><a class="xref" href="Sensus.Notifications.PushNotification.html">PushNotification</a></td>
+        <td><span class="parametername">pushNotification</span></td>
         <td></td>
       </tr>
       <tr>
