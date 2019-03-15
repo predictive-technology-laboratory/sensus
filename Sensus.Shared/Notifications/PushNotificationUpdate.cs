@@ -48,14 +48,14 @@ namespace Sensus.Notifications
         /// </summary>
         /// <value>The JSON.</value>
         [JsonIgnore]
-        public string JSON
+        public JObject JSON
         {
             get
             {
-                return "{" +
-                           "\"type\":" + JsonConvert.ToString(Type) + "," +
-                           "\"content\":" + Content.ToString(Formatting.None) +
-                       "}";
+                return JObject.Parse("{" +
+                                         "\"type\":" + JsonConvert.ToString(Type) + "," +
+                                         "\"content\":" + Content.ToString(Formatting.None) +
+                                     "}");
             }
         }
     }

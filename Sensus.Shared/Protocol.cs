@@ -50,6 +50,7 @@ using Sensus.UI;
 using Sensus.Exceptions;
 using Sensus.Extensions;
 using Plugin.Geolocator.Abstractions;
+using Newtonsoft.Json.Linq;
 
 #if __IOS__
 using HealthKit;
@@ -60,7 +61,6 @@ using Sensus.iOS.Probes.User.Health;
 #if __ANDROID__
 using Sensus.Android;
 using Microsoft.AppCenter.Analytics;
-using Newtonsoft.Json.Linq;
 #endif
 
 namespace Sensus

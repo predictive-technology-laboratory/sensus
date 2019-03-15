@@ -470,7 +470,7 @@ namespace Sensus.DataStores.Remote
             try
             {
                 s3 = await CreateS3ClientAsync();
-                byte[] requestJsonBytes = Encoding.UTF8.GetBytes(request.JSON);
+                byte[] requestJsonBytes = Encoding.UTF8.GetBytes(request.JSON.ToString(Formatting.None));
                 MemoryStream dataStream = new MemoryStream(requestJsonBytes);
 
                 await PutAsync(s3, dataStream, GetPushNotificationRequestKey(request.BackendKey), "application/json", cancellationToken);

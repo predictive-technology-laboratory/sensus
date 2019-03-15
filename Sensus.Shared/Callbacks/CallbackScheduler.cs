@@ -23,6 +23,12 @@ using Sensus.Exceptions;
 using Sensus.Extensions;
 using System.Linq;
 
+#if __IOS__
+using Sensus.Notifications;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+#endif
+
 namespace Sensus.Callbacks
 {
     /// <summary>
@@ -343,13 +349,13 @@ namespace Sensus.Callbacks
                                                 "}")
                     };
 
-                    PushNotificationRequest request = new PushNotificationRequest(id, SensusServiceHelper.Get().DeviceId, callback.Protocol, "", "", "", update, PushNotificationRequest.LocalFormat, callback.NextExecution.Value, callback.PushNotificationBackendKey);
+                    PushNotificationRequest request = new PushNotificationRequest(id, SensusServiceHelper.Get().DeviceId, callback.Protocol, update, PushNotificationRequest.LocalFormat, callback.NextExecution.Value, callback.PushNotificationBackendKey);
 
                     await SensusContext.Current.Notifier.SendPushNotificationRequestAsync(request, CancellationToken.None);
                 }
                 catch (Exception ex)
                 {
-                    SensusException.Report("Exception while getting push notification request for scheduled callback:  " + ex.Message, ex);
+                    SensusException.Report("Exception while sending push notification request for scheduled callback:  " + ex.Message, ex);
                 }
             }
         }

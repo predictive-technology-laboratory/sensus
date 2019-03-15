@@ -15,6 +15,7 @@
 using System;
 using Sensus.Exceptions;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Sensus.Notifications
 {
@@ -94,22 +95,22 @@ namespace Sensus.Notifications
             get { return _backendKey; }
         }
 
-        public string JSON
+        public JObject JSON
         {
             get
             {
-                return "{" +
-                           "\"id\":" + JsonConvert.ToString(_id) + "," +
-                           "\"device\":" + JsonConvert.ToString(_deviceId) + "," +
-                           "\"protocol\":" + JsonConvert.ToString(_protocol.Id) + "," +
-                           (_title == null ? "" : "\"title\":" + JsonConvert.ToString(_title) + ",") +
-                           (_body == null ? "" : "\"body\":" + JsonConvert.ToString(_body) + ",") +
-                           (_sound == null ? "" : "\"sound\":" + JsonConvert.ToString(_sound) + ",") +
-                           (_update == null ? "" : "\"update\":" + _update.JSON + ",") +
-                           "\"format\":" + JsonConvert.ToString(GetAzureFormatIdentifier(_format)) + "," +
-                           "\"creation-time\":" + _creationTime.ToUnixTimeSeconds() + "," +
-                           "\"time\":" + _notificationTime.ToUnixTimeSeconds() +
-                       "}";
+                return JObject.Parse("{" +
+                                         "\"id\":" + JsonConvert.ToString(_id) + "," +
+                                         "\"device\":" + JsonConvert.ToString(_deviceId) + "," +
+                                         "\"protocol\":" + JsonConvert.ToString(_protocol.Id) + "," +
+                                         (_title == null ? "" : "\"title\":" + JsonConvert.ToString(_title) + ",") +
+                                         (_body == null ? "" : "\"body\":" + JsonConvert.ToString(_body) + ",") +
+                                         (_sound == null ? "" : "\"sound\":" + JsonConvert.ToString(_sound) + ",") +
+                                         (_update == null ? "" : "\"update\":" + _update.JSON.ToString(Formatting.None) + ",") +
+                                         "\"format\":" + JsonConvert.ToString(GetAzureFormatIdentifier(_format)) + "," +
+                                         "\"creation-time\":" + _creationTime.ToUnixTimeSeconds() + "," +
+                                         "\"time\":" + _notificationTime.ToUnixTimeSeconds() +
+                                     "}");
             }
         }
 
