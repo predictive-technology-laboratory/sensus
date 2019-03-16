@@ -228,6 +228,9 @@ namespace Sensus.Probes.User.Scripts
         public ScriptProbe()
         {
             _scriptRunners = new ObservableCollection<ScriptRunner>();
+
+            _agent = new SimpleScriptProbeAgent();// new S1ScriptProbeAgent();
+
         }
 
         protected override async Task InitializeAsync()
