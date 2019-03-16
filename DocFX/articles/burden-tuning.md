@@ -37,6 +37,11 @@ involved, the following parameters govern polling behavior and associated power 
   all probes regardless of type will collect data unabated, as the CPU will be powered on despite the display being
   off.
   
+  * [Push notifications](xref:push_notifications) (iOS only):  It is possible to configure push notifications that support
+  data polling in iOS. These impose a burden on the device; however, push notification support for data polling will
+  lessen the burden on the user since remotely invoked data polling preempts user-targeted notifications as enabled by
+  <xref:Sensus.Probes.PollingProbe.AlertUserWhenBackgrounded>.
+  
 ## Data Transfer
 
 It is expensive, both in terms of power and data network usage, to transfer collected data from the device to a 
@@ -66,3 +71,7 @@ is partially configurable depending on the <xref:Sensus.Probes.Probe> and operat
   * <xref:Sensus.Probes.PollingProbe.AlertUserWhenBackgrounded> (iOS only):  Each 
   <xref:Sensus.Probes.PollingProbe> in iOS is capable of issuing a notification to the user when the 
   polling operation is scheduled to occur. This parameter determines whether these notifications are issued.
+  
+  * [Push notifications](xref:push_notifications) (iOS only):  As noted above, push notifications can
+  be configured to drive data polling and preempt the notifications enabled by the
+  <xref:Sensus.Probes.PollingProbe.AlertUserWhenBackgrounded> setting.

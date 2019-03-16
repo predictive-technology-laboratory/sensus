@@ -110,6 +110,11 @@ on the CPU when running a <a class="xref" href="../api/Sensus.Probes.ListeningPr
 all probes regardless of type will collect data unabated, as the CPU will be powered on despite the display being
 off.</p>
 </li>
+<li><p><a class="xref" href="push-notifications.html">Push notifications</a> (iOS only):  It is possible to configure push notifications that support
+data polling in iOS. These impose a burden on the device; however, push notification support for data polling will
+lessen the burden on the user since remotely invoked data polling preempts user-targeted notifications as enabled by
+<a class="xref" href="../api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_AlertUserWhenBackgrounded">AlertUserWhenBackgrounded</a>.</p>
+</li>
 </ul>
 <h2 id="data-transfer">Data Transfer</h2>
 <p>It is expensive, both in terms of power and data network usage, to transfer collected data from the device to a 
@@ -136,9 +141,14 @@ is not required, then this parameter determines a minimum charge level required 
 <p>Sensus will issue notifications for various states of the app. Whether a notification is issued for each app state
 is partially configurable depending on the <a class="xref" href="../api/Sensus.Probes.Probe.html">Probe</a> and operating system.</p>
 <ul>
-<li><a class="xref" href="../api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_AlertUserWhenBackgrounded">AlertUserWhenBackgrounded</a> (iOS only):  Each 
+<li><p><a class="xref" href="../api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_AlertUserWhenBackgrounded">AlertUserWhenBackgrounded</a> (iOS only):  Each 
 <a class="xref" href="../api/Sensus.Probes.PollingProbe.html">PollingProbe</a> in iOS is capable of issuing a notification to the user when the 
-polling operation is scheduled to occur. This parameter determines whether these notifications are issued.</li>
+polling operation is scheduled to occur. This parameter determines whether these notifications are issued.</p>
+</li>
+<li><p><a class="xref" href="push-notifications.html">Push notifications</a> (iOS only):  As noted above, push notifications can
+be configured to drive data polling and preempt the notifications enabled by the
+<a class="xref" href="../api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_AlertUserWhenBackgrounded">AlertUserWhenBackgrounded</a> setting.</p>
+</li>
 </ul>
 </article>
           </div>

@@ -121,25 +121,34 @@ name of the bucket that results from this step (e.g., test-bucket-293843-234234-
 </ol>
 <h2 id="aws-ec2">AWS EC2</h2>
 <ol>
-<li>Configure your AWS EC2 instance using the <code>configure-ec2.sh</code> script within the <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS.zip">configuration</a>
+<li>Configure your AWS EC2 instance using the <code>configure-ec2.sh</code> script within the 
+<a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS.zip">configuration</a>
 archive. This script requires you to install the AWS CLI and the <code>jq</code> command line program. When supplying the bucket
 name, use the name obtained from the previous step.</li>
 </ol>
 <h2 id="sensus-protocol">Sensus Protocol</h2>
 <ol>
-<li>Within your Sensus protocol, set the <a class="xref" href="../api/Sensus.Protocol.html#Sensus_Protocol_PushNotificationsHub">Push Notifications Hub</a> to the Azure Notification
-Hub name, and set the <a class="xref" href="../api/Sensus.Protocol.html#Sensus_Protocol_PushNotificationsSharedAccessSignature">Push Notifications Shared Access Signature</a> to
-the <code>DefaultFullSharedAccessSignature</code> of the Azure Notification Hub.</li>
+<li>Within your Sensus protocol, set the <a class="xref" href="../api/Sensus.Protocol.html#Sensus_Protocol_PushNotificationsHub">PushNotificationsHub</a> to the Azure Notification
+Hub name, and set the <a class="xref" href="../api/Sensus.Protocol.html#Sensus_Protocol_PushNotificationsSharedAccessSignature">PushNotificationsSharedAccessSignature</a> to
+the <code>DefaultListenSharedAccessSignature</code> connection string value within the hub&#39;s Access Policy.</li>
 <li>Configure the <a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">AWS S3 remote data store</a> using the bucket created above.</li>
-<li>Note that APNS has been observed to throttle push notification delivery rate. Please see the <a class="xref" href="../api/Sensus.Probes.PollingProbe.html">Polling Probe</a>
+<li>Note that APNS has been observed to throttle push notification delivery rate. Please see the <a class="xref" href="../api/Sensus.Probes.PollingProbe.html">PollingProbe</a>
 documentation for more information on polling rates and push notification throttling.</li>
 </ol>
-<h2 id="conclusion-and-next-steps">Conclusion and Next Steps</h2>
+<h2 id="next-steps-and-latency-expectations">Next Steps and Latency Expectations</h2>
 <p>If the above steps are successful, your Sensus protocol should now receive push notification support when
-installed and started on participant devices. Here are some things you can now do:</p>
+installed and started on participant devices. Here are some things you can do:</p>
 <ul>
 <li><a class="xref" href="remote-updates.html">Remote protocol updates</a></li>
 </ul>
+<p>The Sensus team has observed that push notifications are generally delivered to iOS devices at most once 
+every 5 minutes. On Android, push notifications are not reliably delivered to the device when it is locked.
+Upon unlock, pending push notifications are generally delivered immediately to Sensus. If a push notification is 
+delivered at a time when the device is unlocked and in use, then the notification will generally be delivered
+immediately to Sensus. As noted in the documentation for <a class="xref" href="../api/Sensus.Probes.PollingProbe.html">PollingProbe</a>s, the protocol&#39;s
+design with respect to notifications should be made conservative to avoid overburdening the device and/or the 
+user. The <a class="xref" href="burden-tuning.html">burden tuning</a> article provides more information about push notifications and
+their implications for the user and device.</p>
 </article>
           </div>
           
