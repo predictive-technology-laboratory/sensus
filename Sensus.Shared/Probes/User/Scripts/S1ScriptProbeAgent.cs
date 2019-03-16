@@ -212,11 +212,8 @@ namespace Sensus
         }
 
 
-        public Task SetPolicyAsync(string strategyJSON)
+        public Task SetPolicyAsync(JObject strategyObject)
         {
-
-            //read in the json object
-            JObject strategyObject = JObject.Parse(strategyJSON);
 
             //read in the parameters
             parameters = strategyObject["params"].ToObject<Dictionary<string, double>>();

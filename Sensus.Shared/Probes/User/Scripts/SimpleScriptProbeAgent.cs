@@ -13,6 +13,7 @@
 // limitations under the License.
 using System;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -52,7 +53,7 @@ namespace Sensus.Probes.User.Scripts
             throw new NotImplementedException();
         }
 
-        public Task SetPolicyAsync(string policyJSON)
+        public Task SetPolicyAsync(JObject policy)
         {
             throw new NotImplementedException();
         }
