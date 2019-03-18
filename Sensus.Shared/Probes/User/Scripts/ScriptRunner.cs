@@ -592,20 +592,6 @@ namespace Sensus.Probes.User.Scripts
                 // day.
                 if (triggerTime.Trigger > DateTime.Now && (Probe.Protocol.ContinueIndefinitely || triggerTime.Trigger < Probe.Protocol.EndDate))
                 {
-#if __IOS__
-                    // ensure we have sufficient background time on ios. the current method is called both when servicing a callback
-                    // as well as when restarting the app upon receipt of a push notification. in both cases, we need to be sensitive
-                    // to the alotted background execution time remaining. the scheduling operating can be slow on ios because it 
-                    // can involve the submission of a push notification request to the remote data store. we don't want to run afoul
-                    // of background execution time constraints as a result. we'll need to defer scheduling script runs until the
-                    // user foregrounds the app again.
-                    if (UIKit.UIApplication.SharedApplication.BackgroundTimeRemaining < 15)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Running out of background time. Aborting scheduling script runs.", LoggingLevel.Normal, GetType());
-                        break;
-                    }
-#endif
-
                     await ScheduleScriptRunAsync(triggerTime);
 
                     // stop when we have scheduled enough runs

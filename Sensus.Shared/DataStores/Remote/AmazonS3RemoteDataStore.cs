@@ -469,6 +469,27 @@ namespace Sensus.DataStores.Remote
 
             try
             {
+
+#if __IOS__
+                // the current method is called in response to push notifications when starting the protocol after the app 
+                // has been terminated. starting the protocol may involve a large number of callbacks, particularly for 
+                // surveys scheduled many times into the future. sending the associated push notification requests can be 
+                // very time consuming. we need to be sensitive to the alotted background execution time remaining so that
+                // the protocol can start fully before background time expires. we don't want to run afoul of background 
+                // execution time constraints. therefore we'll need to defer push notification request submission until the 
+                // user foregrounds the app again and the health test submits the requests. the user will be encouraged to
+                // do so as they'll begin getting notifications from the local callback invocation loop. in the check below
+                // we use BackgroundTimeRemaining rather than ApplicationState, as we're unsure what the state will be when
+                // the app is activated by a push notification. we're certain that background time will be limited. we're 
+                // using a finite, relatively large value for the background time threshold to capture "in the background".
+                // practical values are either the maximum floating point value (for foreground) and less than 30 seconds 
+                // (for background).
+                if (Protocol.State == ProtocolState.Starting && UIKit.UIApplication.SharedApplication.BackgroundTimeRemaining < 1000)
+                {
+                    throw new Exception("Starting protocol from the background. Deferring submission of push notification requests.");
+                }
+#endif
+
                 s3 = await CreateS3ClientAsync();
                 byte[] requestJsonBytes = Encoding.UTF8.GetBytes(request.JSON.ToString(Formatting.None));
                 MemoryStream dataStream = new MemoryStream(requestJsonBytes);
