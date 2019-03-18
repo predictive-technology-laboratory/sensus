@@ -321,23 +321,32 @@ namespace Sensus.iOS
         // This method should be used to release shared resources and it should store the application state.
         // If your application supports background exection this method is called instead of WillTerminate
         // when the user quits.
-        public override void DidEnterBackground(UIApplication uiApplication)
+        public async override void DidEnterBackground(UIApplication uiApplication)
         {
-            // cancel all silent notifications, which should not be shown to the user.
-            (SensusContext.Current.CallbackScheduler as iOSCallbackScheduler).CancelSilentNotifications();
+            nint backgroundTaskId = uiApplication.BeginBackgroundTask(() =>
+            {
+                // not much to do if we run out of time. just report it.
+                string message = "Ran out of background time after entering background.";
+                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                SensusException.Report(message);
+            });
 
             iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
 
-            // save app state in background
-            nint saveTaskId = uiApplication.BeginBackgroundTask(() =>
-            {
-                // not much we can do if we run out of time...
-            });
+            // cancel all silent notifications, which should never be presented to the user. if these notifications
+            // are not cancelled and the app enters the background, then they will appear in the notification 
+            // tray and confuse the user.
+            (SensusContext.Current.CallbackScheduler as iOSCallbackScheduler).CancelSilentNotifications();
 
-            serviceHelper.SaveAsync().ContinueWith(finishedTask =>
-            {
-                uiApplication.EndBackgroundTask(saveTaskId);
-            });
+            // reissue the pending surveys notification to badge the app icon with the number of pending
+            // surveys. we cleared the badge upon activation of the app. not necessary to pass a protocol
+            // for alert exclusion window checking, as this is a badge-only notification with no text or sound.
+            await serviceHelper.IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.Badge, null);
+
+            // save app state
+            await serviceHelper.SaveAsync();
+
+            uiApplication.EndBackgroundTask(backgroundTaskId);
         }
 
         // This method is called as part of the transiton from background to active state.
