@@ -27,9 +27,9 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
 {
     public class UNUserNotificationNotifier : iOSNotifier
     {
-        public override async Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, int? badgeNumber, NotificationUserResponseAction userResponseAction)
+        public override async Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, int? badgeNumber, NotificationUserResponseAction userResponseAction, string userResponseMessage)
         {
-            await IssueNotificationAsync(title, message, id, alertUser, protocol, badgeNumber, userResponseAction, DateTime.Now, null);
+            await IssueNotificationAsync(title, message, id, alertUser, protocol, badgeNumber, userResponseAction, userResponseMessage, DateTime.Now, null);
         }
 
         public async Task IssueSilentNotificationAsync(string id, DateTime triggerDateTime, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
@@ -37,10 +37,10 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
             // the user should never see a silent notification since we cancel them when the app is backgrounded. but there are race conditions that
             // might result in a silent notifiation being scheduled just before the app is backgrounded. give a generic message so that the notification
             // isn't totally confusing to the user. furthermore, it appears that notifications must have content in order to come back.
-            await IssueNotificationAsync("Notice", "Sensus is running. You may safely ignore this notification if desired. Tap to open Sensus.", id, false, null, null, NotificationUserResponseAction.None, triggerDateTime, info, requestCreated);
+            await IssueNotificationAsync("Notice", "Sensus is running. You may safely ignore this notification if desired. Tap to open Sensus.", id, false, null, null, NotificationUserResponseAction.None, null, triggerDateTime, info, requestCreated);
         }
 
-        public async Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, int? badgeNumber, NotificationUserResponseAction userResponseAction, DateTime triggerDateTime, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
+        public async Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, int? badgeNumber, NotificationUserResponseAction userResponseAction, string userResponseMessage, DateTime triggerDateTime, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
         {
             // the callback scheduler will pass in an initialized user info (containing the callback id, invocation id, etc.), but 
             // other requests for notifications might not come with such information. initialize the user info if needed.
@@ -51,6 +51,7 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
 
             info.SetValueForKey(new NSString(id), new NSString(NOTIFICATION_ID_KEY));
             info.SetValueForKey(new NSString(userResponseAction.ToString()), new NSString(NOTIFICATION_USER_RESPONSE_ACTION_KEY));
+            info.SetValueForKey(new NSString(userResponseMessage), new NSString(NOTIFICATION_USER_RESPONSE_MESSAGE_KEY));
 
             UNMutableNotificationContent content = new UNMutableNotificationContent
             {

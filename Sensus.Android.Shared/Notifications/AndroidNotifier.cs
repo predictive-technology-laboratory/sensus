@@ -212,7 +212,7 @@ namespace Sensus.Android.Notifications
             }
         }
 
-        public override Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, int? badgeNumber, NotificationUserResponseAction userResponseAction)
+        public override Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, int? badgeNumber, NotificationUserResponseAction userResponseAction, string userResponseMessage)
         {
             if (_notificationManager == null)
             {
@@ -225,14 +225,8 @@ namespace Sensus.Android.Notifications
             else
             {
                 Intent notificationIntent = new Intent(Application.Context, typeof(AndroidMainActivity));
-
-                // when the user taps the notification, the intent will come back to the app without the notification
-                // title or message content. therefore, we need to store the notification content in the intent in order
-                // to recover it when the user taps the notification. we use the content in different ways depending
-                // on the user response action.
                 notificationIntent.PutExtra(NOTIFICATION_USER_RESPONSE_ACTION_KEY, userResponseAction.ToString());
-                notificationIntent.PutExtra(NOTIFICATION_INTENT_TITLE_KEY, title);
-                notificationIntent.PutExtra(NOTIFICATION_INTENT_MESSAGE_KEY, message);
+                notificationIntent.PutExtra(NOTIFICATION_USER_RESPONSE_MESSAGE_KEY, userResponseMessage);
 
                 PendingIntent notificationPendingIntent = PendingIntent.GetActivity(Application.Context, 0, notificationIntent, PendingIntentFlags.OneShot);
 

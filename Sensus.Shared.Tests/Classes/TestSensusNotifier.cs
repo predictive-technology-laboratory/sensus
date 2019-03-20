@@ -23,7 +23,7 @@ namespace Sensus.Tests.Classes
         {
         }
 
-        public override Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, int? badgeNumber, NotificationUserResponseAction userResponseAction)
+        public override Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, int? badgeNumber, NotificationUserResponseAction userResponseAction, string userResponseMessage)
         {
             return Task.CompletedTask;
         }

@@ -60,7 +60,7 @@ namespace Sensus.Notifications
             _pushNotificationBackendKeysProtocolIdsToDelete = new List<Tuple<Guid, string>>();
         }
 
-        public abstract Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, int? badgeNumber, NotificationUserResponseAction userResponseAction);
+        public abstract Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, int? badgeNumber, NotificationUserResponseAction userResponseAction, string userResponseMessage);
 
         public abstract void CancelNotification(string id);
 
@@ -410,7 +410,8 @@ namespace Sensus.Notifications
                                 if (userNotificationObject != null)
                                 {
                                     string message = userNotificationObject.Value<string>("message");
-                                    await IssueNotificationAsync("Study Updated", "Your study has been updated" + (string.IsNullOrWhiteSpace(message) ? "." : ":  " + message.Trim()), update.Id, true, protocol, null, NotificationUserResponseAction.ShowAlertDialog);
+                                    message = "Your study has been updated" + (string.IsNullOrWhiteSpace(message) ? "." : ":  " + message.Trim());
+                                    await IssueNotificationAsync("Study Updated", message, update.Id, true, protocol, null, NotificationUserResponseAction.ShowAlertDialog, message);
                                 }
                             }
                         }
