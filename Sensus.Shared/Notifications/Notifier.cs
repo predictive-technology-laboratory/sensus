@@ -38,7 +38,7 @@ namespace Sensus.Notifications
         public const string PENDING_SURVEY_TEXT_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-TEXT-NOTIFICATION";
         public const string PENDING_SURVEY_BADGE_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-BADGE-NOTIFICATION";
         public const string NOTIFICATION_USER_RESPONSE_ACTION_KEY = "SENSUS-NOTIFICATION-USER-RESPONSE-ACTION";
-        public const string NOTIFICATION_USER_RESPONSE_MESSAGE_KEY = "NOTIFICATION-INTENT-TITLE-KEY";
+        public const string NOTIFICATION_USER_RESPONSE_MESSAGE_KEY = "SENSUS-NOTIFICATION-USER-RESPONSE-MESSAGE";
 
         private List<PushNotificationRequest> _pushNotificationRequestsToSend;
 
@@ -77,18 +77,16 @@ namespace Sensus.Notifications
                 {
                     (Application.Current as App).DetailPage = new NavigationPage(new PendingScriptsPage());
                 }
-                else if (responseAction == NotificationUserResponseAction.ShowAlertDialog)
-                {
-                    if (!string.IsNullOrWhiteSpace(responseMessage))
-                    {
-                        await (Application.Current as App).DetailPage.DisplayAlert("Alert", responseMessage, "OK");
-                    }
-                }
                 else
                 {
                     SensusException.Report("Unrecognized notification user response action:  " + responseAction);
-                    return;
                 }
+
+                if (!string.IsNullOrWhiteSpace(responseMessage))
+                {
+                    await (Application.Current as App).DetailPage.DisplayAlert("Alert", responseMessage, "OK");
+                }
+
             });
         }
 
@@ -411,7 +409,7 @@ namespace Sensus.Notifications
                                 {
                                     string message = userNotificationObject.Value<string>("message");
                                     message = "Your study has been updated" + (string.IsNullOrWhiteSpace(message) ? "." : ":  " + message.Trim());
-                                    await IssueNotificationAsync("Study Updated", message, update.Id, true, protocol, null, NotificationUserResponseAction.ShowAlertDialog, message);
+                                    await IssueNotificationAsync("Study Updated", message, update.Id, true, protocol, null, NotificationUserResponseAction.None, message);
                                 }
                             }
                         }

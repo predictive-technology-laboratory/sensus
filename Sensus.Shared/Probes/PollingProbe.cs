@@ -395,7 +395,6 @@ namespace Sensus.Probes
                 _pollCallback.UserNotificationMessage = DisplayName + " data requested.";
 
                 // give the user some feedback when they tap the callback notification
-                _pollCallback.NotificationUserResponseAction = NotificationUserResponseAction.ShowAlertDialog;
                 _pollCallback.NotificationUserResponseMessage = "Data collected. Thanks!";
             }
 #endif

@@ -27,11 +27,6 @@ namespace Sensus.Notifications
         /// <summary>
         /// Display the <see cref="UI.PendingScriptsPage"/>.
         /// </summary>
-        DisplayPendingSurveys,
-
-        /// <summary>
-        /// Show an alert dialog containing the notification message.
-        /// </summary>
-        ShowAlertDialog
+        DisplayPendingSurveys
     };
 }
