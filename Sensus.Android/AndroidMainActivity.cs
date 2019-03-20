@@ -30,6 +30,7 @@ using Plugin.CurrentActivity;
 using System.Threading.Tasks;
 using Sensus.Exceptions;
 using Sensus.Notifications;
+using Sensus.Android.Notifications;
 
 #if __ANDROID_23__
 using Plugin.Permissions;
@@ -295,8 +296,6 @@ namespace Sensus.Android
                 return;
             }
 
-            DisplayPage displayPage;
-
             // open page to view protocol if a protocol was passed to us
             if (intent.Data != null)
             {
@@ -349,9 +348,11 @@ namespace Sensus.Android
                     });
                 }
             }
-            else if (Enum.TryParse(intent.GetStringExtra(Notifier.DISPLAY_PAGE_KEY), out displayPage))
+            else if (Enum.TryParse(intent.GetStringExtra(Notifier.NOTIFICATION_USER_RESPONSE_ACTION_KEY), out NotificationUserResponseAction userResponseAction))
             {
-                SensusContext.Current.Notifier.OpenDisplayPage(displayPage);
+                string title = intent.GetStringExtra(AndroidNotifier.NOTIFICATION_INTENT_TITLE_KEY);
+                string message = intent.GetStringExtra(AndroidNotifier.NOTIFICATION_INTENT_MESSAGE_KEY);
+                SensusContext.Current.Notifier.OnNotificationUserResponse(title, message, userResponseAction);
             }
         }
 

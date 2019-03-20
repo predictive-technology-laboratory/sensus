@@ -76,10 +76,10 @@ namespace Sensus.Callbacks
         public CancellationTokenSource Canceller { get; set; }
 
         /// <summary>
-        /// UI page to display when callback is returned to app.
+        /// Action to take when the user responds to the notification associated with this callback.
         /// </summary>
         /// <value>The display page.</value>
-        public DisplayPage DisplayPage { get; set; }
+        public NotificationUserResponseAction NotificationUserResponseAction { get; set; }
 
         /// <summary>
         /// Gets or sets the state.
@@ -155,7 +155,7 @@ namespace Sensus.Callbacks
         private ScheduledCallback()
         {
             Canceller = new CancellationTokenSource();
-            DisplayPage = DisplayPage.None;
+            NotificationUserResponseAction = NotificationUserResponseAction.None;
             State = ScheduledCallbackState.Created;
         }
 

@@ -247,7 +247,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\LongitudeOffsetGpsAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TimeSpanExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\Notifier.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Notifications\DisplayPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\NotificationUserResponseAction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotificationRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotificationRequestFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\BluetoothCharacteristicReadArgs.cs" />

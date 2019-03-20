@@ -692,7 +692,7 @@ namespace Sensus.Probes.User.Scripts
                 callback.UserNotificationMessage = "Please open to take survey.";
             }
 
-            callback.DisplayPage = DisplayPage.PendingSurveys;
+            callback.NotificationUserResponseAction = NotificationUserResponseAction.DisplayPendingSurveys;
 #endif
 
             return callback;

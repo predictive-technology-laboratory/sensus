@@ -43,6 +43,8 @@ namespace Sensus.Android.Notifications
         public const int FOREGROUND_SERVICE_NOTIFICATION_ID = 1;
         public const string FOREGROUND_SERVICE_NOTIFICATION_ACTION_PAUSE = "NOTIFICATION-ACTION-PAUSE";
         public const string FOREGROUND_SERVICE_NOTIFICATION_ACTION_RESUME = "NOTIFICATION-ACTION-RESUME";
+        public const string NOTIFICATION_INTENT_TITLE_KEY = "NOTIFICATION-INTENT-TITLE-KEY";
+        public const string NOTIFICATION_INTENT_MESSAGE_KEY = "NOTIFICATION-INTENT-BODY-KEY";
 
         private NotificationManager _notificationManager;
         private Notification.Builder _foregroundServiceNotificationBuilder;
@@ -212,7 +214,7 @@ namespace Sensus.Android.Notifications
             }
         }
 
-        public override Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, int? badgeNumber, DisplayPage displayPage)
+        public override Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, int? badgeNumber, NotificationUserResponseAction userResponseAction)
         {
             if (_notificationManager == null)
             {
@@ -225,12 +227,20 @@ namespace Sensus.Android.Notifications
             else
             {
                 Intent notificationIntent = new Intent(Application.Context, typeof(AndroidMainActivity));
-                notificationIntent.PutExtra(DISPLAY_PAGE_KEY, displayPage.ToString());
+
+                // when the user taps the notification, the intent will come back to the app without the notification
+                // title or message content. therefore, we need to store the notification content in the intent in order
+                // to recover it when the user taps the notification. we use the content in different ways depending
+                // on the user response action.
+                notificationIntent.PutExtra(NOTIFICATION_USER_RESPONSE_ACTION_KEY, userResponseAction.ToString());
+                notificationIntent.PutExtra(NOTIFICATION_INTENT_TITLE_KEY, title);
+                notificationIntent.PutExtra(NOTIFICATION_INTENT_MESSAGE_KEY, message);
+
                 PendingIntent notificationPendingIntent = PendingIntent.GetActivity(Application.Context, 0, notificationIntent, PendingIntentFlags.OneShot);
 
                 SensusNotificationChannel notificationChannel = SensusNotificationChannel.Default;
 
-                if (displayPage == DisplayPage.PendingSurveys)
+                if (userResponseAction == NotificationUserResponseAction.DisplayPendingSurveys)
                 {
                     notificationChannel = SensusNotificationChannel.Survey;
                 }

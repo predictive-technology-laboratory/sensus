@@ -44,7 +44,7 @@ namespace Sensus.Android.Callbacks
         {
             Intent callbackIntent = new Intent(_service, typeof(AndroidSensusService));
             callbackIntent.SetAction(callback.Id);
-            callbackIntent.PutExtra(Notifier.DISPLAY_PAGE_KEY, callback.DisplayPage.ToString());
+            callbackIntent.PutExtra(Notifier.NOTIFICATION_USER_RESPONSE_ACTION_KEY, callback.NotificationUserResponseAction.ToString());
             callbackIntent.PutExtra(SENSUS_CALLBACK_KEY, true);
             callbackIntent.PutExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY, callback.InvocationId);
             return callbackIntent;

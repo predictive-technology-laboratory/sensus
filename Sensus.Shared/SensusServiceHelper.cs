@@ -1000,7 +1000,7 @@ namespace Sensus
                         return;
                     }
 
-                    await SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, notificationId, alertUser, protocol, numScriptsToRun, DisplayPage.PendingSurveys);
+                    await SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, notificationId, alertUser, protocol, numScriptsToRun, NotificationUserResponseAction.DisplayPendingSurveys);
                 }
             });
         }

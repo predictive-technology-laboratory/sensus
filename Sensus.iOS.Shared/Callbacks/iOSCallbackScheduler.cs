@@ -156,15 +156,6 @@ namespace Sensus.iOS.Callbacks
             });
         }
 
-        public void OpenDisplayPage(NSDictionary notificationInfo)
-        {
-            DisplayPage displayPage;
-            if (Enum.TryParse(notificationInfo?.ValueForKey(new NSString(Notifier.DISPLAY_PAGE_KEY)) as NSString, out displayPage))
-            {
-                SensusContext.Current.Notifier.OpenDisplayPage(displayPage);
-            }
-        }
-
         /// <summary>
         /// Cancels the silent notifications (e.g., those for health test) when the app is going into the background.
         /// </summary>

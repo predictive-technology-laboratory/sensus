@@ -15,18 +15,23 @@
 namespace Sensus.Notifications
 {
     /// <summary>
-    /// Page to display when a callback notification is tapped by the user.
+    /// Action to take when the user responsds to a notification (e.g., by tapping it).
     /// </summary>
-    public enum DisplayPage
+    public enum NotificationUserResponseAction
     {
         /// <summary>
-        /// Display no page.
+        /// Do nothing.
         /// </summary>
         None,
 
         /// <summary>
         /// Display the <see cref="UI.PendingScriptsPage"/>.
         /// </summary>
-        PendingSurveys
+        DisplayPendingSurveys,
+
+        /// <summary>
+        /// Show an alert dialog containing the notification message.
+        /// </summary>
+        ShowAlertDialog
     };
 }

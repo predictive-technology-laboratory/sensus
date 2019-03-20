@@ -37,7 +37,7 @@ namespace Sensus.Notifications
     {
         public const string PENDING_SURVEY_TEXT_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-TEXT-NOTIFICATION";
         public const string PENDING_SURVEY_BADGE_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-BADGE-NOTIFICATION";
-        public const string DISPLAY_PAGE_KEY = "SENSUS-DISPLAY-PAGE";
+        public const string NOTIFICATION_USER_RESPONSE_ACTION_KEY = "SENSUS-NOTIFICATION-USER-RESPONSE-ACTION";
 
         private List<PushNotificationRequest> _pushNotificationRequestsToSend;
 
@@ -59,32 +59,35 @@ namespace Sensus.Notifications
             _pushNotificationBackendKeysProtocolIdsToDelete = new List<Tuple<Guid, string>>();
         }
 
-        public abstract Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, int? badgeNumber, DisplayPage displayPage);
+        public abstract Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, int? badgeNumber, NotificationUserResponseAction userResponseAction);
 
         public abstract void CancelNotification(string id);
 
-        public void OpenDisplayPage(DisplayPage displayPage)
+        public async Task OnNotificationUserResponseAsync(string title, string message, NotificationUserResponseAction responseAction)
         {
-            if (displayPage == DisplayPage.None)
+            if (responseAction == NotificationUserResponseAction.None)
             {
                 return;
             }
 
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
-                Page desiredTopPage = null;
-
-                if (displayPage == DisplayPage.PendingSurveys)
+                if (responseAction == NotificationUserResponseAction.DisplayPendingSurveys)
                 {
-                    desiredTopPage = new PendingScriptsPage();
+                    (Application.Current as App).DetailPage = new NavigationPage(new PendingScriptsPage());
+                }
+                else if (responseAction == NotificationUserResponseAction.ShowAlertDialog)
+                {
+                    if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(message))
+                    {
+                        await (Application.Current as App).DetailPage.DisplayAlert(title, message, "OK");
+                    }
                 }
                 else
                 {
-                    SensusException.Report("Unrecognized display page:  " + displayPage);
+                    SensusException.Report("Unrecognized notification user response action:  " + responseAction);
                     return;
                 }
-
-                (Application.Current as App).DetailPage = new NavigationPage(desiredTopPage);
             });
         }
 
@@ -406,7 +409,7 @@ namespace Sensus.Notifications
                                 if (userNotificationObject != null)
                                 {
                                     string message = userNotificationObject.Value<string>("message");
-                                    await IssueNotificationAsync("Study Updated", "Your study has been updated" + (string.IsNullOrWhiteSpace(message) ? "." : ":  " + message.Trim()), update.Id, true, protocol, null, DisplayPage.None);
+                                    await IssueNotificationAsync("Study Updated", "Your study has been updated" + (string.IsNullOrWhiteSpace(message) ? "." : ":  " + message.Trim()), update.Id, true, protocol, null, NotificationUserResponseAction.ShowAlertDialog);
                                 }
                             }
                         }
@@ -431,7 +434,7 @@ namespace Sensus.Notifications
                 {
                     if (!string.IsNullOrWhiteSpace(pushNotification.Title) && !string.IsNullOrWhiteSpace(pushNotification.Body))
                     {
-                        await IssueNotificationAsync(pushNotification.Title, pushNotification.Body, pushNotification.Id, !string.IsNullOrWhiteSpace(pushNotification.Sound), protocol, null, DisplayPage.None);
+                        await IssueNotificationAsync(pushNotification.Title, pushNotification.Body, pushNotification.Id, !string.IsNullOrWhiteSpace(pushNotification.Sound), protocol, null, NotificationUserResponseAction.None);
                     }
                 }
                 catch (Exception ex)
