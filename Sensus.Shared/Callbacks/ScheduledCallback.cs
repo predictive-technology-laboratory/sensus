@@ -79,8 +79,7 @@ namespace Sensus.Callbacks
         public NotificationUserResponseAction NotificationUserResponseAction { get; set; }
 
         /// <summary>
-        /// If <see cref="NotificationUserResponseAction"/> is set to <see cref="NotificationUserResponseAction.ShowAlertDialog"/>, then
-        /// this is the message that will be displayed after the user has responded to (e.g., by tapping) the notification.
+        /// Message to display after the user has responded to (e.g., by tapping) the notification defined by <see cref="UserNotificationMessage"/>.
         /// </summary>
         /// <value>The notification user response message.</value>
         public string NotificationUserResponseMessage { get; set; }

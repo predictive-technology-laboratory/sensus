@@ -66,27 +66,17 @@ namespace Sensus.Notifications
 
         public async Task OnNotificationUserResponseAsync(NotificationUserResponseAction responseAction, string responseMessage)
         {
-            if (responseAction == NotificationUserResponseAction.None)
-            {
-                return;
-            }
-
             await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
                 if (responseAction == NotificationUserResponseAction.DisplayPendingSurveys)
                 {
                     (Application.Current as App).DetailPage = new NavigationPage(new PendingScriptsPage());
                 }
-                else
-                {
-                    SensusException.Report("Unrecognized notification user response action:  " + responseAction);
-                }
 
                 if (!string.IsNullOrWhiteSpace(responseMessage))
                 {
                     await (Application.Current as App).DetailPage.DisplayAlert("Alert", responseMessage, "OK");
                 }
-
             });
         }
 

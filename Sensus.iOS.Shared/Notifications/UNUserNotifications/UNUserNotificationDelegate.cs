@@ -73,12 +73,19 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
             {
                 SensusServiceHelper.Get().Logger.Log("Notification received user response:  " + (request.Identifier ?? "[null identifier]"), LoggingLevel.Normal, GetType());
 
-                // the user has responded. take action as appropriate.
-                if (Enum.TryParse(notificationInfo?.ValueForKey(new NSString(Notifier.NOTIFICATION_USER_RESPONSE_ACTION_KEY)) as NSString, out NotificationUserResponseAction responseAction))
+                // extract user response action if there is one
+                NotificationUserResponseAction responseAction = NotificationUserResponseAction.None;
+                notificationInfo.TryGetValue(new NSString(Notifier.NOTIFICATION_USER_RESPONSE_ACTION_KEY), out NSObject responseActionString);
+                if (responseActionString != null)
                 {
-                    notificationInfo.TryGetValue(new NSString(Notifier.NOTIFICATION_USER_RESPONSE_MESSAGE_KEY), out NSObject message);
-                    await SensusContext.Current.Notifier.OnNotificationUserResponseAsync(responseAction, message?.ToString());
+                    Enum.TryParse(responseActionString.ToString(), out responseAction);
                 }
+
+                // extract user reponse message if there is one
+                notificationInfo.TryGetValue(new NSString(Notifier.NOTIFICATION_USER_RESPONSE_MESSAGE_KEY), out NSObject message);
+
+                // process user response
+                await SensusContext.Current.Notifier.OnNotificationUserResponseAsync(responseAction, message?.ToString());
 
                 // provide some generic feedback if the user responded to a silent notification. this should only happen in race cases where
                 // a silent notification is issued just before we enter background.
