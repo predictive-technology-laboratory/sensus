@@ -144,8 +144,7 @@ namespace Sensus.iOS.Callbacks
                 });
             });
 
-            // raise callback but don't notify user since we would have already done so when the notification was delivered to the notification tray.
-            await RaiseCallbackAsync(callback, invocationId, false);
+            await RaiseCallbackAsync(callback, invocationId);
 
             // end the background task
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>

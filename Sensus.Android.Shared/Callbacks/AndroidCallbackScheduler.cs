@@ -132,8 +132,7 @@ namespace Sensus.Android.Callbacks
             {
                 string invocationId = intent.GetStringExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY);
 
-                // raise callback and notify the user if there is a message. we wouldn't have presented the user with the message yet.
-                await RaiseCallbackAsync(callback, invocationId, true);
+                await RaiseCallbackAsync(callback, invocationId);
             }
             else
             {

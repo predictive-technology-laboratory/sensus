@@ -190,8 +190,7 @@ namespace Sensus.Callbacks
         /// <returns>Async task</returns>
         /// <param name="callback">Callback to raise.</param>
         /// <param name="invocationId">Identifier of invocation.</param>
-        /// <param name="notifyUser">If set to <c>true</c>, then notify user that the callback is being raised.</param>
-        public virtual async Task RaiseCallbackAsync(ScheduledCallback callback, string invocationId, bool notifyUser)
+        public virtual async Task RaiseCallbackAsync(ScheduledCallback callback, string invocationId)
         {
             try
             {
@@ -236,10 +235,13 @@ namespace Sensus.Callbacks
                         {
                             SensusServiceHelper.Get().Logger.Log("Raising callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
 
-                            if (notifyUser)
-                            {
-                                await SensusContext.Current.Notifier.IssueNotificationAsync("Sensus", callback.UserNotificationMessage, callback.Id, true, callback.Protocol, null, callback.NotificationUserResponseAction, callback.NotificationUserResponseMessage);
-                            }
+#if __ANDROID__
+                            // on android we wouldn't have yet notified the user using the callback's message. on ios, the
+                            // message would have already been displayed to the user if the app was in the background. on
+                            // ios we do not display callback messages if the app is foregrounded. see the notification 
+                            // delegate for how this is done.
+                            await SensusContext.Current.Notifier.IssueNotificationAsync("Sensus", callback.UserNotificationMessage, callback.Id, true, callback.Protocol, null, callback.NotificationUserResponseAction, callback.NotificationUserResponseMessage);
+#endif
 
                             // if the callback specified a timeout, request cancellation at the specified time.
                             if (callback.Timeout.HasValue)
