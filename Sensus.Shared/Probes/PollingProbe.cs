@@ -24,6 +24,7 @@ using Sensus.Callbacks;
 using Microsoft.AppCenter.Analytics;
 using Sensus.Extensions;
 using Sensus.Exceptions;
+using Sensus.Notifications;
 
 #if __IOS__
 using CoreLocation;
@@ -394,6 +395,11 @@ namespace Sensus.Probes
                 }
 
             }, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), TimeSpan.FromMilliseconds(_pollingSleepDurationMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS));
+
+            // give the user some feedback when they tap the callback notification (only happens on iOS).
+            _pollCallback.NotificationUserResponseAction = NotificationUserResponseAction.ShowAlertDialog;
+            _pollCallback.NotificationUserResponseMessage = "Data collected. Thanks!";
+
 
             bool schedulePollCallback = true;
 

@@ -350,9 +350,8 @@ namespace Sensus.Android
             }
             else if (Enum.TryParse(intent.GetStringExtra(Notifier.NOTIFICATION_USER_RESPONSE_ACTION_KEY), out NotificationUserResponseAction userResponseAction))
             {
-                string title = intent.GetStringExtra(AndroidNotifier.NOTIFICATION_INTENT_TITLE_KEY);
-                string message = intent.GetStringExtra(AndroidNotifier.NOTIFICATION_INTENT_MESSAGE_KEY);
-                SensusContext.Current.Notifier.OnNotificationUserResponse(title, message, userResponseAction);
+                string message = intent.GetStringExtra(Notifier.NOTIFICATION_USER_RESPONSE_MESSAGE_KEY);
+                await SensusContext.Current.Notifier.OnNotificationUserResponseAsync(userResponseAction, message);
             }
         }
 

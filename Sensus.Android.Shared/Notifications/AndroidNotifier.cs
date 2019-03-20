@@ -43,8 +43,6 @@ namespace Sensus.Android.Notifications
         public const int FOREGROUND_SERVICE_NOTIFICATION_ID = 1;
         public const string FOREGROUND_SERVICE_NOTIFICATION_ACTION_PAUSE = "NOTIFICATION-ACTION-PAUSE";
         public const string FOREGROUND_SERVICE_NOTIFICATION_ACTION_RESUME = "NOTIFICATION-ACTION-RESUME";
-        public const string NOTIFICATION_INTENT_TITLE_KEY = "NOTIFICATION-INTENT-TITLE-KEY";
-        public const string NOTIFICATION_INTENT_MESSAGE_KEY = "NOTIFICATION-INTENT-BODY-KEY";
 
         private NotificationManager _notificationManager;
         private Notification.Builder _foregroundServiceNotificationBuilder;

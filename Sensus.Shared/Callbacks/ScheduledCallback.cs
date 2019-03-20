@@ -82,6 +82,12 @@ namespace Sensus.Callbacks
         public NotificationUserResponseAction NotificationUserResponseAction { get; set; }
 
         /// <summary>
+        /// Message to display after the user has responded to the notification associated with this callback.
+        /// </summary>
+        /// <value>The notification user response message.</value>
+        public string NotificationUserResponseMessage { get; set; }
+
+        /// <summary>
         /// Gets or sets the state.
         /// </summary>
         /// <value>The state.</value>

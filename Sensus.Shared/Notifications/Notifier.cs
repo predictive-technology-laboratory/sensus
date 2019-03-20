@@ -38,6 +38,7 @@ namespace Sensus.Notifications
         public const string PENDING_SURVEY_TEXT_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-TEXT-NOTIFICATION";
         public const string PENDING_SURVEY_BADGE_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-BADGE-NOTIFICATION";
         public const string NOTIFICATION_USER_RESPONSE_ACTION_KEY = "SENSUS-NOTIFICATION-USER-RESPONSE-ACTION";
+        public const string NOTIFICATION_USER_RESPONSE_MESSAGE_KEY = "NOTIFICATION-INTENT-TITLE-KEY";
 
         private List<PushNotificationRequest> _pushNotificationRequestsToSend;
 
@@ -63,7 +64,7 @@ namespace Sensus.Notifications
 
         public abstract void CancelNotification(string id);
 
-        public async Task OnNotificationUserResponseAsync(string title, string message, NotificationUserResponseAction responseAction)
+        public async Task OnNotificationUserResponseAsync(NotificationUserResponseAction responseAction, string responseMessage)
         {
             if (responseAction == NotificationUserResponseAction.None)
             {
@@ -78,9 +79,9 @@ namespace Sensus.Notifications
                 }
                 else if (responseAction == NotificationUserResponseAction.ShowAlertDialog)
                 {
-                    if (!string.IsNullOrWhiteSpace(title) && !string.IsNullOrWhiteSpace(message))
+                    if (!string.IsNullOrWhiteSpace(responseMessage))
                     {
-                        await (Application.Current as App).DetailPage.DisplayAlert(title, message, "OK");
+                        await (Application.Current as App).DetailPage.DisplayAlert("Alert", responseMessage, "OK");
                     }
                 }
                 else
