@@ -239,16 +239,15 @@ namespace Sensus.DataStores.Remote
 
             _mostRecentSuccessfulWriteTime = DateTime.Now;
 
-            string userNotificationMessage = null;
+            _writeCallback = new ScheduledCallback(cancellationToken => WriteLocalDataStoreAsync(cancellationToken), TimeSpan.FromMilliseconds(_writeDelayMS), TimeSpan.FromMilliseconds(_writeDelayMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_writeTimeoutMinutes), TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS));
 
 #if __IOS__
             // we can't wake up the app on ios. this is problematic since data need to be stored locally and remotely
             // in something of a reliable schedule; otherwise, we risk data loss (e.g., from device restarts, app kills, etc.).
             // so, do the best possible thing and bug the user with a notification indicating that data need to be stored.
-            userNotificationMessage = _userNotificationMessage;
+            _writeCallback.UserNotificationMessage = _userNotificationMessage;
 #endif
 
-            _writeCallback = new ScheduledCallback(cancellationToken => WriteLocalDataStoreAsync(cancellationToken), TimeSpan.FromMilliseconds(_writeDelayMS), TimeSpan.FromMilliseconds(_writeDelayMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_writeTimeoutMinutes), userNotificationMessage, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS));
             await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_writeCallback);
 
             // hook into the AC charge event signal -- add handler to AC broadcast receiver

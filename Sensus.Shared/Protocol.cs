@@ -2012,15 +2012,15 @@ namespace Sensus
                 await PrivateStartAsync(cancellationToken);
                 _scheduledStartCallback = null;
 
-            }, timeUntilStart, "START", _id, this, null,
+            }, timeUntilStart, "START", _id, this, null, TimeSpan.Zero, TimeSpan.Zero);
+
 #if __ANDROID__
-            $"Started study: {Name}."
+            _scheduledStartCallback.UserNotificationMessage = "Started study: " + Name;
 #elif __IOS__
-            $"Please open to start study {Name}."
+            _scheduledStartCallback.UserNotificationMessage = "Please open to start study: " + Name;
 #else
-            $"Started study: {Name}."
+#error "Unrecognized OS"
 #endif
-            , TimeSpan.Zero, TimeSpan.Zero);
 
             await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_scheduledStartCallback);
 
@@ -2053,15 +2053,15 @@ namespace Sensus
                 await StopAsync();
                 _scheduledStopCallback = null;
 
-            }, timeUntilStop, "STOP", _id, this, null,
+            }, timeUntilStop, "STOP", _id, this, null, TimeSpan.Zero, TimeSpan.Zero);
+
 #if __ANDROID__
-            $"Stopped study: {Name}."
+            _scheduledStopCallback.UserNotificationMessage = "Stopped study: " + Name;
 #elif __IOS__
-            $"Please open to stop study: {Name}."
+            _scheduledStopCallback.UserNotificationMessage = "Please open to stop study: " + Name;
 #else
-            $"Stopped study: {Name}."
+#error "Unrecognized OS"
 #endif
-            , TimeSpan.Zero, TimeSpan.Zero);
 
             await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_scheduledStopCallback);
         }

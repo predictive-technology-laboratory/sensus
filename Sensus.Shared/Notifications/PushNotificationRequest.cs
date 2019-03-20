@@ -41,7 +41,7 @@ namespace Sensus.Notifications
 #elif __IOS__
                 return PushNotificationRequestFormat.ApplePushNotificationService;
 #else
-#error "Unrecognized platform."
+#error "Unrecognized OS."
 #endif
             }
         }

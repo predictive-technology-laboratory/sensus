@@ -267,7 +267,7 @@ namespace Sensus.Probes.User.Scripts
                         await scriptRunner.RunAsync(scriptRunner.Script.Copy(true));
                     }
 
-                }, Agent.DeliveryInterval.Value, Agent.DeliveryInterval.Value, Agent.Id, Protocol.Id, Protocol, null, null, Agent.DeliveryIntervalToleranceBefore.GetValueOrDefault(), Agent.DeliveryIntervalToleranceAfter.GetValueOrDefault());
+                }, Agent.DeliveryInterval.Value, Agent.DeliveryInterval.Value, Agent.Id, Protocol.Id, Protocol, null, Agent.DeliveryIntervalToleranceBefore.GetValueOrDefault(), Agent.DeliveryIntervalToleranceAfter.GetValueOrDefault());
 
                 await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_agentIntervalDeliveryScheduledCallback);
             }

@@ -35,7 +35,8 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
 
             SensusServiceHelper.Get().Logger.Log("Notification delivered:  " + (identifier ?? "[null identifier]"), LoggingLevel.Normal, GetType());
 
-            // if the notification is for a callback, service the callback and do not show the notification.
+            // if the notification is for a callback, service the callback and do not show the notification. we use the local 
+            // notification loop to schedule callback events and don't want to display the messages when the app is foregrounded.
             NSDictionary notificationInfo = notification?.Request?.Content?.UserInfo;
             iOSCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as iOSCallbackScheduler;
             if (callbackScheduler.IsCallback(notificationInfo))
@@ -87,7 +88,7 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
                 }
             }
 
-            completionHandler();
+            completionHandler?.Invoke();
         }
     }
 }

@@ -64,28 +64,32 @@ namespace Sensus.Callbacks
         public TimeSpan? Timeout { get; set; }
 
         /// <summary>
-        /// Notification message that should be displayed to the user when the callback is invoked.
+        /// Notification message that should be displayed to the user at the time when the <see cref="ScheduledCallback"/> is
+        /// scheduled to run. On iOS, this message will not be displayed when the app is in the foreground. On Android, this 
+        /// message will be displayed regardless of the foreground/background state of the app.
         /// </summary>
         /// <value>The user notification message.</value>
         public string UserNotificationMessage { get; set; }
+
+        /// <summary>
+        /// Action to take when the user responds to (e.g., by tapping) the notification defined by <see cref="UserNotificationMessage"/>.
+        /// If <see cref="UserNotificationMessage"/> is <c>null</c>, then this has no effect.
+        /// </summary>
+        /// <value>The display page.</value>
+        public NotificationUserResponseAction NotificationUserResponseAction { get; set; }
+
+        /// <summary>
+        /// If <see cref="NotificationUserResponseAction"/> is set to <see cref="NotificationUserResponseAction.ShowAlertDialog"/>, then
+        /// this is the message that will be displayed after the user has responded to (e.g., by tapping) the notification.
+        /// </summary>
+        /// <value>The notification user response message.</value>
+        public string NotificationUserResponseMessage { get; set; }
 
         /// <summary>
         /// Source of cancellation tokens to be cancelled when the action times out.
         /// </summary>
         /// <value>The canceller.</value>
         public CancellationTokenSource Canceller { get; set; }
-
-        /// <summary>
-        /// Action to take when the user responds to the notification associated with this callback.
-        /// </summary>
-        /// <value>The display page.</value>
-        public NotificationUserResponseAction NotificationUserResponseAction { get; set; }
-
-        /// <summary>
-        /// Message to display after the user has responded to the notification associated with this callback.
-        /// </summary>
-        /// <value>The notification user response message.</value>
-        public string NotificationUserResponseMessage { get; set; }
 
         /// <summary>
         /// Gets or sets the state.
@@ -174,7 +178,6 @@ namespace Sensus.Callbacks
         /// <param name="domain">Domain of callback identifier. All callback IDs within a domain must be unique. If an ID duplicates another within the same domain, then it will not be scheduled.</param>
         /// <param name="protocol">Protocol associated with scheduled callback</param>
         /// <param name="timeout">How long to allow callback to execute before cancelling it.</param>
-        /// <param name="userNotificationMessage">Message to display to the user when executing the callback.</param>
         /// <param name="delayToleranceBefore">Delay tolerance before.</param>
         /// <param name="delayToleranceAfter">Delay tolerance after.</param>
         public ScheduledCallback(ActionAsyncDelegate actionAsync,
@@ -183,7 +186,6 @@ namespace Sensus.Callbacks
                                  string domain,
                                  Protocol protocol,
                                  TimeSpan? timeout,
-                                 string userNotificationMessage,
                                  TimeSpan delayToleranceBefore,
                                  TimeSpan delayToleranceAfter)
             : this()
@@ -193,7 +195,6 @@ namespace Sensus.Callbacks
             Id = (domain ?? "SENSUS") + "." + id;  // if a domain is not specified, use a global domain.
             Protocol = protocol;
             Timeout = timeout;
-            UserNotificationMessage = userNotificationMessage;
             DelayToleranceBefore = delayToleranceBefore;
             DelayToleranceAfter = delayToleranceAfter;
         }
@@ -208,7 +209,6 @@ namespace Sensus.Callbacks
         /// <param name="domain">Domain of callback identifier. All callback IDs within a domain must be unique. If an ID duplicates another in the same domain, then it will not be scheduled.</param>
         /// <param name="protocol">Protocol associated with scheduled callback</param>
         /// <param name="timeout">How long to allow callback to execute before cancelling it.</param>
-        /// <param name="userNotificationMessage">Message to display to the user when executing the callback.</param>
         /// <param name="delayToleranceBefore">Delay tolerance before.</param>
         /// <param name="delayToleranceAfter">Delay tolerance after.</param>
         public ScheduledCallback(ActionAsyncDelegate actionAsync,
@@ -218,7 +218,6 @@ namespace Sensus.Callbacks
                                  string domain,
                                  Protocol protocol,
                                  TimeSpan? timeout,
-                                 string userNotificationMessage,
                                  TimeSpan delayToleranceBefore,
                                  TimeSpan delayToleranceAfter)
             : this(actionAsync,
@@ -227,7 +226,6 @@ namespace Sensus.Callbacks
                    domain,
                    protocol,
                    timeout,
-                   userNotificationMessage,
                    delayToleranceBefore,
                    delayToleranceAfter)
         {

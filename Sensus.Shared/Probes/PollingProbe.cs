@@ -327,14 +327,6 @@ namespace Sensus.Probes
 
             string userNotificationMessage = null;
 
-#if __IOS__
-            // on ios, throw an alert at the user so they'll notice that polling is required.
-            if (AlertUserWhenBackgrounded)
-            {
-                userNotificationMessage = DisplayName + " data requested.";
-            }
-#endif
-
             // we used to use an initial delay of zero in order to poll immediately; however, this causes the following
             // problems:
             // 
@@ -394,12 +386,19 @@ namespace Sensus.Probes
                     _isPolling = false;
                 }
 
-            }, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), TimeSpan.FromMilliseconds(_pollingSleepDurationMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS));
+            }, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), TimeSpan.FromMilliseconds(_pollingSleepDurationMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_pollingTimeoutMinutes), TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS));
 
-            // give the user some feedback when they tap the callback notification (only happens on iOS).
-            _pollCallback.NotificationUserResponseAction = NotificationUserResponseAction.ShowAlertDialog;
-            _pollCallback.NotificationUserResponseMessage = "Data collected. Thanks!";
+#if __IOS__
+            // on ios, notify the user about desired polling to encourage them to foreground the app.
+            if (AlertUserWhenBackgrounded)
+            {
+                _pollCallback.UserNotificationMessage = DisplayName + " data requested.";
 
+                // give the user some feedback when they tap the callback notification
+                _pollCallback.NotificationUserResponseAction = NotificationUserResponseAction.ShowAlertDialog;
+                _pollCallback.NotificationUserResponseMessage = "Data collected. Thanks!";
+            }
+#endif
 
             bool schedulePollCallback = true;
 
