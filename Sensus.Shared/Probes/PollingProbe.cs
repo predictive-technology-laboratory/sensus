@@ -325,8 +325,6 @@ namespace Sensus.Probes
         {
             await base.ProtectedStartAsync();
 
-            string userNotificationMessage = null;
-
             // we used to use an initial delay of zero in order to poll immediately; however, this causes the following
             // problems:
             // 
@@ -392,7 +390,7 @@ namespace Sensus.Probes
             // on ios, notify the user about desired polling to encourage them to foreground the app.
             if (AlertUserWhenBackgrounded)
             {
-                _pollCallback.UserNotificationMessage = DisplayName + " data requested.";
+                _pollCallback.UserNotificationMessage = DisplayName.Substring(0, 1).ToUpper() + DisplayName.Substring(1).ToLower() + " data requested.";
 
                 // give the user some feedback when they tap the callback notification
                 _pollCallback.NotificationUserResponseMessage = "Data collected. Thanks!";
