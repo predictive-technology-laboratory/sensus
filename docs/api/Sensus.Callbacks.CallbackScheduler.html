@@ -264,14 +264,14 @@
   
   
   <a id="Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_" data-uid="Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync*"></a>
-  <h4 id="Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_System_Boolean_" data-uid="Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String,System.Boolean)">RaiseCallbackAsync(ScheduledCallback, String, Boolean)</h4>
+  <h4 id="Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_" data-uid="Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String)">RaiseCallbackAsync(ScheduledCallback, String)</h4>
   <div class="markdown level1 summary"><p>Raises a callback. This involves initiating the callback, setting up cancellation timing for the callback&apos;s actions, and scheduling the next
 invocation of the callback in the case of repeating callbacks.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual Task RaiseCallbackAsync(ScheduledCallback callback, string invocationId, bool notifyUser)</code></pre>
+    <pre><code class="lang-csharp hljs">public virtual Task RaiseCallbackAsync(ScheduledCallback callback, string invocationId)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -293,12 +293,6 @@ invocation of the callback in the case of repeating callbacks.</p>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">invocationId</span></td>
         <td><p>Identifier of invocation.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td><span class="parametername">notifyUser</span></td>
-        <td><p>If set to <code>true</code>, then notify user that the callback is being raised.</p>
 </td>
       </tr>
     </tbody>

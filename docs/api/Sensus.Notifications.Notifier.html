@@ -115,12 +115,36 @@
   </h3>
   
   
-  <h4 id="Sensus_Notifications_Notifier_DISPLAY_PAGE_KEY" data-uid="Sensus.Notifications.Notifier.DISPLAY_PAGE_KEY">DISPLAY_PAGE_KEY</h4>
+  <h4 id="Sensus_Notifications_Notifier_NOTIFICATION_USER_RESPONSE_ACTION_KEY" data-uid="Sensus.Notifications.Notifier.NOTIFICATION_USER_RESPONSE_ACTION_KEY">NOTIFICATION_USER_RESPONSE_ACTION_KEY</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const string DISPLAY_PAGE_KEY = &quot;SENSUS-DISPLAY-PAGE&quot;</code></pre>
+    <pre><code class="lang-csharp hljs">public const string NOTIFICATION_USER_RESPONSE_ACTION_KEY = &quot;SENSUS-NOTIFICATION-USER-RESPONSE-ACTION&quot;</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="Sensus_Notifications_Notifier_NOTIFICATION_USER_RESPONSE_MESSAGE_KEY" data-uid="Sensus.Notifications.Notifier.NOTIFICATION_USER_RESPONSE_MESSAGE_KEY">NOTIFICATION_USER_RESPONSE_MESSAGE_KEY</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string NOTIFICATION_USER_RESPONSE_MESSAGE_KEY = &quot;SENSUS-NOTIFICATION-USER-RESPONSE-MESSAGE&quot;</code></pre>
   </div>
   <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -269,12 +293,12 @@
   
   
   <a id="Sensus_Notifications_Notifier_IssueNotificationAsync_" data-uid="Sensus.Notifications.Notifier.IssueNotificationAsync*"></a>
-  <h4 id="Sensus_Notifications_Notifier_IssueNotificationAsync_System_String_System_String_System_String_System_Boolean_Sensus_Protocol_System_Nullable_System_Int32__Sensus_Notifications_DisplayPage_" data-uid="Sensus.Notifications.Notifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.DisplayPage)">IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable&lt;Int32&gt;, DisplayPage)</h4>
+  <h4 id="Sensus_Notifications_Notifier_IssueNotificationAsync_System_String_System_String_System_String_System_Boolean_Sensus_Protocol_System_Nullable_System_Int32__Sensus_Notifications_NotificationUserResponseAction_System_String_" data-uid="Sensus.Notifications.Notifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.NotificationUserResponseAction,System.String)">IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable&lt;Int32&gt;, NotificationUserResponseAction, String)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, Nullable&lt;int&gt; badgeNumber, DisplayPage displayPage)</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, Nullable&lt;int&gt; badgeNumber, NotificationUserResponseAction userResponseAction, string userResponseMessage)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -317,8 +341,13 @@
         <td></td>
       </tr>
       <tr>
-        <td><a class="xref" href="Sensus.Notifications.DisplayPage.html">DisplayPage</a></td>
-        <td><span class="parametername">displayPage</span></td>
+        <td><a class="xref" href="Sensus.Notifications.NotificationUserResponseAction.html">NotificationUserResponseAction</a></td>
+        <td><span class="parametername">userResponseAction</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">userResponseMessage</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -340,13 +369,13 @@
   </table>
   
   
-  <a id="Sensus_Notifications_Notifier_OpenDisplayPage_" data-uid="Sensus.Notifications.Notifier.OpenDisplayPage*"></a>
-  <h4 id="Sensus_Notifications_Notifier_OpenDisplayPage_Sensus_Notifications_DisplayPage_" data-uid="Sensus.Notifications.Notifier.OpenDisplayPage(Sensus.Notifications.DisplayPage)">OpenDisplayPage(DisplayPage)</h4>
+  <a id="Sensus_Notifications_Notifier_OnNotificationUserResponseAsync_" data-uid="Sensus.Notifications.Notifier.OnNotificationUserResponseAsync*"></a>
+  <h4 id="Sensus_Notifications_Notifier_OnNotificationUserResponseAsync_System_String_System_String_" data-uid="Sensus.Notifications.Notifier.OnNotificationUserResponseAsync(System.String,System.String)">OnNotificationUserResponseAsync(String, String)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void OpenDisplayPage(DisplayPage displayPage)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task OnNotificationUserResponseAsync(string responseAction, string responseMessage)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -359,8 +388,28 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.Notifications.DisplayPage.html">DisplayPage</a></td>
-        <td><span class="parametername">displayPage</span></td>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">responseAction</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">responseMessage</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
         <td></td>
       </tr>
     </tbody>

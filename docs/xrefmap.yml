@@ -1810,15 +1810,15 @@ references:
   commentId: F:Sensus.Android.Notifications.AndroidNotifier.FOREGROUND_SERVICE_NOTIFICATION_ID
   fullName: Sensus.Android.Notifications.AndroidNotifier.FOREGROUND_SERVICE_NOTIFICATION_ID
   nameWithType: AndroidNotifier.FOREGROUND_SERVICE_NOTIFICATION_ID
-- uid: Sensus.Android.Notifications.AndroidNotifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.DisplayPage)
-  name: IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable<Int32>, DisplayPage)
-  href: api/Sensus.Android.Notifications.AndroidNotifier.html#Sensus_Android_Notifications_AndroidNotifier_IssueNotificationAsync_System_String_System_String_System_String_System_Boolean_Sensus_Protocol_System_Nullable_System_Int32__Sensus_Notifications_DisplayPage_
-  commentId: M:Sensus.Android.Notifications.AndroidNotifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.DisplayPage)
-  name.vb: IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable(Of Int32), DisplayPage)
-  fullName: Sensus.Android.Notifications.AndroidNotifier.IssueNotificationAsync(System.String, System.String, System.String, System.Boolean, Sensus.Protocol, System.Nullable<System.Int32>, Sensus.Notifications.DisplayPage)
-  fullName.vb: Sensus.Android.Notifications.AndroidNotifier.IssueNotificationAsync(System.String, System.String, System.String, System.Boolean, Sensus.Protocol, System.Nullable(Of System.Int32), Sensus.Notifications.DisplayPage)
-  nameWithType: AndroidNotifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable<Int32>, DisplayPage)
-  nameWithType.vb: AndroidNotifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable(Of Int32), DisplayPage)
+- uid: Sensus.Android.Notifications.AndroidNotifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.NotificationUserResponseAction,System.String)
+  name: IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable<Int32>, NotificationUserResponseAction, String)
+  href: api/Sensus.Android.Notifications.AndroidNotifier.html#Sensus_Android_Notifications_AndroidNotifier_IssueNotificationAsync_System_String_System_String_System_String_System_Boolean_Sensus_Protocol_System_Nullable_System_Int32__Sensus_Notifications_NotificationUserResponseAction_System_String_
+  commentId: M:Sensus.Android.Notifications.AndroidNotifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.NotificationUserResponseAction,System.String)
+  name.vb: IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable(Of Int32), NotificationUserResponseAction, String)
+  fullName: Sensus.Android.Notifications.AndroidNotifier.IssueNotificationAsync(System.String, System.String, System.String, System.Boolean, Sensus.Protocol, System.Nullable<System.Int32>, Sensus.Notifications.NotificationUserResponseAction, System.String)
+  fullName.vb: Sensus.Android.Notifications.AndroidNotifier.IssueNotificationAsync(System.String, System.String, System.String, System.Boolean, Sensus.Protocol, System.Nullable(Of System.Int32), Sensus.Notifications.NotificationUserResponseAction, System.String)
+  nameWithType: AndroidNotifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable<Int32>, NotificationUserResponseAction, String)
+  nameWithType.vb: AndroidNotifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable(Of Int32), NotificationUserResponseAction, String)
 - uid: Sensus.Android.Notifications.AndroidNotifier.IssueNotificationAsync*
   name: IssueNotificationAsync
   href: api/Sensus.Android.Notifications.AndroidNotifier.html#Sensus_Android_Notifications_AndroidNotifier_IssueNotificationAsync_
@@ -21511,12 +21511,12 @@ references:
   commentId: Overload:Sensus.Callbacks.CallbackScheduler.ContainsCallback
   fullName: Sensus.Callbacks.CallbackScheduler.ContainsCallback
   nameWithType: CallbackScheduler.ContainsCallback
-- uid: Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String,System.Boolean)
-  name: RaiseCallbackAsync(ScheduledCallback, String, Boolean)
-  href: api/Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_System_Boolean_
-  commentId: M:Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String,System.Boolean)
-  fullName: Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback, System.String, System.Boolean)
-  nameWithType: CallbackScheduler.RaiseCallbackAsync(ScheduledCallback, String, Boolean)
+- uid: Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String)
+  name: RaiseCallbackAsync(ScheduledCallback, String)
+  href: api/Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_
+  commentId: M:Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String)
+  fullName: Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback, System.String)
+  nameWithType: CallbackScheduler.RaiseCallbackAsync(ScheduledCallback, String)
 - uid: Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync*
   name: RaiseCallbackAsync
   href: api/Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_
@@ -21625,24 +21625,24 @@ references:
   commentId: T:Sensus.Callbacks.ScheduledCallback
   fullName: Sensus.Callbacks.ScheduledCallback
   nameWithType: ScheduledCallback
-- uid: Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.String,System.TimeSpan,System.TimeSpan)
-  name: ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, String, String, Protocol, Nullable<TimeSpan>, String, TimeSpan, TimeSpan)
-  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback__ctor_Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_System_TimeSpan_System_String_System_String_Sensus_Protocol_System_Nullable_System_TimeSpan__System_String_System_TimeSpan_System_TimeSpan_
-  commentId: M:Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.String,System.TimeSpan,System.TimeSpan)
-  name.vb: ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, String, String, Protocol, Nullable(Of TimeSpan), String, TimeSpan, TimeSpan)
-  fullName: Sensus.Callbacks.ScheduledCallback.ScheduledCallback(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate, System.TimeSpan, System.String, System.String, Sensus.Protocol, System.Nullable<System.TimeSpan>, System.String, System.TimeSpan, System.TimeSpan)
-  fullName.vb: Sensus.Callbacks.ScheduledCallback.ScheduledCallback(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate, System.TimeSpan, System.String, System.String, Sensus.Protocol, System.Nullable(Of System.TimeSpan), System.String, System.TimeSpan, System.TimeSpan)
-  nameWithType: ScheduledCallback.ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, String, String, Protocol, Nullable<TimeSpan>, String, TimeSpan, TimeSpan)
-  nameWithType.vb: ScheduledCallback.ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, String, String, Protocol, Nullable(Of TimeSpan), String, TimeSpan, TimeSpan)
-- uid: Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate,System.TimeSpan,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.String,System.TimeSpan,System.TimeSpan)
-  name: ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable<TimeSpan>, String, TimeSpan, TimeSpan)
-  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback__ctor_Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_System_TimeSpan_System_TimeSpan_System_String_System_String_Sensus_Protocol_System_Nullable_System_TimeSpan__System_String_System_TimeSpan_System_TimeSpan_
-  commentId: M:Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate,System.TimeSpan,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.String,System.TimeSpan,System.TimeSpan)
-  name.vb: ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable(Of TimeSpan), String, TimeSpan, TimeSpan)
-  fullName: Sensus.Callbacks.ScheduledCallback.ScheduledCallback(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate, System.TimeSpan, System.TimeSpan, System.String, System.String, Sensus.Protocol, System.Nullable<System.TimeSpan>, System.String, System.TimeSpan, System.TimeSpan)
-  fullName.vb: Sensus.Callbacks.ScheduledCallback.ScheduledCallback(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate, System.TimeSpan, System.TimeSpan, System.String, System.String, Sensus.Protocol, System.Nullable(Of System.TimeSpan), System.String, System.TimeSpan, System.TimeSpan)
-  nameWithType: ScheduledCallback.ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable<TimeSpan>, String, TimeSpan, TimeSpan)
-  nameWithType.vb: ScheduledCallback.ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable(Of TimeSpan), String, TimeSpan, TimeSpan)
+- uid: Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.TimeSpan,System.TimeSpan)
+  name: ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, String, String, Protocol, Nullable<TimeSpan>, TimeSpan, TimeSpan)
+  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback__ctor_Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_System_TimeSpan_System_String_System_String_Sensus_Protocol_System_Nullable_System_TimeSpan__System_TimeSpan_System_TimeSpan_
+  commentId: M:Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.TimeSpan,System.TimeSpan)
+  name.vb: ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, String, String, Protocol, Nullable(Of TimeSpan), TimeSpan, TimeSpan)
+  fullName: Sensus.Callbacks.ScheduledCallback.ScheduledCallback(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate, System.TimeSpan, System.String, System.String, Sensus.Protocol, System.Nullable<System.TimeSpan>, System.TimeSpan, System.TimeSpan)
+  fullName.vb: Sensus.Callbacks.ScheduledCallback.ScheduledCallback(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate, System.TimeSpan, System.String, System.String, Sensus.Protocol, System.Nullable(Of System.TimeSpan), System.TimeSpan, System.TimeSpan)
+  nameWithType: ScheduledCallback.ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, String, String, Protocol, Nullable<TimeSpan>, TimeSpan, TimeSpan)
+  nameWithType.vb: ScheduledCallback.ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, String, String, Protocol, Nullable(Of TimeSpan), TimeSpan, TimeSpan)
+- uid: Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate,System.TimeSpan,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.TimeSpan,System.TimeSpan)
+  name: ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable<TimeSpan>, TimeSpan, TimeSpan)
+  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback__ctor_Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_System_TimeSpan_System_TimeSpan_System_String_System_String_Sensus_Protocol_System_Nullable_System_TimeSpan__System_TimeSpan_System_TimeSpan_
+  commentId: M:Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate,System.TimeSpan,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.TimeSpan,System.TimeSpan)
+  name.vb: ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable(Of TimeSpan), TimeSpan, TimeSpan)
+  fullName: Sensus.Callbacks.ScheduledCallback.ScheduledCallback(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate, System.TimeSpan, System.TimeSpan, System.String, System.String, Sensus.Protocol, System.Nullable<System.TimeSpan>, System.TimeSpan, System.TimeSpan)
+  fullName.vb: Sensus.Callbacks.ScheduledCallback.ScheduledCallback(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate, System.TimeSpan, System.TimeSpan, System.String, System.String, Sensus.Protocol, System.Nullable(Of System.TimeSpan), System.TimeSpan, System.TimeSpan)
+  nameWithType: ScheduledCallback.ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable<TimeSpan>, TimeSpan, TimeSpan)
+  nameWithType.vb: ScheduledCallback.ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable(Of TimeSpan), TimeSpan, TimeSpan)
 - uid: Sensus.Callbacks.ScheduledCallback.#ctor*
   name: ScheduledCallback
   href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback__ctor_
@@ -21787,18 +21787,6 @@ references:
   commentId: Overload:Sensus.Callbacks.ScheduledCallback.DelayToleranceTotal
   fullName: Sensus.Callbacks.ScheduledCallback.DelayToleranceTotal
   nameWithType: ScheduledCallback.DelayToleranceTotal
-- uid: Sensus.Callbacks.ScheduledCallback.DisplayPage
-  name: DisplayPage
-  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_DisplayPage
-  commentId: P:Sensus.Callbacks.ScheduledCallback.DisplayPage
-  fullName: Sensus.Callbacks.ScheduledCallback.DisplayPage
-  nameWithType: ScheduledCallback.DisplayPage
-- uid: Sensus.Callbacks.ScheduledCallback.DisplayPage*
-  name: DisplayPage
-  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_DisplayPage_
-  commentId: Overload:Sensus.Callbacks.ScheduledCallback.DisplayPage
-  fullName: Sensus.Callbacks.ScheduledCallback.DisplayPage
-  nameWithType: ScheduledCallback.DisplayPage
 - uid: Sensus.Callbacks.ScheduledCallback.Id
   name: Id
   href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_Id
@@ -21835,6 +21823,30 @@ references:
   commentId: Overload:Sensus.Callbacks.ScheduledCallback.NextExecution
   fullName: Sensus.Callbacks.ScheduledCallback.NextExecution
   nameWithType: ScheduledCallback.NextExecution
+- uid: Sensus.Callbacks.ScheduledCallback.NotificationUserResponseAction
+  name: NotificationUserResponseAction
+  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_NotificationUserResponseAction
+  commentId: P:Sensus.Callbacks.ScheduledCallback.NotificationUserResponseAction
+  fullName: Sensus.Callbacks.ScheduledCallback.NotificationUserResponseAction
+  nameWithType: ScheduledCallback.NotificationUserResponseAction
+- uid: Sensus.Callbacks.ScheduledCallback.NotificationUserResponseAction*
+  name: NotificationUserResponseAction
+  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_NotificationUserResponseAction_
+  commentId: Overload:Sensus.Callbacks.ScheduledCallback.NotificationUserResponseAction
+  fullName: Sensus.Callbacks.ScheduledCallback.NotificationUserResponseAction
+  nameWithType: ScheduledCallback.NotificationUserResponseAction
+- uid: Sensus.Callbacks.ScheduledCallback.NotificationUserResponseMessage
+  name: NotificationUserResponseMessage
+  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_NotificationUserResponseMessage
+  commentId: P:Sensus.Callbacks.ScheduledCallback.NotificationUserResponseMessage
+  fullName: Sensus.Callbacks.ScheduledCallback.NotificationUserResponseMessage
+  nameWithType: ScheduledCallback.NotificationUserResponseMessage
+- uid: Sensus.Callbacks.ScheduledCallback.NotificationUserResponseMessage*
+  name: NotificationUserResponseMessage
+  href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_NotificationUserResponseMessage_
+  commentId: Overload:Sensus.Callbacks.ScheduledCallback.NotificationUserResponseMessage
+  fullName: Sensus.Callbacks.ScheduledCallback.NotificationUserResponseMessage
+  nameWithType: ScheduledCallback.NotificationUserResponseMessage
 - uid: Sensus.Callbacks.ScheduledCallback.Protocol
   name: Protocol
   href: api/Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_Protocol
@@ -25293,18 +25305,6 @@ references:
   commentId: Overload:Sensus.iOS.Callbacks.iOSCallbackScheduler.IsCallback
   fullName: Sensus.iOS.Callbacks.iOSCallbackScheduler.IsCallback
   nameWithType: iOSCallbackScheduler.IsCallback
-- uid: Sensus.iOS.Callbacks.iOSCallbackScheduler.OpenDisplayPage(Foundation.NSDictionary)
-  name: OpenDisplayPage(NSDictionary)
-  href: api/Sensus.iOS.Callbacks.iOSCallbackScheduler.html#Sensus_iOS_Callbacks_iOSCallbackScheduler_OpenDisplayPage_Foundation_NSDictionary_
-  commentId: M:Sensus.iOS.Callbacks.iOSCallbackScheduler.OpenDisplayPage(Foundation.NSDictionary)
-  fullName: Sensus.iOS.Callbacks.iOSCallbackScheduler.OpenDisplayPage(Foundation.NSDictionary)
-  nameWithType: iOSCallbackScheduler.OpenDisplayPage(NSDictionary)
-- uid: Sensus.iOS.Callbacks.iOSCallbackScheduler.OpenDisplayPage*
-  name: OpenDisplayPage
-  href: api/Sensus.iOS.Callbacks.iOSCallbackScheduler.html#Sensus_iOS_Callbacks_iOSCallbackScheduler_OpenDisplayPage_
-  commentId: Overload:Sensus.iOS.Callbacks.iOSCallbackScheduler.OpenDisplayPage
-  fullName: Sensus.iOS.Callbacks.iOSCallbackScheduler.OpenDisplayPage
-  nameWithType: iOSCallbackScheduler.OpenDisplayPage
 - uid: Sensus.iOS.Callbacks.iOSCallbackScheduler.ReissueSilentNotificationAsync(System.String)
   name: ReissueSilentNotificationAsync(String)
   href: api/Sensus.iOS.Callbacks.iOSCallbackScheduler.html#Sensus_iOS_Callbacks_iOSCallbackScheduler_ReissueSilentNotificationAsync_System_String_
@@ -26238,24 +26238,24 @@ references:
   commentId: Overload:Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.CancelNotification
   fullName: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.CancelNotification
   nameWithType: UNUserNotificationNotifier.CancelNotification
-- uid: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.DisplayPage)
-  name: IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable<Int32>, DisplayPage)
-  href: api/Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.html#Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_System_String_System_String_System_String_System_Boolean_Sensus_Protocol_System_Nullable_System_Int32__Sensus_Notifications_DisplayPage_
-  commentId: M:Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.DisplayPage)
-  name.vb: IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable(Of Int32), DisplayPage)
-  fullName: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String, System.String, System.String, System.Boolean, Sensus.Protocol, System.Nullable<System.Int32>, Sensus.Notifications.DisplayPage)
-  fullName.vb: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String, System.String, System.String, System.Boolean, Sensus.Protocol, System.Nullable(Of System.Int32), Sensus.Notifications.DisplayPage)
-  nameWithType: UNUserNotificationNotifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable<Int32>, DisplayPage)
-  nameWithType.vb: UNUserNotificationNotifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable(Of Int32), DisplayPage)
-- uid: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.DisplayPage,System.DateTime,Foundation.NSMutableDictionary,System.Action{UserNotifications.UNNotificationRequest})
-  name: IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable<Int32>, DisplayPage, DateTime, NSMutableDictionary, Action<UNNotificationRequest>)
-  href: api/Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.html#Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_System_String_System_String_System_String_System_Boolean_Sensus_Protocol_System_Nullable_System_Int32__Sensus_Notifications_DisplayPage_System_DateTime_Foundation_NSMutableDictionary_System_Action_UserNotifications_UNNotificationRequest__
-  commentId: M:Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.DisplayPage,System.DateTime,Foundation.NSMutableDictionary,System.Action{UserNotifications.UNNotificationRequest})
-  name.vb: IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable(Of Int32), DisplayPage, DateTime, NSMutableDictionary, Action(Of UNNotificationRequest))
-  fullName: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String, System.String, System.String, System.Boolean, Sensus.Protocol, System.Nullable<System.Int32>, Sensus.Notifications.DisplayPage, System.DateTime, Foundation.NSMutableDictionary, System.Action<UserNotifications.UNNotificationRequest>)
-  fullName.vb: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String, System.String, System.String, System.Boolean, Sensus.Protocol, System.Nullable(Of System.Int32), Sensus.Notifications.DisplayPage, System.DateTime, Foundation.NSMutableDictionary, System.Action(Of UserNotifications.UNNotificationRequest))
-  nameWithType: UNUserNotificationNotifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable<Int32>, DisplayPage, DateTime, NSMutableDictionary, Action<UNNotificationRequest>)
-  nameWithType.vb: UNUserNotificationNotifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable(Of Int32), DisplayPage, DateTime, NSMutableDictionary, Action(Of UNNotificationRequest))
+- uid: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.NotificationUserResponseAction,System.String)
+  name: IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable<Int32>, NotificationUserResponseAction, String)
+  href: api/Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.html#Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_System_String_System_String_System_String_System_Boolean_Sensus_Protocol_System_Nullable_System_Int32__Sensus_Notifications_NotificationUserResponseAction_System_String_
+  commentId: M:Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.NotificationUserResponseAction,System.String)
+  name.vb: IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable(Of Int32), NotificationUserResponseAction, String)
+  fullName: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String, System.String, System.String, System.Boolean, Sensus.Protocol, System.Nullable<System.Int32>, Sensus.Notifications.NotificationUserResponseAction, System.String)
+  fullName.vb: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String, System.String, System.String, System.Boolean, Sensus.Protocol, System.Nullable(Of System.Int32), Sensus.Notifications.NotificationUserResponseAction, System.String)
+  nameWithType: UNUserNotificationNotifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable<Int32>, NotificationUserResponseAction, String)
+  nameWithType.vb: UNUserNotificationNotifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable(Of Int32), NotificationUserResponseAction, String)
+- uid: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.NotificationUserResponseAction,System.String,System.DateTime,Foundation.NSMutableDictionary,System.Action{UserNotifications.UNNotificationRequest})
+  name: IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable<Int32>, NotificationUserResponseAction, String, DateTime, NSMutableDictionary, Action<UNNotificationRequest>)
+  href: api/Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.html#Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_System_String_System_String_System_String_System_Boolean_Sensus_Protocol_System_Nullable_System_Int32__Sensus_Notifications_NotificationUserResponseAction_System_String_System_DateTime_Foundation_NSMutableDictionary_System_Action_UserNotifications_UNNotificationRequest__
+  commentId: M:Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.NotificationUserResponseAction,System.String,System.DateTime,Foundation.NSMutableDictionary,System.Action{UserNotifications.UNNotificationRequest})
+  name.vb: IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable(Of Int32), NotificationUserResponseAction, String, DateTime, NSMutableDictionary, Action(Of UNNotificationRequest))
+  fullName: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String, System.String, System.String, System.Boolean, Sensus.Protocol, System.Nullable<System.Int32>, Sensus.Notifications.NotificationUserResponseAction, System.String, System.DateTime, Foundation.NSMutableDictionary, System.Action<UserNotifications.UNNotificationRequest>)
+  fullName.vb: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String, System.String, System.String, System.Boolean, Sensus.Protocol, System.Nullable(Of System.Int32), Sensus.Notifications.NotificationUserResponseAction, System.String, System.DateTime, Foundation.NSMutableDictionary, System.Action(Of UserNotifications.UNNotificationRequest))
+  nameWithType: UNUserNotificationNotifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable<Int32>, NotificationUserResponseAction, String, DateTime, NSMutableDictionary, Action<UNNotificationRequest>)
+  nameWithType.vb: UNUserNotificationNotifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable(Of Int32), NotificationUserResponseAction, String, DateTime, NSMutableDictionary, Action(Of UNNotificationRequest))
 - uid: Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(UserNotifications.UNNotificationRequest)
   name: IssueNotificationAsync(UNNotificationRequest)
   href: api/Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.html#Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_UserNotifications_UNNotificationRequest_
@@ -26913,6 +26913,18 @@ references:
   commentId: Overload:Sensus.iOS.Probes.Location.iOSCompassProbe.#ctor
   fullName: Sensus.iOS.Probes.Location.iOSCompassProbe.iOSCompassProbe
   nameWithType: iOSCompassProbe.iOSCompassProbe
+- uid: Sensus.iOS.Probes.Location.iOSCompassProbe.CollectionDescription
+  name: CollectionDescription
+  href: api/Sensus.iOS.Probes.Location.iOSCompassProbe.html#Sensus_iOS_Probes_Location_iOSCompassProbe_CollectionDescription
+  commentId: P:Sensus.iOS.Probes.Location.iOSCompassProbe.CollectionDescription
+  fullName: Sensus.iOS.Probes.Location.iOSCompassProbe.CollectionDescription
+  nameWithType: iOSCompassProbe.CollectionDescription
+- uid: Sensus.iOS.Probes.Location.iOSCompassProbe.CollectionDescription*
+  name: CollectionDescription
+  href: api/Sensus.iOS.Probes.Location.iOSCompassProbe.html#Sensus_iOS_Probes_Location_iOSCompassProbe_CollectionDescription_
+  commentId: Overload:Sensus.iOS.Probes.Location.iOSCompassProbe.CollectionDescription
+  fullName: Sensus.iOS.Probes.Location.iOSCompassProbe.CollectionDescription
+  nameWithType: iOSCompassProbe.CollectionDescription
 - uid: Sensus.iOS.Probes.Location.iOSCompassProbe.GetChartDataPointFromDatum(Sensus.Datum)
   name: GetChartDataPointFromDatum(Datum)
   href: api/Sensus.iOS.Probes.Location.iOSCompassProbe.html#Sensus_iOS_Probes_Location_iOSCompassProbe_GetChartDataPointFromDatum_Sensus_Datum_
@@ -29184,30 +29196,30 @@ references:
   commentId: N:Sensus.Notifications
   fullName: Sensus.Notifications
   nameWithType: Sensus.Notifications
-- uid: Sensus.Notifications.DisplayPage
-  name: DisplayPage
-  href: api/Sensus.Notifications.DisplayPage.html
-  commentId: T:Sensus.Notifications.DisplayPage
-  fullName: Sensus.Notifications.DisplayPage
-  nameWithType: DisplayPage
-- uid: Sensus.Notifications.DisplayPage.None
+- uid: Sensus.Notifications.NotificationUserResponseAction
+  name: NotificationUserResponseAction
+  href: api/Sensus.Notifications.NotificationUserResponseAction.html
+  commentId: T:Sensus.Notifications.NotificationUserResponseAction
+  fullName: Sensus.Notifications.NotificationUserResponseAction
+  nameWithType: NotificationUserResponseAction
+- uid: Sensus.Notifications.NotificationUserResponseAction.DisplayPendingSurveys
+  name: DisplayPendingSurveys
+  href: api/Sensus.Notifications.NotificationUserResponseAction.html#Sensus_Notifications_NotificationUserResponseAction_DisplayPendingSurveys
+  commentId: F:Sensus.Notifications.NotificationUserResponseAction.DisplayPendingSurveys
+  fullName: Sensus.Notifications.NotificationUserResponseAction.DisplayPendingSurveys
+  nameWithType: NotificationUserResponseAction.DisplayPendingSurveys
+- uid: Sensus.Notifications.NotificationUserResponseAction.None
   name: None
-  href: api/Sensus.Notifications.DisplayPage.html#Sensus_Notifications_DisplayPage_None
-  commentId: F:Sensus.Notifications.DisplayPage.None
-  fullName: Sensus.Notifications.DisplayPage.None
-  nameWithType: DisplayPage.None
-- uid: Sensus.Notifications.DisplayPage.PendingSurveys
-  name: PendingSurveys
-  href: api/Sensus.Notifications.DisplayPage.html#Sensus_Notifications_DisplayPage_PendingSurveys
-  commentId: F:Sensus.Notifications.DisplayPage.PendingSurveys
-  fullName: Sensus.Notifications.DisplayPage.PendingSurveys
-  nameWithType: DisplayPage.PendingSurveys
-- uid: Sensus.Notifications.DisplayPage.value__
+  href: api/Sensus.Notifications.NotificationUserResponseAction.html#Sensus_Notifications_NotificationUserResponseAction_None
+  commentId: F:Sensus.Notifications.NotificationUserResponseAction.None
+  fullName: Sensus.Notifications.NotificationUserResponseAction.None
+  nameWithType: NotificationUserResponseAction.None
+- uid: Sensus.Notifications.NotificationUserResponseAction.value__
   name: value__
-  href: api/Sensus.Notifications.DisplayPage.html#Sensus_Notifications_DisplayPage_value__
-  commentId: F:Sensus.Notifications.DisplayPage.value__
-  fullName: Sensus.Notifications.DisplayPage.value__
-  nameWithType: DisplayPage.value__
+  href: api/Sensus.Notifications.NotificationUserResponseAction.html#Sensus_Notifications_NotificationUserResponseAction_value__
+  commentId: F:Sensus.Notifications.NotificationUserResponseAction.value__
+  fullName: Sensus.Notifications.NotificationUserResponseAction.value__
+  nameWithType: NotificationUserResponseAction.value__
 - uid: Sensus.Notifications.Notifier
   name: Notifier
   href: api/Sensus.Notifications.Notifier.html
@@ -29250,39 +29262,45 @@ references:
   commentId: Overload:Sensus.Notifications.Notifier.DeletePushNotificationRequestAsync
   fullName: Sensus.Notifications.Notifier.DeletePushNotificationRequestAsync
   nameWithType: Notifier.DeletePushNotificationRequestAsync
-- uid: Sensus.Notifications.Notifier.DISPLAY_PAGE_KEY
-  name: DISPLAY_PAGE_KEY
-  href: api/Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_DISPLAY_PAGE_KEY
-  commentId: F:Sensus.Notifications.Notifier.DISPLAY_PAGE_KEY
-  fullName: Sensus.Notifications.Notifier.DISPLAY_PAGE_KEY
-  nameWithType: Notifier.DISPLAY_PAGE_KEY
-- uid: Sensus.Notifications.Notifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.DisplayPage)
-  name: IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable<Int32>, DisplayPage)
-  href: api/Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_IssueNotificationAsync_System_String_System_String_System_String_System_Boolean_Sensus_Protocol_System_Nullable_System_Int32__Sensus_Notifications_DisplayPage_
-  commentId: M:Sensus.Notifications.Notifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.DisplayPage)
-  name.vb: IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable(Of Int32), DisplayPage)
-  fullName: Sensus.Notifications.Notifier.IssueNotificationAsync(System.String, System.String, System.String, System.Boolean, Sensus.Protocol, System.Nullable<System.Int32>, Sensus.Notifications.DisplayPage)
-  fullName.vb: Sensus.Notifications.Notifier.IssueNotificationAsync(System.String, System.String, System.String, System.Boolean, Sensus.Protocol, System.Nullable(Of System.Int32), Sensus.Notifications.DisplayPage)
-  nameWithType: Notifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable<Int32>, DisplayPage)
-  nameWithType.vb: Notifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable(Of Int32), DisplayPage)
+- uid: Sensus.Notifications.Notifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.NotificationUserResponseAction,System.String)
+  name: IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable<Int32>, NotificationUserResponseAction, String)
+  href: api/Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_IssueNotificationAsync_System_String_System_String_System_String_System_Boolean_Sensus_Protocol_System_Nullable_System_Int32__Sensus_Notifications_NotificationUserResponseAction_System_String_
+  commentId: M:Sensus.Notifications.Notifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.NotificationUserResponseAction,System.String)
+  name.vb: IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable(Of Int32), NotificationUserResponseAction, String)
+  fullName: Sensus.Notifications.Notifier.IssueNotificationAsync(System.String, System.String, System.String, System.Boolean, Sensus.Protocol, System.Nullable<System.Int32>, Sensus.Notifications.NotificationUserResponseAction, System.String)
+  fullName.vb: Sensus.Notifications.Notifier.IssueNotificationAsync(System.String, System.String, System.String, System.Boolean, Sensus.Protocol, System.Nullable(Of System.Int32), Sensus.Notifications.NotificationUserResponseAction, System.String)
+  nameWithType: Notifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable<Int32>, NotificationUserResponseAction, String)
+  nameWithType.vb: Notifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable(Of Int32), NotificationUserResponseAction, String)
 - uid: Sensus.Notifications.Notifier.IssueNotificationAsync*
   name: IssueNotificationAsync
   href: api/Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_IssueNotificationAsync_
   commentId: Overload:Sensus.Notifications.Notifier.IssueNotificationAsync
   fullName: Sensus.Notifications.Notifier.IssueNotificationAsync
   nameWithType: Notifier.IssueNotificationAsync
-- uid: Sensus.Notifications.Notifier.OpenDisplayPage(Sensus.Notifications.DisplayPage)
-  name: OpenDisplayPage(DisplayPage)
-  href: api/Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_OpenDisplayPage_Sensus_Notifications_DisplayPage_
-  commentId: M:Sensus.Notifications.Notifier.OpenDisplayPage(Sensus.Notifications.DisplayPage)
-  fullName: Sensus.Notifications.Notifier.OpenDisplayPage(Sensus.Notifications.DisplayPage)
-  nameWithType: Notifier.OpenDisplayPage(DisplayPage)
-- uid: Sensus.Notifications.Notifier.OpenDisplayPage*
-  name: OpenDisplayPage
-  href: api/Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_OpenDisplayPage_
-  commentId: Overload:Sensus.Notifications.Notifier.OpenDisplayPage
-  fullName: Sensus.Notifications.Notifier.OpenDisplayPage
-  nameWithType: Notifier.OpenDisplayPage
+- uid: Sensus.Notifications.Notifier.NOTIFICATION_USER_RESPONSE_ACTION_KEY
+  name: NOTIFICATION_USER_RESPONSE_ACTION_KEY
+  href: api/Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_NOTIFICATION_USER_RESPONSE_ACTION_KEY
+  commentId: F:Sensus.Notifications.Notifier.NOTIFICATION_USER_RESPONSE_ACTION_KEY
+  fullName: Sensus.Notifications.Notifier.NOTIFICATION_USER_RESPONSE_ACTION_KEY
+  nameWithType: Notifier.NOTIFICATION_USER_RESPONSE_ACTION_KEY
+- uid: Sensus.Notifications.Notifier.NOTIFICATION_USER_RESPONSE_MESSAGE_KEY
+  name: NOTIFICATION_USER_RESPONSE_MESSAGE_KEY
+  href: api/Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_NOTIFICATION_USER_RESPONSE_MESSAGE_KEY
+  commentId: F:Sensus.Notifications.Notifier.NOTIFICATION_USER_RESPONSE_MESSAGE_KEY
+  fullName: Sensus.Notifications.Notifier.NOTIFICATION_USER_RESPONSE_MESSAGE_KEY
+  nameWithType: Notifier.NOTIFICATION_USER_RESPONSE_MESSAGE_KEY
+- uid: Sensus.Notifications.Notifier.OnNotificationUserResponseAsync(System.String,System.String)
+  name: OnNotificationUserResponseAsync(String, String)
+  href: api/Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_OnNotificationUserResponseAsync_System_String_System_String_
+  commentId: M:Sensus.Notifications.Notifier.OnNotificationUserResponseAsync(System.String,System.String)
+  fullName: Sensus.Notifications.Notifier.OnNotificationUserResponseAsync(System.String, System.String)
+  nameWithType: Notifier.OnNotificationUserResponseAsync(String, String)
+- uid: Sensus.Notifications.Notifier.OnNotificationUserResponseAsync*
+  name: OnNotificationUserResponseAsync
+  href: api/Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_OnNotificationUserResponseAsync_
+  commentId: Overload:Sensus.Notifications.Notifier.OnNotificationUserResponseAsync
+  fullName: Sensus.Notifications.Notifier.OnNotificationUserResponseAsync
+  nameWithType: Notifier.OnNotificationUserResponseAsync
 - uid: Sensus.Notifications.Notifier.PENDING_SURVEY_BADGE_NOTIFICATION_ID
   name: PENDING_SURVEY_BADGE_NOTIFICATION_ID
   href: api/Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_PENDING_SURVEY_BADGE_NOTIFICATION_ID
@@ -34695,6 +34713,18 @@ references:
   commentId: Overload:Sensus.Probes.Location.ListeningLocationProbe.#ctor
   fullName: Sensus.Probes.Location.ListeningLocationProbe.ListeningLocationProbe
   nameWithType: ListeningLocationProbe.ListeningLocationProbe
+- uid: Sensus.Probes.Location.ListeningLocationProbe.CollectionDescription
+  name: CollectionDescription
+  href: api/Sensus.Probes.Location.ListeningLocationProbe.html#Sensus_Probes_Location_ListeningLocationProbe_CollectionDescription
+  commentId: P:Sensus.Probes.Location.ListeningLocationProbe.CollectionDescription
+  fullName: Sensus.Probes.Location.ListeningLocationProbe.CollectionDescription
+  nameWithType: ListeningLocationProbe.CollectionDescription
+- uid: Sensus.Probes.Location.ListeningLocationProbe.CollectionDescription*
+  name: CollectionDescription
+  href: api/Sensus.Probes.Location.ListeningLocationProbe.html#Sensus_Probes_Location_ListeningLocationProbe_CollectionDescription_
+  commentId: Overload:Sensus.Probes.Location.ListeningLocationProbe.CollectionDescription
+  fullName: Sensus.Probes.Location.ListeningLocationProbe.CollectionDescription
+  nameWithType: ListeningLocationProbe.CollectionDescription
 - uid: Sensus.Probes.Location.ListeningLocationProbe.DatumType
   name: DatumType
   href: api/Sensus.Probes.Location.ListeningLocationProbe.html#Sensus_Probes_Location_ListeningLocationProbe_DatumType
@@ -34857,6 +34887,18 @@ references:
   commentId: Overload:Sensus.Probes.Location.ListeningPointsOfInterestProximityProbe.#ctor
   fullName: Sensus.Probes.Location.ListeningPointsOfInterestProximityProbe.ListeningPointsOfInterestProximityProbe
   nameWithType: ListeningPointsOfInterestProximityProbe.ListeningPointsOfInterestProximityProbe
+- uid: Sensus.Probes.Location.ListeningPointsOfInterestProximityProbe.CollectionDescription
+  name: CollectionDescription
+  href: api/Sensus.Probes.Location.ListeningPointsOfInterestProximityProbe.html#Sensus_Probes_Location_ListeningPointsOfInterestProximityProbe_CollectionDescription
+  commentId: P:Sensus.Probes.Location.ListeningPointsOfInterestProximityProbe.CollectionDescription
+  fullName: Sensus.Probes.Location.ListeningPointsOfInterestProximityProbe.CollectionDescription
+  nameWithType: ListeningPointsOfInterestProximityProbe.CollectionDescription
+- uid: Sensus.Probes.Location.ListeningPointsOfInterestProximityProbe.CollectionDescription*
+  name: CollectionDescription
+  href: api/Sensus.Probes.Location.ListeningPointsOfInterestProximityProbe.html#Sensus_Probes_Location_ListeningPointsOfInterestProximityProbe_CollectionDescription_
+  commentId: Overload:Sensus.Probes.Location.ListeningPointsOfInterestProximityProbe.CollectionDescription
+  fullName: Sensus.Probes.Location.ListeningPointsOfInterestProximityProbe.CollectionDescription
+  nameWithType: ListeningPointsOfInterestProximityProbe.CollectionDescription
 - uid: Sensus.Probes.Location.ListeningPointsOfInterestProximityProbe.DatumType
   name: DatumType
   href: api/Sensus.Probes.Location.ListeningPointsOfInterestProximityProbe.html#Sensus_Probes_Location_ListeningPointsOfInterestProximityProbe_DatumType
@@ -36879,6 +36921,18 @@ references:
   commentId: Overload:Sensus.Probes.Movement.ListeningSpeedProbe.#ctor
   fullName: Sensus.Probes.Movement.ListeningSpeedProbe.ListeningSpeedProbe
   nameWithType: ListeningSpeedProbe.ListeningSpeedProbe
+- uid: Sensus.Probes.Movement.ListeningSpeedProbe.CollectionDescription
+  name: CollectionDescription
+  href: api/Sensus.Probes.Movement.ListeningSpeedProbe.html#Sensus_Probes_Movement_ListeningSpeedProbe_CollectionDescription
+  commentId: P:Sensus.Probes.Movement.ListeningSpeedProbe.CollectionDescription
+  fullName: Sensus.Probes.Movement.ListeningSpeedProbe.CollectionDescription
+  nameWithType: ListeningSpeedProbe.CollectionDescription
+- uid: Sensus.Probes.Movement.ListeningSpeedProbe.CollectionDescription*
+  name: CollectionDescription
+  href: api/Sensus.Probes.Movement.ListeningSpeedProbe.html#Sensus_Probes_Movement_ListeningSpeedProbe_CollectionDescription_
+  commentId: Overload:Sensus.Probes.Movement.ListeningSpeedProbe.CollectionDescription
+  fullName: Sensus.Probes.Movement.ListeningSpeedProbe.CollectionDescription
+  nameWithType: ListeningSpeedProbe.CollectionDescription
 - uid: Sensus.Probes.Movement.ListeningSpeedProbe.DatumType
   name: DatumType
   href: api/Sensus.Probes.Movement.ListeningSpeedProbe.html#Sensus_Probes_Movement_ListeningSpeedProbe_DatumType
