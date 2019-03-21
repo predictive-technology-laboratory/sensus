@@ -72,14 +72,15 @@ namespace Sensus.Callbacks
         public string UserNotificationMessage { get; set; }
 
         /// <summary>
-        /// Action to take when the user responds to (e.g., by tapping) the notification defined by <see cref="UserNotificationMessage"/>.
+        /// Action to take after the user responds to (e.g., by tapping) the notification defined by <see cref="UserNotificationMessage"/>.
         /// If <see cref="UserNotificationMessage"/> is <c>null</c>, then this has no effect.
         /// </summary>
         /// <value>The display page.</value>
         public NotificationUserResponseAction NotificationUserResponseAction { get; set; }
 
         /// <summary>
-        /// Message to display after the user has responded to (e.g., by tapping) the notification defined by <see cref="UserNotificationMessage"/>.
+        /// Message to display after the user responds to (e.g., by tapping) the notification defined by <see cref="UserNotificationMessage"/>.
+        /// If <see cref="UserNotificationMessage"/> is <c>null</c>, then this has no effect.
         /// </summary>
         /// <value>The notification user response message.</value>
         public string NotificationUserResponseMessage { get; set; }
