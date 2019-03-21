@@ -64,13 +64,16 @@ namespace Sensus.Notifications
 
         public abstract void CancelNotification(string id);
 
-        public async Task OnNotificationUserResponseAsync(NotificationUserResponseAction responseAction, string responseMessage)
+        public async Task OnNotificationUserResponseAsync(string responseAction, string responseMessage)
         {
             await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
-                if (responseAction == NotificationUserResponseAction.DisplayPendingSurveys)
+                if (Enum.TryParse(responseAction, out NotificationUserResponseAction action))
                 {
-                    (Application.Current as App).DetailPage = new NavigationPage(new PendingScriptsPage());
+                    if (action == NotificationUserResponseAction.DisplayPendingSurveys)
+                    {
+                        (Application.Current as App).DetailPage = new NavigationPage(new PendingScriptsPage());
+                    }
                 }
 
                 if (!string.IsNullOrWhiteSpace(responseMessage))

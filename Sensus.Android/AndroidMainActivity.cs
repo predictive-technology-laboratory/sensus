@@ -350,17 +350,9 @@ namespace Sensus.Android
             }
             else
             {
-                // check for user response action
-                NotificationUserResponseAction userResponseAction = NotificationUserResponseAction.None;
-                string userResponseActionString = intent.GetStringExtra(Notifier.NOTIFICATION_USER_RESPONSE_ACTION_KEY);
-                if (userResponseActionString != null)
-                {
-                    Enum.TryParse(userResponseActionString.ToString(), out userResponseAction);
-                }
-
-                string message = intent.GetStringExtra(Notifier.NOTIFICATION_USER_RESPONSE_MESSAGE_KEY);
-
-                await SensusContext.Current.Notifier.OnNotificationUserResponseAsync(userResponseAction, message);
+                string userResponseAction = intent.GetStringExtra(Notifier.NOTIFICATION_USER_RESPONSE_ACTION_KEY);
+                string userResponseMessage = intent.GetStringExtra(Notifier.NOTIFICATION_USER_RESPONSE_MESSAGE_KEY);
+                await SensusContext.Current.Notifier.OnNotificationUserResponseAsync(userResponseAction, userResponseMessage);
             }
         }
 
