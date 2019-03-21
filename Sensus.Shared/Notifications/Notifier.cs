@@ -427,7 +427,7 @@ namespace Sensus.Notifications
                 {
                     if (!string.IsNullOrWhiteSpace(pushNotification.Title) && !string.IsNullOrWhiteSpace(pushNotification.Body))
                     {
-                        await IssueNotificationAsync(pushNotification.Title, pushNotification.Body, pushNotification.Id, !string.IsNullOrWhiteSpace(pushNotification.Sound), protocol, null, NotificationUserResponseAction.None);
+                        await IssueNotificationAsync(pushNotification.Title, pushNotification.Body, pushNotification.Id, !string.IsNullOrWhiteSpace(pushNotification.Sound), protocol, null, NotificationUserResponseAction.None, null);
                     }
                 }
                 catch (Exception ex)

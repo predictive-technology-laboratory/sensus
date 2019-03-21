@@ -51,7 +51,12 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
 
             info.SetValueForKey(new NSString(id), new NSString(NOTIFICATION_ID_KEY));
             info.SetValueForKey(new NSString(userResponseAction.ToString()), new NSString(NOTIFICATION_USER_RESPONSE_ACTION_KEY));
-            info.SetValueForKey(new NSString(userResponseMessage), new NSString(NOTIFICATION_USER_RESPONSE_MESSAGE_KEY));
+
+            // values may not be null
+            if (userResponseMessage != null)
+            {
+                info.SetValueForKey(new NSString(userResponseMessage), new NSString(NOTIFICATION_USER_RESPONSE_MESSAGE_KEY));
+            }
 
             UNMutableNotificationContent content = new UNMutableNotificationContent
             {
