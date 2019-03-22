@@ -40,6 +40,13 @@ Sensus is available for Android from [the Google Play Store](https://play.google
 for iOS from [iTunes](https://itunes.apple.com/us/app/sensus-uva/id1053498740). After installation, browse our [articles](articles/intro.md) for 
 next steps.
 
+Google has decided to disallow the use of SMS and phone permissions within Sensus. As a result, the version in the Goolge Play Store
+will not allow you to run the [SMS](xref:Sensus.Android.Probes.Communication.AndroidSmsProbe) or 
+[phone](xref:Sensus.Android.Probes.Communication.AndroidTelephonyProbe) probes. You may still download a version of Sensus
+directly from the Sensus team with these permissions enabled. Visit 
+[this page](https://install.appcenter.ms/orgs/uva-predictive-technology-lab/apps/sensus-android/distribution_groups/sms%20and%20phone%20permissions)
+for more information.
+
 If you would like to try out the beta (early release) versions of Sensus for Android, you can join the testing 
 program [here](https://play.google.com/apps/testing/edu.virginia.sie.ptl.sensus).
 
