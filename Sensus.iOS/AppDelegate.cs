@@ -65,7 +65,28 @@ namespace Sensus.iOS
             // would have triggered are about to be rescheduled when the app is actived.
             (SensusContext.Current.Notifier as iOSNotifier).RemoveAllNotifications();
 
-            // initialize service helper. must come after context initialization.
+            // facebook settings
+            Settings.AppId = "873948892650954";
+            Settings.DisplayName = "Sensus";
+
+            // initialize stuff prior to app load
+            Forms.Init();
+            FormsMaps.Init();
+
+            // initialize the syncfusion charting system
+#pragma warning disable RECS0026 // Possible unassigned object created by 'new'
+            new SfChartRenderer();
+#pragma warning restore RECS0026 // Possible unassigned object created by 'new'
+
+            ZXing.Net.Mobile.Forms.iOS.Platform.Init();
+
+            // load the app, which starts crash reporting and analytics telemetry.
+            LoadApplication(new App());
+
+            // initialize service helper. must come after context initialization. desirable to come
+            // after app loading, in case we crash. crash reporting is initialized when the app 
+            // object is created. nothing in the app creating and loading loop will depend on having
+            // an initialized service helper, so we should be fine.
             SensusServiceHelper.Initialize(() => new iOSSensusServiceHelper());
 
             // register for push notifications. must come after service helper initialization. if the 
@@ -75,23 +96,6 @@ namespace Sensus.iOS
             // https://developer.apple.com/documentation/uikit/uiapplication/1623078-registerforremotenotifications
             //
             UIApplication.SharedApplication.RegisterForRemoteNotifications();
-
-            // facebook settings
-            Settings.AppId = "873948892650954";
-            Settings.DisplayName = "Sensus";
-
-            // initialize stuff prior to app load
-            Forms.Init();
-            FormsMaps.Init();
-
-#pragma warning disable RECS0026 // Possible unassigned object created by 'new'
-            new SfChartRenderer();
-#pragma warning restore RECS0026 // Possible unassigned object created by 'new'
-
-            ZXing.Net.Mobile.Forms.iOS.Platform.Init();
-
-            // load the app, which starts crash reporting and analytics telemetry.
-            LoadApplication(new App());
 
 #if UI_TESTING
             Forms.ViewInitialized += (sender, e) =>
@@ -337,11 +341,6 @@ namespace Sensus.iOS
             // are not cancelled and the app enters the background, then they will appear in the notification 
             // tray and confuse the user.
             (SensusContext.Current.CallbackScheduler as iOSCallbackScheduler).CancelSilentNotifications();
-
-            // reissue the pending surveys notification to badge the app icon with the number of pending
-            // surveys. we cleared the badge upon activation of the app. not necessary to pass a protocol
-            // for alert exclusion window checking, as this is a badge-only notification with no text or sound.
-            await serviceHelper.IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.Badge, null);
 
             // save app state
             await serviceHelper.SaveAsync();
