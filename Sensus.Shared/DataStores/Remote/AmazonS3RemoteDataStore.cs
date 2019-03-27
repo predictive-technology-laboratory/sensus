@@ -552,7 +552,7 @@ namespace Sensus.DataStores.Remote
             catch (Exception ex)
             {
                 string message = "Failed to write stream to Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message;
-                SensusServiceHelper.Get().Logger.Log(message + " " + ex.Message, LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                 throw new Exception(message, ex);
             }
         }
@@ -602,7 +602,7 @@ namespace Sensus.DataStores.Remote
             catch (Exception ex)
             {
                 string message = "Failed to list keys in Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message;
-                SensusServiceHelper.Get().Logger.Log(message + " " + ex.Message, LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                 throw new Exception(message, ex);
             }
         }
@@ -621,7 +621,7 @@ namespace Sensus.DataStores.Remote
             catch (Exception ex)
             {
                 string message = "Failed to delete key from Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message;
-                SensusServiceHelper.Get().Logger.Log(message + " " + ex.Message, LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                 throw new Exception(message, ex);
             }
         }
