@@ -38,6 +38,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\HumidityProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\SoundDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\BatteryDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\ProcessorUtilizationProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\ProcessorUtilizationDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\ScreenDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\ProximityDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\ProximityProbe.cs" />
