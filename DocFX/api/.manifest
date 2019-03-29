@@ -64,7 +64,7 @@
   "Sensus.Android.AndroidPowerConnectionChangeListener.#ctor": "Sensus.Android.AndroidPowerConnectionChangeListener.yml",
   "Sensus.Android.AndroidSensusService": "Sensus.Android.AndroidSensusService.yml",
   "Sensus.Android.AndroidSensusService.#ctor": "Sensus.Android.AndroidSensusService.yml",
-  "Sensus.Android.AndroidSensusService.GetIntent": "Sensus.Android.AndroidSensusService.yml",
+  "Sensus.Android.AndroidSensusService.GetServiceIntent(System.Boolean)": "Sensus.Android.AndroidSensusService.yml",
   "Sensus.Android.AndroidSensusService.KEY_STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN": "Sensus.Android.AndroidSensusService.yml",
   "Sensus.Android.AndroidSensusService.OnBind(Android.Content.Intent)": "Sensus.Android.AndroidSensusService.yml",
   "Sensus.Android.AndroidSensusService.OnCreate": "Sensus.Android.AndroidSensusService.yml",

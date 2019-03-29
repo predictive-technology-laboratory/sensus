@@ -718,18 +718,18 @@ references:
   commentId: Overload:Sensus.Android.AndroidSensusService.#ctor
   fullName: Sensus.Android.AndroidSensusService.AndroidSensusService
   nameWithType: AndroidSensusService.AndroidSensusService
-- uid: Sensus.Android.AndroidSensusService.GetIntent
-  name: GetIntent()
-  href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_GetIntent
-  commentId: M:Sensus.Android.AndroidSensusService.GetIntent
-  fullName: Sensus.Android.AndroidSensusService.GetIntent()
-  nameWithType: AndroidSensusService.GetIntent()
-- uid: Sensus.Android.AndroidSensusService.GetIntent*
-  name: GetIntent
-  href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_GetIntent_
-  commentId: Overload:Sensus.Android.AndroidSensusService.GetIntent
-  fullName: Sensus.Android.AndroidSensusService.GetIntent
-  nameWithType: AndroidSensusService.GetIntent
+- uid: Sensus.Android.AndroidSensusService.GetServiceIntent(System.Boolean)
+  name: GetServiceIntent(Boolean)
+  href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_GetServiceIntent_System_Boolean_
+  commentId: M:Sensus.Android.AndroidSensusService.GetServiceIntent(System.Boolean)
+  fullName: Sensus.Android.AndroidSensusService.GetServiceIntent(System.Boolean)
+  nameWithType: AndroidSensusService.GetServiceIntent(Boolean)
+- uid: Sensus.Android.AndroidSensusService.GetServiceIntent*
+  name: GetServiceIntent
+  href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_GetServiceIntent_
+  commentId: Overload:Sensus.Android.AndroidSensusService.GetServiceIntent
+  fullName: Sensus.Android.AndroidSensusService.GetServiceIntent
+  nameWithType: AndroidSensusService.GetServiceIntent
 - uid: Sensus.Android.AndroidSensusService.KEY_STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN
   name: KEY_STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN
   href: api/Sensus.Android.AndroidSensusService.html#Sensus_Android_AndroidSensusService_KEY_STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN
