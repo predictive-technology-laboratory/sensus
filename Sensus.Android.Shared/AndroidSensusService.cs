@@ -44,17 +44,37 @@ namespace Sensus.Android
     {
         public const string KEY_STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN = "STOP-SERVICE-IF-NO-PROTOCOLS-SHOULD-RUN";
 
-        public static Intent GetIntent() => new Intent(Application.Context, typeof(AndroidSensusService));
+        /// <summary>
+        /// Gets the service intent.
+        /// </summary>
+        /// <returns>The service intent.</returns>
+        /// <param name="stopServiceIfNoProtocolsShouldRun">If set to <c>true</c>, then add an intent extra indicating that the <see cref="AndroidSensusService"/> should stop itself immediately if no <see cref="Protocol"/> should run.</param>
+        public static Intent GetServiceIntent(bool stopServiceIfNoProtocolsShouldRun)
+        {
+            Intent intent = new Intent(Application.Context, typeof(AndroidSensusService));
+            intent.PutExtra(KEY_STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN, stopServiceIfNoProtocolsShouldRun);
+            return intent;
+        }
 
         /// <summary>
         /// Starts the service.
         /// </summary>
-        /// <param name="stopServiceIfNoProtocolsShouldRun">If set to <c>true</c> stop service if no <see cref="Protocol"/> should run.</param>
-        /// <returns>The service intent.</returns>
-        public static Intent Start(bool stopServiceIfNoProtocolsShouldRun)
+        /// <param name="stopServiceIfNoProtocolsShouldRun">If set to <c>true</c>, then add an intent extra indicating that the <see cref="AndroidSensusService"/> should stop itself immediately if no <see cref="Protocol"/> should run.</param>
+        public static void Start(bool stopServiceIfNoProtocolsShouldRun)
         {
-            Intent serviceIntent = GetIntent();
-            serviceIntent.PutExtra(KEY_STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN, stopServiceIfNoProtocolsShouldRun);
+            Intent serviceIntent = GetServiceIntent(stopServiceIfNoProtocolsShouldRun);
+
+            // log the start of the service. the service helper might not yet exist.
+            SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
+            string message = "About to start Android service:  ";
+            if (serviceHelper == null)
+            {
+                Console.Error.WriteLine(message + "Service helper does not yet exist.");
+            }
+            else
+            {
+                serviceHelper.Logger.Log(message + "Service helper already exists.", LoggingLevel.Normal, typeof(AndroidSensusService));
+            }
 
             // after android 26, starting a foreground service requires the use of StartForegroundService rather than StartService.
             // in either case, the service itself will call StartForeground after it has started. more info:  
@@ -74,8 +94,6 @@ namespace Sensus.Android
             {
                 Application.Context.StartService(serviceIntent);
             }
-
-            return serviceIntent;
         }
 
         private readonly List<AndroidSensusServiceBinder> _bindings = new List<AndroidSensusServiceBinder>();

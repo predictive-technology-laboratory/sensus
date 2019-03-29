@@ -637,7 +637,7 @@ namespace Sensus.UI
                     // up when the os (or a push notification) starts the service again.
                     await SensusServiceHelper.Get().StopAsync();
 
-                    global::Android.App.Application.Context.StopService(AndroidSensusService.GetIntent());
+                    global::Android.App.Application.Context.StopService(AndroidSensusService.GetServiceIntent(false));
                 }
 
             }, ToolbarItemOrder.Secondary));
