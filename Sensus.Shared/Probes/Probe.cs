@@ -254,7 +254,17 @@ namespace Sensus.Probes
         {
             get
             {
-                return _mostRecentDatum == null ? "[no data]" : _mostRecentDatum.DisplayDetail + "  " + _mostRecentDatum.Timestamp.ToLocalTime();
+                // get and check reference to most recent datum, as it might change due to
+                // concurrent access by probe reading.
+                Datum mostRecentDatum = _mostRecentDatum;
+                if (mostRecentDatum == null)
+                {
+                    return "[no data]";
+                }
+                else
+                {
+                    return mostRecentDatum.DisplayDetail + "  " + mostRecentDatum.Timestamp.ToLocalTime();
+                }
             }
         }
 
