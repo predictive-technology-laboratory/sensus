@@ -20,25 +20,41 @@ namespace Sensus.Extensions
 {
     public static class UriExtensions
     {
-        public static async Task<byte[]> DownloadBytes(this Uri uri)
+        public static async Task<byte[]> DownloadBytesAsync(this Uri uri)
         {
             byte[] downloadedBytes = null;
 
             using (HttpClient client = new HttpClient())
             {
-                downloadedBytes = await client.GetByteArrayAsync(uri);
+                try
+                {
+                    downloadedBytes = await client.GetByteArrayAsync(uri);
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while getting byte array from URI \"" + uri + "\":  " + ex.Message, LoggingLevel.Normal, typeof(Uri));
+                    throw ex;
+                }
             }
 
             return downloadedBytes;
         }
 
-        public static async Task<string> DownloadString(this Uri uri)
+        public static async Task<string> DownloadStringAsync(this Uri uri)
         {
             string downloadedString = null;
 
             using (HttpClient client = new HttpClient())
             {
-                downloadedString = await client.GetStringAsync(uri);
+                try
+                {
+                    downloadedString = await client.GetStringAsync(uri);
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while getting string from URI \"" + uri + "\":  " + ex.Message, LoggingLevel.Normal, typeof(Uri));
+                    throw ex;
+                }
             }
 
             return downloadedString;

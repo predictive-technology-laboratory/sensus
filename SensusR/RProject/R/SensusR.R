@@ -18,7 +18,7 @@ NULL
 #' 
 #' @param profile AWS credentials profile to use for authentication.
 #' @param aws.path Path to AWS client.
-#' 
+#' @return None
 sensus.list.aws.s3.buckets = function(profile = "default", aws.path = "/usr/local/bin/aws")
 {
   aws.args = paste("s3api --profile", profile, "list-buckets --query \"Buckets[].Name\"", sep = " ")
@@ -36,8 +36,6 @@ sensus.list.aws.s3.buckets = function(profile = "default", aws.path = "/usr/loca
 #' @param delete Whether or not to delete local files that are not present in the S3 path.
 #' @param decompress Whether or not to decompress any gzip files after downloading them.
 #' @return Local path to location of downloaded data.
-#' @examples 
-#' # data.path = sensus.sync.from.aws.s3("s3://bucket/path/to/data", local.path = "~/Desktop/data")
 sensus.sync.from.aws.s3 = function(s3.path, profile = "default", local.path = tempfile(), aws.path = "/usr/local/bin/aws", delete = FALSE, decompress = FALSE)
 {
   aws.args = paste("s3 --profile", profile, "sync ", s3.path, local.path, sep = " ")
@@ -66,10 +64,6 @@ sensus.sync.from.aws.s3 = function(s3.path, profile = "default", local.path = te
 #' @param rsa.private.key.password Password used to decrypt the RSA private key.
 #' @param replace.files Whether or not to delete .bin files after they have been decrypted.
 #' @return None
-#' @examples
-#' # sensus.decrypt.bin.files(data.path = "/path/to/bin/files/directory", 
-#' #                          rsa.private.key.path = "/path/to/private.pem", 
-#' #                          replace.files = FALSE)
 sensus.decrypt.bin.files = function(data.path, is.directory = TRUE, recursive = TRUE, rsa.private.key.path, rsa.private.key.password = askpass, replace.files = FALSE)
 {
   bin.paths = c(data.path)
@@ -137,9 +131,6 @@ sensus.decrypt.bin.files = function(data.path, is.directory = TRUE, recursive = 
 #' @param overwrite If TRUE and the output file already exists, the file is silently overwritten; otherwise an exception is thrown (unless skip is TRUE).
 #' @param remove If TRUE, the input file is removed afterward, otherwise not.
 #' @return None
-#' @examples 
-#' data.path = system.file("extdata", "example-data", package="SensusR")
-#' sensus.decompress.gz.files(data.path)
 sensus.decompress.gz.files = function(local.path, skip = TRUE, overwrite = FALSE, remove = FALSE)
 {
   gz.paths = list.files(local.path, recursive = TRUE, full.names = TRUE, include.dirs = FALSE, pattern = "*.gz$")
@@ -160,9 +151,9 @@ sensus.decompress.gz.files = function(local.path, skip = TRUE, overwrite = FALSE
 #' @param local.timezone The local timezone to convert datum timestamps to, or NULL to leave the timestamps unconverted.
 #' @param data.types Specific data types to read. A full list of data types can be found here:  \url{https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Datum.html}. For example \code{c("AccelerometerDatum", "HeightDatum")} will only read accelerometer and height data. Pass \code{NULL} to read all data types.
 #' @return All data, listed by type.
-#' @examples
-#' data.path = system.file("extdata", "example-data", package="SensusR")
-#' data = sensus.read.json.files(data.path)
+#' @examples	
+#' # data.path = system.file("extdata", "example-data", package="SensusR")	
+#' # data = sensus.read.json.files(data.path)
 sensus.read.json.files = function(data.path, 
                                   is.directory = TRUE, 
                                   recursive = TRUE,
@@ -490,8 +481,7 @@ sensus.read.json.files = function(data.path,
 #' Gets unique device IDs within a dataset.
 #'
 #' @param data Data to write, as read using \code{\link{sensus.read.json.files}}.
-#' @return Unique device IDs within the data
-#' 
+#' @return Unique device IDs within the data.
 sensus.get.unique.device.ids = function(data)
 {
   return(unique(unlist(sapply(names(data), function(datum.type) unique(data[[datum.type]]$DeviceId)), use.names = FALSE)))
@@ -502,10 +492,7 @@ sensus.get.unique.device.ids = function(data)
 #' @param data Data to write, as read using \code{\link{sensus.read.json.files}}.
 #' @param directory Directory to write CSV files to. Will be created if it does not exist.
 #' @param file.name.prefix Prefix to add to the generated file names.
-#' @examples 
-#' data.path = system.file("extdata", "example-data", package="SensusR")
-#' data = sensus.read.json.files(data.path)
-#' # sensus.write.csv.files(data, directory = "/path/to/directory")
+#' @return None
 sensus.write.csv.files = function(data, directory, file.name.prefix = "")
 {
   dir.create(directory, showWarnings = FALSE)
@@ -521,10 +508,7 @@ sensus.write.csv.files = function(data, directory, file.name.prefix = "")
 #' @param data Data to write, as read using \code{\link{sensus.read.json.files}}.
 #' @param directory Directory to write CSV files to. Will be created if it does not exist.
 #' @param file.name.prefix Prefix to add to the generated file names.
-#' @examples 
-#' data.path = system.file("extdata", "example-data", package="SensusR")
-#' data = sensus.read.json.files(data.path)
-#' # sensus.write.csv.files(data, directory = "/path/to/directory")
+#' @return None
 sensus.write.rdata.files = function(data, directory, file.name.prefix = "")
 {
   dir.create(directory, showWarnings = FALSE)
@@ -541,7 +525,7 @@ sensus.write.rdata.files = function(data, directory, file.name.prefix = "")
 #' @param data Data, as returned by \code{\link{sensus.read.json.files}}.
 #' @param phase Phase of activity (Starting, During, Stopping)
 #' @param state State of phase (Active, Inactive, Unknown)
-#' 
+#' @return None
 sensus.list.activities = function(data, phase = "Starting", state = "Active")
 {
   data$ActivityDatum[data$ActivityDatum$Phase == phase & data$ActivityDatum$State == state, ]
@@ -554,10 +538,7 @@ sensus.list.activities = function(data, phase = "Starting", state = "Active")
 #' @param pch Plotting character.
 #' @param type Line type. 
 #' @param ... Other plotting parameters.
-#' @examples
-#' data.path = system.file("extdata", "example-data", package="SensusR")
-#' data = sensus.read.json.files(data.path)
-#' plot(data$AccelerometerDatum)
+#' @return None
 plot.AccelerometerDatum = function(x, pch = ".", type = "l", ...)
 { 
   par(mfrow=c(2,2))
@@ -574,10 +555,7 @@ plot.AccelerometerDatum = function(x, pch = ".", type = "l", ...)
 #' @param pch Plotting character.
 #' @param type Line type. 
 #' @param ... Other plotting parameters.
-#' @examples
-#' data.path = system.file("extdata", "example-data", package="SensusR")
-#' data = sensus.read.json.files(data.path)
-#' plot(data$AltitudeDatum)
+#' @return None
 plot.AltitudeDatum = function(x, pch = ".", type = "l", ...)
 {
   plot.default(x$Timestamp, x$Altitude, main = "Altitude", xlab = "Time", ylab = "Meters", pch = pch, type = type, ...)
@@ -589,11 +567,9 @@ plot.AltitudeDatum = function(x, pch = ".", type = "l", ...)
 #' @param x Battery data.
 #' @param pch Plotting character.
 #' @param type Line type. 
+#' @param main Main title.
 #' @param ... Other plotting parameters.
-#' @examples
-#' data.path = system.file("extdata", "example-data", package="SensusR")
-#' data = sensus.read.json.files(data.path)
-#' plot(data$BatteryDatum)
+#' @return None
 plot.BatteryDatum = function(x, pch = ".", type = "l", main = "Battery", ...)
 {
   plot(x$Timestamp, x$Level, main = main, xlab = "Time", ylab = "Level (%)", pch = pch, type = type, ...)
@@ -604,10 +580,7 @@ plot.BatteryDatum = function(x, pch = ".", type = "l", main = "Battery", ...)
 #' @method plot CellTowerDatum
 #' @param x Cell tower data.
 #' @param ... Other plotting arguments.
-#' @examples
-#' data.path = system.file("extdata", "example-data", package="SensusR")
-#' data = sensus.read.json.files(data.path)
-#' plot(data$CellTowerDatum)
+#' @return None
 plot.CellTowerDatum = function(x, ...)
 {
   freqs = plyr::count(x$CellTower)
@@ -624,10 +597,7 @@ plot.CellTowerDatum = function(x, ...)
 #' @param pch Plotting character.
 #' @param type Line type. 
 #' @param ... Other plotting parameters.
-#' @examples
-#' data.path = system.file("extdata", "example-data", package="SensusR")
-#' data = sensus.read.json.files(data.path)
-#' plot(data$CompassDatum)
+#' @return None
 plot.CompassDatum = function(x, pch = ".", type = "l", ...)
 {
   plot(x$Timestamp, x$Heading, main = "Compass", xlab = "Time", ylab = "Heading", pch = pch, type = type, ...)
@@ -640,10 +610,7 @@ plot.CompassDatum = function(x, pch = ".", type = "l", ...)
 #' @param pch Plotting character.
 #' @param type Line type. 
 #' @param ... Other plotting parameters.
-#' @examples
-#' data.path = system.file("extdata", "example-data", package="SensusR")
-#' data = sensus.read.json.files(data.path)
-#' plot(data$LightDatum)
+#' @return None
 plot.LightDatum = function(x, pch = ".", type = "l", ...)
 {
   plot(x$Timestamp, x$Brightness, main = "Light", xlab = "Time", ylab = "Level", pch = pch, type = type, ...)
@@ -654,10 +621,7 @@ plot.LightDatum = function(x, pch = ".", type = "l", ...)
 #' @method plot LocationDatum
 #' @param x Location data.
 #' @param ... Arguments to pass to plotting routines. This can include two special arguments:  qmap.args (passed to \code{\link{qmap}}) and geom.point.args (passed to \code{\link{geom_point}}).
-#' @examples
-#' data.path = system.file("extdata", "example-data", package="SensusR")
-#' data = sensus.read.json.files(data.path)
-#' #plot(data$LocationDatum) -- this line of example code does not play nicely with the CRAN servers.
+#' @return None
 plot.LocationDatum = function(x, ...)
 {
   args = list(...)
@@ -700,10 +664,7 @@ plot.LocationDatum = function(x, ...)
 #' @method plot ScreenDatum
 #' @param x Screen data.
 #' @param ... Other plotting parameters.
-#' @examples
-#' data.path = system.file("extdata", "example-data", package="SensusR")
-#' data = sensus.read.json.files(data.path)
-#' plot(data$ScreenDatum)
+#' @return None
 plot.ScreenDatum = function(x, ...)
 {
   plot(x$Timestamp, x$On, main = "Screen", xlab = "Time", ylab = "On/Off", pch=".", type = "l", ...)
@@ -716,10 +677,7 @@ plot.ScreenDatum = function(x, ...)
 #' @param pch Plotting character.
 #' @param type Line type. 
 #' @param ... Other plotting parameters.
-#' @examples
-#' data.path = system.file("extdata", "example-data", package="SensusR")
-#' data = sensus.read.json.files(data.path)
-#' plot(data$SoundDatum)
+#' @return None
 plot.SoundDatum = function(x, pch = ".", type = "l", ...)
 {
   plot(x$Timestamp, x$Decibels, main = "Sound", xlab = "Time", ylab = "Decibels", pch = pch, type = type, ...)
@@ -732,10 +690,7 @@ plot.SoundDatum = function(x, pch = ".", type = "l", ...)
 #' @param pch Plotting character.
 #' @param type Line type. 
 #' @param ... Other plotting parameters.
-#' @examples
-#' data.path = system.file("extdata", "example-data", package="SensusR")
-#' data = sensus.read.json.files(data.path)
-#' plot(data$SpeedDatum)
+#' @return None
 plot.SpeedDatum = function(x, pch = ".", type = "l", ...)
 {
   plot(x$Timestamp, x$KPH, main = "Speed", xlab = "Time", ylab = "KPH", pch = pch, type = type, ...)
@@ -746,10 +701,7 @@ plot.SpeedDatum = function(x, pch = ".", type = "l", ...)
 #' @method plot TelephonyDatum
 #' @param x Telephony data.
 #' @param ... Other plotting parameters.
-#' @examples
-#' data.path = system.file("extdata", "example-data", package="SensusR")
-#' data = sensus.read.json.files(data.path)
-#' plot(data$TelephonyDatum)
+#' @return None
 plot.TelephonyDatum = function(x, ...)
 {
   par(mfrow = c(2,1))
@@ -774,10 +726,7 @@ plot.TelephonyDatum = function(x, ...)
 #' @method plot WlanDatum
 #' @param x WLAN data.
 #' @param ... Other plotting parameters.
-#' @examples
-#' data.path = system.file("extdata", "example-data", package="SensusR")
-#' data = sensus.read.json.files(data.path)
-#' plot(data$WlanDatum)
+#' @return None
 plot.WlanDatum = function(x, ...)
 {
   freqs = plyr::count(x$AccessPointBSSID[x$AccessPointBSSID != ""])
@@ -789,13 +738,8 @@ plot.WlanDatum = function(x, ...)
 
 #' Get timestamp lags for a Sensus data frame.
 #' 
-#' @param data Data to plot lags for (e.g., the result of \code{read.sensus.json}).
+#' @param data Data to plot lags for (e.g., the result of \code{sensus.read.json.files}).
 #' @return List of lags organized by datum type.
-#' @examples
-#' data.path = system.file("extdata", "example-data", package="SensusR")
-#' data = sensus.read.json.files(data.path)
-#' lags = sensus.get.all.timestamp.lags(data)
-#' plot(lags[["AccelerometerDatum"]])
 sensus.get.all.timestamp.lags = function(data)
 {
   lags = list()
@@ -813,12 +757,8 @@ sensus.get.all.timestamp.lags = function(data)
 
 #' Get timestamp lags for a Sensus datum.
 #' 
-#' @param datum One element of a Sensus data frame (e.g., data$CompassDatum).
+#' @param datum Data to plot lags for (e.g., the result of \code{sensus.read.json.files}).
 #' @return List of lags.
-#' @examples
-#' data.path = system.file("extdata", "example-data", package="SensusR")
-#' data = sensus.read.json.files(data.path)
-#' plot(sensus.get.timestamp.lags(data$AccelerometerDatum))
 sensus.get.timestamp.lags = function(datum)
 {
   lags = NULL
@@ -838,10 +778,7 @@ sensus.get.timestamp.lags = function(datum)
 #' @param xlab Label for x-axis.
 #' @param ylab Label for y-axis.
 #' @param main Label for plot.
-#' @examples 
-#' data.path = system.file("extdata", "example-data", package="SensusR")
-#' data = sensus.read.json.files(data.path)
-#' sensus.plot.lag.cdf(data$AccelerometerDatum)
+#' @return None.
 sensus.plot.lag.cdf = function(datum, xlim = c(0,1), xlab = "Inter-reading time (seconds)", ylab = "Percentile", main = paste("Inter-reading times (n=", nrow(datum), ")", sep=""))
 {
   lags = diff(datum$Timestamp)
@@ -855,10 +792,6 @@ sensus.plot.lag.cdf = function(datum, xlim = c(0,1), xlab = "Inter-reading time 
 #' @param datum Data collection to process.
 #' @param device.id Device ID to remove.
 #' @return Data without a particular device ID.
-#' @examples 
-#' data.path = system.file("extdata", "example-data", package="SensusR")
-#' data = sensus.read.json.files(data.path)
-#' filtered.data = sensus.remove.device.id(data$AccelerometerDatum, "a448s0df98f")
 sensus.remove.device.id = function(datum, device.id)
 {
   return(datum[datum$DeviceId != device.id, ])
@@ -868,22 +801,16 @@ sensus.remove.device.id = function(datum, device.id)
 #' 
 #' @param x String to trim.
 #' @return Result of trimming.
-#' @examples 
-#' trim.leading("  asdfasdf")
 trim.leading = function (x) sub("^\\s+", "", x)
 
 #' Trim trailing white space from a string.
 #' 
 #' @param x String to trim.
 #' @return Result of trimming.
-#' @examples 
-#' trim.trailing("asdfasdf  ")
 trim.trailing = function (x) sub("\\s+$", "", x)
 
 #' Trim leading and trailing white space from a string.
 #' 
 #' @param x String to trim.
 #' @return Result of trimming.
-#' @examples 
-#' trim("  asdf  ")
 trim = function (x) gsub("^\\s+|\\s+$", "", x)

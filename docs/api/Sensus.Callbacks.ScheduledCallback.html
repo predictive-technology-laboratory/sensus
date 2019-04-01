@@ -102,13 +102,13 @@
   
   
   <a id="Sensus_Callbacks_ScheduledCallback__ctor_" data-uid="Sensus.Callbacks.ScheduledCallback.#ctor*"></a>
-  <h4 id="Sensus_Callbacks_ScheduledCallback__ctor_Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_System_TimeSpan_System_String_System_String_Sensus_Protocol_System_Nullable_System_TimeSpan__System_String_System_TimeSpan_System_TimeSpan_" data-uid="Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.String,System.TimeSpan,System.TimeSpan)">ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, String, String, Protocol, Nullable&lt;TimeSpan&gt;, String, TimeSpan, TimeSpan)</h4>
+  <h4 id="Sensus_Callbacks_ScheduledCallback__ctor_Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_System_TimeSpan_System_String_System_String_Sensus_Protocol_System_Nullable_System_TimeSpan__System_TimeSpan_System_TimeSpan_" data-uid="Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.TimeSpan,System.TimeSpan)">ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, String, String, Protocol, Nullable&lt;TimeSpan&gt;, TimeSpan, TimeSpan)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ScheduledCallback(ScheduledCallback.ActionAsyncDelegate actionAsync, TimeSpan delay, string id, string domain, Protocol protocol, Nullable&lt;TimeSpan&gt; timeout, string userNotificationMessage, TimeSpan delayToleranceBefore, TimeSpan delayToleranceAfter)</code></pre>
+    <pre><code class="lang-csharp hljs">public ScheduledCallback(ScheduledCallback.ActionAsyncDelegate actionAsync, TimeSpan delay, string id, string domain, Protocol protocol, Nullable&lt;TimeSpan&gt; timeout, TimeSpan delayToleranceBefore, TimeSpan delayToleranceAfter)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -141,7 +141,7 @@
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">domain</span></td>
-        <td><p>Domain of callback identifier. All callback IDs within a domain must be unique. If a duplicate ID is provided, it will not be scheduled.</p>
+        <td><p>Domain of callback identifier. All callback IDs within a domain must be unique. If an ID duplicates another within the same domain, then it will not be scheduled.</p>
 </td>
       </tr>
       <tr>
@@ -154,12 +154,6 @@
         <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
         <td><span class="parametername">timeout</span></td>
         <td><p>How long to allow callback to execute before cancelling it.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">userNotificationMessage</span></td>
-        <td><p>Message to display to the user when executing the callback.</p>
 </td>
       </tr>
       <tr>
@@ -179,13 +173,13 @@
   
   
   <a id="Sensus_Callbacks_ScheduledCallback__ctor_" data-uid="Sensus.Callbacks.ScheduledCallback.#ctor*"></a>
-  <h4 id="Sensus_Callbacks_ScheduledCallback__ctor_Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_System_TimeSpan_System_TimeSpan_System_String_System_String_Sensus_Protocol_System_Nullable_System_TimeSpan__System_String_System_TimeSpan_System_TimeSpan_" data-uid="Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate,System.TimeSpan,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.String,System.TimeSpan,System.TimeSpan)">ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable&lt;TimeSpan&gt;, String, TimeSpan, TimeSpan)</h4>
+  <h4 id="Sensus_Callbacks_ScheduledCallback__ctor_Sensus_Callbacks_ScheduledCallback_ActionAsyncDelegate_System_TimeSpan_System_TimeSpan_System_String_System_String_Sensus_Protocol_System_Nullable_System_TimeSpan__System_TimeSpan_System_TimeSpan_" data-uid="Sensus.Callbacks.ScheduledCallback.#ctor(Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate,System.TimeSpan,System.TimeSpan,System.String,System.String,Sensus.Protocol,System.Nullable{System.TimeSpan},System.TimeSpan,System.TimeSpan)">ScheduledCallback(ScheduledCallback.ActionAsyncDelegate, TimeSpan, TimeSpan, String, String, Protocol, Nullable&lt;TimeSpan&gt;, TimeSpan, TimeSpan)</h4>
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a> class.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ScheduledCallback(ScheduledCallback.ActionAsyncDelegate action, TimeSpan initialDelay, TimeSpan repeatDelay, string id, string domain, Protocol protocol, Nullable&lt;TimeSpan&gt; timeout, string userNotificationMessage, TimeSpan delayToleranceBefore, TimeSpan delayToleranceAfter)</code></pre>
+    <pre><code class="lang-csharp hljs">public ScheduledCallback(ScheduledCallback.ActionAsyncDelegate actionAsync, TimeSpan initialDelay, TimeSpan repeatDelay, string id, string domain, Protocol protocol, Nullable&lt;TimeSpan&gt; timeout, TimeSpan delayToleranceBefore, TimeSpan delayToleranceAfter)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -199,7 +193,7 @@
     <tbody>
       <tr>
         <td><a class="xref" href="Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.html">ScheduledCallback.ActionAsyncDelegate</a></td>
-        <td><span class="parametername">action</span></td>
+        <td><span class="parametername">actionAsync</span></td>
         <td><p>Action to execute when callback time arrives.</p>
 </td>
       </tr>
@@ -224,7 +218,7 @@
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">domain</span></td>
-        <td><p>Domain of callback identifier. All callback IDs within a domain must be unique. If a duplicate ID is provided, it will not be scheduled.</p>
+        <td><p>Domain of callback identifier. All callback IDs within a domain must be unique. If an ID duplicates another in the same domain, then it will not be scheduled.</p>
 </td>
       </tr>
       <tr>
@@ -237,12 +231,6 @@
         <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
         <td><span class="parametername">timeout</span></td>
         <td><p>How long to allow callback to execute before cancelling it.</p>
-</td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">userNotificationMessage</span></td>
-        <td><p>Message to display to the user when executing the callback.</p>
 </td>
       </tr>
       <tr>
@@ -284,6 +272,33 @@
       <tr>
         <td><a class="xref" href="Sensus.Callbacks.ScheduledCallback.ActionAsyncDelegate.html">ScheduledCallback.ActionAsyncDelegate</a></td>
         <td><p>The action.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Callbacks_ScheduledCallback_Batched_" data-uid="Sensus.Callbacks.ScheduledCallback.Batched*"></a>
+  <h4 id="Sensus_Callbacks_ScheduledCallback_Batched" data-uid="Sensus.Callbacks.ScheduledCallback.Batched">Batched</h4>
+  <div class="markdown level1 summary"><p>Gets or sets a value indicating whether this <a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a> has been batched with another <a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Batched { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> if batched; otherwise, <code>false</code>.</p>
 </td>
       </tr>
     </tbody>
@@ -425,33 +440,6 @@
   </table>
   
   
-  <a id="Sensus_Callbacks_ScheduledCallback_DisplayPage_" data-uid="Sensus.Callbacks.ScheduledCallback.DisplayPage*"></a>
-  <h4 id="Sensus_Callbacks_ScheduledCallback_DisplayPage" data-uid="Sensus.Callbacks.ScheduledCallback.DisplayPage">DisplayPage</h4>
-  <div class="markdown level1 summary"><p>UI page to display when callback is returned to app.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public DisplayPage DisplayPage { get; set; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Sensus.Notifications.DisplayPage.html">DisplayPage</a></td>
-        <td><p>The display page.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
   <a id="Sensus_Callbacks_ScheduledCallback_Id_" data-uid="Sensus.Callbacks.ScheduledCallback.Id*"></a>
   <h4 id="Sensus_Callbacks_ScheduledCallback_Id" data-uid="Sensus.Callbacks.ScheduledCallback.Id">Id</h4>
   <div class="markdown level1 summary"><p>Gets or sets the identifier.</p>
@@ -527,6 +515,62 @@
       <tr>
         <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.DateTime</span>&gt;</td>
         <td><p>The next execution time.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Callbacks_ScheduledCallback_NotificationUserResponseAction_" data-uid="Sensus.Callbacks.ScheduledCallback.NotificationUserResponseAction*"></a>
+  <h4 id="Sensus_Callbacks_ScheduledCallback_NotificationUserResponseAction" data-uid="Sensus.Callbacks.ScheduledCallback.NotificationUserResponseAction">NotificationUserResponseAction</h4>
+  <div class="markdown level1 summary"><p>Action to take after the user responds to (e.g., by tapping) the notification defined by <a class="xref" href="Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_UserNotificationMessage">UserNotificationMessage</a>.
+If <a class="xref" href="Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_UserNotificationMessage">UserNotificationMessage</a> is <code>null</code>, then this has no effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public NotificationUserResponseAction NotificationUserResponseAction { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Notifications.NotificationUserResponseAction.html">NotificationUserResponseAction</a></td>
+        <td><p>The display page.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Callbacks_ScheduledCallback_NotificationUserResponseMessage_" data-uid="Sensus.Callbacks.ScheduledCallback.NotificationUserResponseMessage*"></a>
+  <h4 id="Sensus_Callbacks_ScheduledCallback_NotificationUserResponseMessage" data-uid="Sensus.Callbacks.ScheduledCallback.NotificationUserResponseMessage">NotificationUserResponseMessage</h4>
+  <div class="markdown level1 summary"><p>Message to display after the user responds to (e.g., by tapping) the notification defined by <a class="xref" href="Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_UserNotificationMessage">UserNotificationMessage</a>.
+If <a class="xref" href="Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_UserNotificationMessage">UserNotificationMessage</a> is <code>null</code>, then this has no effect.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string NotificationUserResponseMessage { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The notification user response message.</p>
 </td>
       </tr>
     </tbody>
@@ -643,7 +687,9 @@
   
   <a id="Sensus_Callbacks_ScheduledCallback_UserNotificationMessage_" data-uid="Sensus.Callbacks.ScheduledCallback.UserNotificationMessage*"></a>
   <h4 id="Sensus_Callbacks_ScheduledCallback_UserNotificationMessage" data-uid="Sensus.Callbacks.ScheduledCallback.UserNotificationMessage">UserNotificationMessage</h4>
-  <div class="markdown level1 summary"><p>Notification message that should be displayed to the user when the callback is invoked.</p>
+  <div class="markdown level1 summary"><p>Notification message that should be displayed to the user at the time when the <a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a> is
+scheduled to run. On iOS, this message will not be displayed when the app is in the foreground. On Android, this 
+message will be displayed regardless of the foreground/background state of the app.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>

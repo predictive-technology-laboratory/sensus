@@ -85,6 +85,8 @@ namespace Sensus.Probes
         private DataRateCalculator _uiUpdateRateCalculator;
         private EventHandler<bool> _powerConnectionChanged;
         private CancellationTokenSource _processDataCanceller;
+        private readonly object _restartLocker = new object();
+        private bool _restarting = false;
 
         [JsonIgnore]
         public abstract string DisplayName { get; }
@@ -160,6 +162,13 @@ namespace Sensus.Probes
             get { return _storeData; }
             set { _storeData = value; }
         }
+
+        /// <summary>
+        /// Whether or not to allow the user to disable this <see cref="Probe"/> when starting the <see cref="Protocol"/>.
+        /// </summary>
+        /// <value>Allow user to disable on start up.</value>
+        [OnOffUiProperty("Allow Disable On Startup:", true, 5)]
+        public bool AllowDisableOnStartUp { get; set; } = false;
 
         [JsonIgnore]
         public abstract Type DatumType { get; }
@@ -245,7 +254,17 @@ namespace Sensus.Probes
         {
             get
             {
-                return _mostRecentDatum == null ? "[no data]" : _mostRecentDatum.DisplayDetail + "  " + _mostRecentDatum.Timestamp.ToLocalTime();
+                // get and check reference to most recent datum, as it might change due to
+                // concurrent access by probe reading.
+                Datum mostRecentDatum = _mostRecentDatum;
+                if (mostRecentDatum == null)
+                {
+                    return "[no data]";
+                }
+                else
+                {
+                    return mostRecentDatum.DisplayDetail + "  " + mostRecentDatum.Timestamp.ToLocalTime();
+                }
             }
         }
 
@@ -309,6 +328,14 @@ namespace Sensus.Probes
 
         public async Task StartAsync()
         {
+            // don't attempt to start the probe if it is not enabled. this can happen, e.g., when remote protocol updates
+            // disable the probe and the probe is subsequently restarted to take on the update values. bail out.
+            if (!Enabled)
+            {
+                SensusServiceHelper.Get().Logger.Log("Probe is not enabled. Not starting", LoggingLevel.Normal, GetType());
+                return;
+            }
+
             try
             {
                 await ProtectedStartAsync();
@@ -330,7 +357,7 @@ namespace Sensus.Probes
                     }
                 }
 
-                string message = "Failed to start probe \"" + GetType().Name + "\":  " + startException.Message;
+                string message = "Sensus failed to start probe \"" + GetType().Name + "\":  " + startException.Message;
                 SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                 await SensusServiceHelper.Get().FlashNotificationAsync(message);
 
@@ -383,11 +410,11 @@ namespace Sensus.Probes
         /// <param name="cancellationToken">Cancellation token.</param>
         public async Task StoreDatumAsync(Datum datum, CancellationToken? cancellationToken = null)
         {
-            // it's possible for the current method to be called when the protocol is not running. we try to prevent
-            // this (e.g., by forcing the user to start the protocol before taking a survey saved from a previous run of
-            // the app), but there are probably corner cases we haven't accounted for. at the very least, there are race
-            // conditions (e.g., taking a survey when a protocol is about to stop) that could cause data to be stored 
-            // without a running protocol.
+            // it's possible for the current method to be called when the protocol is not running. the obvious case is when
+            // the protocol is paused, but there are other race-like conditions. we try to prevent this (e.g., by forcing 
+            // the user to start the protocol before taking a survey saved from a previous run of the app), but there are 
+            // probably corner cases we haven't accounted for. at the very least, there are race conditions (e.g., taking a 
+            // survey when a protocol is about to stop) that could cause data to be stored without a running protocol.
             if (_protocol.State != ProtocolState.Running)
             {
                 return;
@@ -409,11 +436,15 @@ namespace Sensus.Probes
                 datum.ProtocolId = Protocol.Id;
                 datum.ParticipantId = Protocol.ParticipantId;
 
-                // tag the data if we're in tagging mode, indicated with a non-null event id on the protocol.
-                if (Protocol.TaggedEventId != null)
+                // tag the data if we're in tagging mode, indicated with a non-null event id on the protocol. avoid 
+                // any race conditions related to starting/stopping a tagging by getting the required values and
+                // then checking both for validity. we need to guarantee that any tagged datum has both an id and tags.
+                string taggedEventId = Protocol.TaggedEventId;
+                List<string> taggedEventTags = Protocol.TaggedEventTags.ToList();
+                if (!string.IsNullOrWhiteSpace(taggedEventId) && taggedEventTags.Count > 0)
                 {
-                    datum.TaggedEventId = Protocol.TaggedEventId;
-                    datum.TaggedEventTags = Protocol.TaggedEventTags;
+                    datum.TaggedEventId = taggedEventId;
+                    datum.TaggedEventTags = taggedEventTags;
                 }
             }
 
@@ -557,8 +588,28 @@ namespace Sensus.Probes
 
         public async Task RestartAsync()
         {
-            await StopAsync();
-            await StartAsync();
+            // prevent concurrent restarts
+            lock (_restartLocker)
+            {
+                if (_restarting)
+                {
+                    return;
+                }
+                else
+                {
+                    _restarting = true;
+                }
+            }
+
+            try
+            {
+                await StopAsync();
+                await StartAsync();
+            }
+            finally
+            {
+                _restarting = false;
+            }
         }
 
         public virtual Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
@@ -591,7 +642,9 @@ namespace Sensus.Probes
                 properties.Add("Raw Data / Second", Convert.ToString(rawDataPerSecond));
                 properties.Add("Stored Data / Second", Convert.ToString(storedDataPerSecond));
             }
-            else
+            // the probe might not be running because it's in the middle of being restarted. only 
+            // return a signal to resart the probe if it is not currently being restarted.
+            else if (!_restarting)
             {
                 Analytics.TrackEvent(eventName, properties);
                 result = HealthTestResult.Restart;

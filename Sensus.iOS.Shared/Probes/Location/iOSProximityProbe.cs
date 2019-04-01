@@ -38,7 +38,7 @@ namespace Sensus.iOS.Probes.Location
 
             if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Sensors) == PermissionStatus.Granted)
             {
-                //Enable the proximity Monitoring, is set to false by default, if the device cannot monitor proximity, it will remain false
+                // enable proximity monitoring, is set to false by default, and if the device cannot monitor proximity, then it will remain false.
                 UIDevice.CurrentDevice.ProximityMonitoringEnabled = true;
             }
             else

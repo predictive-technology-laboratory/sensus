@@ -22,9 +22,9 @@ using Sensus.Android.Context;
 using Sensus.Android.Callbacks;
 using Sensus.Android.Concurrent;
 using Sensus.Encryption;
-using System.Linq;
 using System.Threading.Tasks;
 using Sensus.Android.Notifications;
+using Plugin.CurrentActivity;
 
 // the unit test project contains the Resource class in its namespace rather than the Sensus.Android
 // namespace. include that namespace below.
@@ -35,21 +35,46 @@ using Sensus.Android.Tests;
 namespace Sensus.Android
 {
     /// <summary>
-    /// Android sensus service. Manages background running of Sensus. This is a hybrid service (http://developer.android.com/guide/components/services.html), in that
-    /// it is started by the Sensus activity to run indefinitely, but the activity also binds to it to manage the Sensus system (e.g., creating protocols, starting
-    /// and stopping them, etc.). For now, nobody other than the Sensus activity can interact with the service (Exported = false). Perhaps we'll allow this in the future
-    /// to support integration with other apps.
+    /// Android sensus service. This is a [hybrid service](http://developer.android.com/guide/components/services.html), as it
+    /// is started by the Sensus activity to run indefinitely, and the activity also binds to it. This service runs in the foreground. 
+    /// For now, no components other than the Sensus activity can interact with the service, as the service is not exported.
     /// </summary>
-    [Service(Exported = false, Label = "Runs the Sensus mobile sensing application.")]
+    [Service(Exported = false, Label = "Runs the SensusMobile sensing application.")]
     public class AndroidSensusService : Service
     {
-        public const int FOREGROUND_SERVICE_NOTIFICATION_ID = 1;
-        public const string FROM_ON_BOOT_KEY = "from-on-boot";
+        public const string KEY_STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN = "STOP-SERVICE-IF-NO-PROTOCOLS-SHOULD-RUN";
 
-        public static Intent StartService(global::Android.Content.Context context, bool fromOnBoot)
+        /// <summary>
+        /// Gets the service intent.
+        /// </summary>
+        /// <returns>The service intent.</returns>
+        /// <param name="stopServiceIfNoProtocolsShouldRun">If set to <c>true</c>, then add an intent extra indicating that the <see cref="AndroidSensusService"/> should stop itself immediately if no <see cref="Protocol"/> should run.</param>
+        public static Intent GetServiceIntent(bool stopServiceIfNoProtocolsShouldRun)
         {
-            Intent serviceIntent = new Intent(context, typeof(AndroidSensusService));
-            serviceIntent.PutExtra(FROM_ON_BOOT_KEY, fromOnBoot);
+            Intent intent = new Intent(Application.Context, typeof(AndroidSensusService));
+            intent.PutExtra(KEY_STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN, stopServiceIfNoProtocolsShouldRun);
+            return intent;
+        }
+
+        /// <summary>
+        /// Starts the service.
+        /// </summary>
+        /// <param name="stopServiceIfNoProtocolsShouldRun">If set to <c>true</c>, then add an intent extra indicating that the <see cref="AndroidSensusService"/> should stop itself immediately if no <see cref="Protocol"/> should run.</param>
+        public static void Start(bool stopServiceIfNoProtocolsShouldRun)
+        {
+            Intent serviceIntent = GetServiceIntent(stopServiceIfNoProtocolsShouldRun);
+
+            // log the start of the service. the service helper might not yet exist.
+            SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
+            string message = "About to start Android service:  ";
+            if (serviceHelper == null)
+            {
+                Console.Error.WriteLine(message + "Service helper does not yet exist.");
+            }
+            else
+            {
+                serviceHelper.Logger.Log(message + "Service helper already exists.", LoggingLevel.Normal, typeof(AndroidSensusService));
+            }
 
             // after android 26, starting a foreground service requires the use of StartForegroundService rather than StartService.
             // in either case, the service itself will call StartForeground after it has started. more info:  
@@ -62,24 +87,27 @@ namespace Sensus.Android
 #if __ANDROID_26__
             if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
             {
-                context.StartForegroundService(serviceIntent);
+                Application.Context.StartForegroundService(serviceIntent);
             }
             else
 #endif
             {
-                context.StartService(serviceIntent);
+                Application.Context.StartService(serviceIntent);
             }
-
-            return serviceIntent;
         }
 
         private readonly List<AndroidSensusServiceBinder> _bindings = new List<AndroidSensusServiceBinder>();
-        private Notification.Builder _foregroundServiceNotificationBuilder;
         private AndroidPowerConnectionChangeBroadcastReceiver _powerBroadcastReceiver;
 
         public override void OnCreate()
         {
             base.OnCreate();
+
+            // initialize the current activity plugin here as well as in the main activity
+            // since this service may be created by iteself without a main activity (e.g., 
+            // on boot or on OS restart of the service). we want the plugin to have be 
+            // initialized regardless of how the app comes to be created.
+            CrossCurrentActivity.Current.Init(Application);
 
             SensusContext.Current = new AndroidSensusContext
             {
@@ -87,20 +115,15 @@ namespace Sensus.Android
                 MainThreadSynchronizer = new MainConcurrent(),
                 SymmetricEncryption = new SymmetricEncryption(SensusServiceHelper.ENCRYPTION_KEY),
                 CallbackScheduler = new AndroidCallbackScheduler(this),
-                Notifier = new AndroidNotifier(this),
+                Notifier = new AndroidNotifier(),
                 PowerConnectionChangeListener = new AndroidPowerConnectionChangeListener()
             };
 
             // promote this service to a foreground service as soon as possible. we use a foreground service for several 
             // reasons. it's honest and transparent. it lets us work effectively with the android 8.0 restrictions on 
             // background services. we can run forever without being killed. we receive background location updates, etc.
-            PendingIntent mainActivityPendingIntent = PendingIntent.GetActivity(this, 0, new Intent(this, typeof(AndroidMainActivity)), 0);
-            _foregroundServiceNotificationBuilder = (SensusContext.Current.Notifier as AndroidNotifier).CreateNotificationBuilder(this, AndroidNotifier.SensusNotificationChannel.ForegroundService)
-                                                                                                       .SetSmallIcon(Resource.Drawable.ic_launcher)
-                                                                                                       .SetContentIntent(mainActivityPendingIntent)
-                                                                                                       .SetOngoing(true);
-            UpdateForegroundServiceNotificationBuilder();
-            StartForeground(FOREGROUND_SERVICE_NOTIFICATION_ID, _foregroundServiceNotificationBuilder.Build());
+            (SensusContext.Current.Notifier as AndroidNotifier).UpdateForegroundServiceNotificationBuilder();
+            StartForeground(AndroidNotifier.FOREGROUND_SERVICE_NOTIFICATION_ID, (SensusContext.Current.Notifier as AndroidNotifier).BuildForegroundServiceNotification());
 
             // https://developer.android.com/reference/android/content/Intent#ACTION_POWER_CONNECTED
             // This is intended for applications that wish to register specifically to this notification. Unlike ACTION_BATTERY_CHANGED, 
@@ -122,15 +145,11 @@ namespace Sensus.Android
 
             AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
 
-            // we might have failed to create the service helper. it's also happened that the service is created after the 
-            // service helper is disposed:  https://insights.xamarin.com/app/Sensus-Production/issues/46
+            // we might have failed to create the service helper. it's also happened that the service is created 
+            // after the service helper is disposed.
             if (serviceHelper == null)
             {
                 Stop();
-            }
-            else
-            {
-                serviceHelper.SetService(this);
             }
         }
 
@@ -146,14 +165,14 @@ namespace Sensus.Android
                 serviceHelper.Logger.Log("Sensus service received start command (startId=" + startId + ", flags=" + flags + ").", LoggingLevel.Normal, GetType());
 
                 // update the foreground service notification with information about loaded/running studies.
-                ReissueForegroundServiceNotification();
+                (SensusContext.Current.Notifier as AndroidNotifier).ReissueForegroundServiceNotification();
 
-                // if we started from the on-boot signal and there are no running protocols, stop the app now. there is no reason for
-                // the app to be running in this situation, and the user will likely be annoyed at the presence of the foreground
-                // service notification.
-                if (intent != null && intent.GetBooleanExtra(FROM_ON_BOOT_KEY, false) && serviceHelper.RunningProtocolIds.Count == 0)
+                // if the service started but there are no protocols that should be running, then stop the app now. there is no 
+                // reason for the app to be running in this situation, and the user will likely be annoyed at the presence of the 
+                // foreground service notification.
+                if (intent != null && intent.GetBooleanExtra(KEY_STOP_SERVICE_IF_NO_PROTOCOLS_SHOULD_RUN, false) && serviceHelper.RunningProtocolIds.Count == 0)
                 {
-                    serviceHelper.Logger.Log("Started from on-boot signal without running protocols. Stopping service now.", LoggingLevel.Normal, GetType());
+                    serviceHelper.Logger.Log("Started service without running protocols. Stopping service now.", LoggingLevel.Normal, GetType());
                     Stop();
                     return StartCommandResult.NotSticky;
                 }
@@ -163,33 +182,34 @@ namespace Sensus.Android
 
                 Task.Run(async () =>
                 {
-                    // the service can be stopped without destroying the service object. in such cases, 
-                    // subsequent calls to start the service will not call OnCreate. therefore, it's 
-                    // important that any code called here is okay to call multiple times, even if the 
-                    // service is running. calling this when the service is running can happen because 
-                    // sensus receives a signal on device boot and for any callback alarms that are 
-                    // requested. furthermore, all calls here should be nonblocking / async so we don't 
-                    // tie up the UI thread.
-                    await serviceHelper.StartAsync();
+                    try
+                    {
+                        // the service can be stopped without destroying the service object. in such cases, 
+                        // subsequent calls to start the service will not call OnCreate. therefore, it's 
+                        // important that any code called here is okay to call multiple times, even if the 
+                        // service is running. calling this when the service is running can happen because 
+                        // sensus receives a signal on device boot and for any callback alarms that are 
+                        // requested. furthermore, all calls here should be nonblocking / async so we don't 
+                        // tie up the UI thread.
+                        await serviceHelper.StartAsync();
 
-                    if (intent == null)
+                        if (intent != null)
+                        {
+                            AndroidCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as AndroidCallbackScheduler;
+
+                            if (callbackScheduler.IsCallback(intent))
+                            {
+                                await callbackScheduler.ServiceCallbackAsync(intent);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        serviceHelper.Logger.Log("Exception while responding to on-start command:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                    finally
                     {
                         serviceHelper.LetDeviceSleep();
-                    }
-                    else
-                    {
-                        AndroidCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as AndroidCallbackScheduler;
-
-                        // is this a callback intent?
-                        if (callbackScheduler.IsCallback(intent))
-                        {
-                            // service the callback -- the matching LetDeviceSleep will be called therein
-                            await callbackScheduler.ServiceCallbackAsync(intent);
-                        }
-                        else
-                        {
-                            serviceHelper.LetDeviceSleep();
-                        }
                     }
                 });
             }
@@ -199,52 +219,9 @@ namespace Sensus.Android
             return StartCommandResult.Sticky;
         }
 
-        /// <summary>
-        /// Updates the foreground service notification builder, so that it reflects the enrollment status and participation level of the user.
-        /// </summary>
-        private void UpdateForegroundServiceNotificationBuilder()
-        {
-            AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
-
-            // the service helper will be null when this method is called from OnCreate. set some generic text until
-            // the service helper has a chance to load, at which time this method will be called again and we'll update
-            // the notification with more detailed information.
-            if (serviceHelper == null)
-            {
-                _foregroundServiceNotificationBuilder.SetContentTitle("Starting...");
-                _foregroundServiceNotificationBuilder.SetContentText("Tap to Open Sensus.");
-            }
-            // after the service helper has been initialized, we'll have more information about the studies.
-            else
-            {
-                int numRunningStudies = serviceHelper.RunningProtocolIds.Count;
-                _foregroundServiceNotificationBuilder.SetContentTitle("You are enrolled in " + numRunningStudies + " " + (numRunningStudies == 1 ? "study" : "studies") + ".");
-
-                string contentText = "";
-
-                // although the number of studies might be greater than 0, the protocols might not yet be started (e.g., after starting sensus).
-                List<Protocol> runningProtocols = serviceHelper.GetRunningProtocols();
-                if (runningProtocols.Count > 0)
-                {
-                    double avgParticipation = runningProtocols.Average(protocol => protocol.Participation) * 100;
-                    contentText += "Your overall participation level is " + Math.Round(avgParticipation, 0) + "%. ";
-                }
-
-                contentText += "Tap to open Sensus.";
-
-                _foregroundServiceNotificationBuilder.SetContentText(contentText);
-            }
-        }
-
-        public void ReissueForegroundServiceNotification()
-        {
-            UpdateForegroundServiceNotificationBuilder();
-            (GetSystemService(NotificationService) as NotificationManager).Notify(FOREGROUND_SERVICE_NOTIFICATION_ID, _foregroundServiceNotificationBuilder.Build());
-        }
-
         public override IBinder OnBind(Intent intent)
         {
-            AndroidSensusServiceBinder binder = new AndroidSensusServiceBinder(SensusServiceHelper.Get() as AndroidSensusServiceHelper);
+            AndroidSensusServiceBinder binder = new AndroidSensusServiceBinder();
 
             lock (_bindings)
             {
@@ -265,17 +242,15 @@ namespace Sensus.Android
             // let everyone who is bound to the service know that we're going to stop.
             lock (_bindings)
             {
-                foreach (AndroidSensusServiceBinder binder in _bindings)
+                foreach (AndroidSensusServiceBinder binding in _bindings)
                 {
-                    if (binder.SensusServiceHelper != null && binder.ServiceStopAction != null)
+                    try
                     {
-                        try
-                        {
-                            binder.ServiceStopAction();
-                        }
-                        catch (Exception)
-                        {
-                        }
+                        binding.OnServiceStop?.Invoke();
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get()?.Logger.Log("Exception while notifying binding of service stop:  " + ex.Message, LoggingLevel.Normal, GetType());
                     }
                 }
 
@@ -283,25 +258,19 @@ namespace Sensus.Android
             }
         }
 
-        public override async void OnDestroy()
+        public override void OnDestroy()
         {
             Console.Error.WriteLine("--------------------------- Destroying Service ---------------------------");
 
-            AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+            // we used to stop all protocols when destroying the service, but this is not appropriate. if we're
+            // destroying the service because the user has stopped the app, then we'll already have stopped the
+            // protocols as requested by the user. if the os is destroying the service to reclaim resources, then
+            // the protocol should be left running. if the os subsequently kills the app's process, the protocols
+            // will restart when the os resumes the process and service. so, don't stop the protocols.
 
-            // the service helper will be null if we failed to create it within OnCreate, so first check that. also, 
-            // OnDestroy can be called either when the user stops Sensus (in Android) and when the system reclaims
-            // the service under memory pressure. in the former case, we'll already have done the notification and 
-            // stopping of protocols; however, we have no way to know how we reached OnDestroy, so to cover the latter
-            // case we're going to do the notification and stopping again. this will be duplicative in the case where
-            // the user has stopped sensus. in sum, anything we do below must be safe to run repeatedly.
-            if (serviceHelper != null)
-            {
-                serviceHelper.Logger.Log("Destroying service.", LoggingLevel.Normal, GetType());
-                NotifyBindingsOfStop();
-                await serviceHelper.StopProtocolsAsync();
-                serviceHelper.SetService(null);
-            }
+            SensusServiceHelper.Get()?.Logger.Log("Destroying service.", LoggingLevel.Normal, GetType());  // the service helper will be null if we failed to create it within OnCreate
+
+            NotifyBindingsOfStop();
 
             // we've seen cases where the receiver doesn't get registered before the service is 
             // destroyed. catch exception raised from attempting to unregister a receiver that 
@@ -309,6 +278,13 @@ namespace Sensus.Android
             try
             {
                 UnregisterReceiver(_powerBroadcastReceiver);
+            }
+            catch (Exception)
+            { }
+
+            try
+            {
+                (SensusContext.Current.Notifier as AndroidNotifier).OnDestroy();
             }
             catch (Exception)
             { }

@@ -5,7 +5,7 @@ if [ $# -ne 2 ]; then
     echo "\t[name]:  Informative name for bucket (alphanumerics and dashes). Must be 11 characters or fewer."
     echo "\t[region]:  AWS region to use (e.g., us-east-1)"
     echo ""
-    echo "Output:  The Sensus S3 IAM account that has write-only access to the bucket."
+    echo "Output:  The Sensus S3 IAM account that has access to the bucket."
     exit 1
 fi
 
@@ -35,57 +35,57 @@ if [ $? -ne 0 ]; then
     exit $?
 fi
 
-###################################################################################
-##### Write-only IAM group/user:  enables the app to write data to the bucket #####
-###################################################################################
+#################################
+##### Device IAM group/user #####
+#################################
 
 # create group
-echo "Creating write-only IAM group..."
-iamWriteOnlyGroupName="${bucket}-write-only-group"
-aws iam create-group --group-name $iamWriteOnlyGroupName
+echo "Creating device IAM group..."
+iamDeviceGroupName="${bucket}-device-group"
+aws iam create-group --group-name $iamDeviceGroupName
 if [ $? -ne 0 ]; then
-    echo "Failed to create write-only IAM group."
+    echo "Failed to create device IAM group."
     exit $?
 fi
 
-# create/put group policy
-echo "Attaching write-only IAM group policy..."
-cp ./iam-write-only-group-policy.json tmp.json
+# create/put group policy for devices
+echo "Attaching device IAM group policy..."
+cp ./iam-device-policy.json tmp.json
 sed "s/bucketName/$bucket/" ./tmp.json > tmp2.json  # sed in place differs across platforms...avoid and use file redirect instead
 mv tmp2.json tmp.json
-aws iam put-group-policy --group-name $iamWriteOnlyGroupName --policy-document file://tmp.json --policy-name "${iamWriteOnlyGroupName}-policy"
+aws iam put-group-policy --group-name $iamDeviceGroupName --policy-document file://tmp.json --policy-name "${iamDeviceGroupName}-policy"
 if [ $? -ne 0 ]; then
     rm tmp.json
-    echo "Failed to put IAM write-only group policy."
+    echo "Failed to put IAM device group policy."
     exit $?
 fi
 rm tmp.json
 
-# create write-only IAM user
-echo "Creating write-only IAM user..."
-iamWriteOnlyUserName="${bucket}-write-only-user"
-aws iam create-user --user-name $iamWriteOnlyUserName
+# create device IAM user
+echo "Creating device IAM user..."
+iamDeviceUserName="${bucket}-device-user"
+aws iam create-user --user-name $iamDeviceUserName
 if [ $? -ne 0 ]; then
-    echo "Failed to create write-only IAM user."
+    echo "Failed to create device IAM user."
     exit $?
 fi
 
 # create access key for user
-echo "Creating access key for write-only IAM user..."
-writeOnlyCredentials=$(aws iam create-access-key --user-name $iamWriteOnlyUserName --query "AccessKey.[AccessKeyId,SecretAccessKey]" --output text | tr '\t' ':')
+echo "Creating access key for device IAM user..."
+deviceCredentials=$(aws iam create-access-key --user-name $iamDeviceUserName --query "AccessKey.[AccessKeyId,SecretAccessKey]" --output text | tr '\t' ':')
 if [ $? -ne 0 ]; then
-    echo "Failed to create access key for write-only IAM user."
+    echo "Failed to create access key for device IAM user."
     exit $?
 fi
 
 # add user to group
-echo "Adding write-only IAM user to write-only IAM group..."
-aws iam add-user-to-group --user-name $iamWriteOnlyUserName --group-name $iamWriteOnlyGroupName
+echo "Adding device IAM user to device IAM group..."
+aws iam add-user-to-group --user-name $iamDeviceUserName --group-name $iamDeviceGroupName
 if [ $? -ne 0 ]; then
-    echo "Failed to add write-only IAM user to write-only group."
+    echo "Failed to add device IAM user to device group."
     exit $?
 fi
 
 echo "Done. Details:"
 echo "  Sensus S3 bucket:  $bucket"
-echo "  Sensus S3 IAM account:  $writeOnlyCredentials"
+echo "  Sensus S3 IAM account:  $deviceCredentials"

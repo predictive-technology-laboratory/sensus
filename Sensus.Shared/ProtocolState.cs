@@ -37,6 +37,13 @@ namespace Sensus
         /// <summary>
         /// The <see cref="Protocol"/> is in the middle of stopping and will soon become <see cref="Stopped"/>.
         /// </summary>
-        Stopping
+        Stopping,
+
+        /// <summary>
+        /// The protocol has been paused, which means that it is not storing data and is not registered as <see cref="Running"/>, but is
+        /// active in other ways (e.g., surveys will fire, push notifications will be received, data will be transmitted to the
+        /// <see cref="DataStores.Remote.RemoteDataStore"/>).
+        /// </summary>
+        Paused
     }
 }

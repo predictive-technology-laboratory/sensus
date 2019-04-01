@@ -22,8 +22,16 @@ namespace Sensus.UI
         public ProbesEditPage(Protocol protocol)
             : base(protocol, "Edit Probes")
         {
+            // restore the enabled status of each probe to reflect its original values. this ensures that
+            // probes disabled due to running without hardware support do not continue to be disabled 
+            // indefinitely when dismissing this page (see OnDisappearing).
+            foreach (Probe probe in protocol.Probes)
+            {
+                probe.Enabled = probe.OriginallyEnabled;
+            }
+
             // enabling all probes is only available when the protocol is stopped. the enable is an async operation, and 
-            // the probes don't play nice with each other when starting concurrently.
+            // the probes don't play nice with each other when starting/stopping concurrently.
             if (protocol.State == ProtocolState.Stopped)
             {
                 ToolbarItems.Add(new ToolbarItem("All", null, async () =>
@@ -64,6 +72,9 @@ namespace Sensus.UI
         {
             base.OnDisappearing();
 
+            // the user is finished editing probe settings. store the enabled status of each probe. we use this
+            // value to restore the protocol prior to sharing, e.g., in cases where the probe has become disabled 
+            // because it was started without hardware support.
             foreach (Probe probe in Protocol.Probes)
             {
                 probe.OriginallyEnabled = probe.Enabled;

@@ -10,7 +10,7 @@ if [ $# -ne 7 ]; then
     echo "\t[azure hub]:  The Azure push notification hub name. See Push Notification documentation. Can be ignored by using \"\"."
     echo "\t[azure notification hub full access key]:  The value of the DefaultFullSharedAccessSignature key (e.g., cVRantasldfkjaslkj3flkjelfrz+a3lkjflkj=). See Push notification documentation. Can be ignored by using \"\"."
     echo ""
-    echo "Effect:  Configures an EC2 instance with an IAM group/user that has read-only access to the given S3 bucket and monitors the bucket for push notifications."
+    echo "Effect:  Configures an EC2 instance with an IAM group/user that has access to the given S3 bucket and monitors the bucket for push notifications."
     exit 1
 fi
 
@@ -41,52 +41,52 @@ sleep 30
 aws ec2 create-tags --resources $instanceId --tags Key=Name,Value=$bucket
 publicIP=$(aws ec2 describe-instances --instance-ids $instanceId --query "Reservations[*].Instances[*].PublicIpAddress" --output=text)
 
-###################################################################################
-##### Read-only IAM group/user:  enables someone to read data from the bucket #####
-###################################################################################
+##########################
+##### IAM group/user #####
+##########################
 
 # create group
-echo "Creating read-only IAM group..."
-iamReadOnlyGroupName="${bucket}-ro-group"
-aws iam create-group --group-name $iamReadOnlyGroupName
+echo "Creating backend IAM group..."
+iamBackendGroupName="${bucket}-b-group"
+aws iam create-group --group-name $iamBackendGroupName
 if [ $? -ne 0 ]; then
-    echo "Failed to create read-only IAM group."
+    echo "Failed to create backend IAM group."
     exit $?
 fi
 
 # create/put group policy
-echo "Attaching read-only IAM group policy..."
-cp ./iam-read-only-group-policy.json tmp.json
+echo "Attaching backend IAM group policy..."
+cp ./iam-backend-policy.json tmp.json
 sed "s/bucketName/$bucket/" ./tmp.json > ./tmp2.json
 mv tmp2.json tmp.json
-aws iam put-group-policy --group-name $iamReadOnlyGroupName --policy-document file://tmp.json --policy-name "${iamReadOnlyGroupName}-policy"
+aws iam put-group-policy --group-name $iamBackendGroupName --policy-document file://tmp.json --policy-name "${iamBackendGroupName}-policy"
 if [ $? -ne 0 ]; then
     rm tmp.json
-    echo "Failed to put IAM read-only group policy."
+    echo "Failed to put IAM backend group policy."
     exit $?
 fi
 rm tmp.json
 
-# create read-only IAM user
-echo "Creating read-only IAM user..."
-iamReadOnlyUserName="${bucket}-ro-user"
-aws iam create-user --user-name $iamReadOnlyUserName
+# create backend IAM user
+echo "Creating backend IAM user..."
+iamBackendUserName="${bucket}-b-user"
+aws iam create-user --user-name $iamBackendUserName
 if [ $? -ne 0 ]; then
-    echo "Failed to create read-only IAM user."
+    echo "Failed to create backend IAM user."
     exit $?
 fi
 
 # create access key for user
-echo "Creating access key for read-only IAM user..."
-iamAccessKeyJSON=$(aws iam create-access-key --user-name $iamReadOnlyUserName)
+echo "Creating access key for backend IAM user..."
+iamAccessKeyJSON=$(aws iam create-access-key --user-name $iamBackendUserName)
 iamAccessKeyID=$(echo $iamAccessKeyJSON | jq -r .AccessKey.AccessKeyId)
 iamAccessKeySecret=$(echo $iamAccessKeyJSON | jq -r .AccessKey.SecretAccessKey)
 
 # add user to group
-echo "Adding read-only IAM user to read-only IAM group..."
-aws iam add-user-to-group --user-name $iamReadOnlyUserName --group-name $iamReadOnlyGroupName
+echo "Adding backend IAM user to backend IAM group..."
+aws iam add-user-to-group --user-name $iamBackendUserName --group-name $iamBackendGroupName
 if [ $? -ne 0 ]; then
-    echo "Failed to add read-only IAM user to read-only group."
+    echo "Failed to add backend IAM user to backend group."
     exit $?
 fi
 
@@ -109,9 +109,9 @@ rm tmp
 scp -i $pemFileName send-push-notifications.sh ec2-user@$publicIP:~/
 ssh -i $pemFileName ec2-user@$publicIP "chmod +x send-push-notifications.sh"
 scp -i $pemFileName get-sas.js ec2-user@$publicIP:~/
-scp -i $pemFileName dump-push-notifications.sh ec2-user@$publicIP:~/
-ssh -i $pemFileName ec2-user@$publicIP "chmod +x dump-push-notifications.sh"
-ssh -i $pemFileName ec2-user@$publicIP "sudo yum -y install jq"
+scp -i $pemFileName -r push-protocol-updates/* ec2-user@$publicIP:~/
+ssh -i $pemFileName ec2-user@$publicIP "sudo yum -y install jq emacs"
+ssh -i $pemFileName ec2-user@$publicIP "echo \"export EDITOR=\\\"emacs -nw\\\"\" >> ~/.bash_profile"
 ssh -i $pemFileName ec2-user@$publicIP "curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash && . ~/.nvm/nvm.sh && nvm install 8.11.2"
 
 # configure crontab to run push notification processor using the get-sas script

@@ -22,7 +22,3 @@ None
 \description{
 Decompresses JSON files downloaded from AWS S3.
 }
-\examples{
-data.path = system.file("extdata", "example-data", package="SensusR")
-sensus.decompress.gz.files(data.path)
-}

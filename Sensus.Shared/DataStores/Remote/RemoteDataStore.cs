@@ -24,6 +24,7 @@ using Microsoft.AppCenter.Analytics;
 using System.Collections.Generic;
 using Sensus.Extensions;
 using Sensus.Notifications;
+using Newtonsoft.Json.Linq;
 
 namespace Sensus.DataStores.Remote
 {
@@ -149,12 +150,13 @@ namespace Sensus.DataStores.Remote
         }
 
         /// <summary>
-        /// The message displayed to iOS users when Sensus is in the background and data are scheduled to be transferred
-        /// to the <see cref="RemoteDataStore"/>. This message is delivered via a notification in the hope that the user
-        /// will open Sensus to transmit the data.
+        /// Available on iOS only. The message displayed to the user when Sensus is in the background and data are 
+        /// scheduled to be transferred to the <see cref="RemoteDataStore"/>. This message is delivered via a notification 
+        /// in the hope that the user will open Sensus to transmit the data. Data will not be transferred if the user
+        /// does not open Sensus.
         /// </summary>
         /// <value>The user notification message.</value>
-        [EntryStringUiProperty("User Notification Message:", true, 56, true)]
+        [EntryStringUiProperty("(iOS) User Notification Message:", true, 56, true)]
         public string UserNotificationMessage
         {
             get { return _userNotificationMessage; }
@@ -237,16 +239,15 @@ namespace Sensus.DataStores.Remote
 
             _mostRecentSuccessfulWriteTime = DateTime.Now;
 
-            string userNotificationMessage = null;
+            _writeCallback = new ScheduledCallback(cancellationToken => WriteLocalDataStoreAsync(cancellationToken), TimeSpan.FromMilliseconds(_writeDelayMS), TimeSpan.FromMilliseconds(_writeDelayMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_writeTimeoutMinutes), TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS));
 
 #if __IOS__
             // we can't wake up the app on ios. this is problematic since data need to be stored locally and remotely
             // in something of a reliable schedule; otherwise, we risk data loss (e.g., from device restarts, app kills, etc.).
             // so, do the best possible thing and bug the user with a notification indicating that data need to be stored.
-            userNotificationMessage = _userNotificationMessage;
+            _writeCallback.UserNotificationMessage = _userNotificationMessage;
 #endif
 
-            _writeCallback = new ScheduledCallback((callbackId, cancellationToken, letDeviceSleepCallback) => WriteLocalDataStoreAsync(cancellationToken), TimeSpan.FromMilliseconds(_writeDelayMS), TimeSpan.FromMilliseconds(_writeDelayMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_writeTimeoutMinutes), userNotificationMessage, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS));
             await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_writeCallback);
 
             // hook into the AC charge event signal -- add handler to AC broadcast receiver
@@ -255,6 +256,8 @@ namespace Sensus.DataStores.Remote
 
         public override async Task StopAsync()
         {
+            await base.StopAsync();
+
             await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_writeCallback);
 
             // unhook from the AC charge event signal -- remove handler to AC broadcast receiver
@@ -353,9 +356,19 @@ namespace Sensus.DataStores.Remote
             return false;
         }
 
-        public abstract Task<string> GetScriptAgentPolicyAsync(CancellationToken cancellationToken);
+        /// <summary>
+        /// Gets the script agent policy from the <see cref="RemoteDataStore"/>. See concrete class implementation for details.
+        /// </summary>
+        /// <returns>The script agent policy.</returns>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public abstract Task<JObject> GetScriptAgentPolicyAsync(CancellationToken cancellationToken);
 
-        public abstract Task<string> GetProtocolUpdatesAsync(CancellationToken cancellationToken);
+        /// <summary>
+        /// Gets <see cref="PushNotificationUpdate"/>s for the current device.
+        /// </summary>
+        /// <returns>The updates</returns>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public abstract Task<List<PushNotificationUpdate>> GetPushNotificationUpdatesAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Writes a stream of <see cref="Datum"/> objects.
@@ -402,17 +415,9 @@ namespace Sensus.DataStores.Remote
         /// Deletes the push notification request.
         /// </summary>
         /// <returns>Task</returns>
-        /// <param name="request">Request.</param>
+        /// <param name="backendKey">Backend key</param>
         /// <param name="cancellationToken">Cancellation token.</param>
-        public abstract Task DeletePushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken);
-
-        /// <summary>
-        /// Deletes the push notifiation request.
-        /// </summary>
-        /// <returns>Task</returns>
-        /// <param name="id">Push notification request identifier (see <see cref="PushNotificationRequest.Id"/>).</param>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        public abstract Task DeletePushNotificationRequestAsync(string id, CancellationToken cancellationToken);
+        public abstract Task DeletePushNotificationRequestAsync(Guid backendKey, CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the key (identifier) value for a <see cref="Datum"/>. Used within <see cref="WriteDatumAsync"/> and <see cref="GetDatumAsync"/>.

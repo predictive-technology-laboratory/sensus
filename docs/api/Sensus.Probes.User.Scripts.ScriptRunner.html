@@ -333,13 +333,13 @@ public bool Enabled { get; set; }</code></pre>
   
   <a id="Sensus_Probes_User_Scripts_ScriptRunner_ForceRemoteStorageOnSurveySubmission_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ForceRemoteStorageOnSurveySubmission*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_ForceRemoteStorageOnSurveySubmission" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ForceRemoteStorageOnSurveySubmission">ForceRemoteStorageOnSurveySubmission</h4>
-  <div class="markdown level1 summary"><p>Whether or not to force a local-to-remote transfer to run each time this survey is completed
+  <div class="markdown level1 summary"><p>Whether or not to force a local-to-remote transfer to run each time this survey is submitted
 by the user.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Force Remote Storage On Survey Submission:&quot;, true, 18)]
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Force Remote Storage On Submission:&quot;, true, 18)]
 public bool ForceRemoteStorageOnSurveySubmission { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -353,7 +353,7 @@ public bool ForceRemoteStorageOnSurveySubmission { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
-        <td><p><code>true</code> to force transfer on survey submission; otherwise, <code>false</code>.</p>
+        <td><p><code>true</code> to force transfer on submission; otherwise, <code>false</code>.</p>
 </td>
       </tr>
     </tbody>
@@ -698,33 +698,6 @@ public bool RunOnStart { get; set; }</code></pre>
   </table>
   
   
-  <a id="Sensus_Probes_User_Scripts_ScriptRunner_ScheduledCallbackTimes_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackTimes*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_ScheduledCallbackTimes" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScheduledCallbackTimes">ScheduledCallbackTimes</h4>
-  <div class="markdown level1 summary"><p>Public property for serialization only. Do not reference due to concurrency issues.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public List&lt;Tuple&lt;ScheduledCallback, ScriptTriggerTime&gt;&gt; ScheduledCallbackTimes { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.Tuple</span>&lt;<a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a>, <a class="xref" href="Sensus.Probes.User.Scripts.ScriptTriggerTime.html">ScriptTriggerTime</a>&gt;&gt;</td>
-        <td><p>The scheduled callbacks.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
   <a id="Sensus_Probes_User_Scripts_ScriptRunner_ScheduleTriggerReadableDescription_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScheduleTriggerReadableDescription*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_ScheduleTriggerReadableDescription" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ScheduleTriggerReadableDescription">ScheduleTriggerReadableDescription</h4>
   <div class="markdown level1 summary"></div>
@@ -779,7 +752,9 @@ public bool RunOnStart { get; set; }</code></pre>
   
   <a id="Sensus_Probes_User_Scripts_ScriptRunner_ShuffleInputGroups_" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ShuffleInputGroups*"></a>
   <h4 id="Sensus_Probes_User_Scripts_ScriptRunner_ShuffleInputGroups" data-uid="Sensus.Probes.User.Scripts.ScriptRunner.ShuffleInputGroups">ShuffleInputGroups</h4>
-  <div class="markdown level1 summary"><p>Whether or not to shuffle the order of the survey&apos;s input groups prior to displaying them to the user.</p>
+  <div class="markdown level1 summary"><p>Whether or not to shuffle the order of the survey&apos;s <a class="xref" href="Sensus.UI.Inputs.InputGroup.html">InputGroup</a>s prior to displaying them to the user. This 
+only applies if none of the groups contain <a class="xref" href="Sensus.UI.Inputs.Input.html">Input</a>s with display conditions. If display conditions are present, 
+then it is not possible to shuffle the <a class="xref" href="Sensus.UI.Inputs.InputGroup.html">InputGroup</a>s and this setting will have no effect.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>

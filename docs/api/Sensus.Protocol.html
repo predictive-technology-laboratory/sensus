@@ -83,9 +83,9 @@
   
   <h1 id="Sensus_Protocol" data-uid="Sensus.Protocol" class="text-break">Class Protocol
   </h1>
-  <div class="markdown level0 summary"><p>A Protocol defines a plan for collecting (via <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>s), anonymizing (via <a class="xref" href="Sensus.Anonymization.Anonymizers.Anonymizer.html">Anonymizer</a>s), and 
+  <div class="markdown level0 summary"><p>A <a class="xref" href="Sensus.Protocol.html">Protocol</a> defines a plan for collecting (via <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>s), anonymizing (via <a class="xref" href="Sensus.Anonymization.Anonymizers.Anonymizer.html">Anonymizer</a>s), and 
 storing (via <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_LocalDataStore">LocalDataStore</a>s and <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_RemoteDataStore">RemoteDataStore</a>s) data from a device. Study organizers use Sensus to configure the 
-study&apos;s Protocol. Study participants use Sensus to load a Protocol and enroll in the study. All of this happens within the Sensus app.</p>
+study&apos;s <a class="xref" href="Sensus.Protocol.html">Protocol</a>. Study participants use Sensus to load a <a class="xref" href="Sensus.Protocol.html">Protocol</a> and enroll in the study. All of this happens within the Sensus app.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -96,12 +96,13 @@ study&apos;s Protocol. Study participants use Sensus to load a Protocol and enro
   <div classs="implements">
     <h5>Implements</h5>
     <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
+    <div><a class="xref" href="Sensus.IProtocol.html">IProtocol</a></div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.html">Sensus</a></h6>
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Protocol_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class Protocol : Object, INotifyPropertyChanged</code></pre>
+    <pre><code class="lang-csharp hljs">public class Protocol : Object, INotifyPropertyChanged, IProtocol</code></pre>
   </div>
   <h3 id="fields">Fields
   </h3>
@@ -113,6 +114,54 @@ study&apos;s Protocol. Study participants use Sensus to load a Protocol and enro
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public const int GPS_DEFAULT_ACCURACY_METERS = 25</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="Sensus_Protocol_GPS_DEFAULT_DEFERRAL_DISTANCE_METERS" data-uid="Sensus.Protocol.GPS_DEFAULT_DEFERRAL_DISTANCE_METERS">GPS_DEFAULT_DEFERRAL_DISTANCE_METERS</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int GPS_DEFAULT_DEFERRAL_DISTANCE_METERS = 500</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="Sensus_Protocol_GPS_DEFAULT_DEFERRAL_TIME_MINUTES" data-uid="Sensus.Protocol.GPS_DEFAULT_DEFERRAL_TIME_MINUTES">GPS_DEFAULT_DEFERRAL_TIME_MINUTES</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int GPS_DEFAULT_DEFERRAL_TIME_MINUTES = 5</code></pre>
   </div>
   <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -350,6 +399,34 @@ public bool AllowParticipationScanning { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_Protocol_AllowPause_" data-uid="Sensus.Protocol.AllowPause*"></a>
+  <h4 id="Sensus_Protocol_AllowPause" data-uid="Sensus.Protocol.AllowPause">AllowPause</h4>
+  <div class="markdown level1 summary"><p>Whether or not to allow the user to put the protocol into the <a class="xref" href="Sensus.ProtocolState.html#Sensus_ProtocolState_Paused">Paused</a> state.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Allow Pause:  &quot;, true, 48)]
+public bool AllowPause { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> to allow pause; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Protocol_AllowSubmitData_" data-uid="Sensus.Protocol.AllowSubmitData*"></a>
   <h4 id="Sensus_Protocol_AllowSubmitData" data-uid="Sensus.Protocol.AllowSubmitData">AllowSubmitData</h4>
   <div class="markdown level1 summary"><p>Whether or not to allow the user to manually submit data being collected by the <a class="xref" href="Sensus.Protocol.html">Protocol</a>.</p>
@@ -400,6 +477,34 @@ public bool AllowTagging { get; set; }</code></pre>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><p><code>true</code> if allow tagging; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_AllowTestPushNotification_" data-uid="Sensus.Protocol.AllowTestPushNotification*"></a>
+  <h4 id="Sensus_Protocol_AllowTestPushNotification" data-uid="Sensus.Protocol.AllowTestPushNotification">AllowTestPushNotification</h4>
+  <div class="markdown level1 summary"><p>Whether or not to allow the user to request a test push notification.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;Allow Test Push:  &quot;, true, 49)]
+public bool AllowTestPushNotification { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> if allow test push notification; otherwise, <code>false</code>.</p>
 </td>
       </tr>
     </tbody>
@@ -707,6 +812,36 @@ public string Description { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_Protocol_DisplayParticipationPercentageInForegroundServiceNotification_" data-uid="Sensus.Protocol.DisplayParticipationPercentageInForegroundServiceNotification*"></a>
+  <h4 id="Sensus_Protocol_DisplayParticipationPercentageInForegroundServiceNotification" data-uid="Sensus.Protocol.DisplayParticipationPercentageInForegroundServiceNotification">DisplayParticipationPercentageInForegroundServiceNotification</h4>
+  <div class="markdown level1 summary"><p>Available on Android only. Whether or not to display the participation percentage (see <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_ParticipationHorizonDays">ParticipationHorizonDays</a>) in the 
+foreground service notification. If multiple <a class="xref" href="Sensus.Protocol.html">Protocol</a>s enable this option, then the average percentage across these will
+be displayed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;(Android) Display Participation:&quot;, true, 55)]
+public bool DisplayParticipationPercentageInForegroundServiceNotification { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> if display participation percentage in foreground service notification; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Protocol_EndDate_" data-uid="Sensus.Protocol.EndDate*"></a>
   <h4 id="Sensus_Protocol_EndDate" data-uid="Sensus.Protocol.EndDate">EndDate</h4>
   <div class="markdown level1 summary"><p>The date on which the <a class="xref" href="Sensus.Protocol.html">Protocol</a> will stop running. Only has an effect if <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_ContinueIndefinitely">ContinueIndefinitely</a> is <code>false</code>.</p>
@@ -788,6 +923,90 @@ public TimeSpan EndTime { get; set; }</code></pre>
   </table>
   
   
+  <a id="Sensus_Protocol_GpsDeferLocationUpdates_" data-uid="Sensus.Protocol.GpsDeferLocationUpdates*"></a>
+  <h4 id="Sensus_Protocol_GpsDeferLocationUpdates" data-uid="Sensus.Protocol.GpsDeferLocationUpdates">GpsDeferLocationUpdates</h4>
+  <div class="markdown level1 summary"><p>Available on iOS only. Whether or not to defer location updates until the app is active, thereby conserving battery.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;(iOS) GPS - Defer Location Updates:&quot;, true, 34)]
+public bool GpsDeferLocationUpdates { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> if gps defer location updates; otherwise, <code>false</code>.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_GpsDeferralDistanceMeters_" data-uid="Sensus.Protocol.GpsDeferralDistanceMeters*"></a>
+  <h4 id="Sensus_Protocol_GpsDeferralDistanceMeters" data-uid="Sensus.Protocol.GpsDeferralDistanceMeters">GpsDeferralDistanceMeters</h4>
+  <div class="markdown level1 summary"><p>Available on iOS only. How far to travel before deferred location updates are delivered.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryFloatUiProperty(&quot;(iOS) GPS - Deferral Distance (Meters):&quot;, true, 35, false)]
+public float GpsDeferralDistanceMeters { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Single</span></td>
+        <td><p>The gps deferral distance meters.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_GpsDeferralTimeMinutes_" data-uid="Sensus.Protocol.GpsDeferralTimeMinutes*"></a>
+  <h4 id="Sensus_Protocol_GpsDeferralTimeMinutes" data-uid="Sensus.Protocol.GpsDeferralTimeMinutes">GpsDeferralTimeMinutes</h4>
+  <div class="markdown level1 summary"><p>Available on iOS only. How long to wait before deferred location updates are delivered.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[EntryFloatUiProperty(&quot;(iOS) GPS - Deferral Time (Mins.):&quot;, true, 36, false)]
+public float GpsDeferralTimeMinutes { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Single</span></td>
+        <td><p>The gps deferral time minutes.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Protocol_GpsDesiredAccuracyMeters_" data-uid="Sensus.Protocol.GpsDesiredAccuracyMeters*"></a>
   <h4 id="Sensus_Protocol_GpsDesiredAccuracyMeters" data-uid="Sensus.Protocol.GpsDesiredAccuracyMeters">GpsDesiredAccuracyMeters</h4>
   <div class="markdown level1 summary"><p>The desired accuracy in meters of the collected GPS readings. There are no guarantees that this accuracy
@@ -811,6 +1030,35 @@ public float GpsDesiredAccuracyMeters { get; set; }</code></pre>
       <tr>
         <td><span class="xref">System.Single</span></td>
         <td><p>The GPS desired accuracy, in meters.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_GpsListenForSignificantChanges_" data-uid="Sensus.Protocol.GpsListenForSignificantChanges*"></a>
+  <h4 id="Sensus_Protocol_GpsListenForSignificantChanges" data-uid="Sensus.Protocol.GpsListenForSignificantChanges">GpsListenForSignificantChanges</h4>
+  <div class="markdown level1 summary"><p>Available on iOS only. Whether or not to use significant changes in location (e.g., moving between
+cellular towers) in place of GPS.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;(iOS) GPS - Significant Changes:&quot;, true, 33)]
+public bool GpsListenForSignificantChanges { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> if gps listen for significant changes; otherwise, <code>false</code>.</p>
 </td>
       </tr>
     </tbody>
@@ -921,6 +1169,63 @@ public int GpsMinTimeDelayMS { get; set; }</code></pre>
       <tr>
         <td><span class="xref">System.Int32</span></td>
         <td><p>The GPS minimum time delay, in milliseconds.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_GpsPauseActivityType_" data-uid="Sensus.Protocol.GpsPauseActivityType*"></a>
+  <h4 id="Sensus_Protocol_GpsPauseActivityType" data-uid="Sensus.Protocol.GpsPauseActivityType">GpsPauseActivityType</h4>
+  <div class="markdown level1 summary"><p>Available on iOS only. The types of activities that should be considered for pausing activities, if
+<a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_GpsPauseLocationUpdatesAutomatically">GpsPauseLocationUpdatesAutomatically</a> is enabled.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[ListUiProperty]
+public ActivityType GpsPauseActivityType { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Plugin.Geolocator.Abstractions.ActivityType</span></td>
+        <td><p>The type of the gps pause activity.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_GpsPauseLocationUpdatesAutomatically_" data-uid="Sensus.Protocol.GpsPauseLocationUpdatesAutomatically*"></a>
+  <h4 id="Sensus_Protocol_GpsPauseLocationUpdatesAutomatically" data-uid="Sensus.Protocol.GpsPauseLocationUpdatesAutomatically">GpsPauseLocationUpdatesAutomatically</h4>
+  <div class="markdown level1 summary"><p>Available on iOS only. Whether or not to pause location updates when movement is unlikely.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[OnOffUiProperty(&quot;(iOS) GPS - Pause Location Updates:&quot;, true, 31)]
+public bool GpsPauseLocationUpdatesAutomatically { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code> if gps pause location updates automatically; otherwise, <code>false</code>.</p>
 </td>
       </tr>
     </tbody>
@@ -1308,7 +1613,7 @@ the <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_PushNotifications
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Push Notification Hub:&quot;, true, 49, false)]
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Push Notification Hub:&quot;, true, 51, false)]
 public string PushNotificationsHub { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -1338,7 +1643,7 @@ the DefaultListenSharedAccessSignature policy and copy the entire value of the c
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Push Notifications Shared Access Signature:&quot;, true, 50, false)]
+    <pre><code class="lang-csharp hljs">[EntryStringUiProperty(&quot;Push Notifications Shared Access Signature:&quot;, true, 52, false)]
 public string PushNotificationsSharedAccessSignature { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -2038,12 +2343,12 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   
   
   <a id="Sensus_Protocol_DeserializeAsync_" data-uid="Sensus.Protocol.DeserializeAsync*"></a>
-  <h4 id="Sensus_Protocol_DeserializeAsync_System_Byte___" data-uid="Sensus.Protocol.DeserializeAsync(System.Byte[])">DeserializeAsync(Byte[])</h4>
+  <h4 id="Sensus_Protocol_DeserializeAsync_System_Byte___System_Boolean_" data-uid="Sensus.Protocol.DeserializeAsync(System.Byte[],System.Boolean)">DeserializeAsync(Byte[], Boolean)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Task&lt;Protocol&gt; DeserializeAsync(byte[] bytes)</code></pre>
+    <pre><code class="lang-csharp hljs">public static Task&lt;Protocol&gt; DeserializeAsync(byte[] bytes, bool offerToReplaceExistingProtocol)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2058,6 +2363,11 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
       <tr>
         <td><span class="xref">System.Byte</span>[]</td>
         <td><span class="parametername">bytes</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">offerToReplaceExistingProtocol</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -2080,12 +2390,12 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   
   
   <a id="Sensus_Protocol_DeserializeAsync_" data-uid="Sensus.Protocol.DeserializeAsync*"></a>
-  <h4 id="Sensus_Protocol_DeserializeAsync_System_Uri_Sensus_Authentication_AmazonS3Credentials_" data-uid="Sensus.Protocol.DeserializeAsync(System.Uri,Sensus.Authentication.AmazonS3Credentials)">DeserializeAsync(Uri, AmazonS3Credentials)</h4>
+  <h4 id="Sensus_Protocol_DeserializeAsync_System_Uri_System_Boolean_Sensus_Authentication_AmazonS3Credentials_" data-uid="Sensus.Protocol.DeserializeAsync(System.Uri,System.Boolean,Sensus.Authentication.AmazonS3Credentials)">DeserializeAsync(Uri, Boolean, AmazonS3Credentials)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static Task&lt;Protocol&gt; DeserializeAsync(Uri uri, AmazonS3Credentials credentials = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public static Task&lt;Protocol&gt; DeserializeAsync(Uri uri, bool offerToReplaceExistingProtocol, AmazonS3Credentials credentials = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2100,6 +2410,11 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
       <tr>
         <td><span class="xref">System.Uri</span></td>
         <td><span class="parametername">uri</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><span class="parametername">offerToReplaceExistingProtocol</span></td>
         <td></td>
       </tr>
       <tr>
@@ -2229,6 +2544,56 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
     <tbody>
       <tr>
         <td><span class="xref">System.Int32</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_PauseAsync_" data-uid="Sensus.Protocol.PauseAsync*"></a>
+  <h4 id="Sensus_Protocol_PauseAsync" data-uid="Sensus.Protocol.PauseAsync">PauseAsync()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task PauseAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_ResumeAsync_" data-uid="Sensus.Protocol.ResumeAsync*"></a>
+  <h4 id="Sensus_Protocol_ResumeAsync" data-uid="Sensus.Protocol.ResumeAsync">ResumeAsync()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task ResumeAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -2422,7 +2787,7 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   
   
   <a id="Sensus_Protocol_StartWithUserAgreementAsync_" data-uid="Sensus.Protocol.StartWithUserAgreementAsync*"></a>
-  <h4 id="Sensus_Protocol_StartWithUserAgreementAsync_System_String_" data-uid="Sensus.Protocol.StartWithUserAgreementAsync(System.String)">StartWithUserAgreementAsync(String)</h4>
+  <h4 id="Sensus_Protocol_StartWithUserAgreementAsync" data-uid="Sensus.Protocol.StartWithUserAgreementAsync">StartWithUserAgreementAsync()</h4>
   <div class="markdown level1 summary"><p>Starts the current <a class="xref" href="Sensus.Protocol.html">Protocol</a> after displaying a message to the user indicating what is about to happen. This is
 also the place where the user&apos;s agreement to the <a class="xref" href="Sensus.Protocol.html">Protocol</a> is obtained through the various 
 <a class="xref" href="Sensus.ProtocolStartConfirmationMode.html">ProtocolStartConfirmationMode</a> options. After obtaining agreement, a <a class="xref" href="Sensus.UI.ProgressPage.html">ProgressPage</a> is displayed
@@ -2431,26 +2796,8 @@ to show progress and prevent the user from interacting with the app until the <a
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task StartWithUserAgreementAsync(string startupMessage = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task StartWithUserAgreementAsync()</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">startupMessage</span></td>
-        <td><p>Startup message to display, along with the standard information.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
@@ -2462,8 +2809,7 @@ to show progress and prevent the user from interacting with the app until the <a
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>The with user agreement async.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -2653,6 +2999,90 @@ to show progress and prevent the user from interacting with the app until the <a
       </tr>
     </tbody>
   </table>
+  
+  
+  <a id="Sensus_Protocol_UpdateScriptAgentPolicyAsync_" data-uid="Sensus.Protocol.UpdateScriptAgentPolicyAsync*"></a>
+  <h4 id="Sensus_Protocol_UpdateScriptAgentPolicyAsync_Newtonsoft_Json_Linq_JObject_" data-uid="Sensus.Protocol.UpdateScriptAgentPolicyAsync(Newtonsoft.Json.Linq.JObject)">UpdateScriptAgentPolicyAsync(JObject)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task UpdateScriptAgentPolicyAsync(JObject policy)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Newtonsoft.Json.Linq.JObject</span></td>
+        <td><span class="parametername">policy</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_UpdateScriptAgentPolicyAsync_" data-uid="Sensus.Protocol.UpdateScriptAgentPolicyAsync*"></a>
+  <h4 id="Sensus_Protocol_UpdateScriptAgentPolicyAsync_System_Threading_CancellationToken_" data-uid="Sensus.Protocol.UpdateScriptAgentPolicyAsync(System.Threading.CancellationToken)">UpdateScriptAgentPolicyAsync(CancellationToken)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task UpdateScriptAgentPolicyAsync(CancellationToken cancellationToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="events">Events
   </h3>
   
@@ -2706,6 +3136,9 @@ to show progress and prevent the user from interacting with the app until the <a
   <h3 id="implements">Implements</h3>
   <div>
       <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
+  </div>
+  <div>
+      <a class="xref" href="Sensus.IProtocol.html">IProtocol</a>
   </div>
 </article>
           </div>

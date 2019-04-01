@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using System.IO;
 using Sensus.Extensions;
 using Sensus.Notifications;
+using Newtonsoft.Json.Linq;
 
 namespace Sensus.DataStores.Remote
 {
@@ -78,12 +79,7 @@ namespace Sensus.DataStores.Remote
             return Task.CompletedTask;
         }
 
-        public override Task DeletePushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
-        }
-
-        public override Task DeletePushNotificationRequestAsync(string id, CancellationToken cancellationToken)
+        public override Task DeletePushNotificationRequestAsync(Guid backendKey, CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
         }
@@ -98,12 +94,12 @@ namespace Sensus.DataStores.Remote
             throw new NotImplementedException();
         }
 
-        public override Task<string> GetScriptAgentPolicyAsync(CancellationToken cancellationToken)
+        public override Task<List<PushNotificationUpdate>> GetPushNotificationUpdatesAsync(CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        public override Task<string> GetProtocolUpdatesAsync(CancellationToken cancellationToken)
+        public override Task<JObject> GetScriptAgentPolicyAsync(CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

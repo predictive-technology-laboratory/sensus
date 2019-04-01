@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Sensus;
@@ -42,6 +43,7 @@ namespace ExampleScriptProbeAgent
         private double _deliveryProbability = 0.5;
         private TimeSpan _deferralInterval = TimeSpan.FromSeconds(30);
         private ISensusServiceHelper _sensusServiceHelper;
+        private IProtocol _protocol;
 
         /// <summary>
         /// Gets the description.
@@ -73,12 +75,11 @@ namespace ExampleScriptProbeAgent
         /// <summary>
         /// Sets the policy.
         /// </summary>
-        /// <param name="policyJSON">Policy json.</param>
-        public Task SetPolicyAsync(string policyJSON)
+        /// <param name="policy">Policy.</param>
+        public Task SetPolicyAsync(JObject policy)
         {
-            JObject policyObject = JObject.Parse(policyJSON);
-            _deliveryProbability = (double)policyObject.GetValue("p");
-            _deferralInterval = TimeSpan.FromSeconds((int)policyObject.GetValue("deferral"));
+            _deliveryProbability = (double)policy.GetValue("p");
+            _deferralInterval = TimeSpan.FromSeconds((int)policy.GetValue("deferral"));
 
             _sensusServiceHelper?.Logger.Log("Script agent policy set:  p=" + _deliveryProbability + "; deferral=" + _deferralInterval, LoggingLevel.Normal, GetType());
 
@@ -148,19 +149,29 @@ namespace ExampleScriptProbeAgent
         }
 
         /// <summary>
-        /// Reset this instance.
+        /// Initializes this <see cref="IScriptProbeAgent"/>. This is called when the <see cref="IProtocol"/> associated with
+        /// this <see cref="IScriptProbeAgent"/> is started.
         /// </summary>
         /// <param name="sensusServiceHelper">A reference to the Sensus helper.</param>
-        public Task ResetAsync(ISensusServiceHelper sensusServiceHelper)
+        /// <param name="protocol">A reference to the <see cref="IProtocol"/> associated with this <see cref="IScriptProbeAgent"/>.</param>
+        public async Task InitializeAsync(ISensusServiceHelper sensusServiceHelper, IProtocol protocol)
         {
             _sensusServiceHelper = sensusServiceHelper;
+            _protocol = protocol;
+
+            // download the initial policy
+            try
+            {
+                await _protocol.UpdateScriptAgentPolicyAsync(CancellationToken.None);
+            }
+            catch (Exception ex)
+            {
+                _sensusServiceHelper?.Logger.Log("Exception while downloading the policy:  " + ex.Message, LoggingLevel.Normal, GetType());
+            }
 
             _numDataObserved = 0;
-            _deliveryProbability = 0.5;
 
-            _sensusServiceHelper?.Logger.Log("Agent has been reset.", LoggingLevel.Normal, GetType());
-
-            return Task.CompletedTask;
+            _sensusServiceHelper?.Logger.Log("Agent has been initialized.", LoggingLevel.Normal, GetType());
         }
 
         /// <summary>

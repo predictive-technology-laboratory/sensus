@@ -22,6 +22,7 @@ using Sensus.UI.Inputs;
 using System.Threading.Tasks;
 using Sensus.Authentication;
 using System.Net;
+using Sensus.Notifications;
 
 #if __ANDROID__
 using Sensus.Android;
@@ -91,10 +92,19 @@ namespace Sensus.UI
                 if (selectedProtocol.State == ProtocolState.Running)
                 {
                     actions.Add("Stop");
+
+                    if (selectedProtocol.AllowPause)
+                    {
+                        actions.Add("Pause");
+                    }
                 }
                 else if (selectedProtocol.State == ProtocolState.Stopped)
                 {
                     actions.Add("Start");
+                }
+                else if (selectedProtocol.State == ProtocolState.Paused)
+                {
+                    actions.Add("Resume");
                 }
 
                 if (selectedProtocol.AllowTagging)
@@ -176,6 +186,11 @@ namespace Sensus.UI
                     actions.Insert(0, "Cancel Scheduled Start");
                 }
 
+                if (selectedProtocol.State == ProtocolState.Running && selectedProtocol.AllowTestPushNotification)
+                {
+                    actions.Add("Request Test Push Notification");
+                }
+
                 actions.Add("Delete");
                 #endregion
 
@@ -183,10 +198,7 @@ namespace Sensus.UI
                 string selectedAction = await DisplayActionSheet(selectedProtocol.Name, "Cancel", null, actions.ToArray());
 
                 // must reset the protocol selection manually
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-                {
-                    _protocolsList.SelectedItem = null;
-                });
+                _protocolsList.SelectedItem = null;
 
                 if (selectedAction == "Start")
                 {
@@ -205,6 +217,14 @@ namespace Sensus.UI
                     {
                         await selectedProtocol.StopAsync();
                     }
+                }
+                else if (selectedAction == "Pause")
+                {
+                    await selectedProtocol.PauseAsync();
+                }
+                else if (selectedAction == "Resume")
+                {
+                    await selectedProtocol.ResumeAsync();
                 }
                 else if (selectedAction == "Tag Data")
                 {
@@ -423,12 +443,11 @@ namespace Sensus.UI
                 }
                 else if (selectedAction == "Group")
                 {
-                    Input input = await SensusServiceHelper.Get().PromptForInputAsync("Group",
-                        new ItemPickerPageInput("Select Protocols", groupableProtocols.Cast<object>().ToList(), "Name")
-                        {
-                            Multiselect = true
+                    Input input = await SensusServiceHelper.Get().PromptForInputAsync("Group", new ItemPickerPageInput("Select Protocols", groupableProtocols.Cast<object>().ToList(), textBindingPropertyPath: nameof(Protocol.Name))
+                    {
+                        Multiselect = true
 
-                        }, null, true, "Group", null, null, null, false);
+                    }, null, true, "Group", null, null, null, false);
 
                     if (input == null)
                     {
@@ -457,6 +476,19 @@ namespace Sensus.UI
                         selectedProtocol.GroupedProtocols.Clear();
                     }
                 }
+                else if (selectedAction == "Request Test Push Notification")
+                {
+                    try
+                    {
+                        PushNotificationRequest request = new PushNotificationRequest(SensusServiceHelper.Get().DeviceId + ".test", SensusServiceHelper.Get().DeviceId, selectedProtocol, "Test", "Your test push notification has been delivered.", "default", PushNotificationRequest.LocalFormat, DateTimeOffset.UtcNow, Guid.NewGuid());
+                        await SensusContext.Current.Notifier.SendPushNotificationRequestAsync(request, CancellationToken.None);
+                        await DisplayAlert("Pending", "Your test push notification was sent and is pending delivery. It should come back within 5 minutes.", "OK");
+                    }
+                    catch (Exception ex)
+                    {
+                        await DisplayAlert("Error", "Failed to send test push notification:  " + ex.Message, "OK");
+                    }
+                }
                 else if (selectedAction == "Delete")
                 {
                     if (await DisplayAlert("Delete " + selectedProtocol.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
@@ -464,8 +496,8 @@ namespace Sensus.UI
                         await selectedProtocol.DeleteAsync();
                     }
                 }
+                #endregion
             };
-            #endregion
 
             Content = _protocolsList;
 
@@ -524,14 +556,13 @@ namespace Sensus.UI
                                 cancellationTokenSource.Token.ThrowIfCancellationRequested();
 
                                 await loadProgressPage.SetProgressAsync(0.6, "downloading study");
-                                protocol = await Protocol.DeserializeAsync(new Uri(credentials.ProtocolURL), credentials);
+                                protocol = await Protocol.DeserializeAsync(new Uri(credentials.ProtocolURL), true, credentials);
                                 await loadProgressPage.SetProgressAsync(1, null);
 
                                 // don't throw for cancellation here as doing so will leave the protocol partially configured. if 
                                 // the download succeeds, ensure that the properties get set below before throwing any exceptions.
                                 protocol.ParticipantId = account.ParticipantId;
                                 protocol.AuthenticationService = authenticationService;
-                                authenticationService.Protocol = protocol;
 
                                 // make sure protocol has the id that we expect
                                 if (protocol.Id != credentials.ProtocolId)
@@ -539,7 +570,7 @@ namespace Sensus.UI
                                     throw new Exception("The identifier of the study does not match that of the credentials.");
                                 }
                             }
-                            catch(Exception ex)
+                            catch (Exception ex)
                             {
                                 loadException = ex;
                             }
@@ -554,20 +585,22 @@ namespace Sensus.UI
                         {
                             try
                             {
-                                protocol = await Protocol.DeserializeAsync(new Uri(url));
+                                protocol = await Protocol.DeserializeAsync(new Uri(url), true);
                             }
-                            catch(Exception ex)
+                            catch (Exception ex)
                             {
                                 loadException = ex;
                             }
                         }
 
+                        // show load exception to user
                         if (loadException != null)
                         {
                             await SensusServiceHelper.Get().FlashNotificationAsync("Failed to get study:  " + loadException.Message);
                             protocol = null;
                         }
 
+                        // start protocol if we have one
                         if (protocol != null)
                         {
                             // save app state to hang on to protocol, authentication information, etc.
@@ -598,9 +631,13 @@ namespace Sensus.UI
             {
                 if (await DisplayAlert("Confirm", "Are you sure you want to stop Sensus? This will end your participation in all studies.", "Stop Sensus", "Go Back"))
                 {
-                    await SensusServiceHelper.Get().StopProtocolsAsync();
+                    // stop all protocols and then stop the service. stopping the service alone does not stop 
+                    // the service, as we want to cover the case when the os stops/destroys the service. in this
+                    // case we do not want to mark the protocols as stopped, as we'd like them to start back
+                    // up when the os (or a push notification) starts the service again.
+                    await SensusServiceHelper.Get().StopAsync();
 
-                    (SensusServiceHelper.Get() as AndroidSensusServiceHelper)?.StopAndroidSensusService();
+                    global::Android.App.Application.Context.StopService(AndroidSensusService.GetServiceIntent(false));
                 }
 
             }, ToolbarItemOrder.Secondary));

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 using Sensus.Context;
 using Sensus.UI.Inputs;
@@ -53,60 +54,60 @@ namespace Sensus.UI
             {
                 Title = "Privacy Policy",
                 IconSource = "privacy.png",
-                TargetType = typeof(PrivacyPolicyPage)
+                Action = () =>
+                {
+                    Device.OpenUri(new Uri("https://predictive-technology-laboratory.github.io/sensus/articles/privacy-policy.html"));
+                }
             });
 
-            SensusDetailPageItem accountItem = new SensusDetailPageItem
+            detailPageItems.Add(new SensusDetailPageItem
             {
                 Title = "Authenticate",
-                IconSource = "account.png"
-            };
-
-            accountItem.Action = () =>
-            {
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+                IconSource = "account.png",
+                Action = () =>
                 {
-                    Input input = await SensusServiceHelper.Get().PromptForInputAsync("Authenticate", new QrCodeInput(QrCodePrefix.IAM_CREDENTIALS, "Account:  ", true, "Please scan your account barcode."), null, true, null, null, null, null, false);
-
-                    if (input == null)
+                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                     {
-                        return;
-                    }
+                        Input input = await SensusServiceHelper.Get().PromptForInputAsync("Authenticate", new QrCodeInput(QrCodePrefix.IAM_CREDENTIALS, "Account:  ", true, "Please scan your account barcode."), null, true, null, null, null, null, false);
 
-                    string error = null;
-
-                    string credentials = input.Value?.ToString();
-                    if (string.IsNullOrWhiteSpace(credentials))
-                    {
-                        error = "Empty credentials barcode.";
-                    }
-                    else
-                    {
-                        string[] parts = credentials.Split(':');
-                        if (parts.Length == 3)
+                        if (input == null)
                         {
-                            SensusContext.Current.IamRegion = parts[0];
-                            SensusContext.Current.IamAccessKey = parts[1];
-                            SensusContext.Current.IamAccessKeySecret = parts[2];
+                            return;
+                        }
+
+                        string error = null;
+
+                        string credentials = input.Value?.ToString();
+                        if (string.IsNullOrWhiteSpace(credentials))
+                        {
+                            error = "Empty credentials barcode.";
                         }
                         else
                         {
-                            error = "Invalid credentials barcode.";
+                            string[] parts = credentials.Split(':');
+                            if (parts.Length == 3)
+                            {
+                                SensusContext.Current.IamRegion = parts[0];
+                                SensusContext.Current.IamAccessKey = parts[1];
+                                SensusContext.Current.IamAccessKeySecret = parts[2];
+                            }
+                            else
+                            {
+                                error = "Invalid credentials barcode.";
+                            }
                         }
-                    }
 
-                    if (error == null)
-                    {
-                        await SensusServiceHelper.Get().FlashNotificationAsync("Successfully authenticated.");
-                    }
-                    else
-                    {
-                        await SensusServiceHelper.Get().FlashNotificationAsync(error);
-                    }
-                });
-            };
-
-            detailPageItems.Add(accountItem);
+                        if (error == null)
+                        {
+                            await SensusServiceHelper.Get().FlashNotificationAsync("Successfully authenticated.");
+                        }
+                        else
+                        {
+                            await SensusServiceHelper.Get().FlashNotificationAsync(error);
+                        }
+                    });
+                }
+            });
 
             _masterPageItemsListView = new ListView(ListViewCachingStrategy.RecycleElement)
             {

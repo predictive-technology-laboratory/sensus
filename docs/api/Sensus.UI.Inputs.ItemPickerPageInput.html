@@ -225,12 +225,12 @@
   
   
   <a id="Sensus_UI_Inputs_ItemPickerPageInput__ctor_" data-uid="Sensus.UI.Inputs.ItemPickerPageInput.#ctor*"></a>
-  <h4 id="Sensus_UI_Inputs_ItemPickerPageInput__ctor_System_String_System_Collections_Generic_List_System_Object__System_String_" data-uid="Sensus.UI.Inputs.ItemPickerPageInput.#ctor(System.String,System.Collections.Generic.List{System.Object},System.String)">ItemPickerPageInput(String, List&lt;Object&gt;, String)</h4>
+  <h4 id="Sensus_UI_Inputs_ItemPickerPageInput__ctor_System_String_System_Collections_Generic_List_System_Object__System_Collections_Generic_Dictionary_System_Int32_System_Boolean__System_Collections_Generic_List_System_Int32__System_String_" data-uid="Sensus.UI.Inputs.ItemPickerPageInput.#ctor(System.String,System.Collections.Generic.List{System.Object},System.Collections.Generic.Dictionary{System.Int32,System.Boolean},System.Collections.Generic.List{System.Int32},System.String)">ItemPickerPageInput(String, List&lt;Object&gt;, Dictionary&lt;Int32, Boolean&gt;, List&lt;Int32&gt;, String)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ItemPickerPageInput(string labelText, List&lt;object&gt; items, string textBindingPropertyPath = &quot;.&quot;)</code></pre>
+    <pre><code class="lang-csharp hljs">public ItemPickerPageInput(string labelText, List&lt;object&gt; items, Dictionary&lt;int, bool&gt; initialIndexSelected = null, List&lt;int&gt; frozenIndices = null, string textBindingPropertyPath = &quot;.&quot;)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -250,6 +250,16 @@
       <tr>
         <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.Object</span>&gt;</td>
         <td><span class="parametername">items</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.Dictionary</span>&lt;<span class="xref">System.Int32</span>, <span class="xref">System.Boolean</span>&gt;</td>
+        <td><span class="parametername">initialIndexSelected</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
+        <td><span class="parametername">frozenIndices</span></td>
         <td></td>
       </tr>
       <tr>

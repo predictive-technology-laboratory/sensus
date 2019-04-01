@@ -264,12 +264,12 @@ off of the device.</p>
   
   
   <a id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_DeletePushNotificationRequestAsync_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.DeletePushNotificationRequestAsync*"></a>
-  <h4 id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_DeletePushNotificationRequestAsync_Sensus_Notifications_PushNotificationRequest_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.DeletePushNotificationRequestAsync(Sensus.Notifications.PushNotificationRequest,System.Threading.CancellationToken)">DeletePushNotificationRequestAsync(PushNotificationRequest, CancellationToken)</h4>
+  <h4 id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_DeletePushNotificationRequestAsync_System_Guid_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.DeletePushNotificationRequestAsync(System.Guid,System.Threading.CancellationToken)">DeletePushNotificationRequestAsync(Guid, CancellationToken)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override Task DeletePushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task DeletePushNotificationRequestAsync(Guid backendKey, CancellationToken cancellationToken)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -282,8 +282,8 @@ off of the device.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.Notifications.PushNotificationRequest.html">PushNotificationRequest</a></td>
-        <td><span class="parametername">request</span></td>
+        <td><span class="xref">System.Guid</span></td>
+        <td><span class="parametername">backendKey</span></td>
         <td></td>
       </tr>
       <tr>
@@ -309,56 +309,7 @@ off of the device.</p>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_DeletePushNotificationRequestAsync_Sensus_Notifications_PushNotificationRequest_System_Threading_CancellationToken_">RemoteDataStore.DeletePushNotificationRequestAsync(PushNotificationRequest, CancellationToken)</a></div>
-  
-  
-  <a id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_DeletePushNotificationRequestAsync_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.DeletePushNotificationRequestAsync*"></a>
-  <h4 id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_DeletePushNotificationRequestAsync_System_String_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.DeletePushNotificationRequestAsync(System.String,System.Threading.CancellationToken)">DeletePushNotificationRequestAsync(String, CancellationToken)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override Task DeletePushNotificationRequestAsync(string id, CancellationToken cancellationToken)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">id</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Threading.CancellationToken</span></td>
-        <td><span class="parametername">cancellationToken</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_DeletePushNotificationRequestAsync_System_String_System_Threading_CancellationToken_">RemoteDataStore.DeletePushNotificationRequestAsync(String, CancellationToken)</a></div>
+  <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_DeletePushNotificationRequestAsync_System_Guid_System_Threading_CancellationToken_">RemoteDataStore.DeletePushNotificationRequestAsync(Guid, CancellationToken)</a></div>
   
   
   <a id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_DeletePushNotificationTokenAsync_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.DeletePushNotificationTokenAsync*"></a>
@@ -514,13 +465,13 @@ off of the device.</p>
   <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetDatumKey_Sensus_Datum_">RemoteDataStore.GetDatumKey(Datum)</a></div>
   
   
-  <a id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_GetProtocolUpdatesAsync_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetProtocolUpdatesAsync*"></a>
-  <h4 id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_GetProtocolUpdatesAsync_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetProtocolUpdatesAsync(System.Threading.CancellationToken)">GetProtocolUpdatesAsync(CancellationToken)</h4>
+  <a id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_GetPushNotificationUpdatesAsync_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetPushNotificationUpdatesAsync*"></a>
+  <h4 id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_GetPushNotificationUpdatesAsync_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetPushNotificationUpdatesAsync(System.Threading.CancellationToken)">GetPushNotificationUpdatesAsync(CancellationToken)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override Task&lt;string&gt; GetProtocolUpdatesAsync(CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task&lt;List&lt;PushNotificationUpdate&gt;&gt; GetPushNotificationUpdatesAsync(CancellationToken cancellationToken)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -549,13 +500,13 @@ off of the device.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.Notifications.PushNotificationUpdate.html">PushNotificationUpdate</a>&gt;&gt;</td>
         <td></td>
       </tr>
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetProtocolUpdatesAsync_System_Threading_CancellationToken_">RemoteDataStore.GetProtocolUpdatesAsync(CancellationToken)</a></div>
+  <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetPushNotificationUpdatesAsync_System_Threading_CancellationToken_">RemoteDataStore.GetPushNotificationUpdatesAsync(CancellationToken)</a></div>
   
   
   <a id="Sensus_DataStores_Remote_ConsoleRemoteDataStore_GetScriptAgentPolicyAsync_" data-uid="Sensus.DataStores.Remote.ConsoleRemoteDataStore.GetScriptAgentPolicyAsync*"></a>
@@ -564,7 +515,7 @@ off of the device.</p>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override Task&lt;string&gt; GetScriptAgentPolicyAsync(CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task&lt;JObject&gt; GetScriptAgentPolicyAsync(CancellationToken cancellationToken)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -593,7 +544,7 @@ off of the device.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">Newtonsoft.Json.Linq.JObject</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>

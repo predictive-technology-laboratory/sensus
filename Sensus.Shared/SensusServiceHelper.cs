@@ -57,8 +57,6 @@ namespace Sensus
         #region static members
         private static SensusServiceHelper SINGLETON;
         public const int PARTICIPATION_VERIFICATION_TIMEOUT_SECONDS = 60;
-        public const string PENDING_SURVEY_NOTIFICATION_ID = "SENSUS-PENDING-SURVEY-NOTIFICATION";
-        public const string PROTOCOL_UPDATED_NOTIFICATION_ID = "SENSUS-PROTOCOL-UPDATED-NOTIFICATION";
 
         /// <summary>
         /// App Center key for Android app. To obtain this key, create a new Xamarin Android app within the Microsoft App Center. This
@@ -306,6 +304,8 @@ namespace Sensus
         private ConcurrentObservableCollection<Script> _scriptsToRun;
         private bool _updatingPushNotificationRegistrations;
         private bool _updatePushNotificationRegistrationsOnNextHealthTest;
+
+        private readonly object _healthTestCallbackLocker = new object();
         private readonly object _shareFileLocker = new object();
         private readonly object _saveLocker = new object();
         private readonly object _updatePushNotificationRegistrationsLocker = new object();
@@ -411,9 +411,6 @@ namespace Sensus
         public abstract string OperatingSystem { get; }
 
         [JsonIgnore]
-        protected abstract bool IsOnMainThread { get; }
-
-        [JsonIgnore]
         public abstract string Version { get; }
 
         [JsonIgnore]
@@ -425,7 +422,6 @@ namespace Sensus
         #region iOS GPS listener settings
 
 #if __IOS__
-
         [JsonIgnore]
         public bool GpsPauseLocationUpdatesAutomatically
         {
@@ -485,7 +481,6 @@ namespace Sensus
                 return runningProtocols.Count == 0 ? -1 : runningProtocols.Min(p => p.GpsDeferralTimeMinutes);
             }
         }
-
 #endif
 
         #endregion
@@ -602,12 +597,6 @@ namespace Sensus
 
         public abstract Task<string> RunVoicePromptAsync(string prompt, Action postDisplayCallback);
 
-        public abstract void KeepDeviceAwake();
-
-        public abstract void LetDeviceSleep();
-
-        public abstract Task BringToForegroundAsync();
-
         /// <summary>
         /// The user can enable all probes at once. When this is done, it doesn't make sense to enable, e.g., the
         /// listening location probe as well as the polling location probe. This method allows the platforms to
@@ -634,148 +623,39 @@ namespace Sensus
 
         public async Task AddRunningProtocolIdAsync(string id)
         {
-            bool scheduleHealthTestCallback = false;
+            bool save = false;
 
             lock (_runningProtocolIds)
             {
                 if (!_runningProtocolIds.Contains(id))
                 {
                     _runningProtocolIds.Add(id);
-
-#if __ANDROID__
-                    (this as Android.AndroidSensusServiceHelper).ReissueForegroundServiceNotification();
-#endif
-                }
-
-                // a protocol is running, so there should be a repeating health test callback scheduled. check for the 
-                // callback, initialize if needed, and request that the callback be scheduled.
-                if (_healthTestCallback == null)
-                {
-                    _healthTestCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
-                    {
-                        // get protocols to test (those that should be running)
-                        List<Protocol> protocolsToTest = _registeredProtocols.Where(protocol =>
-                        {
-                            lock (_runningProtocolIds)
-                            {
-                                return _runningProtocolIds.Contains(protocol.Id);
-                            }
-
-                        }).ToList();
-
-                        // test protocols
-                        foreach (Protocol protocolToTest in protocolsToTest)
-                        {
-                            if (cancellationToken.IsCancellationRequested)
-                            {
-                                break;
-                            }
-
-                            _logger.Log("Sensus health test for protocol \"" + protocolToTest.Name + "\" is running on callback " + callbackId + ".", LoggingLevel.Normal, GetType());
-
-                            bool testCurrentProtocol = true;
-
-                            // if we're using an authentication service, check if the desired protocol has changed as indicated by 
-                            // the protocol id returned with credentials.
-                            if (protocolToTest.AuthenticationService != null)
-                            {
-                                try
-                                {
-                                    // get fresh credentials and check the protocol ID
-                                    AmazonS3Credentials testCredentials = await protocolToTest.AuthenticationService.GetCredentialsAsync();
-
-                                    if (protocolToTest.Id != testCredentials.ProtocolId)
-                                    {
-                                        // we're about to stop and delete the current protocol. don't bother testing it once we're done.
-                                        testCurrentProtocol = false;
-
-                                        Logger.Log("Protocol identifier no longer matches that of credentials. Downloading new protocol.", LoggingLevel.Normal, GetType());
-
-                                        await protocolToTest.StopAsync();
-                                        await protocolToTest.DeleteAsync();
-
-                                        // get the desired protocol and wire it up with the current authentication service
-                                        Protocol desiredProtocol = await Protocol.DeserializeAsync(new Uri(testCredentials.ProtocolURL), testCredentials);
-                                        desiredProtocol.ParticipantId = protocolToTest.AuthenticationService.Account.ParticipantId;
-                                        desiredProtocol.AuthenticationService = protocolToTest.AuthenticationService;
-                                        desiredProtocol.AuthenticationService.Protocol = desiredProtocol;
-
-                                        await desiredProtocol.StartAsync(cancellationToken);
-
-                                        // make sure the new protocol has the id that we expect. don't throw an exception, as there's nothing to be
-                                        // gained in doing so. rather, just report the exception and continue running the new protocol.
-                                        if (desiredProtocol.Id != testCredentials.ProtocolId)
-                                        {
-                                            SensusException.Report("Retrieved new protocol on the fly, but its identifier does not match that of the credentials.");
-                                        }
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    SensusException.Report("Exception while checking for protocol change:  " + ex.Message, ex);
-                                }
-                            }
-
-                            if (testCurrentProtocol)
-                            {
-                                await protocolToTest.TestHealthAsync(false, cancellationToken);
-                            }
-
-                            // write a heartbeat datum to let the backend know we're alive
-                            protocolToTest.LocalDataStore.WriteDatum(new HeartbeatDatum(DateTimeOffset.UtcNow), cancellationToken);
-                        }
-
-                        // test the callback scheduler
-                        SensusContext.Current.CallbackScheduler.TestHealth();
-
-                        // update push notification registrations
-                        if (_updatePushNotificationRegistrationsOnNextHealthTest)
-                        {
-                            await UpdatePushNotificationRegistrationsAsync(cancellationToken);
-                        }
-
-                        // test the notifier, which checks the push notification requests.
-                        await SensusContext.Current.Notifier.TestHealthAsync(cancellationToken);
-
-                    }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(1), null, TimeSpan.Zero, TimeSpan.Zero);  // we use the health test count to measure participation. don't tolerate any delay in the callback.
-
-                    scheduleHealthTestCallback = true;
+                    save = true;
                 }
             }
 
-            // schedule the callback outside of the lock, as we're async.
-            if (scheduleHealthTestCallback)
+            if (save)
             {
-                await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_healthTestCallback);
+                await SaveAsync();
             }
         }
 
         public async Task RemoveRunningProtocolIdAsync(string id)
         {
-            bool unscheduleHealthTestCallback = false;
+            bool save = false;
 
             lock (_runningProtocolIds)
             {
-                if (_runningProtocolIds.Remove(id) && _runningProtocolIds.Count == 0)
+                if (_runningProtocolIds.Remove(id))
                 {
-                    unscheduleHealthTestCallback = true;
+                    save = true;
                 }
-
-#if __ANDROID__
-                (this as Android.AndroidSensusServiceHelper).ReissueForegroundServiceNotification();
-#endif
             }
 
-            if (unscheduleHealthTestCallback)
+            if (save)
             {
-                await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_healthTestCallback);
-                _healthTestCallback = null;
+                await SaveAsync();
             }
-        }
-
-        public bool ProtocolShouldBeRunning(Protocol protocol)
-        {
-            return _runningProtocolIds.Contains(protocol.Id);
         }
 
         public List<Protocol> GetRunningProtocols()
@@ -821,6 +701,109 @@ namespace Sensus
         /// </summary>
         public async Task StartAsync()
         {
+            // initialize the health test callback if it hasn't already been done
+            bool scheduleHealthTestCallback = false;
+            lock (_healthTestCallbackLocker)
+            {
+                if (_healthTestCallback == null)
+                {
+                    _healthTestCallback = new ScheduledCallback(async cancellationToken =>
+                    {
+                        // test running protocols. we used to test all protocols, but this causes problems when editing stopped
+                        // protocols, as they might be replaced without the user intending after the user manually sets the id.
+                        foreach (Protocol protocolToTest in GetRunningProtocols())
+                        {
+                            if (cancellationToken.IsCancellationRequested)
+                            {
+                                break;
+                            }
+
+                            _logger.Log("Sensus health test for protocol \"" + protocolToTest.Name + "\" (" + protocolToTest.Id + ") is running.", LoggingLevel.Normal, GetType());
+
+                            bool testCurrentProtocol = true;
+
+                            // if we're using an authentication service, check if the desired protocol has changed as indicated by 
+                            // the protocol id returned with credentials.
+                            if (protocolToTest.AuthenticationService != null)
+                            {
+                                try
+                                {
+                                    // get fresh credentials and check the protocol ID
+                                    AmazonS3Credentials testCredentials = await protocolToTest.AuthenticationService.GetCredentialsAsync();
+
+                                    // we're getting app center errors indicating a null reference somewhere in this try clause. do some extra reporting.
+                                    if (testCredentials == null)
+                                    {
+                                        throw new NullReferenceException("Returned test credentials are null.");
+                                    }
+
+                                    if (protocolToTest.Id != testCredentials.ProtocolId)
+                                    {
+                                        Logger.Log("Protocol identifier no longer matches that of credentials. Updating to new protocol.", LoggingLevel.Normal, GetType());
+
+                                        // if the current protocol is starting or running, then we'll start the new protocol.
+                                        bool startNewProtocol = protocolToTest.State == ProtocolState.Starting || protocolToTest.State == ProtocolState.Running;
+
+                                        // delete the current protocol (this first stops it). previously, we waited to stop/delete the current
+                                        // protocol until after we had started the new one; however, this is both confusing (the user was seeing
+                                        // two protocols listed) as well as error prone (the protocols may share identifiers like those on 
+                                        // scripts, which eventually make their way into callback IDs that might clash with those currently scheduled
+                                        // as a result -- see issue #736 on github).
+                                        await protocolToTest.DeleteAsync();
+
+                                        // we just stopped/deleted the current protocol. don't bother testing it.
+                                        testCurrentProtocol = false;
+
+                                        // download the desired protocol. as we're initiating the download without user interaction, do not explicitly
+                                        // offer to replace the existing protocol. if the identifier in the protocol that we download duplicates one on 
+                                        // the current device, don't bother the user (as they did not initiate the action). an exception to be thrown.
+                                        Protocol newProtocol = await Protocol.DeserializeAsync(new Uri(testCredentials.ProtocolURL), false, testCredentials);
+
+                                        // wire up new protocol with the current authentication service
+                                        newProtocol.AuthenticationService = protocolToTest.AuthenticationService;
+                                        newProtocol.ParticipantId = protocolToTest.AuthenticationService.Account.ParticipantId;
+
+                                        if (startNewProtocol)
+                                        {
+                                            await newProtocol.StartAsync(cancellationToken);
+                                        }
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    Logger.Log("Exception while checking for protocol change:  " + ex.Message, LoggingLevel.Normal, GetType());
+                                }
+                            }
+
+                            if (testCurrentProtocol)
+                            {
+                                await protocolToTest.TestHealthAsync(false, cancellationToken);
+                            }
+                        }
+
+                        // test the callback scheduler
+                        SensusContext.Current.CallbackScheduler.TestHealth();
+
+                        // update push notification registrations
+                        if (_updatePushNotificationRegistrationsOnNextHealthTest)
+                        {
+                            await UpdatePushNotificationRegistrationsAsync(cancellationToken);
+                        }
+
+                        // test the notifier, which checks the push notification requests.
+                        await SensusContext.Current.Notifier.TestHealthAsync(cancellationToken);
+
+                    }, HEALTH_TEST_DELAY, HEALTH_TEST_DELAY, "HEALTH-TEST", GetType().FullName, null, TimeSpan.FromMinutes(5), TimeSpan.Zero, TimeSpan.Zero);  // we use the health test count to measure participation. don't tolerate any delay in the callback.
+
+                    scheduleHealthTestCallback = true;
+                }
+            }
+
+            if (scheduleHealthTestCallback)
+            {
+                await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_healthTestCallback);
+            }
+
             foreach (Protocol registeredProtocol in _registeredProtocols)
             {
                 if (registeredProtocol.State == ProtocolState.Stopped && _runningProtocolIds.Contains(registeredProtocol.Id))
@@ -841,14 +824,21 @@ namespace Sensus
 
         public async Task AddScriptAsync(Script script, RunMode runMode)
         {
-            // shuffle input groups and inputs if needed
+            // shuffle input groups if needed, but only if there are no display conditions involved. display
+            // conditions assume that the input groups will be displayed in a particular order (i.e., non-shuffled).
+            // if a display condition is present and the groups are shuffled, then it could happen that a group's
+            // inputs (being conditioned on a subsequent group) are not shown.
             Random random = new Random();
-            if (script.Runner.ShuffleInputGroups)
+            if (script.Runner.ShuffleInputGroups &&
+                !script.InputGroups.SelectMany(inputGroup => inputGroup.Inputs)
+                                   .SelectMany(input => input.DisplayConditions)
+                                   .Any())
             {
                 random.Shuffle(script.InputGroups);
             }
 
-            // shuffle inputs in groups if needed
+            // shuffle inputs in groups if needed. it's fine to shuffle the inputs within a group even when there
+            // are display conditions, as display conditions only hold between inputs in different groups.
             foreach (InputGroup inputGroup in script.InputGroups)
             {
                 if (inputGroup.ShuffleInputs)
@@ -910,7 +900,11 @@ namespace Sensus
 
             if (modifiedScriptsToRun)
             {
-                await IssuePendingSurveysNotificationAsync(script.Runner.Probe.Protocol, true);
+                // clear out any expired scripts
+                await RemoveExpiredScriptsAsync();
+
+                // update the pending surveys notification
+                await IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.BadgeTextAlert, script.Runner.Probe.Protocol);
 
                 // save the app state. if the app crashes we want to keep the surveys around so they can be 
                 // taken. this will not result in duplicate surveys in cases where the script probe restarts
@@ -928,32 +922,34 @@ namespace Sensus
             }
         }
 
-        public async Task RemoveScriptAsync(Script script, bool issueNotification)
+        public bool RemoveScriptsForRunner(ScriptRunner runner)
         {
-            await RemoveScriptsAsync(issueNotification, script);
+            return RemoveScripts(_scriptsToRun.Where(script => script.Runner == runner).ToArray());
         }
 
-        public async Task RemoveScriptsForRunnerAsync(ScriptRunner runner, bool issueNotification)
+        public async Task<bool> RemoveExpiredScriptsAsync()
         {
-            await RemoveScriptsAsync(issueNotification, _scriptsToRun.Where(script => script.Runner == runner).ToArray());
-        }
+            bool removed = false;
 
-        public async Task RemoveExpiredScriptsAsync(bool issueNotification)
-        {
             foreach (Script script in _scriptsToRun)
             {
                 if (script.Expired)
                 {
-                    await RemoveScriptAsync(script, issueNotification);
-
                     // let the script agent know and store a datum to record the event
                     await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Expired) ?? Task.CompletedTask);
                     await script.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Expired, DateTimeOffset.UtcNow, script), CancellationToken.None);
+
+                    if (RemoveScripts(script))
+                    {
+                        removed = true;
+                    }
                 }
             }
+
+            return removed;
         }
 
-        public async Task ClearScriptsAsync()
+        public async Task<bool> ClearScriptsAsync()
         {
             foreach (Script script in _scriptsToRun)
             {
@@ -962,42 +958,65 @@ namespace Sensus
                 await script.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Deleted, DateTimeOffset.UtcNow, script), CancellationToken.None);
             }
 
-            _scriptsToRun.Clear();
-
-            await IssuePendingSurveysNotificationAsync(null, false);
+            return RemoveScripts(_scriptsToRun.ToArray());
         }
 
-        /// <summary>
-        /// Issues the pending surveys notification.
-        /// </summary>
-        /// <param name="protocol">Protocol used to check for alert exclusion time windows. </param>
-        /// <param name="alertUser">If set to <c>true</c> alert user using sound and/or vibration.</param>
-        public async Task IssuePendingSurveysNotificationAsync(Protocol protocol, bool alertUser)
+        public async Task IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode notificationMode, Protocol protocol)
         {
-            await RemoveExpiredScriptsAsync(false);
+            // clear any existing notifications/badges
+            CancelPendingSurveysNotification();
 
             await _scriptsToRun.Concurrent.ExecuteThreadSafe(async () =>
             {
                 int numScriptsToRun = _scriptsToRun.Count;
 
-                if (numScriptsToRun == 0)
-                {
-                    ClearPendingSurveysNotification();
-                }
-                else
+                if (numScriptsToRun > 0 && notificationMode != PendingSurveyNotificationMode.None)
                 {
                     string s = numScriptsToRun == 1 ? "" : "s";
                     string pendingSurveysTitle = numScriptsToRun == 0 ? null : $"You have {numScriptsToRun} pending survey{s}.";
                     DateTime? nextExpirationDate = _scriptsToRun.Select(script => script.ExpirationDate).Where(expirationDate => expirationDate.HasValue).OrderBy(expirationDate => expirationDate).FirstOrDefault();
                     string nextExpirationMessage = nextExpirationDate == null ? (numScriptsToRun == 1 ? "This survey does" : "These surveys do") + " not expire." : "Next expiration:  " + nextExpirationDate.Value.ToShortDateString() + " at " + nextExpirationDate.Value.ToShortTimeString();
-                    await SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, PENDING_SURVEY_NOTIFICATION_ID, protocol, alertUser, DisplayPage.PendingSurveys);
+
+                    string notificationId = null;
+                    bool alertUser = false;
+
+                    if (notificationMode == PendingSurveyNotificationMode.Badge)
+                    {
+                        notificationId = Notifier.PENDING_SURVEY_BADGE_NOTIFICATION_ID;
+                    }
+                    else if (notificationMode == PendingSurveyNotificationMode.BadgeText)
+                    {
+                        notificationId = Notifier.PENDING_SURVEY_TEXT_NOTIFICATION_ID;
+                        alertUser = false;
+                    }
+                    else if (notificationMode == PendingSurveyNotificationMode.BadgeTextAlert)
+                    {
+                        notificationId = Notifier.PENDING_SURVEY_TEXT_NOTIFICATION_ID;
+                        alertUser = true;
+                    }
+                    else
+                    {
+                        SensusException.Report("Unrecognized pending survey notification mode:  " + notificationMode);
+                        return;
+                    }
+
+                    await SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, notificationId, alertUser, protocol, numScriptsToRun, NotificationUserResponseAction.DisplayPendingSurveys, null);
                 }
             });
         }
 
-        public void ClearPendingSurveysNotification()
+        public void CancelPendingSurveysNotification()
         {
-            SensusContext.Current.Notifier.CancelNotification(PENDING_SURVEY_NOTIFICATION_ID);
+            SensusContext.Current.Notifier.CancelNotification(Notifier.PENDING_SURVEY_TEXT_NOTIFICATION_ID);
+            SensusContext.Current.Notifier.CancelNotification(Notifier.PENDING_SURVEY_BADGE_NOTIFICATION_ID);
+
+#if __IOS__
+            // clear the budge -- must be done from UI thread
+            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+            {
+                UIKit.UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
+            });
+#endif
         }
 
         /// <summary>
@@ -1155,8 +1174,6 @@ namespace Sensus
                 }
                 else
                 {
-                    await BringToForegroundAsync();
-
                     await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
                     {
                         int stepNumber = inputGroupNum + 1;
@@ -1344,10 +1361,11 @@ namespace Sensus
             });
         }
 
-        public async Task UnregisterProtocolAsync(Protocol protocol)
+        public Task UnregisterProtocolAsync(Protocol protocol)
         {
             _registeredProtocols.Remove(protocol);
-            await protocol.StopAsync();
+
+            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -1426,81 +1444,87 @@ namespace Sensus
         {
             return await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
             {
-                // the Permissions plugin requires a main activity to be present on android. ensure the activity is running
-                // before using the plugin.
-                await BringToForegroundAsync();
-
                 if (await CrossPermissions.Current.CheckPermissionStatusAsync(permission) == PermissionStatus.Granted)
                 {
                     return PermissionStatus.Granted;
                 }
 
-                string rationale = null;
+                // if the user has previously denied our permission request, then we should be given an opportunity to
+                // display a rationale for the request. if the user has selected the "don't ask again" option, then
+                // we will not be able to display the rationale and all requests for the permission will fail.
+                if (await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
+                {
+                    string rationale = null;
 
-                if (permission == Permission.Calendar)
-                {
-                    rationale = "Sensus collects calendar information for studies you enroll in.";
-                }
-                else if (permission == Permission.Camera)
-                {
-                    rationale = "Sensus uses the camera to scan barcodes. Sensus will not record images or video.";
-                }
-                else if (permission == Permission.Contacts)
-                {
-                    rationale = "Sensus collects calendar information for studies you enroll in.";
-                }
-                else if (permission == Permission.Location)
-                {
-                    rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
-                }
-                else if (permission == Permission.LocationAlways)
-                {
-                    rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
-                }
-                else if (permission == Permission.LocationWhenInUse)
-                {
-                    rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
-                }
-                else if (permission == Permission.MediaLibrary)
-                {
-                    rationale = "Sensus collects media for studies you enroll in.";
-                }
-                else if (permission == Permission.Microphone)
-                {
-                    rationale = "Sensus uses the microphone to collect sound level information for studies you enroll in. Sensus will not record audio.";
-                }
-                else if (permission == Permission.Phone)
-                {
-                    rationale = "Sensus collects call information for studies you enroll in. Sensus will not record audio from calls.";
-                }
-                else if (permission == Permission.Photos)
-                {
-                    rationale = "Sensus collects photos for studies you enroll in.";
-                }
-                else if (permission == Permission.Reminders)
-                {
-                    rationale = "Sensus collects reminder information for studies you enroll in.";
-                }
-                else if (permission == Permission.Sensors)
-                {
-                    rationale = "Sensus uses movement sensors to collect information for studies you enroll in.";
-                }
-                else if (permission == Permission.Sms)
-                {
-                    rationale = "Sensus collects text messages for studies you enroll in.";
-                }
-                else if (permission == Permission.Speech)
-                {
-                    rationale = "Sensus uses the microphone for studies you enroll in.";
-                }
-                else if (permission == Permission.Storage)
-                {
-                    rationale = "Sensus must be able to write to your device's storage for proper operation.";
-                }
+                    if (permission == Permission.Calendar)
+                    {
+                        rationale = "Sensus collects calendar information for studies you enroll in.";
+                    }
+                    else if (permission == Permission.Camera)
+                    {
+                        rationale = "Sensus uses the camera to scan barcodes. Sensus will not record images or video.";
+                    }
+                    else if (permission == Permission.Contacts)
+                    {
+                        rationale = "Sensus collects calendar information for studies you enroll in.";
+                    }
+                    else if (permission == Permission.Location)
+                    {
+                        rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
+                    }
+                    else if (permission == Permission.LocationAlways)
+                    {
+                        rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
+                    }
+                    else if (permission == Permission.LocationWhenInUse)
+                    {
+                        rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
+                    }
+                    else if (permission == Permission.MediaLibrary)
+                    {
+                        rationale = "Sensus collects media for studies you enroll in.";
+                    }
+                    else if (permission == Permission.Microphone)
+                    {
+                        rationale = "Sensus uses the microphone to collect sound level information for studies you enroll in. Sensus will not record audio.";
+                    }
+                    else if (permission == Permission.Phone)
+                    {
+                        rationale = "Sensus collects call information for studies you enroll in. Sensus will not record audio from calls.";
+                    }
+                    else if (permission == Permission.Photos)
+                    {
+                        rationale = "Sensus collects photos for studies you enroll in.";
+                    }
+                    else if (permission == Permission.Reminders)
+                    {
+                        rationale = "Sensus collects reminder information for studies you enroll in.";
+                    }
+                    else if (permission == Permission.Sensors)
+                    {
+                        rationale = "Sensus uses movement sensors to collect information for studies you enroll in.";
+                    }
+                    else if (permission == Permission.Sms)
+                    {
+                        rationale = "Sensus collects text messages for studies you enroll in.";
+                    }
+                    else if (permission == Permission.Speech)
+                    {
+                        rationale = "Sensus uses the microphone for studies you enroll in.";
+                    }
+                    else if (permission == Permission.Storage)
+                    {
+                        rationale = "Sensus must be able to write to your device's storage for proper operation.";
+                    }
+                    else
+                    {
+                        SensusException.Report("Missing rationale for permission request:  " + permission);
+                    }
 
-                if (rationale != null && await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
-                {
-                    await Application.Current.MainPage.DisplayAlert("Permission Request", $"On the next screen, Sensus will request access to your device's {permission.ToString().ToUpper()}. {rationale}", "OK");
+                    if (rationale != null)
+                    {
+                        await Application.Current.MainPage.DisplayAlert("Permission Request", $"On the next screen, Sensus will request access to your device's {permission.ToString().ToUpper()}. {rationale}", "OK");
+                    }
                 }
 
                 try
@@ -1685,25 +1709,31 @@ namespace Sensus
             }
         }
 
-        public async Task StopProtocolsAsync()
+        /// <summary>
+        /// Called when the system or user wishes to stop the app entirely. Will stop all protocols and clean up.
+        /// </summary>
+        /// <returns>Task</returns>
+        public async Task StopAsync()
         {
-            _logger.Log("Stopping protocols.", LoggingLevel.Normal, GetType());
+            Logger.Log("Stopping protocols.", LoggingLevel.Normal, GetType());
 
-            foreach (Protocol runningProtocol in _registeredProtocols.ToArray().Where(p => p.State == ProtocolState.Running))
+            foreach (Protocol protocol in _registeredProtocols.ToArray())
             {
                 try
                 {
-                    await runningProtocol.StopAsync();
+                    await protocol.StopAsync();
                 }
                 catch (Exception ex)
                 {
-                    _logger.Log($"Failed to stop protocol \"{runningProtocol.Name}\": {ex.Message}", LoggingLevel.Normal, GetType());
+                    _logger.Log($"Failed to stop protocol \"{protocol.Name}\": {ex.Message}", LoggingLevel.Normal, GetType());
                 }
             }
+
+            Logger.Log("Unscheduling health test callback.", LoggingLevel.Normal, GetType());
+            await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_healthTestCallback);
         }
 
-        #region Private Methods
-        private async Task RemoveScriptsAsync(bool issueNotification, params Script[] scripts)
+        public bool RemoveScripts(params Script[] scripts)
         {
             bool removed = false;
 
@@ -1715,10 +1745,7 @@ namespace Sensus
                 }
             }
 
-            if (removed && issueNotification)
-            {
-                await IssuePendingSurveysNotificationAsync(null, false);
-            }
+            return removed;               
         }
 
         private int GetScriptIndex(Script script)
@@ -1747,6 +1774,5 @@ namespace Sensus
 
             return index;
         }
-        #endregion
     }
 }

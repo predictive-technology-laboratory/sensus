@@ -94,11 +94,6 @@ namespace Sensus.iOS
             }
         }
 
-        protected override bool IsOnMainThread
-        {
-            get { return NSThread.IsMain; }
-        }
-
         public override string Version
         {
             get
@@ -405,19 +400,6 @@ namespace Sensus.iOS
         public override async Task PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
         {
             await FlashNotificationAsync("This is not supported on iOS.");
-        }
-
-        public override void KeepDeviceAwake()
-        {
-        }
-
-        public override void LetDeviceSleep()
-        {
-        }
-
-        public override Task BringToForegroundAsync()
-        {
-            return Task.CompletedTask;
         }
 
         #endregion

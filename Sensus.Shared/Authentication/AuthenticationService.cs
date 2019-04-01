@@ -13,16 +13,16 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Amazon.KeyManagementService;
 using Amazon.KeyManagementService.Model;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Sensus.Context;
 using Sensus.Encryption;
 using Sensus.Exceptions;
@@ -38,6 +38,16 @@ namespace Sensus.Authentication
         private const string CREATE_ACCOUNT_PATH = "/createaccount?deviceId={0}&participantId={1}&deviceType={2}";
         private const string GET_CREDENTIALS_PATH = "/getcredentials?participantId={0}&password={1}&deviceId={2}";
 
+        /// <summary>
+        /// The ignored web exception statuses. These are statuses that we expect to encounter under normal operating 
+        /// conditions (e.g., due to lack of internet connection, server-side errors, etc.).
+        /// </summary>
+        private readonly List<WebExceptionStatus> IGNORED_WEB_EXCEPTION_STATUSES = new[] { WebExceptionStatus.ConnectFailure,
+                                                                                           WebExceptionStatus.NameResolutionFailure,
+                                                                                           WebExceptionStatus.SecureChannelFailure,
+                                                                                           WebExceptionStatus.Timeout,
+                                                                                           WebExceptionStatus.TrustFailure,
+                                                                                           WebExceptionStatus.ReceiveFailure }.ToList();
         private readonly string _createAccountURL;
         private readonly string _getCredentialsURL;
         private Task<AmazonS3Credentials> _getCredentialsTask;
@@ -61,8 +71,6 @@ namespace Sensus.Authentication
         /// <value>The credentials.</value>
         [JsonProperty]
         private AmazonS3Credentials AmazonS3Credentials { get; set; }
-
-        public Protocol Protocol { get; set; }
 
         public AuthenticationService(string baseServiceURL)
         {
@@ -88,7 +96,7 @@ namespace Sensus.Authentication
                 SensusException.Report("Unrecognized platform:  " + SensusContext.Current.Platform);
             }
 
-            string accountJSON = await new Uri(string.Format(_createAccountURL, SensusServiceHelper.Get().DeviceId, participantId, deviceType)).DownloadString();
+            string accountJSON = await new Uri(string.Format(_createAccountURL, SensusServiceHelper.Get().DeviceId, participantId, deviceType)).DownloadStringAsync();
 
             try
             {
@@ -99,14 +107,14 @@ namespace Sensus.Authentication
                 SensusException.Report("Exception while deserializing account:  " + ex.Message, ex);
             }
 
-            // check properties
+            // check properties. trim while we're at it.
 
-            if (string.IsNullOrWhiteSpace(Account.ParticipantId))
+            if (string.IsNullOrWhiteSpace(Account.ParticipantId = Account.ParticipantId?.Trim()))
             {
                 SensusException.Report("Empty " + nameof(Account.ParticipantId) + " returned by authentication service for device " + SensusServiceHelper.Get().DeviceId + " and participant " + (participantId ?? "[null]."));
             }
 
-            if (string.IsNullOrWhiteSpace(Account.Password))
+            if (string.IsNullOrWhiteSpace(Account.Password = Account.Password?.Trim()))
             {
                 SensusException.Report("Empty " + nameof(Account.Password) + " returned by authentication service for device " + SensusServiceHelper.Get().DeviceId + " and participant " + (participantId ?? "[null]."));
             }
@@ -121,6 +129,8 @@ namespace Sensus.Authentication
         {
             lock (_getCredentialsTaskLocker)
             {
+                // if the get credentials task is in a state from which we wouldn't expect to return a presently
+                // valid set of credentials, then start a new task to check/refresh the credentials.
                 if (_getCredentialsTask == null ||
                     _getCredentialsTask.Status == TaskStatus.Canceled ||
                     _getCredentialsTask.Status == TaskStatus.Faulted ||
@@ -128,6 +138,7 @@ namespace Sensus.Authentication
                 {
                     _getCredentialsTask = Task.Run(async () =>
                     {
+                        // if the credentials we currently hold will be valid for a while, then simply return them.
                         if (AmazonS3Credentials?.WillBeValidFor(TimeSpan.FromHours(1)) ?? false)
                         {
                             return AmazonS3Credentials;
@@ -137,12 +148,15 @@ namespace Sensus.Authentication
                             AmazonS3Credentials = null;
                         }
 
+                        // we should always have an account
                         if (Account == null)
                         {
-                            throw new Exception("Tried to get credentials without an account.");
+                            Exception noAccountException = new Exception("Tried to get credentials without an account.");
+                            SensusException.Report(noAccountException);
+                            throw noAccountException;
                         }
 
-                        string credentialsJSON = await new Uri(string.Format(_getCredentialsURL, Account.ParticipantId, Account.Password, SensusServiceHelper.Get().DeviceId)).DownloadString();
+                        string credentialsJSON = await new Uri(string.Format(_getCredentialsURL, Account.ParticipantId, Account.Password, SensusServiceHelper.Get().DeviceId)).DownloadStringAsync();
 
                         // deserialize credentials
                         try
@@ -155,44 +169,44 @@ namespace Sensus.Authentication
                             throw ex;
                         }
 
-                        // check properties
+                        // check properties. trim while we're at it.
 
-                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.AccessKeyId))
+                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.AccessKeyId = AmazonS3Credentials.AccessKeyId?.Trim()))
                         {
                             SensusException.Report("Empty " + nameof(AmazonS3Credentials.AccessKeyId) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
                         }
 
-                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.CustomerMasterKey))
+                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.CustomerMasterKey = AmazonS3Credentials.CustomerMasterKey?.Trim()))
                         {
                             SensusException.Report("Empty " + nameof(AmazonS3Credentials.CustomerMasterKey) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
                         }
 
-                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.ExpirationUnixTimeMilliseconds))
+                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.ExpirationUnixTimeMilliseconds = AmazonS3Credentials.ExpirationUnixTimeMilliseconds?.Trim()))
                         {
                             SensusException.Report("Empty " + nameof(AmazonS3Credentials.ExpirationUnixTimeMilliseconds) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
                         }
 
-                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.ProtocolId))
+                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.ProtocolId = AmazonS3Credentials.ProtocolId?.Trim()))
                         {
                             SensusException.Report("Empty " + nameof(AmazonS3Credentials.ProtocolId) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
                         }
 
-                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.ProtocolURL))
+                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.ProtocolURL = AmazonS3Credentials.ProtocolURL?.Trim()))
                         {
                             SensusException.Report("Empty " + nameof(AmazonS3Credentials.ProtocolURL) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
                         }
 
-                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.Region))
+                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.Region = AmazonS3Credentials.Region?.Trim()))
                         {
                             SensusException.Report("Empty " + nameof(AmazonS3Credentials.Region) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
                         }
 
-                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.SecretAccessKey))
+                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.SecretAccessKey = AmazonS3Credentials.SecretAccessKey?.Trim()))
                         {
                             SensusException.Report("Empty " + nameof(AmazonS3Credentials.SecretAccessKey) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
                         }
 
-                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.SessionToken))
+                        if (string.IsNullOrWhiteSpace(AmazonS3Credentials.SessionToken = AmazonS3Credentials.SessionToken?.Trim()))
                         {
                             SensusException.Report("Empty " + nameof(AmazonS3Credentials.SessionToken) + " returned by authentication service for participant " + (Account.ParticipantId ?? "[null]."));
                         }
@@ -264,28 +278,67 @@ namespace Sensus.Authentication
                 byte[] encryptedBytes = symmetricEncryption.Encrypt(unencryptedBytes);
                 encryptedOutputStream.Write(encryptedBytes, 0, encryptedBytes.Length);
             }
-            catch (WebException ex)
+            // the following catch statements attempt to filter out expected exceptions (e.g., due to naturally lacking internet connections)
+            // from those that are fixable errors within the app. expected exceptions are logged but not reported to the app center, whereas
+            // all others are reported to the app center. our approach is to whitelist excepted exceptions as we see them appear in the app
+            // center, in order to ensure that we don't miss any fixable errors.
+            catch (HttpRequestException ex)
             {
-                // don't report the exception if it was caused by a connection failure, as we'll get this under expected conditions.
-                if (ex.Status == WebExceptionStatus.ConnectFailure)
+                bool logged = false;
+
+                if (ex.InnerException is WebException)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Failed to connect when running KMS-based envelope encryption:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
-                // report non-connect based exceptions
-                else
-                {
-                    SensusException.Report("Non-connection web exception when running KMS-based envelope encryption:  " + ex.Message, ex);
+                    WebException webException = ex.InnerException as WebException;
+
+                    if (IGNORED_WEB_EXCEPTION_STATUSES.Contains(webException.Status))
+                    {
+                        LogKmsEnvelopeException(ex);
+                        logged = true;
+                    }
                 }
 
-                // always throw the exception though, as we did not succeed.
+                if (!logged)
+                {
+                    ReportKmsEnvelopeException(ex);
+                }
+
                 throw ex;
             }
-            // any other exceptions may be problematic, so report and throw them.
+            catch (WebException webException)
+            {
+                if (IGNORED_WEB_EXCEPTION_STATUSES.Contains(webException.Status))
+                {
+                    LogKmsEnvelopeException(webException);
+                }
+                else
+                {
+                    ReportKmsEnvelopeException(webException);
+                }
+
+                throw webException;
+            }
+            catch (OperationCanceledException ex)
+            {
+                LogKmsEnvelopeException(ex);
+
+                throw ex;
+            }
             catch (Exception ex)
             {
-                SensusException.Report("Exception when running KMS-based envelope encryption:  " + ex.Message, ex);
+                ReportKmsEnvelopeException(ex);
+
                 throw ex;
             }
+        }
+
+        private void LogKmsEnvelopeException(Exception ex)
+        {
+            SensusServiceHelper.Get().Logger.Log("Non-reportable exception when running KMS-based envelope encryption:  " + ex.Message, LoggingLevel.Normal, GetType());
+        }
+
+        private void ReportKmsEnvelopeException(Exception ex)
+        {
+            SensusException.Report("Reportable exception when running KMS-based envelope encryption:  " + ex.Message, ex);
         }
     }
 }

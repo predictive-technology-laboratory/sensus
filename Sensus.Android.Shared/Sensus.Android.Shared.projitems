@@ -62,6 +62,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\TextCellDisposedFix.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\AndroidEstimoteIndoorCloudCallback.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\AndroidEstimoteIndoorPositionUpdateListener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\ForegroundServiceNotificationActionReceiver.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)UI\" />

@@ -115,12 +115,84 @@
   </h3>
   
   
-  <h4 id="Sensus_Notifications_Notifier_DISPLAY_PAGE_KEY" data-uid="Sensus.Notifications.Notifier.DISPLAY_PAGE_KEY">DISPLAY_PAGE_KEY</h4>
+  <h4 id="Sensus_Notifications_Notifier_NOTIFICATION_USER_RESPONSE_ACTION_KEY" data-uid="Sensus.Notifications.Notifier.NOTIFICATION_USER_RESPONSE_ACTION_KEY">NOTIFICATION_USER_RESPONSE_ACTION_KEY</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const string DISPLAY_PAGE_KEY = &quot;SENSUS-DISPLAY-PAGE&quot;</code></pre>
+    <pre><code class="lang-csharp hljs">public const string NOTIFICATION_USER_RESPONSE_ACTION_KEY = &quot;SENSUS-NOTIFICATION-USER-RESPONSE-ACTION&quot;</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="Sensus_Notifications_Notifier_NOTIFICATION_USER_RESPONSE_MESSAGE_KEY" data-uid="Sensus.Notifications.Notifier.NOTIFICATION_USER_RESPONSE_MESSAGE_KEY">NOTIFICATION_USER_RESPONSE_MESSAGE_KEY</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string NOTIFICATION_USER_RESPONSE_MESSAGE_KEY = &quot;SENSUS-NOTIFICATION-USER-RESPONSE-MESSAGE&quot;</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="Sensus_Notifications_Notifier_PENDING_SURVEY_BADGE_NOTIFICATION_ID" data-uid="Sensus.Notifications.Notifier.PENDING_SURVEY_BADGE_NOTIFICATION_ID">PENDING_SURVEY_BADGE_NOTIFICATION_ID</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string PENDING_SURVEY_BADGE_NOTIFICATION_ID = &quot;SENSUS-PENDING-SURVEY-BADGE-NOTIFICATION&quot;</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="Sensus_Notifications_Notifier_PENDING_SURVEY_TEXT_NOTIFICATION_ID" data-uid="Sensus.Notifications.Notifier.PENDING_SURVEY_TEXT_NOTIFICATION_ID">PENDING_SURVEY_TEXT_NOTIFICATION_ID</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string PENDING_SURVEY_TEXT_NOTIFICATION_ID = &quot;SENSUS-PENDING-SURVEY-TEXT-NOTIFICATION&quot;</code></pre>
   </div>
   <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -169,12 +241,12 @@
   
   
   <a id="Sensus_Notifications_Notifier_DeletePushNotificationRequestAsync_" data-uid="Sensus.Notifications.Notifier.DeletePushNotificationRequestAsync*"></a>
-  <h4 id="Sensus_Notifications_Notifier_DeletePushNotificationRequestAsync_Sensus_Notifications_PushNotificationRequest_System_Threading_CancellationToken_" data-uid="Sensus.Notifications.Notifier.DeletePushNotificationRequestAsync(Sensus.Notifications.PushNotificationRequest,System.Threading.CancellationToken)">DeletePushNotificationRequestAsync(PushNotificationRequest, CancellationToken)</h4>
+  <h4 id="Sensus_Notifications_Notifier_DeletePushNotificationRequestAsync_System_Guid_Sensus_Protocol_System_Threading_CancellationToken_" data-uid="Sensus.Notifications.Notifier.DeletePushNotificationRequestAsync(System.Guid,Sensus.Protocol,System.Threading.CancellationToken)">DeletePushNotificationRequestAsync(Guid, Protocol, CancellationToken)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task DeletePushNotificationRequestAsync(PushNotificationRequest request, CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task DeletePushNotificationRequestAsync(Guid backendKey, Protocol protocol, CancellationToken cancellationToken)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -187,55 +259,8 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.Notifications.PushNotificationRequest.html">PushNotificationRequest</a></td>
-        <td><span class="parametername">request</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Threading.CancellationToken</span></td>
-        <td><span class="parametername">cancellationToken</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_Notifications_Notifier_DeletePushNotificationRequestAsync_" data-uid="Sensus.Notifications.Notifier.DeletePushNotificationRequestAsync*"></a>
-  <h4 id="Sensus_Notifications_Notifier_DeletePushNotificationRequestAsync_System_String_Sensus_Protocol_System_Threading_CancellationToken_" data-uid="Sensus.Notifications.Notifier.DeletePushNotificationRequestAsync(System.String,Sensus.Protocol,System.Threading.CancellationToken)">DeletePushNotificationRequestAsync(String, Protocol, CancellationToken)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task DeletePushNotificationRequestAsync(string id, Protocol protocol, CancellationToken cancellationToken)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">id</span></td>
+        <td><span class="xref">System.Guid</span></td>
+        <td><span class="parametername">backendKey</span></td>
         <td></td>
       </tr>
       <tr>
@@ -268,12 +293,12 @@
   
   
   <a id="Sensus_Notifications_Notifier_IssueNotificationAsync_" data-uid="Sensus.Notifications.Notifier.IssueNotificationAsync*"></a>
-  <h4 id="Sensus_Notifications_Notifier_IssueNotificationAsync_System_String_System_String_System_String_Sensus_Protocol_System_Boolean_Sensus_Notifications_DisplayPage_" data-uid="Sensus.Notifications.Notifier.IssueNotificationAsync(System.String,System.String,System.String,Sensus.Protocol,System.Boolean,Sensus.Notifications.DisplayPage)">IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage)</h4>
+  <h4 id="Sensus_Notifications_Notifier_IssueNotificationAsync_System_String_System_String_System_String_System_Boolean_Sensus_Protocol_System_Nullable_System_Int32__Sensus_Notifications_NotificationUserResponseAction_System_String_" data-uid="Sensus.Notifications.Notifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.NotificationUserResponseAction,System.String)">IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable&lt;Int32&gt;, NotificationUserResponseAction, String)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract Task IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage)</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, Nullable&lt;int&gt; badgeNumber, NotificationUserResponseAction userResponseAction, string userResponseMessage)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -301,18 +326,28 @@
         <td></td>
       </tr>
       <tr>
-        <td><a class="xref" href="Sensus.Protocol.html">Protocol</a></td>
-        <td><span class="parametername">protocol</span></td>
-        <td></td>
-      </tr>
-      <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">alertUser</span></td>
         <td></td>
       </tr>
       <tr>
-        <td><a class="xref" href="Sensus.Notifications.DisplayPage.html">DisplayPage</a></td>
-        <td><span class="parametername">displayPage</span></td>
+        <td><a class="xref" href="Sensus.Protocol.html">Protocol</a></td>
+        <td><span class="parametername">protocol</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
+        <td><span class="parametername">badgeNumber</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Sensus.Notifications.NotificationUserResponseAction.html">NotificationUserResponseAction</a></td>
+        <td><span class="parametername">userResponseAction</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">userResponseMessage</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -334,13 +369,13 @@
   </table>
   
   
-  <a id="Sensus_Notifications_Notifier_OpenDisplayPage_" data-uid="Sensus.Notifications.Notifier.OpenDisplayPage*"></a>
-  <h4 id="Sensus_Notifications_Notifier_OpenDisplayPage_Sensus_Notifications_DisplayPage_" data-uid="Sensus.Notifications.Notifier.OpenDisplayPage(Sensus.Notifications.DisplayPage)">OpenDisplayPage(DisplayPage)</h4>
+  <a id="Sensus_Notifications_Notifier_OnNotificationUserResponseAsync_" data-uid="Sensus.Notifications.Notifier.OnNotificationUserResponseAsync*"></a>
+  <h4 id="Sensus_Notifications_Notifier_OnNotificationUserResponseAsync_System_String_System_String_" data-uid="Sensus.Notifications.Notifier.OnNotificationUserResponseAsync(System.String,System.String)">OnNotificationUserResponseAsync(String, String)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public void OpenDisplayPage(DisplayPage displayPage)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task OnNotificationUserResponseAsync(string responseAction, string responseMessage)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -353,8 +388,28 @@
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.Notifications.DisplayPage.html">DisplayPage</a></td>
-        <td><span class="parametername">displayPage</span></td>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">responseAction</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">responseMessage</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -362,12 +417,12 @@
   
   
   <a id="Sensus_Notifications_Notifier_ProcessReceivedPushNotificationAsync_" data-uid="Sensus.Notifications.Notifier.ProcessReceivedPushNotificationAsync*"></a>
-  <h4 id="Sensus_Notifications_Notifier_ProcessReceivedPushNotificationAsync_System_String_System_String_System_String_System_String_System_String_System_String_System_Threading_CancellationToken_" data-uid="Sensus.Notifications.Notifier.ProcessReceivedPushNotificationAsync(System.String,System.String,System.String,System.String,System.String,System.String,System.Threading.CancellationToken)">ProcessReceivedPushNotificationAsync(String, String, String, String, String, String, CancellationToken)</h4>
+  <h4 id="Sensus_Notifications_Notifier_ProcessReceivedPushNotificationAsync_Sensus_Notifications_PushNotification_System_Threading_CancellationToken_" data-uid="Sensus.Notifications.Notifier.ProcessReceivedPushNotificationAsync(Sensus.Notifications.PushNotification,System.Threading.CancellationToken)">ProcessReceivedPushNotificationAsync(PushNotification, CancellationToken)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task ProcessReceivedPushNotificationAsync(string protocolId, string id, string title, string body, string sound, string command, CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task ProcessReceivedPushNotificationAsync(PushNotification pushNotification, CancellationToken cancellationToken)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -380,33 +435,8 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">protocolId</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">id</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">title</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">body</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">sound</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">command</span></td>
+        <td><a class="xref" href="Sensus.Notifications.PushNotification.html">PushNotification</a></td>
+        <td><span class="parametername">pushNotification</span></td>
         <td></td>
       </tr>
       <tr>

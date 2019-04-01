@@ -52,6 +52,23 @@ namespace Sensus.Probes.User.Scripts
         /// <summary>
         /// The script expired after it was <see cref="Delivered"/>.
         /// </summary>
-        Expired
+        Expired,
+
+        /// <summary>
+        /// The <see cref="IScriptProbeAgent"/> accepted the <see cref="IScript"/> for delivery, making it available
+        /// to the user.
+        /// </summary>
+        AgentAccepted,
+
+        /// <summary>
+        /// The <see cref="IScriptProbeAgent"/> declined the <see cref="IScript"/> for delivery, causing it to be
+        /// ignored forever.
+        /// </summary>
+        AgentDeclined,
+
+        /// <summary>
+        /// The <see cref="IScriptProbeAgent"/> deferred delivery of the <see cref="IScript"/> to a later time.
+        /// </summary>
+        AgentDeferred
     }
 }

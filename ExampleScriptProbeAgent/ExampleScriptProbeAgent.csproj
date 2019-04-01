@@ -47,7 +47,7 @@
       <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Sensus.Shared.NuGet">
-      <HintPath>..\packages\Sensus.1.18.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
+      <HintPath>..\packages\Sensus.1.21.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

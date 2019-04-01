@@ -42,11 +42,12 @@ namespace Sensus.iOS.Callbacks
         public abstract List<string> CallbackIds { get; }
 
         /// <summary>
-        /// Updates the callbacks by running any that should have already been serviced or will be serviced in the near future.
-        /// Also reissues all silent notifications, which would have been canceled when the app went into the background.
+        /// Updates the callbacks when the app is activated. This services any callbacks that should have already been 
+        /// serviced or will be serviced in the near future. This also reissues all silent notifications, which would 
+        /// have been canceled when the app went into the background.
         /// </summary>
         /// <returns>Async task.</returns>
-        public async Task UpdateCallbacksAsync()
+        public async Task UpdateCallbacksOnActivationAsync()
         {
             foreach (string callbackId in CallbackIds)
             {
@@ -65,6 +66,7 @@ namespace Sensus.iOS.Callbacks
                     await ServiceCallbackAsync(callback, callback.InvocationId);
                 }
                 // all silent notifications (e.g., those for health tests) were cancelled when the app entered background. reissue them now.
+                // if the notification has already been issued, it will simply be replaced with itself (no change).
                 else if (callback.Silent)
                 {
                     await ReissueSilentNotificationAsync(callback.Id);
@@ -142,10 +144,7 @@ namespace Sensus.iOS.Callbacks
                 });
             });
 
-            // raise callback but don't notify user since we would have already done so when the notification was delivered to the notification tray.
-            // we don't need to specify how repeats will be scheduled, since the class that extends this one will take care of it. furthermore, there's 
-            // nothing to do if the callback thinks we can sleep, since ios does not provide wake-locks like android.
-            await RaiseCallbackAsync(callback, invocationId, false, null, null);
+            await RaiseCallbackAsync(callback, invocationId);
 
             // end the background task
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
@@ -154,15 +153,6 @@ namespace Sensus.iOS.Callbacks
 
                 UIApplication.SharedApplication.EndBackgroundTask(callbackTaskId);
             });
-        }
-
-        public void OpenDisplayPage(NSDictionary notificationInfo)
-        {
-            DisplayPage displayPage;
-            if (Enum.TryParse(notificationInfo?.ValueForKey(new NSString(Notifier.DISPLAY_PAGE_KEY)) as NSString, out displayPage))
-            {
-                SensusContext.Current.Notifier.OpenDisplayPage(displayPage);
-            }
         }
 
         /// <summary>

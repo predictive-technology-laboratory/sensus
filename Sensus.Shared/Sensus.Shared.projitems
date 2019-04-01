@@ -234,7 +234,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\EstimoteBeaconProbeBeaconsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SensusMasterPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SensusDetailPageItem.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\PrivacyPolicyPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SensusMasterDetailPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Compressor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\IClearableDataStore.cs" />
@@ -248,7 +247,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\LongitudeOffsetGpsAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TimeSpanExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\Notifier.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Notifications\DisplayPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\NotificationUserResponseAction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotificationRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotificationRequestFormat.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\BluetoothCharacteristicReadArgs.cs" />
@@ -273,6 +272,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\JsonDotNetExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TypeExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\WebRequestExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\PendingSurveyNotificationMode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ProtocolUpdateDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotificationUpdate.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotificationUpdateType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotification.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />

@@ -26,6 +26,7 @@ using System.Reflection;
 using Sensus.Callbacks;
 using Sensus.Exceptions;
 using Sensus.Context;
+using Newtonsoft.Json.Linq;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -37,9 +38,10 @@ namespace Sensus.Probes.User.Scripts
     public class ScriptProbe : Probe
     {
 
+#if __ANDROID__
+
         // android allows us to dynamically load code assemblies, but iOS does not. so, the current approach
         // is to only support dynamic loading on android and force compile-time assembly inclusion on ios.
-#if __ANDROID__
 
         public static IScriptProbeAgent GetAgent(byte[] assemblyBytes, string agentId)
         {
@@ -112,9 +114,9 @@ namespace Sensus.Probes.User.Scripts
 #endif
 
                         // set the agent's policy if we previously received one (e.g., via push notification)
-                        if (!string.IsNullOrWhiteSpace(AgentPolicyJSON))
+                        if (AgentPolicy != null)
                         {
-                            _agent.SetPolicyAsync(AgentPolicyJSON).Wait();
+                            _agent.SetPolicyAsync(AgentPolicy).Wait();
                         }
                     }
                     catch (Exception ex)
@@ -139,10 +141,10 @@ namespace Sensus.Probes.User.Scripts
         public string AgentId { get; set; }
 
         /// <summary>
-        /// Gets or sets the agent policy JSON.
+        /// Gets or sets the agent policy.
         /// </summary>
         /// <value>The agent policy JSON.</value>
-        public string AgentPolicyJSON { get; set; }
+        public JObject AgentPolicy { get; set; }
 
         public ObservableCollection<ScriptRunner> ScriptRunners
         {
@@ -240,7 +242,7 @@ namespace Sensus.Probes.User.Scripts
                 }
             }
 
-            await (Agent?.ResetAsync(SensusServiceHelper.Get()) ?? Task.CompletedTask);
+            await (Agent?.InitializeAsync(SensusServiceHelper.Get(), Protocol) ?? Task.CompletedTask);
         }
 
         protected override async Task ProtectedStartAsync()
@@ -258,14 +260,14 @@ namespace Sensus.Probes.User.Scripts
             // if the probe agent has requested survey delivery at regular intervals, schedule a repeating callback.
             if (Agent?.DeliveryInterval != null)
             {
-                _agentIntervalDeliveryScheduledCallback = new ScheduledCallback(async (id, cancellationToken, letDeviceSleepCallback) =>
+                _agentIntervalDeliveryScheduledCallback = new ScheduledCallback(async cancellationToken =>
                 {
                     foreach (ScriptRunner scriptRunner in _scriptRunners)
                     {
                         await scriptRunner.RunAsync(scriptRunner.Script.Copy(true));
                     }
 
-                }, Agent.DeliveryInterval.Value, Agent.DeliveryInterval.Value, Agent.Id, Protocol.Id, Protocol, null, null, Agent.DeliveryIntervalToleranceBefore.GetValueOrDefault(), Agent.DeliveryIntervalToleranceAfter.GetValueOrDefault());
+                }, Agent.DeliveryInterval.Value, Agent.DeliveryInterval.Value, Agent.Id, Protocol.Id, Protocol, null, Agent.DeliveryIntervalToleranceBefore.GetValueOrDefault(), Agent.DeliveryIntervalToleranceAfter.GetValueOrDefault());
 
                 await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_agentIntervalDeliveryScheduledCallback);
             }

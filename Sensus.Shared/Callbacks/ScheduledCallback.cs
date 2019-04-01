@@ -28,11 +28,9 @@ namespace Sensus.Callbacks
         /// <summary>
         /// Delegate for scheduled callback actions.
         /// </summary>
-        /// <param name="id">Identifier of the callback.</param>
         /// <param name="cancellationToken">Cancellation token for action.</param>
-        /// <param name="letDeviceSleepCallback">Action to call if the system should be allowed to sleep prior to completion of the action. Can be null.</param>
         /// <returns>A task that can be awaited while the action completes.</returns>
-        public delegate Task ActionAsyncDelegate(string id, CancellationToken cancellationToken, Action letDeviceSleepCallback);
+        public delegate Task ActionAsyncDelegate(CancellationToken cancellationToken);
 
         /// <summary>
         /// Action to execute.
@@ -66,22 +64,32 @@ namespace Sensus.Callbacks
         public TimeSpan? Timeout { get; set; }
 
         /// <summary>
-        /// Notification message that should be displayed to the user when the callback is invoked.
+        /// Notification message that should be displayed to the user at the time when the <see cref="ScheduledCallback"/> is
+        /// scheduled to run. On iOS, this message will not be displayed when the app is in the foreground. On Android, this 
+        /// message will be displayed regardless of the foreground/background state of the app.
         /// </summary>
         /// <value>The user notification message.</value>
         public string UserNotificationMessage { get; set; }
+
+        /// <summary>
+        /// Action to take after the user responds to (e.g., by tapping) the notification defined by <see cref="UserNotificationMessage"/>.
+        /// If <see cref="UserNotificationMessage"/> is <c>null</c>, then this has no effect.
+        /// </summary>
+        /// <value>The display page.</value>
+        public NotificationUserResponseAction NotificationUserResponseAction { get; set; }
+
+        /// <summary>
+        /// Message to display after the user responds to (e.g., by tapping) the notification defined by <see cref="UserNotificationMessage"/>.
+        /// If <see cref="UserNotificationMessage"/> is <c>null</c>, then this has no effect.
+        /// </summary>
+        /// <value>The notification user response message.</value>
+        public string NotificationUserResponseMessage { get; set; }
 
         /// <summary>
         /// Source of cancellation tokens to be cancelled when the action times out.
         /// </summary>
         /// <value>The canceller.</value>
         public CancellationTokenSource Canceller { get; set; }
-
-        /// <summary>
-        /// UI page to display when callback is returned to app.
-        /// </summary>
-        /// <value>The display page.</value>
-        public DisplayPage DisplayPage { get; set; }
 
         /// <summary>
         /// Gets or sets the state.
@@ -125,15 +133,30 @@ namespace Sensus.Callbacks
         /// <value>The delay tolerance total.</value>
         public TimeSpan DelayToleranceTotal => DelayToleranceBefore + DelayToleranceAfter;
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this <see cref="T:Sensus.Callbacks.ScheduledCallback"/> has been batched with another <see cref="ScheduledCallback"/>.
+        /// </summary>
+        /// <value><c>true</c> if batched; otherwise, <c>false</c>.</value>
+        public bool Batched { get; set; }
+
 #if __IOS__
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="T:Sensus.Callbacks.ScheduledCallback"/> is silent. Silent 
         /// callbacks do not have a message to display to the user via notifications, and the user is never aware of them. These
         /// are only used when Sensus is in the foreground when managing <see cref="ScheduledCallback"/>s. This only applies
         /// to iOS, as there is no need for such silent callbacks in Android where we are free to do things in the background.
+        /// To create a <see cref="ScheduledCallback"/> for which <see cref="Silent"/> is <code>true</code>, pass <code>null</code>
+        /// to the constructor for the user notification message.
         /// </summary>
         /// <value><c>true</c> if silent; otherwise, <c>false</c>.</value>
         public bool Silent { get { return UserNotificationMessage == null; } }
+
+        /// <summary>
+        /// Gets or sets the push notification backend key. Only used in iOS, which uses push notifications to run
+        /// each <see cref="T:Sensus.Callbacks.ScheduledCallback"/>.
+        /// </summary>
+        /// <value>The push notification backend key.</value>
+        public Guid PushNotificationBackendKey { get; set; } = Guid.NewGuid();
 #endif
 
         /// <summary>
@@ -142,7 +165,7 @@ namespace Sensus.Callbacks
         private ScheduledCallback()
         {
             Canceller = new CancellationTokenSource();
-            DisplayPage = DisplayPage.None;
+            NotificationUserResponseAction = NotificationUserResponseAction.None;
             State = ScheduledCallbackState.Created;
         }
 
@@ -152,10 +175,9 @@ namespace Sensus.Callbacks
         /// <param name="actionAsync">Action to execute when callback time arrives.</param>
         /// <param name="delay">How long to delay callback execution.</param>
         /// <param name="id">Identifier for callback. Must be unique within the callback domain.</param>
-        /// <param name="domain">Domain of callback identifier. All callback IDs within a domain must be unique. If a duplicate ID is provided, it will not be scheduled.</param>
+        /// <param name="domain">Domain of callback identifier. All callback IDs within a domain must be unique. If an ID duplicates another within the same domain, then it will not be scheduled.</param>
         /// <param name="protocol">Protocol associated with scheduled callback</param>
         /// <param name="timeout">How long to allow callback to execute before cancelling it.</param>
-        /// <param name="userNotificationMessage">Message to display to the user when executing the callback.</param>
         /// <param name="delayToleranceBefore">Delay tolerance before.</param>
         /// <param name="delayToleranceAfter">Delay tolerance after.</param>
         public ScheduledCallback(ActionAsyncDelegate actionAsync,
@@ -164,7 +186,6 @@ namespace Sensus.Callbacks
                                  string domain,
                                  Protocol protocol,
                                  TimeSpan? timeout,
-                                 string userNotificationMessage,
                                  TimeSpan delayToleranceBefore,
                                  TimeSpan delayToleranceAfter)
             : this()
@@ -174,7 +195,6 @@ namespace Sensus.Callbacks
             Id = (domain ?? "SENSUS") + "." + id;  // if a domain is not specified, use a global domain.
             Protocol = protocol;
             Timeout = timeout;
-            UserNotificationMessage = userNotificationMessage;
             DelayToleranceBefore = delayToleranceBefore;
             DelayToleranceAfter = delayToleranceAfter;
         }
@@ -182,33 +202,30 @@ namespace Sensus.Callbacks
         /// <summary>
         /// Initializes a new instance of the <see cref="ScheduledCallback"/> class.
         /// </summary>
-        /// <param name="action">Action to execute when callback time arrives.</param>
+        /// <param name="actionAsync">Action to execute when callback time arrives.</param>
         /// <param name="initialDelay">How long to delay callback execution.</param>
         /// <param name="repeatDelay">How long to delay repeating callback executions following the first callback.</param>
         /// <param name="id">Identifier for callback. Must be unique within the callback domain.</param>
-        /// <param name="domain">Domain of callback identifier. All callback IDs within a domain must be unique. If a duplicate ID is provided, it will not be scheduled.</param>
+        /// <param name="domain">Domain of callback identifier. All callback IDs within a domain must be unique. If an ID duplicates another in the same domain, then it will not be scheduled.</param>
         /// <param name="protocol">Protocol associated with scheduled callback</param>
         /// <param name="timeout">How long to allow callback to execute before cancelling it.</param>
-        /// <param name="userNotificationMessage">Message to display to the user when executing the callback.</param>
         /// <param name="delayToleranceBefore">Delay tolerance before.</param>
         /// <param name="delayToleranceAfter">Delay tolerance after.</param>
-        public ScheduledCallback(ActionAsyncDelegate action,
+        public ScheduledCallback(ActionAsyncDelegate actionAsync,
                                  TimeSpan initialDelay,
                                  TimeSpan repeatDelay,
                                  string id,
                                  string domain,
                                  Protocol protocol,
                                  TimeSpan? timeout,
-                                 string userNotificationMessage,
                                  TimeSpan delayToleranceBefore,
                                  TimeSpan delayToleranceAfter)
-            : this(action,
+            : this(actionAsync,
                    initialDelay,
                    id,
                    domain,
                    protocol,
                    timeout,
-                   userNotificationMessage,
                    delayToleranceBefore,
                    delayToleranceAfter)
         {

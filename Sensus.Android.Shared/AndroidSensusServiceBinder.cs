@@ -19,18 +19,10 @@ namespace Sensus.Android
 {
     public class AndroidSensusServiceBinder : Binder
     {
-        private AndroidSensusServiceHelper _sensusServiceHelper;
-        public Action ServiceStopAction;
+        public Action OnServiceStop;
 
-        public AndroidSensusServiceHelper SensusServiceHelper
+        public AndroidSensusServiceBinder()
         {
-            get { return _sensusServiceHelper; }
-            set { _sensusServiceHelper = value; }
-        }
-
-        public AndroidSensusServiceBinder(AndroidSensusServiceHelper sensusServiceHelper)
-        {
-            _sensusServiceHelper = sensusServiceHelper;
         }
     }
 }

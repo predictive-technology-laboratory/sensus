@@ -32,34 +32,50 @@ using CoreLocation;
 namespace Sensus.Probes
 {
     /// <summary>
-    /// Polling Probes are triggered at regular intervals. When triggered, Polling Probes ask the device (and perhaps the user) for some type of 
-    /// information and store the resulting information in the <see cref="LocalDataStore"/>.
+    /// Polling Probes are triggered at regular intervals. When triggered, the <see cref="PollingProbe"/> asks the device (and perhaps the user) 
+    /// for some type of information and stores the resulting information in the <see cref="LocalDataStore"/>.
     /// 
     /// # Background Considerations
-    /// On Android, all Polling Probes are able to periodically wake up in the background, take a reading, and allow the system to go back to 
+    /// On Android, each <see cref="PollingProbe"/> is able to periodically wake up in the background, take a reading, and allow the system to go back to 
     /// sleep. The Android operating system will occasionally delay the wake-up signal in order to batch wake-ups and thereby conserve energy; however, 
-    /// this delay is usually only 5-10 seconds. So, if you configure a Polling Probe to poll every 60 seconds, you may see actual polling delays of 
-    /// 65-70 seconds and maybe even more. This is by design within Android and cannot be changed.
+    /// this delay is usually only 5-10 seconds. So, if you configure a <see cref="PollingProbe"/> to poll every 60 seconds, you may see actual polling 
+    /// delays of 65-70 seconds and maybe even more. This is by design within Android and cannot be changed.
     /// 
     /// Polling on iOS is generally less reliable than on Android. By design, iOS apps are restricted from performing processing in the background, 
     /// with the following exceptions for <see cref="PollingProbe"/>s:
     /// 
-    ///   * Significant location change processing:  If SignificantChangePoll is enabled, the Polling Probe will wake up each time
+    ///   * Significant location change processing:  If <see cref="SignificantChangePoll"/> is enabled, the <see cref="PollingProbe"/> will wake up each time
     ///     the user's physical location changes significantly. This change is triggered by a change in cellular tower, which is roughly on the 
     ///     order of several kilometers.
     /// 
-    ///   * Push notification processing:  If you [configure push notifications](xref:push_notifications), the Polling Probe will be woken up
+    ///   * Push notification processing:  If you [configure push notifications](xref:push_notifications), the <see cref="PollingProbe"/> will be woken up
     ///     at the desired time to take a reading. Note that the reliability of these timings is subject to push notification throttling imposed
     ///     by the Apple Push Notification Service. The value of <see cref="PollingSleepDurationMS"/> should be set conservatively for all probes,
-    ///     for example no lower than 15-20 minutes.
+    ///     for example no lower than 15-20 minutes. The push notification backend server will attempt to deliver push notifications slightly ahead of their
+    ///     scheduled times. If such a push notification arrives at the device before the scheduled time, then the local notification (if 
+    ///     <see cref="AlertUserWhenBackgrounded"/> is enabled) will be cancelled.
     /// 
-    /// Beyond these exceptions, all processing within Sensus for iOS must be halted when the user backgrounds the app. Sensus does its best to support Polling 
-    /// Probes on iOS by scheduling notifications to appear when polling operations (e.g., taking a GPS reading) should execute. This relies on the 
-    /// user to open the notification from the tray and bring Sensus to the foreground so that the polling operation can execute. Of course, the user 
-    /// might not see the notification or might choose not to open it. The polling operation will not be executed in such cases.
+    /// Beyond these exceptions, all processing within Sensus for iOS must be halted when the user backgrounds the app. Sensus does its best to support 
+    /// <see cref="PollingProbe"/>s on iOS by scheduling notifications to appear when polling operations (e.g., taking a GPS reading) should execute. This 
+    /// relies on the user to open the notification from the tray and bring Sensus to the foreground so that the polling operation can execute. Of course, 
+    /// the user might not see the notification or might choose not to open it. The polling operation will not be executed in such cases.
     /// </summary>
     public abstract class PollingProbe : Probe
     {
+
+#if __IOS__
+        // we used to instantiate the CLLocationManager as an instance-level field of this class,
+        // but these references are duplicative and all point to the same object. as a result, 
+        // we were seeing many warnings about unnecessary reinitialization. this is better done
+        // as a static member.
+        private static CLLocationManager SIGNIFICANT_CHANGE_LOCATION_MANAGER = new CLLocationManager
+        {
+            DistanceFilter = 5.0,
+            PausesLocationUpdatesAutomatically = false,
+            AllowsBackgroundLocationUpdates = true
+        };
+#endif
+
         private int _pollingSleepDurationMS;
         private int _pollingTimeoutMinutes;
         private bool _isPolling;
@@ -68,12 +84,8 @@ namespace Sensus.Probes
         private bool _acPowerConnectPoll;
         private bool _acPowerConnectPollOverridesScheduledPolls;
         private EventHandler<bool> _powerConnectionChanged;
-
-#if __IOS__
         private bool _significantChangePoll;
         private bool _significantChangePollOverridesScheduledPolls;
-        private CLLocationManager _locationManager;
-#endif
 
         /// <summary>
         /// How long to sleep (become inactive) between successive polling operations.
@@ -168,14 +180,13 @@ namespace Sensus.Probes
             set { _acPowerConnectPollOverridesScheduledPolls = value; }
         }
 
-#if __IOS__
         /// <summary>
         /// Available on iOS only. Whether or not to poll when a significant change in location has occurred. See 
         /// [here](https://developer.apple.com/library/content/documentation/UserExperience/Conceptual/LocationAwarenessPG/CoreLocation/CoreLocation.html) for 
         /// more information on significant changes.
         /// </summary>
         /// <value><c>true</c> if significant change poll; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Poll On Significant Location Change:", true, 9)]
+        [OnOffUiProperty("(iOS) Poll On Significant Location Change:", true, 9)]
         public bool SignificantChangePoll
         {
             get { return _significantChangePoll; }
@@ -188,20 +199,30 @@ namespace Sensus.Probes
         /// on significant changes.
         /// </summary>
         /// <value><c>true</c> if significant change poll overrides scheduled polls; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Significant Change Poll Overrides Scheduled Polls:", true, 10)]
+        [OnOffUiProperty("(iOS) Significant Change Poll Overrides Scheduled Polls:", true, 10)]
         public bool SignificantChangePollOverridesScheduledPolls
         {
             get { return _significantChangePollOverridesScheduledPolls; }
             set { _significantChangePollOverridesScheduledPolls = value; }
         }
-#endif
+
+        /// <summary>
+        /// Available on iOS only. Whether or not to alert the user with a notification when polling should occur and the
+        /// app is in the background. See the <see cref="PollingProbe"/> overview for information about background considerations. 
+        /// The notifications issued when this setting is enabled encourage the user to bring the app to the foreground so that 
+        /// data polling may occur. Depending on how many <see cref="PollingProbe"/>s are enabled, these notifications can
+        /// become excessive for the user.
+        /// </summary>
+        /// <value><c>true</c> to alert user when backgrounded; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("(iOS) Alert User When Backgrounded:", true, 11)]
+        public bool AlertUserWhenBackgrounded { get; set; } = true;
 
         /// <summary>
         /// Tolerance in milliseconds for running the <see cref="PollingProbe"/> before the scheduled 
         /// time, if doing so will increase the number of batched actions and thereby decrease battery consumption.
         /// </summary>
         /// <value>The delay tolerance before.</value>
-        [EntryIntegerUiProperty("Delay Tolerance Before (MS):", true, 11, true)]
+        [EntryIntegerUiProperty("Delay Tolerance Before (MS):", true, 12, true)]
         public int DelayToleranceBeforeMS { get; set; }
 
         /// <summary>
@@ -209,7 +230,7 @@ namespace Sensus.Probes
         /// time, if doing so will increase the number of batched actions and thereby decrease battery consumption.
         /// </summary>
         /// <value>The delay tolerance before.</value>
-        [EntryIntegerUiProperty("Delay Tolerance After (MS):", true, 12, true)]
+        [EntryIntegerUiProperty("Delay Tolerance After (MS):", true, 13, true)]
         public int DelayToleranceAfterMS { get; set; }
 
         public override string CollectionDescription
@@ -259,12 +280,11 @@ namespace Sensus.Probes
             _pollTimes = new List<DateTime>();
             _acPowerConnectPoll = false;
             _acPowerConnectPollOverridesScheduledPolls = false;
-
-#if __IOS__
             _significantChangePoll = false;
             _significantChangePollOverridesScheduledPolls = false;
-            _locationManager = new CLLocationManager();
-            _locationManager.LocationsUpdated += async (sender, e) =>
+
+#if __IOS__
+            SIGNIFICANT_CHANGE_LOCATION_MANAGER.LocationsUpdated += async (sender, e) =>
             {
                 try
                 {
@@ -276,7 +296,7 @@ namespace Sensus.Probes
                         pollCallbackCanceller.CancelAfter(_pollCallback.Timeout.Value);
                     }   
 
-                    await _pollCallback.ActionAsync(_pollCallback.Id, pollCallbackCanceller.Token, () => { });
+                    await _pollCallback.ActionAsync(pollCallbackCanceller.Token);
                 }
                 catch (Exception ex)
                 {
@@ -299,7 +319,7 @@ namespace Sensus.Probes
                             pollCallbackCanceller.CancelAfter(_pollCallback.Timeout.Value);
                         }
 
-                        await _pollCallback.ActionAsync(_pollCallback.Id, pollCallbackCanceller.Token, () => { });
+                        await _pollCallback.ActionAsync(pollCallbackCanceller.Token);
                     }
                 }
                 catch (Exception ex)
@@ -312,17 +332,6 @@ namespace Sensus.Probes
         protected override async Task ProtectedStartAsync()
         {
             await base.ProtectedStartAsync();
-
-#if __IOS__
-            string userNotificationMessage = DisplayName + " data requested.";
-#elif __ANDROID__
-            string userNotificationMessage = null;
-#elif LOCAL_TESTS
-            string userNotificationMessage = null;
-#else
-#warning "Unrecognized platform"
-            string userNotificationMessage = null;
-#endif
 
             // we used to use an initial delay of zero in order to poll immediately; however, this causes the following
             // problems:
@@ -337,7 +346,7 @@ namespace Sensus.Probes
             //
             // given the above, we now use an initial delay equal to the standard delay. the only cost is a single lost
             // reading at the very beginning.
-            _pollCallback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
+            _pollCallback = new ScheduledCallback(async cancellationToken =>
             {
                 if (Running)
                 {
@@ -383,21 +392,32 @@ namespace Sensus.Probes
                     _isPolling = false;
                 }
 
-            }, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), TimeSpan.FromMilliseconds(_pollingSleepDurationMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_pollingTimeoutMinutes), userNotificationMessage, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS));
+            }, TimeSpan.FromMilliseconds(_pollingSleepDurationMS), TimeSpan.FromMilliseconds(_pollingSleepDurationMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_pollingTimeoutMinutes), TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS));
+
+#if __IOS__
+            // on ios, notify the user about desired polling to encourage them to foreground the app.
+            if (AlertUserWhenBackgrounded)
+            {
+                // capitalize first character of data request message
+                string dataRequestMessage = DisplayName + " data requested.";
+                dataRequestMessage = dataRequestMessage[0].ToString().ToUpper() + dataRequestMessage.Substring(1).ToLower();
+                _pollCallback.UserNotificationMessage = dataRequestMessage;
+
+                // give the user some feedback when they tap the callback notification
+                _pollCallback.NotificationUserResponseMessage = "Data collected. Thanks!";
+            }
+#endif
 
             bool schedulePollCallback = true;
 
 #if __IOS__
             if (_significantChangePoll)
             {
-                _locationManager.RequestAlwaysAuthorization();
-                _locationManager.DistanceFilter = 5.0;
-                _locationManager.PausesLocationUpdatesAutomatically = false;
-                _locationManager.AllowsBackgroundLocationUpdates = true;
+                SIGNIFICANT_CHANGE_LOCATION_MANAGER.RequestAlwaysAuthorization();
 
                 if (CLLocationManager.LocationServicesEnabled)
                 {
-                    _locationManager.StartMonitoringSignificantLocationChanges();
+                    SIGNIFICANT_CHANGE_LOCATION_MANAGER.StartMonitoringSignificantLocationChanges();
 
                     if (_significantChangePollOverridesScheduledPolls)
                     {
@@ -436,7 +456,7 @@ namespace Sensus.Probes
 #if __IOS__
             if (_significantChangePoll)
             {
-                _locationManager.StopMonitoringSignificantLocationChanges();
+                SIGNIFICANT_CHANGE_LOCATION_MANAGER.StopMonitoringSignificantLocationChanges();
             }
 #endif
 

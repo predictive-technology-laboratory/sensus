@@ -19,7 +19,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using Sensus.Concurrent;
-using Sensus.Extensions;
 using Sensus.UI.UiProperties;
 using Sensus.Context;
 using Sensus.Callbacks;
@@ -27,10 +26,7 @@ using Newtonsoft.Json;
 using Sensus.UI.Inputs;
 using Plugin.Permissions.Abstractions;
 using System.ComponentModel;
-
-#if __IOS__
 using Sensus.Notifications;
-#endif
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -223,10 +219,12 @@ namespace Sensus.Probes.User.Scripts
         }
 
         /// <summary>
-        /// Public property for serialization only. Do not reference due to concurrency issues.
+        /// Property for serialization only. Do not reference due to concurrency issues. Instead, reference
+        /// the field <see cref="_scheduledCallbackTimes"/> within a lock statement.
         /// </summary>
         /// <value>The scheduled callbacks.</value>
-        public List<Tuple<ScheduledCallback, ScriptTriggerTime>> ScheduledCallbackTimes
+        [JsonProperty]
+        private List<Tuple<ScheduledCallback, ScriptTriggerTime>> ScheduledCallbackTimes
         {
             get
             {
@@ -310,7 +308,9 @@ namespace Sensus.Probes.User.Scripts
         public string IncompleteSubmissionConfirmation { get; set; }
 
         /// <summary>
-        /// Whether or not to shuffle the order of the survey's input groups prior to displaying them to the user.
+        /// Whether or not to shuffle the order of the survey's <see cref="InputGroup"/>s prior to displaying them to the user. This 
+        /// only applies if none of the groups contain <see cref="Input"/>s with display conditions. If display conditions are present, 
+        /// then it is not possible to shuffle the <see cref="InputGroup"/>s and this setting will have no effect.
         /// </summary>
         /// <value><c>true</c> if shuffle input groups; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Shuffle Input Groups:", true, 16)]
@@ -327,11 +327,11 @@ namespace Sensus.Probes.User.Scripts
         public bool UseTriggerDatumTimestampInSubcaption { get; set; }
 
         /// <summary>
-        /// Whether or not to force a local-to-remote transfer to run each time this survey is completed
+        /// Whether or not to force a local-to-remote transfer to run each time this survey is submitted
         /// by the user.
         /// </summary>
-        /// <value><c>true</c> to force transfer on survey submission; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Force Remote Storage On Survey Submission:", true, 18)]
+        /// <value><c>true</c> to force transfer on submission; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Force Remote Storage On Submission:", true, 18)]
         public bool ForceRemoteStorageOnSurveySubmission { get; set; }
 
         /// <summary>
@@ -517,7 +517,11 @@ namespace Sensus.Probes.User.Scripts
         public async Task StopAsync()
         {
             await UnscheduleCallbacksAsync();
-            await SensusServiceHelper.Get().RemoveScriptsForRunnerAsync(this, true);
+
+            if (SensusServiceHelper.Get().RemoveScriptsForRunner(this))
+            {
+                await SensusServiceHelper.Get().IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.None, Probe.Protocol);
+            }
         }
 
         public async Task ScheduleScriptRunsAsync()
@@ -536,26 +540,31 @@ namespace Sensus.Probes.User.Scripts
             List<ScriptTriggerTime> callbackTimesToReschedule = new List<ScriptTriggerTime>();
             lock (_scheduledCallbackTimes)
             {
-                // remove any callbacks whose times have passed
+                // remove any callbacks whose times have passed. be sure to use the callback's next execution time, as this may differ
+                // from the script trigger time when callback batching is enabled. for example, if the callback permit delay tolerance
+                // prior to the trigger time, then the scheduled callback next execution time may precede the trigger time. 
                 _scheduledCallbackTimes.RemoveAll(scriptRunCallback => scriptRunCallback.Item1.NextExecution.GetValueOrDefault(DateTime.MinValue) < DateTime.Now);
 
                 // get future callbacks that need to be rescheduled. it can happen that the app crashes or is killed 
                 // and then resumes (e.g., on ios push notification), and it's important for the times of the scheduled 
-                // callbacks to be maintained. this is particularly important for runs that are very far out in the future. 
-                // if the app is restarted more often than the script is run, then the script will likely never be run.
+                // callbacks to be maintained. this is particularly important for scheduled times that are very far out 
+                // in the future. if the app is restarted more often than the script is run, then the script will likely 
+                // never be run.
                 foreach (Tuple<ScheduledCallback, ScriptTriggerTime> callbackTime in _scheduledCallbackTimes.ToList())
                 {
                     if (!SensusContext.Current.CallbackScheduler.ContainsCallback(callbackTime.Item1))
                     {
+                        // it's correct to reference the trigger time rather than the callback time, as the former
+                        // is what should be used in callback batching.
                         callbackTimesToReschedule.Add(callbackTime.Item2);
 
-                        // we're about to reschedule callback. remove the old one so we don't have duplicates.
+                        // we're about to reschedule the callback. remove the old one so we don't have duplicates.
                         _scheduledCallbackTimes.Remove(callbackTime);
                     }
                 }
             }
 
-            // reschedule as needed
+            // reschedule script runs as needed
             foreach (ScriptTriggerTime callbackTimeToReschedule in callbackTimesToReschedule)
             {
                 await ScheduleScriptRunAsync(callbackTimeToReschedule);
@@ -583,20 +592,6 @@ namespace Sensus.Probes.User.Scripts
                 // day.
                 if (triggerTime.Trigger > DateTime.Now && (Probe.Protocol.ContinueIndefinitely || triggerTime.Trigger < Probe.Protocol.EndDate))
                 {
-#if __IOS__
-                    // ensure we have sufficient background time on ios. the current method is called both when servicing a callback
-                    // as well as when restarting the app upon receipt of a push notification. in both cases, we need to be sensitive
-                    // to the alotted background execution time remaining. the scheduling operating can be slow on ios because it 
-                    // can involve the submission of a push notification request to the remote data store. we don't want to run afoul
-                    // of background execution time constraints as a result. we'll need to defer scheduling script runs until the
-                    // user foregrounds the app again.
-                    if (UIKit.UIApplication.SharedApplication.BackgroundTimeRemaining < 10)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Running out of background time. Aborting scheduling script runs.", LoggingLevel.Normal, GetType());
-                        break;
-                    }
-#endif
-
                     await ScheduleScriptRunAsync(triggerTime);
 
                     // stop when we have scheduled enough runs
@@ -614,9 +609,15 @@ namespace Sensus.Probes.User.Scripts
             await SensusServiceHelper.Get().SaveAsync();
         }
 
-        private async Task ScheduleScriptRunAsync(ScriptTriggerTime triggerTime)
+        /// <summary>
+        /// Schedules a script run. 
+        /// </summary>
+        /// <returns>Task.</returns>
+        /// <param name="triggerTime">Trigger time.</param>
+        /// <param name="scriptId">Script identifier. If null, a random identifier will be generated for the script to run.</param>
+        private async Task ScheduleScriptRunAsync(ScriptTriggerTime triggerTime, string scriptId = null)
         {
-            ScheduledCallback callback = CreateScriptRunCallback(triggerTime);
+            ScheduledCallback callback = CreateScriptRunCallback(triggerTime, scriptId);
 
             // there is a race condition, so far only seen in ios, in which multiple script runner notifications
             // accumulate and are executed concurrently when the user opens the app. when these script runners
@@ -639,15 +640,27 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
-        private ScheduledCallback CreateScriptRunCallback(ScriptTriggerTime triggerTime)
+        /// <summary>
+        /// Creates the script run callback.
+        /// </summary>
+        /// <returns>The script run callback.</returns>
+        /// <param name="triggerTime">Trigger time.</param>
+        /// <param name="scriptId">Script identifier. If null, then a random identifier will be generated for the script that will be run.</param>
+        private ScheduledCallback CreateScriptRunCallback(ScriptTriggerTime triggerTime, string scriptId = null)
         {
             Script scriptToRun = Script.Copy(true);
             scriptToRun.ExpirationDate = triggerTime.Expiration;
             scriptToRun.ScheduledRunTime = triggerTime.Trigger;
 
-            ScheduledCallback callback = new ScheduledCallback(async (callbackId, cancellationToken, letDeviceSleepCallback) =>
+            // if we're passed a run ID, then override the random one that was generated above in the call to Script.Copy.
+            if (scriptId != null)
             {
-                SensusServiceHelper.Get().Logger.Log($"Running script on callback ({callbackId})", LoggingLevel.Normal, GetType());
+                scriptToRun.Id = scriptId;
+            }
+
+            ScheduledCallback callback = new ScheduledCallback(async cancellationToken =>
+            {
+                SensusServiceHelper.Get().Logger.Log("Running script \"" + Name + "\".", LoggingLevel.Normal, GetType());
 
                 if (!Probe.Running || !_enabled)
                 {
@@ -656,18 +669,13 @@ namespace Sensus.Probes.User.Scripts
 
                 await RunAsync(scriptToRun);
 
-                lock (_scheduledCallbackTimes)
-                {
-                    _scheduledCallbackTimes.RemoveAll(scriptRunCallbackTime => scriptRunCallbackTime.Item1.Id == callbackId);
-                }
-
                 // on android, the callback alarm has fired and the script has been run. on ios, the notification has been
                 // delivered (1) to the app in the foreground, (2) to the notification tray where the user has opened
                 // it, or (3) via push notification in the background. in any case, the script has been run. now is a good 
                 // time to update the scheduled callbacks to run this script.
                 await ScheduleScriptRunsAsync();
 
-            }, triggerTime.TimeTillTrigger, GetType().FullName + "-" + (triggerTime.Trigger - DateTime.MinValue).Days + "-" + triggerTime.Window, Script.Id, Probe.Protocol, null, null, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS));  // use Script.Id rather than script.Id for the callback domain. using the former means that callbacks are unique to the script runner and not the script copies (the latter) that we will be running. the latter would always be unique.
+            }, triggerTime.TimeTillTrigger, Script.Id + "." + GetType().FullName + "." + (triggerTime.Trigger - DateTime.MinValue).Days + "." + triggerTime.Window, Probe.Protocol.Id, Probe.Protocol, null, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS));  // use Script.Id rather than script.Id for the callback identifier. using the former means that callbacks are unique to the script runner and not the script copies (the latter) that we will be running. the latter would always be unique.
 
 #if __IOS__
             // all scheduled scripts with an expiration should show an expiration date to the user. on iOS this will be the only notification for 
@@ -684,7 +692,7 @@ namespace Sensus.Probes.User.Scripts
                 callback.UserNotificationMessage = "Please open to take survey.";
             }
 
-            callback.DisplayPage = DisplayPage.PendingSurveys;
+            callback.NotificationUserResponseAction = NotificationUserResponseAction.DisplayPendingSurveys;
 #endif
 
             return callback;
@@ -760,15 +768,23 @@ namespace Sensus.Probes.User.Scripts
             {
                 Tuple<bool, DateTimeOffset?> deliverFutureTime = await Probe.Agent.DeliverSurveyNowAsync(script);
 
-                if (!deliverFutureTime.Item1)
+                if (deliverFutureTime.Item1)
+                {
+                    await Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.AgentAccepted, script.RunTime.Value, script), CancellationToken.None);
+                }
+                else
                 {
                     if (deliverFutureTime.Item2 == null)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Cancelling survey at agent's request.", LoggingLevel.Normal, GetType());
+                        SensusServiceHelper.Get().Logger.Log("Agent has declined survey without deferral.", LoggingLevel.Normal, GetType());
+
+                        await Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.AgentDeclined, script.RunTime.Value, script), CancellationToken.None);
                     }
                     else if (deliverFutureTime.Item2.Value > DateTimeOffset.UtcNow)
                     {
-                        SensusServiceHelper.Get().Logger.Log("Rescheduling survey for " + deliverFutureTime.Item2.Value, LoggingLevel.Normal, GetType());
+                        SensusServiceHelper.Get().Logger.Log("Agent has deferred survey until:  " + deliverFutureTime.Item2.Value, LoggingLevel.Normal, GetType());
+
+                        await Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.AgentDeferred, script.RunTime.Value, script), CancellationToken.None);
 
                         // check whether we need to expire the rescheduled script at some future point
                         DateTime? expiration = null;
@@ -781,12 +797,15 @@ namespace Sensus.Probes.User.Scripts
                         // there is no window, so just add a descriptive, unique descriptor in place of the window
                         ScriptTriggerTime triggerTime = new ScriptTriggerTime(trigger, expiration, "DEFERRED-" + Guid.NewGuid());
 
-                        // schedule the trigger
-                        await ScheduleScriptRunAsync(triggerTime);
+                        // schedule the trigger. since this is a deferral, use the same script identifier that we currently have. this 
+                        // will maintain consistency and interpretability of the ScriptStateDatum objects that are recording the progression
+                        // of scripts. this will also let survey agents better interpret what's going on with deferrals. this identifier is
+                        // used as the RunId in the various tracked data types.
+                        await ScheduleScriptRunAsync(triggerTime, script.Id);
                     }
                     else
                     {
-                        SensusServiceHelper.Get().Logger.Log("Warning:  Survey reschedule time is in the past:  " + deliverFutureTime.Item2.Value, LoggingLevel.Normal, GetType());
+                        SensusServiceHelper.Get().Logger.Log("Warning:  Agent has deferred survey to a time in the past:  " + deliverFutureTime.Item2.Value, LoggingLevel.Normal, GetType());
                     }
 
                     // do not proceed. the calling method (if scheduler-based) will take care of removing the current script.

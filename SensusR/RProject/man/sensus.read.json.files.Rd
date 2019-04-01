@@ -5,8 +5,8 @@
 \title{Read JSON-formatted Sensus data.}
 \usage{
 sensus.read.json.files(data.path, is.directory = TRUE,
-  recursive = TRUE, convert.to.local.timezone = TRUE,
-  local.timezone = Sys.timezone())
+  recursive = TRUE, local.timezone = Sys.timezone(),
+  data.types = NULL)
 }
 \arguments{
 \item{data.path}{Path to Sensus JSON data (either a file or a directory).}
@@ -15,9 +15,9 @@ sensus.read.json.files(data.path, is.directory = TRUE,
 
 \item{recursive}{Whether or not to read files recursively from directory indicated by path.}
 
-\item{convert.to.local.timezone}{Whether or not to convert timestamps to the local timezone.}
+\item{local.timezone}{The local timezone to convert datum timestamps to, or NULL to leave the timestamps unconverted.}
 
-\item{local.timezone}{If converting timestamps to local timesonze, the local timezone to use.}
+\item{data.types}{Specific data types to read. A full list of data types can be found here:  \url{https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Datum.html}. For example \code{c("AccelerometerDatum", "HeightDatum")} will only read accelerometer and height data. Pass \code{NULL} to read all data types.}
 }
 \value{
 All data, listed by type.
@@ -26,6 +26,6 @@ All data, listed by type.
 Read JSON-formatted Sensus data.
 }
 \examples{
-data.path = system.file("extdata", "example-data", package="SensusR")
-data = sensus.read.json.files(data.path)
+# data.path = system.file("extdata", "example-data", package="SensusR")	
+# data = sensus.read.json.files(data.path)
 }

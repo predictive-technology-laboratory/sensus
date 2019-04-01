@@ -41,9 +41,9 @@ namespace Sensus.UI
         {
             base.OnStart();
 
-            AppCenter.Start("ios=" + SensusServiceHelper.APP_CENTER_KEY_IOS + ";" + 
-                            "android=" + SensusServiceHelper.APP_CENTER_KEY_ANDROID, 
-                            typeof(Analytics), 
+            AppCenter.Start("ios=" + SensusServiceHelper.APP_CENTER_KEY_IOS + ";" +
+                            "android=" + SensusServiceHelper.APP_CENTER_KEY_ANDROID,
+                            typeof(Analytics),
                             typeof(Crashes));
         }
     }

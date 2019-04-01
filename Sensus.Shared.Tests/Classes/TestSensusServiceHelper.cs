@@ -81,19 +81,6 @@ namespace Sensus.Tests.Classes
 
         public override string PushNotificationToken => throw new NotImplementedException();
 
-        protected override bool IsOnMainThread
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public override Task BringToForegroundAsync()
-        {
-            throw new NotImplementedException();
-        }
-
         public override Task<bool> DisableBluetoothAsync(bool reenable, bool lowEnergy, string rationale)
         {
             throw new NotImplementedException();
@@ -110,16 +97,6 @@ namespace Sensus.Tests.Classes
         }
 
         public override ImageSource GetQrCodeImageSource(string contents)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void KeepDeviceAwake()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void LetDeviceSleep()
         {
             throw new NotImplementedException();
         }

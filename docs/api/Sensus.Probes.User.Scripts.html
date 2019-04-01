@@ -112,7 +112,11 @@ to display when a <a class="xref" href="Sensus.Datum.html">Datum</a> from anothe
       <section><p>Status of scripts within Sensus</p>
 </section>
       <h4><a class="xref" href="Sensus.Probes.User.Scripts.ScriptStateDatum.html">ScriptStateDatum</a></h4>
-      <section><p>Records state updates for each <a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a> as it progresses from delivery through removal from the system.</p>
+      <section><p>Records state transitions for each <a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a> as it progresses from delivery to the user through removal from 
+the system, either by the user completing and submitting it or deleting it without submission. This data stream in some
+ways parallels that of <a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html">ScriptDatum</a>, with the latter tracking data resulting from submission of the
+<a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a> by the user. The <a class="xref" href="Sensus.Probes.User.Scripts.ScriptStateDatum.html">ScriptStateDatum</a> stream will be generated and submitted to the
+<a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a> regardless of whether the user submits the <a class="xref" href="Sensus.Probes.User.Scripts.Script.html">Script</a>.</p>
 </section>
       <h4><a class="xref" href="Sensus.Probes.User.Scripts.ScriptTriggerTime.html">ScriptTriggerTime</a></h4>
       <section></section>

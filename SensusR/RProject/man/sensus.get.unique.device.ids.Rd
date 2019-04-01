@@ -10,7 +10,7 @@ sensus.get.unique.device.ids(data)
 \item{data}{Data to write, as read using \code{\link{sensus.read.json.files}}.}
 }
 \value{
-Unique device IDs within the data
+Unique device IDs within the data.
 }
 \description{
 Gets unique device IDs within a dataset.

@@ -25,6 +25,18 @@ namespace Sensus.iOS.Probes.Location
     {
         private EventHandler<PositionEventArgs> _positionChangedHandler;
 
+        /// <summary>
+        /// This <see cref="Sensus.Probes.Probe"/> uses continuous GPS listening and will have a significant negative impact on battery life.
+        /// </summary>
+        /// <value>The collection description.</value>
+        public override string CollectionDescription
+        {
+            get
+            {
+                return base.CollectionDescription + " Please note that this sensor will have a significant negative impact on battery life.";
+            }
+        }
+
         public iOSCompassProbe()
         {
             _positionChangedHandler = async (o, e) =>

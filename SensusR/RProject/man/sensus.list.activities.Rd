@@ -13,6 +13,9 @@ sensus.list.activities(data, phase = "Starting", state = "Active")
 
 \item{state}{State of phase (Active, Inactive, Unknown)}
 }
+\value{
+None
+}
 \description{
 Lists activities in a given phase and state.
 }

@@ -4,7 +4,8 @@
 \alias{plot.BatteryDatum}
 \title{Plot battery data.}
 \usage{
-\method{plot}{BatteryDatum}(x, pch = ".", type = "l", ...)
+\method{plot}{BatteryDatum}(x, pch = ".", type = "l",
+  main = "Battery", ...)
 }
 \arguments{
 \item{x}{Battery data.}
@@ -13,13 +14,13 @@
 
 \item{type}{Line type.}
 
+\item{main}{Main title.}
+
 \item{...}{Other plotting parameters.}
+}
+\value{
+None
 }
 \description{
 Plot battery data.
-}
-\examples{
-data.path = system.file("extdata", "example-data", package="SensusR")
-data = sensus.read.json.files(data.path)
-plot(data$BatteryDatum)
 }

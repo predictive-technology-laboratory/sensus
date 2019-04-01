@@ -96,10 +96,9 @@
       <h4><a class="xref" href="Sensus.Android.AndroidPowerConnectionChangeListener.html">AndroidPowerConnectionChangeListener</a></h4>
       <section></section>
       <h4><a class="xref" href="Sensus.Android.AndroidSensusService.html">AndroidSensusService</a></h4>
-      <section><p>Android sensus service. Manages background running of Sensus. This is a hybrid service (<a href="http://developer.android.com/guide/components/services.html">http://developer.android.com/guide/components/services.html</a>), in that
-it is started by the Sensus activity to run indefinitely, but the activity also binds to it to manage the Sensus system (e.g., creating protocols, starting
-and stopping them, etc.). For now, nobody other than the Sensus activity can interact with the service (Exported = false). Perhaps we&apos;ll allow this in the future
-to support integration with other apps.</p>
+      <section><p>Android sensus service. This is a <a href="http://developer.android.com/guide/components/services.html">hybrid service</a>, as it
+is started by the Sensus activity to run indefinitely, and the activity also binds to it. This service runs in the foreground. 
+For now, no components other than the Sensus activity can interact with the service, as the service is not exported.</p>
 </section>
       <h4><a class="xref" href="Sensus.Android.AndroidSensusServiceBinder.html">AndroidSensusServiceBinder</a></h4>
       <section></section>

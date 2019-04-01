@@ -207,6 +207,9 @@ and <code>Edit Locations</code> buttons in the Estimote Beacon Probe configurati
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreData">Probe.StoreData</a>
     </div>
     <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_AllowDisableOnStartUp">Probe.AllowDisableOnStartUp</a>
+    </div>
+    <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StartStopTimes">Probe.StartStopTimes</a>
     </div>
     <div>
@@ -521,14 +524,31 @@ public int IndoorLocationUpdateIntervalMS { get; set; }</code></pre>
   </h3>
   
   
-  <a id="Sensus_Probes_Location_EstimoteBeaconProbe_GetBeaconTagsFromCloud_" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.GetBeaconTagsFromCloud*"></a>
-  <h4 id="Sensus_Probes_Location_EstimoteBeaconProbe_GetBeaconTagsFromCloud" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.GetBeaconTagsFromCloud">GetBeaconTagsFromCloud()</h4>
+  <a id="Sensus_Probes_Location_EstimoteBeaconProbe_GetBeaconTagsFromCloudAsync_" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.GetBeaconTagsFromCloudAsync*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteBeaconProbe_GetBeaconTagsFromCloudAsync_System_Nullable_System_TimeSpan__" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.GetBeaconTagsFromCloudAsync(System.Nullable{System.TimeSpan})">GetBeaconTagsFromCloudAsync(Nullable&lt;TimeSpan&gt;)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public List&lt;string&gt; GetBeaconTagsFromCloud()</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;List&lt;string&gt;&gt; GetBeaconTagsFromCloudAsync(Nullable&lt;TimeSpan&gt; timeout = null)</code></pre>
   </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td><span class="parametername">timeout</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
@@ -539,7 +559,7 @@ public int IndoorLocationUpdateIntervalMS { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.String</span>&gt;</td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.String</span>&gt;&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -671,14 +691,31 @@ public int IndoorLocationUpdateIntervalMS { get; set; }</code></pre>
   <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetChartSeries">Probe.GetChartSeries()</a></div>
   
   
-  <a id="Sensus_Probes_Location_EstimoteBeaconProbe_GetLocationsFromCloud_" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.GetLocationsFromCloud*"></a>
-  <h4 id="Sensus_Probes_Location_EstimoteBeaconProbe_GetLocationsFromCloud" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.GetLocationsFromCloud">GetLocationsFromCloud()</h4>
+  <a id="Sensus_Probes_Location_EstimoteBeaconProbe_GetLocationsFromCloudAsync_" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.GetLocationsFromCloudAsync*"></a>
+  <h4 id="Sensus_Probes_Location_EstimoteBeaconProbe_GetLocationsFromCloudAsync_System_Nullable_System_TimeSpan__" data-uid="Sensus.Probes.Location.EstimoteBeaconProbe.GetLocationsFromCloudAsync(System.Nullable{System.TimeSpan})">GetLocationsFromCloudAsync(Nullable&lt;TimeSpan&gt;)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public List&lt;EstimoteLocation&gt; GetLocationsFromCloud()</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;List&lt;EstimoteLocation&gt;&gt; GetLocationsFromCloudAsync(Nullable&lt;TimeSpan&gt; timeout)</code></pre>
   </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td><span class="parametername">timeout</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
@@ -689,7 +726,7 @@ public int IndoorLocationUpdateIntervalMS { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.Probes.Location.EstimoteLocation.html">EstimoteLocation</a>&gt;</td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.Probes.Location.EstimoteLocation.html">EstimoteLocation</a>&gt;&gt;</td>
         <td></td>
       </tr>
     </tbody>

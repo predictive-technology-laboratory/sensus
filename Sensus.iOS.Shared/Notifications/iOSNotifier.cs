@@ -20,8 +20,10 @@ namespace Sensus.iOS.Notifications
     public abstract class iOSNotifier : Notifier
     {
         /// <summary>
-        /// The notification identifier key, which has a value uniquely identifying the issued notification.
+        /// Key for the notification identifier, which is a value uniquely identifying the issued notification.
         /// </summary>
         public const string NOTIFICATION_ID_KEY = "SENSUS-NOTIFICATION-ID";
+
+        public abstract void RemoveAllNotifications();
     }
 }

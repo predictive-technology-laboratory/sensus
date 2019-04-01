@@ -187,7 +187,7 @@ namespace Sensus.UI.Inputs
                     string definedVariable = input.DefinedVariable;
                     if (definedVariable != null)
                     {
-                        Protocol protocolForInput = GetProtocolForInput();
+                        Protocol protocolForInput = GetProtocol();
 
                         if (protocolForInput != null)
                         {
@@ -479,11 +479,11 @@ namespace Sensus.UI.Inputs
                 string labelTextStr = _labelText;
 
                 // get the protocol that contains the current input in a script runner (if any)
-                Protocol protocolForInput = GetProtocolForInput();
+                Protocol protocolForInput = GetProtocol();
 
                 if (protocolForInput != null)
                 {
-                    // replace all variables with their values
+                    // replace all variable references in the input label text with the variables' values
                     foreach (string variable in protocolForInput.VariableValue.Keys)
                     {
                         // get the value for the variable as defined on the protocol
@@ -512,23 +512,29 @@ namespace Sensus.UI.Inputs
             }
         }
 
-        private Protocol GetProtocolForInput()
+        /// <summary>
+        /// Gets the <see cref="Protocol"/> containing the current input.
+        /// </summary>
+        /// <returns>The <see cref="Protocol"/>.</returns>
+        private Protocol GetProtocol()
         {
             try
             {
                 return SensusServiceHelper.Get().RegisteredProtocols.SingleOrDefault(protocol => protocol.Probes.OfType<ScriptProbe>()             // get script probes
-                                                                                                 .Single()                                         // must be only 1
+                                                                                                 .Single()                                         // must be only 1 script probe
                                                                                                  .ScriptRunners                                    // get runners
                                                                                                  .SelectMany(runner => runner.Script.InputGroups)  // get input groups for each runner
                                                                                                  .SelectMany(inputGroup => inputGroup.Inputs)      // get inputs for each input group
-                                                                                                 .Any(input => input.Id == _id));                  // check if any inputs are the current one
+                                                                                                 .Any(input => input.Id == _id));                  // check if any inputs are the current one. must check ids rather than object references, as we make deep copies of inputs when instantiating scripts to run.
             }
             catch (Exception ex)
             {
-                // for some reason, we are seeing crashes caused by different protocols having inputs with the same id. this
-                // should not be possible as one cannot load the same protocol twice, nor can one copy a protocol without
-                // resetting the input ids. so just report the exception for now and return null.
-                SensusException.Report("Exception while getting protocol for input:  " + ex.Message, ex);
+                // there is only one known situation in which multiple protocols may contain inputs with the same
+                // ids:  when the user manually set the protocol id and loads both protocols (one with the original
+                // id and one with the new id. when manually setting the protocol id, any script inputs do not receive
+                // a new id. this is by design in the use case where authentication servers wish to push out an updated
+                // protocol.
+                SensusServiceHelper.Get().Logger.Log("Exception while getting protocol for input:  " + ex.Message, LoggingLevel.Normal, GetType());
                 return null;
             }
         }

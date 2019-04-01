@@ -88,7 +88,7 @@ namespace Sensus.Android.Probes.Location
 
         protected override async Task StartListeningAsync()
         {
-            Notification notification = (SensusContext.Current.Notifier as AndroidNotifier).CreateNotificationBuilder(Application.Context, AndroidNotifier.SensusNotificationChannel.ForegroundService)
+            Notification notification = (SensusContext.Current.Notifier as AndroidNotifier).CreateNotificationBuilder(AndroidNotifier.SensusNotificationChannel.ForegroundService)
                                                                                                .SetSmallIcon(Resource.Drawable.notification_icon_background)
                                                                                                .SetContentTitle("Beacon Scan")
                                                                                                .SetContentText("Scanning...")
@@ -97,10 +97,10 @@ namespace Sensus.Android.Probes.Location
             if (Beacons.Count > 0)
             {
                 _proximityObserver = new ProximityObserverBuilder(Application.Context, new Estimote.Android.Proximity.EstimoteCloudCredentials(EstimoteCloudAppId, EstimoteCloudAppToken))
-                    .WithBalancedPowerMode()
-                    .WithScannerInForegroundService(notification)
-                    .OnError(new ProximityErrorHandler())
-                    .Build();
+                                             .WithBalancedPowerMode()
+                                             .WithScannerInForegroundService(notification)
+                                             .OnError(new ProximityErrorHandler())
+                                             .Build();
 
                 List<IProximityZone> zones = new List<IProximityZone>();
 
@@ -129,10 +129,10 @@ namespace Sensus.Android.Probes.Location
                 Estimote.Android.Indoor.Location cloudLocation = await cloudCallback.GetValueAsync();
 
                 _indoorLocationManager = new IndoorLocationManagerBuilder(Application.Context, cloudLocation, credentials)
-                    .WithPositionUpdateInterval(IndoorLocationUpdateIntervalMS)
-                    .WithOnErrorAction(new IndoorErrorHandler())
-                    .WithScannerInForegroundService(notification)
-                    .Build();
+                                                 .WithPositionUpdateInterval(IndoorLocationUpdateIntervalMS)
+                                                 .WithOnErrorAction(new IndoorErrorHandler())
+                                                 .WithScannerInForegroundService(notification)
+                                                 .Build();
 
                 AndroidEstimoteIndoorPositionUpdateListener indoorPositionUpdateListener = new AndroidEstimoteIndoorPositionUpdateListener();
                 indoorPositionUpdateListener.UpdatedPositionAsync += async (estimoteLocation) =>

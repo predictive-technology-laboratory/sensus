@@ -98,22 +98,28 @@
       <a class="xref" href="Sensus.iOS.Notifications.iOSNotifier.html#Sensus_iOS_Notifications_iOSNotifier_NOTIFICATION_ID_KEY">iOSNotifier.NOTIFICATION_ID_KEY</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_DISPLAY_PAGE_KEY">Notifier.DISPLAY_PAGE_KEY</a>
+      <a class="xref" href="Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_PENDING_SURVEY_TEXT_NOTIFICATION_ID">Notifier.PENDING_SURVEY_TEXT_NOTIFICATION_ID</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_OpenDisplayPage_Sensus_Notifications_DisplayPage_">Notifier.OpenDisplayPage(DisplayPage)</a>
+      <a class="xref" href="Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_PENDING_SURVEY_BADGE_NOTIFICATION_ID">Notifier.PENDING_SURVEY_BADGE_NOTIFICATION_ID</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_NOTIFICATION_USER_RESPONSE_ACTION_KEY">Notifier.NOTIFICATION_USER_RESPONSE_ACTION_KEY</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_NOTIFICATION_USER_RESPONSE_MESSAGE_KEY">Notifier.NOTIFICATION_USER_RESPONSE_MESSAGE_KEY</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_OnNotificationUserResponseAsync_System_String_System_String_">Notifier.OnNotificationUserResponseAsync(String, String)</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_SendPushNotificationRequestAsync_Sensus_Notifications_PushNotificationRequest_System_Threading_CancellationToken_">Notifier.SendPushNotificationRequestAsync(PushNotificationRequest, CancellationToken)</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_ProcessReceivedPushNotificationAsync_System_String_System_String_System_String_System_String_System_String_System_String_System_Threading_CancellationToken_">Notifier.ProcessReceivedPushNotificationAsync(String, String, String, String, String, String, CancellationToken)</a>
+      <a class="xref" href="Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_ProcessReceivedPushNotificationAsync_Sensus_Notifications_PushNotification_System_Threading_CancellationToken_">Notifier.ProcessReceivedPushNotificationAsync(PushNotification, CancellationToken)</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_DeletePushNotificationRequestAsync_Sensus_Notifications_PushNotificationRequest_System_Threading_CancellationToken_">Notifier.DeletePushNotificationRequestAsync(PushNotificationRequest, CancellationToken)</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_DeletePushNotificationRequestAsync_System_String_Sensus_Protocol_System_Threading_CancellationToken_">Notifier.DeletePushNotificationRequestAsync(String, Protocol, CancellationToken)</a>
+      <a class="xref" href="Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_DeletePushNotificationRequestAsync_System_Guid_Sensus_Protocol_System_Threading_CancellationToken_">Notifier.DeletePushNotificationRequestAsync(Guid, Protocol, CancellationToken)</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_TestHealthAsync_System_Threading_CancellationToken_">Notifier.TestHealthAsync(CancellationToken)</a>
@@ -198,12 +204,12 @@
   
   
   <a id="Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_" data-uid="Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync*"></a>
-  <h4 id="Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_System_String_System_String_System_String_Sensus_Protocol_System_Boolean_Sensus_Notifications_DisplayPage_" data-uid="Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,Sensus.Protocol,System.Boolean,Sensus.Notifications.DisplayPage)">IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage)</h4>
+  <h4 id="Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_System_String_System_String_System_String_System_Boolean_Sensus_Protocol_System_Nullable_System_Int32__Sensus_Notifications_NotificationUserResponseAction_System_String_" data-uid="Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.NotificationUserResponseAction,System.String)">IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable&lt;Int32&gt;, NotificationUserResponseAction, String)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override Task IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage)</code></pre>
+    <pre><code class="lang-csharp hljs">public override Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, Nullable&lt;int&gt; badgeNumber, NotificationUserResponseAction userResponseAction, string userResponseMessage)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -231,18 +237,28 @@
         <td></td>
       </tr>
       <tr>
-        <td><a class="xref" href="Sensus.Protocol.html">Protocol</a></td>
-        <td><span class="parametername">protocol</span></td>
-        <td></td>
-      </tr>
-      <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">alertUser</span></td>
         <td></td>
       </tr>
       <tr>
-        <td><a class="xref" href="Sensus.Notifications.DisplayPage.html">DisplayPage</a></td>
-        <td><span class="parametername">displayPage</span></td>
+        <td><a class="xref" href="Sensus.Protocol.html">Protocol</a></td>
+        <td><span class="parametername">protocol</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
+        <td><span class="parametername">badgeNumber</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Sensus.Notifications.NotificationUserResponseAction.html">NotificationUserResponseAction</a></td>
+        <td><span class="parametername">userResponseAction</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">userResponseMessage</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -263,16 +279,16 @@
     </tbody>
   </table>
   <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_IssueNotificationAsync_System_String_System_String_System_String_Sensus_Protocol_System_Boolean_Sensus_Notifications_DisplayPage_">Notifier.IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage)</a></div>
+  <div><a class="xref" href="Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_IssueNotificationAsync_System_String_System_String_System_String_System_Boolean_Sensus_Protocol_System_Nullable_System_Int32__Sensus_Notifications_NotificationUserResponseAction_System_String_">Notifier.IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable&lt;Int32&gt;, NotificationUserResponseAction, String)</a></div>
   
   
   <a id="Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_" data-uid="Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync*"></a>
-  <h4 id="Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_System_String_System_String_System_String_Sensus_Protocol_System_Boolean_Sensus_Notifications_DisplayPage_System_DateTime_Foundation_NSMutableDictionary_System_Action_UserNotifications_UNNotificationRequest__" data-uid="Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,Sensus.Protocol,System.Boolean,Sensus.Notifications.DisplayPage,System.DateTime,Foundation.NSMutableDictionary,System.Action{UserNotifications.UNNotificationRequest})">IssueNotificationAsync(String, String, String, Protocol, Boolean, DisplayPage, DateTime, NSMutableDictionary, Action&lt;UNNotificationRequest&gt;)</h4>
+  <h4 id="Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_System_String_System_String_System_String_System_Boolean_Sensus_Protocol_System_Nullable_System_Int32__Sensus_Notifications_NotificationUserResponseAction_System_String_System_DateTime_Foundation_NSMutableDictionary_System_Action_UserNotifications_UNNotificationRequest__" data-uid="Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,System.String,System.String,System.Boolean,Sensus.Protocol,System.Nullable{System.Int32},Sensus.Notifications.NotificationUserResponseAction,System.String,System.DateTime,Foundation.NSMutableDictionary,System.Action{UserNotifications.UNNotificationRequest})">IssueNotificationAsync(String, String, String, Boolean, Protocol, Nullable&lt;Int32&gt;, NotificationUserResponseAction, String, DateTime, NSMutableDictionary, Action&lt;UNNotificationRequest&gt;)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage, DateTime triggerDateTime, NSMutableDictionary info, Action&lt;UNNotificationRequest&gt; requestCreated = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, Nullable&lt;int&gt; badgeNumber, NotificationUserResponseAction userResponseAction, string userResponseMessage, DateTime triggerDateTime, NSMutableDictionary info, Action&lt;UNNotificationRequest&gt; requestCreated = null)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -300,18 +316,28 @@
         <td></td>
       </tr>
       <tr>
-        <td><a class="xref" href="Sensus.Protocol.html">Protocol</a></td>
-        <td><span class="parametername">protocol</span></td>
-        <td></td>
-      </tr>
-      <tr>
         <td><span class="xref">System.Boolean</span></td>
         <td><span class="parametername">alertUser</span></td>
         <td></td>
       </tr>
       <tr>
-        <td><a class="xref" href="Sensus.Notifications.DisplayPage.html">DisplayPage</a></td>
-        <td><span class="parametername">displayPage</span></td>
+        <td><a class="xref" href="Sensus.Protocol.html">Protocol</a></td>
+        <td><span class="parametername">protocol</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
+        <td><span class="parametername">badgeNumber</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Sensus.Notifications.NotificationUserResponseAction.html">NotificationUserResponseAction</a></td>
+        <td><span class="parametername">userResponseAction</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">userResponseMessage</span></td>
         <td></td>
       </tr>
       <tr>
@@ -322,63 +348,6 @@
       <tr>
         <td><span class="xref">Foundation.NSMutableDictionary</span></td>
         <td><span class="parametername">info</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Action</span>&lt;<span class="xref">UserNotifications.UNNotificationRequest</span>&gt;</td>
-        <td><span class="parametername">requestCreated</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_" data-uid="Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync*"></a>
-  <h4 id="Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_IssueNotificationAsync_System_String_UserNotifications_UNNotificationContent_System_DateTime_System_Action_UserNotifications_UNNotificationRequest__" data-uid="Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.IssueNotificationAsync(System.String,UserNotifications.UNNotificationContent,System.DateTime,System.Action{UserNotifications.UNNotificationRequest})">IssueNotificationAsync(String, UNNotificationContent, DateTime, Action&lt;UNNotificationRequest&gt;)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task IssueNotificationAsync(string id, UNNotificationContent content, DateTime triggerDateTime, Action&lt;UNNotificationRequest&gt; requestCreated = null)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">id</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">UserNotifications.UNNotificationContent</span></td>
-        <td><span class="parametername">content</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.DateTime</span></td>
-        <td><span class="parametername">triggerDateTime</span></td>
         <td></td>
       </tr>
       <tr>
@@ -502,6 +471,18 @@
       </tr>
     </tbody>
   </table>
+  
+  
+  <a id="Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_RemoveAllNotifications_" data-uid="Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.RemoveAllNotifications*"></a>
+  <h4 id="Sensus_iOS_Notifications_UNUserNotifications_UNUserNotificationNotifier_RemoveAllNotifications" data-uid="Sensus.iOS.Notifications.UNUserNotifications.UNUserNotificationNotifier.RemoveAllNotifications">RemoveAllNotifications()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void RemoveAllNotifications()</code></pre>
+  </div>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.iOS.Notifications.iOSNotifier.html#Sensus_iOS_Notifications_iOSNotifier_RemoveAllNotifications">iOSNotifier.RemoveAllNotifications()</a></div>
 </article>
           </div>
           

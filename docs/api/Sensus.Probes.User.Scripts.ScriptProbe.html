@@ -146,6 +146,9 @@ to display when a <a class="xref" href="Sensus.Datum.html">Datum</a> from anothe
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StoreData">Probe.StoreData</a>
     </div>
     <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_AllowDisableOnStartUp">Probe.AllowDisableOnStartUp</a>
+    </div>
+    <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StartStopTimes">Probe.StartStopTimes</a>
     </div>
     <div>
@@ -270,14 +273,14 @@ to display when a <a class="xref" href="Sensus.Datum.html">Datum</a> from anothe
   </table>
   
   
-  <a id="Sensus_Probes_User_Scripts_ScriptProbe_AgentPolicyJSON_" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.AgentPolicyJSON*"></a>
-  <h4 id="Sensus_Probes_User_Scripts_ScriptProbe_AgentPolicyJSON" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.AgentPolicyJSON">AgentPolicyJSON</h4>
-  <div class="markdown level1 summary"><p>Gets or sets the agent policy JSON.</p>
+  <a id="Sensus_Probes_User_Scripts_ScriptProbe_AgentPolicy_" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.AgentPolicy*"></a>
+  <h4 id="Sensus_Probes_User_Scripts_ScriptProbe_AgentPolicy" data-uid="Sensus.Probes.User.Scripts.ScriptProbe.AgentPolicy">AgentPolicy</h4>
+  <div class="markdown level1 summary"><p>Gets or sets the agent policy.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public string AgentPolicyJSON { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public JObject AgentPolicy { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -289,7 +292,7 @@ to display when a <a class="xref" href="Sensus.Datum.html">Datum</a> from anothe
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.String</span></td>
+        <td><span class="xref">Newtonsoft.Json.Linq.JObject</span></td>
         <td><p>The agent policy JSON.</p>
 </td>
       </tr>

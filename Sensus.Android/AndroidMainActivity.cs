@@ -30,6 +30,7 @@ using Plugin.CurrentActivity;
 using System.Threading.Tasks;
 using Sensus.Exceptions;
 using Sensus.Notifications;
+using Sensus.Android.Notifications;
 
 #if __ANDROID_23__
 using Plugin.Permissions;
@@ -40,7 +41,7 @@ using Plugin.Permissions;
 
 namespace Sensus.Android
 {
-    [Activity(Label = "@string/app_name", MainLauncher = true, LaunchMode = LaunchMode.SingleTask, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Label = "SensusMobile", MainLauncher = true, LaunchMode = LaunchMode.SingleTask, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault, Intent.CategoryBrowsable }, DataScheme = "https", DataHost = "*", DataPathPattern = ".*\\\\.json")]  // protocols downloaded from an https web link
     [IntentFilter(new string[] { Intent.ActionView }, Categories = new string[] { Intent.CategoryDefault }, DataMimeType = "application/json")]  // protocols obtained from "file" and "content" schemes:  http://developer.android.com/guide/components/intents-filters.html#DataTest
     public class AndroidMainActivity : FormsAppCompatActivity
@@ -80,6 +81,13 @@ namespace Sensus.Android
             Forms.Init(this, savedInstanceState);
             FormsMaps.Init(this, savedInstanceState);
             ZXing.Net.Mobile.Forms.Android.Platform.Init();
+
+            // initialize the current activity plugin here as well as in the service,
+            // since this activity will be starting the service after it is created.
+            // only initializing the plugin in the service was keeping the plugin from
+            // being properly initialized, presumably because the plugin missed the 
+            // lifecycle events of the activity. we want the plugin to have be 
+            // initialized regardless of how the app comes to be created.
             CrossCurrentActivity.Current.Init(this, savedInstanceState);
 
 #if UI_TESTING
@@ -97,17 +105,11 @@ namespace Sensus.Android
             _serviceConnection = new AndroidSensusServiceConnection();
             _serviceConnection.ServiceConnected += (o, e) =>
             {
-                // it's happened that the service is created / started after the service helper is disposed:  https://insights.xamarin.com/app/Sensus-Production/issues/46
-                // binding to the service in such a situation can result in a null service helper within the binder. if the service helper was disposed, then the goal is 
-                // to close down sensus. so finish the activity.
-                if (e.Binder.SensusServiceHelper == null)
-                {
-                    Finish();
-                    return;
-                }
+                // service was created/connected, so the service helper must exist.
+                SensusServiceHelper.Get().Logger.Log("Bound to Android service.", LoggingLevel.Normal, GetType());
 
                 // tell the service to finish this activity when it is stopped
-                e.Binder.ServiceStopAction = Finish;
+                e.Binder.OnServiceStop = Finish;
 
                 // signal the activity that the service has been bound
                 _serviceBindWait.Set();
@@ -128,6 +130,9 @@ namespace Sensus.Android
                 DisconnectFromService();
                 Finish();
             };
+
+            // ensure the service is started any time the activity is created
+            AndroidSensusService.Start(false);
 
             await OpenIntentAsync(Intent);
         }
@@ -150,24 +155,30 @@ namespace Sensus.Android
             (Xamarin.Forms.Application.Current as App).MasterPage.IsVisible = false;
             (Xamarin.Forms.Application.Current as App).DetailPage.IsVisible = false;
 
-            // make sure that the service is running and bound any time the activity is resumed. the service is both started
-            // and bound, as we'd like the service to remain running and available to other apps even if the current activity unbinds.
-            Intent serviceIntent = AndroidSensusService.StartService(this, false);
-            BindService(serviceIntent, _serviceConnection, Bind.AboveClient);
+            // ensure the service is bound any time the activity is resumed
+            BindService(AndroidSensusService.GetServiceIntent(false), _serviceConnection, Bind.AboveClient);
 
             // start new task to wait for connection, since we're currently on the UI thread, which the service connection needs in order to complete.
             await Task.Run(() =>
             {
                 // we've not seen the binding take more than a second or two; however, we want to be very careful not to block indefinitely
-                // here becaus the UI is currently disabled. if for some strange reason the binding does not work, bail out after 10 seconds
+                // here because the UI is currently disabled. if for some strange reason the binding does not work, bail out after 10 seconds
                 // and let the user interact with the UI. most likely, a crash will be coming very soon in this case, as the sensus service
                 // will probably not be running. again, this has not occurred in practice, but allowing the crash to occur will send us information
                 // through the crash analytics service and we'll be able to track it
-                _serviceBindWait.WaitOne(TimeSpan.FromSeconds(10000));
+                TimeSpan serviceBindTimeout = TimeSpan.FromSeconds(10000);
+                if (_serviceBindWait.WaitOne(serviceBindTimeout))
+                {
+                    SensusServiceHelper.Get().Logger.Log("Activity proceeding following service bind.", LoggingLevel.Normal, GetType());
+                }
+                else
+                {
+                    SensusException.Report("Timed out waiting " + serviceBindTimeout + " for the service to bind.");
+                }
 
-                SensusServiceHelper.Get().ClearPendingSurveysNotification();
+                SensusServiceHelper.Get().CancelPendingSurveysNotification();
 
-                // now that the service connection has been established, reenable UI.
+                // enable the UI
                 try
                 {
                     SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
@@ -218,7 +229,7 @@ namespace Sensus.Android
             // finish a destroyed activity if/when the service stops.
             if (_serviceConnection.Binder != null)
             {
-                _serviceConnection.Binder.ServiceStopAction = null;
+                _serviceConnection.Binder.OnServiceStop = null;
             }
         }
 
@@ -231,10 +242,11 @@ namespace Sensus.Android
                 try
                 {
                     UnbindService(_serviceConnection);
+                    SensusServiceHelper.Get().Logger.Log("Unbound from Android service.", LoggingLevel.Normal, GetType());
                 }
                 catch (Exception ex)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Failed to disconnection from service:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Failed to disconnect from service:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
             }
         }
@@ -297,8 +309,6 @@ namespace Sensus.Android
                 return;
             }
 
-            DisplayPage displayPage;
-
             // open page to view protocol if a protocol was passed to us
             if (intent.Data != null)
             {
@@ -310,7 +320,7 @@ namespace Sensus.Android
 
                     if (intent.Scheme == "https")
                     {
-                        protocol = await Protocol.DeserializeAsync(new Uri(dataURI.ToString()));
+                        protocol = await Protocol.DeserializeAsync(new Uri(dataURI.ToString()), true);
                     }
                     else if (intent.Scheme == "content" || intent.Scheme == "file")
                     {
@@ -331,7 +341,7 @@ namespace Sensus.Android
 
                         if (bytes != null)
                         {
-                            protocol = await Protocol.DeserializeAsync(bytes);
+                            protocol = await Protocol.DeserializeAsync(bytes, true);
                         }
                     }
                     else
@@ -345,14 +355,17 @@ namespace Sensus.Android
                 {
                     SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
                     {
-                        new AlertDialog.Builder(this).SetTitle("Failed to start protocol").SetMessage(ex.Message).Show();
-                        SensusServiceHelper.Get().Logger.Log(ex.Message, LoggingLevel.Normal, GetType());
+                        string message = "Failed to start study:  " + ex.Message;
+                        new AlertDialog.Builder(this).SetTitle("Error").SetMessage(message).Show();
+                        SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                     });
                 }
             }
-            else if (Enum.TryParse(intent.GetStringExtra(Notifier.DISPLAY_PAGE_KEY), out displayPage))
+            else
             {
-                SensusContext.Current.Notifier.OpenDisplayPage(displayPage);
+                string userResponseAction = intent.GetStringExtra(Notifier.NOTIFICATION_USER_RESPONSE_ACTION_KEY);
+                string userResponseMessage = intent.GetStringExtra(Notifier.NOTIFICATION_USER_RESPONSE_MESSAGE_KEY);
+                await SensusContext.Current.Notifier.OnNotificationUserResponseAsync(userResponseAction, userResponseMessage);
             }
         }
 

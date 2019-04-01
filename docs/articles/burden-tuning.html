@@ -1,0 +1,191 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Burden Tuning | Sensus Documentation </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Burden Tuning | Sensus Documentation ">
+    <meta name="generator" content="docfx 2.38.1.0">
+    
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/group-of-members-users-icon.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="burden_tuning">
+<h1 id="burden-tuning">Burden Tuning</h1>
+
+<p>Burden is a key consideration when deploying Sensus to users. This article addresses key dimensions of
+burden placed on the user and the user&#39;s device. It also offers advice for tuning the balance of burden 
+and data collection.</p>
+<h2 id="data-pollingxrefsensusprobespollingprobe"><a class="xref" href="../api/Sensus.Probes.PollingProbe.html">Data Polling</a></h2>
+<p>Polling-style probes within Sensus run on schedules. Sensus will attempt to poll for data according to these
+schedules. Each polling operation consumes power, the effective amount of which depends on the hardware involved. 
+For example, the <a class="xref" href="../api/Sensus.Probes.Location.PollingLocationProbe.html">PollingLocationProbe</a> uses the device&#39;s GPS chip, which consumes 
+significant power. Contrast this with the <a class="xref" href="../api/Sensus.Probes.Movement.AccelerometerProbe.html">AccelerometerProbe</a>, which uses the device&#39;s 
+accelerometer chip -- a relatively low-power component. Regardless of the <a class="xref" href="../api/Sensus.Probes.Probe.html">Probe</a> and hardware 
+involved, the following parameters govern polling behavior and associated power consumption.</p>
+<ul>
+<li><p><a class="xref" href="../api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_PollingSleepDurationMS">PollingSleepDurationMS</a>:  This parameter determines how frequently the
+<a class="xref" href="../api/Sensus.Probes.PollingProbe.html">PollingProbe</a> attempts to poll for data.</p>
+</li>
+<li><p><a class="xref" href="../api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_DelayToleranceAfterMS">DelayToleranceAfterMS</a> and <a class="xref" href="../api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_DelayToleranceAfterMS">DelayToleranceAfterMS</a>:
+Each polling probe runs on its own schedule independent of the other probes&#39; schedules. As a result, the overall polling
+timeline will become increasingly crowded as additional polling probes are enabled. The operating system will
+therefore have fewer opportunities to turn off the CPU and conserve power. To address this, Sensus allows you to 
+configure tolerance within the polling schedule using these two parameters. If a polling probe is scheduled to poll
+for data at time <code>t</code>, these two parameters will create a window around <code>t</code> within which to search for other polling
+events that are already scheduled for other probes. If another polling operation is already scheduled within this 
+window, then the new polling operation will be batched with the existing operation and will be executed at approximately 
+the same time. Widening the scheduling tolerance around <code>t</code> will increase the prevalence of batching, decrease
+crowding of the overall polling timeline, and increase the amount of time when CPU is allowed to sleep.</p>
+</li>
+<li><p><a class="xref" href="../api/Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_KeepDeviceAwake">KeepDeviceAwake</a> (Android only):  This parameter determines whether Sensus 
+will hold a <a href="https://developer.android.com/reference/android/os/PowerManager.html#PARTIAL_WAKE_LOCK">partial wake lock</a>
+on the CPU when running a <a class="xref" href="../api/Sensus.Probes.ListeningProbe.html">ListeningProbe</a>. If this parameter is enabled for any such probe, then
+all probes regardless of type will collect data unabated, as the CPU will be powered on despite the display being
+off.</p>
+</li>
+<li><p><a class="xref" href="push-notifications.html">Push notifications</a> (iOS only):  It is possible to configure push notifications that support
+data polling in iOS. These impose a burden on the device; however, push notification support for data polling will
+lessen the burden on the user since remotely invoked data polling preempts user-targeted notifications as enabled by
+<a class="xref" href="../api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_AlertUserWhenBackgrounded">AlertUserWhenBackgrounded</a>.</p>
+</li>
+</ul>
+<h2 id="data-transfer">Data Transfer</h2>
+<p>It is expensive, both in terms of power and data network usage, to transfer collected data from the device to a 
+<a class="xref" href="../api/Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a>. The following parameters govern transfer behavior and associated
+power and network usage:</p>
+<ul>
+<li><p><a class="xref" href="../api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_WriteDelayMS">WriteDelayMS</a>:  This parameter determines how frequently
+Sensus writes data from the device to the <a class="xref" href="../api/Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a>. After writing
+data successfully, the data are deleted and subsequent writes operate only on data subsequently collected.
+The power and network usage of these writes will be determined by the number, type, and configuration of
+probes that are enabled.</p>
+</li>
+<li><p><a class="xref" href="../api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_RequireWiFi">RequireWiFi</a>:  This parameter determines whether WiFi
+is required for data transfer.</p>
+</li>
+<li><p><a class="xref" href="../api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_RequireCharging">RequireCharging</a>:  This parameter determines whether
+external power is required for data transfer.</p>
+</li>
+<li><p><a class="xref" href="../api/Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_RequiredBatteryChargeLevelPercent">RequiredBatteryChargeLevelPercent</a>:  If external power
+is not required, then this parameter determines a minimum charge level required for data transfer.</p>
+</li>
+</ul>
+<h2 id="notifications">Notifications</h2>
+<p>Sensus will issue notifications for various states of the app. Whether a notification is issued for each app state
+is partially configurable depending on the <a class="xref" href="../api/Sensus.Probes.Probe.html">Probe</a> and operating system.</p>
+<ul>
+<li><p><a class="xref" href="../api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_AlertUserWhenBackgrounded">AlertUserWhenBackgrounded</a> (iOS only):  Each 
+<a class="xref" href="../api/Sensus.Probes.PollingProbe.html">PollingProbe</a> in iOS is capable of issuing a notification to the user when the 
+polling operation is scheduled to occur. This parameter determines whether these notifications are issued.</p>
+</li>
+<li><p><a class="xref" href="push-notifications.html">Push notifications</a> (iOS only):  As noted above, push notifications can
+be configured to drive data polling and preempt the notifications enabled by the
+<a class="xref" href="../api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_AlertUserWhenBackgrounded">AlertUserWhenBackgrounded</a> setting.</p>
+</li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/DocFX/articles/burden-tuning.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

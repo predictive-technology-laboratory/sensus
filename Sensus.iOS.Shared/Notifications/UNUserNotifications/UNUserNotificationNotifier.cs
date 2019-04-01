@@ -27,20 +27,20 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
 {
     public class UNUserNotificationNotifier : iOSNotifier
     {
-        public override async Task IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage)
+        public override async Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, int? badgeNumber, NotificationUserResponseAction userResponseAction, string userResponseMessage)
         {
-            await IssueNotificationAsync(title, message, id, protocol, alertUser, displayPage, DateTime.Now, null, null);
+            await IssueNotificationAsync(title, message, id, alertUser, protocol, badgeNumber, userResponseAction, userResponseMessage, DateTime.Now, null);
         }
 
         public async Task IssueSilentNotificationAsync(string id, DateTime triggerDateTime, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
         {
             // the user should never see a silent notification since we cancel them when the app is backgrounded. but there are race conditions that
             // might result in a silent notifiation being scheduled just before the app is backgrounded. give a generic message so that the notification
-            // isn't totally confusing to the user.
-            await IssueNotificationAsync("Please open this notification.", "One of your studies needs to be updated.", id, null, false, DisplayPage.None, triggerDateTime, info, requestCreated);
+            // isn't totally confusing to the user. furthermore, it appears that notifications must have content in order to come back.
+            await IssueNotificationAsync("Notice", "Sensus is running. You may safely ignore this notification if desired. Tap to open Sensus.", id, false, null, null, NotificationUserResponseAction.None, null, triggerDateTime, info, requestCreated);
         }
 
-        public async Task IssueNotificationAsync(string title, string message, string id, Protocol protocol, bool alertUser, DisplayPage displayPage, DateTime triggerDateTime, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
+        public async Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, int? badgeNumber, NotificationUserResponseAction userResponseAction, string userResponseMessage, DateTime triggerDateTime, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
         {
             // the callback scheduler will pass in an initialized user info (containing the callback id, invocation id, etc.), but 
             // other requests for notifications might not come with such information. initialize the user info if needed.
@@ -50,7 +50,13 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
             }
 
             info.SetValueForKey(new NSString(id), new NSString(NOTIFICATION_ID_KEY));
-            info.SetValueForKey(new NSString(displayPage.ToString()), new NSString(DISPLAY_PAGE_KEY));
+            info.SetValueForKey(new NSString(userResponseAction.ToString()), new NSString(NOTIFICATION_USER_RESPONSE_ACTION_KEY));
+
+            // values may not be null
+            if (userResponseMessage != null)
+            {
+                info.SetValueForKey(new NSString(userResponseMessage), new NSString(NOTIFICATION_USER_RESPONSE_MESSAGE_KEY));
+            }
 
             UNMutableNotificationContent content = new UNMutableNotificationContent
             {
@@ -69,17 +75,23 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
                 content.Body = message;
             }
 
-            // protocol might be null when issuing the pending surveys notification.
-            if (alertUser && (protocol == null || !protocol.TimeIsWithinAlertExclusionWindow(triggerDateTime.TimeOfDay)))
+            // if the notification is configured to alert users and the trigger time doesn't fall within 
+            // one of the protocol's alert exclusion windows, then set the sound.
+            bool triggerIsWithinExclusionWindow = protocol?.TimeIsWithinAlertExclusionWindow(triggerDateTime.TimeOfDay) ?? false;
+            if (alertUser && !triggerIsWithinExclusionWindow)
             {
                 content.Sound = UNNotificationSound.Default;
             }
+            else
+            {
+                content.Sound = null;
+            }
 
-            await IssueNotificationAsync(id, content, triggerDateTime, requestCreated);
-        }
+            if (badgeNumber != null)
+            {
+                content.Badge = NSNumber.FromInt32(badgeNumber.Value);
+            }
 
-        public async Task IssueNotificationAsync(string id, UNNotificationContent content, DateTime triggerDateTime, Action<UNNotificationRequest> requestCreated = null)
-        {
             UNCalendarNotificationTrigger trigger = null;
 
             // we're going to specify an absolute trigger date below. if this time is in the past by the time
@@ -105,6 +117,7 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
 
             UNNotificationRequest notificationRequest = UNNotificationRequest.FromIdentifier(id, content, trigger);
             requestCreated?.Invoke(notificationRequest);
+
             await IssueNotificationAsync(notificationRequest);
         }
 
@@ -147,7 +160,7 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
                 return;
             }
 
-            var ids = new[] { id };
+            string[] ids = new string[] { id };
             UNUserNotificationCenter.Current.RemoveDeliveredNotifications(ids);
             UNUserNotificationCenter.Current.RemovePendingNotificationRequests(ids);
         }
@@ -155,6 +168,12 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
         public void CancelNotification(UNNotificationRequest request)
         {
             CancelNotification(request?.Identifier);
+        }
+
+        public override void RemoveAllNotifications()
+        {
+            UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
+            UNUserNotificationCenter.Current.RemoveAllPendingNotificationRequests();
         }
     }
 }

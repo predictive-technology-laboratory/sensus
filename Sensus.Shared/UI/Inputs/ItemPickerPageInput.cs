@@ -25,10 +25,12 @@ namespace Sensus.UI.Inputs
     public class ItemPickerPageInput : ItemPickerInput
     {
         private List<object> _items;
+        private Dictionary<int, bool> _initialIndexSelected;
+        private List<int> _frozenIndices;
         private bool _multiselect;
         private List<object> _selectedItems;
         private string _textBindingPropertyPath;
-        private List<Label> _itemLabels;
+        private List<Frame> _itemFrames;
         private Label _label;
 
         public List<object> Items
@@ -100,13 +102,13 @@ namespace Sensus.UI.Inputs
         {
             get
             {
-                return _itemLabels.Count == 0 ? true : _itemLabels[0].IsEnabled;
+                return _itemFrames.Count == 0 || _itemFrames[0].IsEnabled;
             }
             set
             {
-                foreach (Label itemLabel in _itemLabels)
+                foreach (Frame itemFrame in _itemFrames)
                 {
-                    itemLabel.IsEnabled = value;
+                    itemFrame.IsEnabled = value;
                 }
             }
         }
@@ -124,12 +126,18 @@ namespace Sensus.UI.Inputs
             Construct();
         }
 
-        public ItemPickerPageInput(string labelText, List<object> items, string textBindingPropertyPath = ".")
+        public ItemPickerPageInput(string labelText, 
+                                   List<object> items, 
+                                   Dictionary<int, bool> initialIndexSelected = null, 
+                                   List<int> frozenIndices = null,
+                                   string textBindingPropertyPath = ".")
             : base(labelText)
         {
             Construct();
 
             _items = items;
+            _initialIndexSelected = initialIndexSelected;
+            _frozenIndices = frozenIndices;
 
             if (!string.IsNullOrWhiteSpace(textBindingPropertyPath))
             {
@@ -143,12 +151,12 @@ namespace Sensus.UI.Inputs
             _multiselect = false;
             _selectedItems = new List<object>();
             _textBindingPropertyPath = ".";
-            _itemLabels = new List<Label>();
+            _itemFrames = new List<Frame>();
         }
 
         public override View GetView(int index)
         {
-            if(_items.Count == 0)
+            if (_items.Count == 0)
             {
                 return null;
             }
@@ -156,14 +164,14 @@ namespace Sensus.UI.Inputs
             if (base.GetView(index) == null)
             {
                 _selectedItems.Clear();
-                _itemLabels.Clear();
+                _itemFrames.Clear();
 
                 StackLayout itemLabelStack = new StackLayout
                 {
                     Orientation = StackOrientation.Vertical,
                     VerticalOptions = LayoutOptions.Start,
                     HorizontalOptions = LayoutOptions.FillAndExpand,
-                    Padding = new Thickness(30, 10, 0, 10)
+                    Padding = new Thickness(10, 10, 0, 10)
                 };
 
                 List<object> itemList = RandomizeItemOrder ? _items.OrderBy(item => Guid.NewGuid()).ToList() : _items;
@@ -180,7 +188,7 @@ namespace Sensus.UI.Inputs
 
                     Label itemLabel = new Label
                     {
-                        FontSize = 20,
+                        FontSize = LabelFontSize,
                         HorizontalOptions = LayoutOptions.FillAndExpand,
                         BindingContext = item
 
@@ -190,47 +198,56 @@ namespace Sensus.UI.Inputs
 #endif
                     };
 
-                    _itemLabels.Add(itemLabel);
+                    // frame the label to indicate selection
+                    Frame itemFrame = new Frame
+                    {
+                        Content = itemLabel,
+                        BackgroundColor = Color.Transparent,
+                        HasShadow = false,
+                        Padding = new Thickness(5)
+                    };
+
+                    // needs to be added before taps are registered
+                    _itemFrames.Add(itemFrame);
 
                     itemLabel.SetBinding(Label.TextProperty, _textBindingPropertyPath, stringFormat: "{0}");
 
                     TapGestureRecognizer tapRecognizer = new TapGestureRecognizer
                     {
-                        NumberOfTapsRequired = 1
+                        NumberOfTapsRequired = 1,
+                        CommandParameter = i
                     };
 
-                    Color defaultBackgroundColor = itemLabel.BackgroundColor;
-
-                    tapRecognizer.Tapped += (o, e) =>
+                    tapRecognizer.Tapped += async (o, eventArgs) =>
                     {
                         if (!itemLabel.IsEnabled)
                         {
                             return;
                         }
 
-                        if (_selectedItems.Contains(item))
+                        // check whether the item is frozen
+                        TappedEventArgs tappedEventArgs = eventArgs as TappedEventArgs;
+                        int itemIndex = (int)tappedEventArgs.Parameter;
+                        bool itemIsFrozen = _frozenIndices?.Contains(itemIndex) ?? false;
+
+                        // bail if user is not allowed to change the item
+                        if (itemIsFrozen)
                         {
-                            _selectedItems.Remove(item);
-                        }
-                        else
-                        {
-                            _selectedItems.Add(item);
+                            await SensusServiceHelper.Get().FlashNotificationAsync("That item cannot be changed.");
+                            return;
                         }
 
-                        if (!_multiselect)
-                        {
-                            _selectedItems.RemoveAll(selectedItem => selectedItem != item);
-                        }
-
-                        foreach (Label label in _itemLabels)
-                        {
-                            label.BackgroundColor = _selectedItems.Contains(label.BindingContext) ? Color.Accent : defaultBackgroundColor;
-                        }
-
-                        Complete = (Value as List<object>).Count > 0;
+                        ItemTapped(item);
                     };
 
                     itemLabel.GestureRecognizers.Add(tapRecognizer);
+
+                    // if the item should be initially selected, simulate a user tap. the item's label has not yet been
+                    // shown to the user, so this first tap will certainly be the selection tap as opposed to deselection.
+                    if (_initialIndexSelected != null && _initialIndexSelected.TryGetValue(i, out bool selected) && selected)
+                    {
+                        ItemTapped(item);
+                    }
 
                     // add invisible separator between items for fewer tapping errors
                     if (itemLabelStack.Children.Count > 0)
@@ -238,7 +255,7 @@ namespace Sensus.UI.Inputs
                         itemLabelStack.Children.Add(new BoxView { Color = Color.Transparent, HeightRequest = 5 });
                     }
 
-                    itemLabelStack.Children.Add(itemLabel);
+                    itemLabelStack.Children.Add(itemFrame);
                 }
 
                 _label = CreateLabel(index);
@@ -256,6 +273,50 @@ namespace Sensus.UI.Inputs
             }
 
             return base.GetView(index);
+        }
+
+        private void ItemTapped(object item)
+        {
+            // update the list of selected items
+            if (_selectedItems.Contains(item))
+            {
+                _selectedItems.Remove(item);
+            }
+            else
+            {
+                _selectedItems.Add(item);
+            }
+
+            if (!_multiselect)
+            {
+                _selectedItems.RemoveAll(selectedItem => selectedItem != item);
+            }
+
+            // update label background colors according to selected items
+            for (int i = 0; i < _itemFrames.Count; ++i)
+            {
+                Frame itemFrame = _itemFrames[i];
+
+                Color frameBorderColor = Color.Transparent;
+
+                if (_selectedItems.Contains(itemFrame.Content.BindingContext))
+                {
+                    bool itemIsFrozen = _frozenIndices?.Contains(i) ?? false;
+
+                    if (itemIsFrozen)
+                    {
+                        frameBorderColor = Color.LightGray;
+                    }
+                    else
+                    {
+                        frameBorderColor = Color.Accent;
+                    }
+                }
+
+                itemFrame.BorderColor = frameBorderColor;
+            }
+
+            Complete = (Value as List<object>).Count > 0;
         }
 
         public override bool ValueMatches(object conditionValue, bool conjunctive)
