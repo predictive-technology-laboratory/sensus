@@ -148,6 +148,10 @@ namespace Sensus.iOS
                 // time the app is killed and restarted. but the NRE condition above should be very rare.
                 _deviceId = Guid.NewGuid().ToString();
             }
+            finally
+            {
+                Microsoft.AppCenter.AppCenter.SetUserId(_deviceId);
+            }
 
             try
             {

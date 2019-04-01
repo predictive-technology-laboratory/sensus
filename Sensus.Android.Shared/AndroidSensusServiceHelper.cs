@@ -238,6 +238,8 @@ namespace Sensus.Android
                 _wakeLock = (_service.GetSystemService(global::Android.Content.Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, "SENSUS");
                 _wakeLockAcquisitionCount = 0;
                 _deviceId = Settings.Secure.GetString(_service.ContentResolver, Settings.Secure.AndroidId);
+
+                Microsoft.AppCenter.AppCenter.SetUserId(_deviceId);
             }
         }
 
