@@ -57,6 +57,24 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <JavaMaximumHeapSize>2G</JavaMaximumHeapSize>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.AppCenter, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AppCenter.1.13.2\lib\MonoAndroid403\Microsoft.AppCenter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Analytics, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AppCenter.Analytics.1.13.2\lib\MonoAndroid403\Microsoft.AppCenter.Analytics.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Analytics.Android.Bindings, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AppCenter.Analytics.1.13.2\lib\MonoAndroid403\Microsoft.AppCenter.Analytics.Android.Bindings.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Android.Bindings, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AppCenter.1.13.2\lib\MonoAndroid403\Microsoft.AppCenter.Android.Bindings.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Crashes, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AppCenter.Crashes.1.13.2\lib\MonoAndroid403\Microsoft.AppCenter.Crashes.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Crashes.Android.Bindings, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AppCenter.Crashes.1.13.2\lib\MonoAndroid403\Microsoft.AppCenter.Crashes.Android.Bindings.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Android" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -301,24 +319,6 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Reference Include="Xamarin.Azure.NotificationHubs.Android">
       <HintPath>..\packages\Xamarin.Azure.NotificationHubs.Android.0.5.0\lib\MonoAndroid403\Xamarin.Azure.NotificationHubs.Android.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.AppCenter.Android.Bindings">
-      <HintPath>..\packages\Microsoft.AppCenter.1.11.0\lib\MonoAndroid403\Microsoft.AppCenter.Android.Bindings.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter">
-      <HintPath>..\packages\Microsoft.AppCenter.1.11.0\lib\MonoAndroid403\Microsoft.AppCenter.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter.Analytics.Android.Bindings">
-      <HintPath>..\packages\Microsoft.AppCenter.Analytics.1.11.0\lib\MonoAndroid403\Microsoft.AppCenter.Analytics.Android.Bindings.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter.Analytics">
-      <HintPath>..\packages\Microsoft.AppCenter.Analytics.1.11.0\lib\MonoAndroid403\Microsoft.AppCenter.Analytics.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter.Crashes.Android.Bindings">
-      <HintPath>..\packages\Microsoft.AppCenter.Crashes.1.11.0\lib\MonoAndroid403\Microsoft.AppCenter.Crashes.Android.Bindings.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter.Crashes">
-      <HintPath>..\packages\Microsoft.AppCenter.Crashes.1.11.0\lib\MonoAndroid403\Microsoft.AppCenter.Crashes.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -387,7 +387,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
   <ItemGroup>
     <AndroidAsset Include="Assets\README.txt" />
   </ItemGroup>
-  <ItemGroup>
+    <ItemGroup>
     <Folder Include="Resources\values-v21\" />
     <Folder Include="Resources\layout\" />
   </ItemGroup>

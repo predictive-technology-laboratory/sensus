@@ -72,7 +72,7 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <CodesignProvision>Sensus App Store</CodesignProvision>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <NoWarn>1701</NoWarn>
-<MtouchUseLlvm>true</MtouchUseLlvm>
+    <MtouchUseLlvm>true</MtouchUseLlvm>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
     <Optimize>true</Optimize>
@@ -94,6 +94,24 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <CodesignKey>iPhone Developer</CodesignKey>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.AppCenter, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AppCenter.1.13.2\lib\Xamarin.iOS10\Microsoft.AppCenter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Analytics, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AppCenter.Analytics.1.13.2\lib\Xamarin.iOS10\Microsoft.AppCenter.Analytics.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Analytics.iOS.Bindings, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AppCenter.Analytics.1.13.2\lib\Xamarin.iOS10\Microsoft.AppCenter.Analytics.iOS.Bindings.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Crashes, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AppCenter.Crashes.1.13.2\lib\Xamarin.iOS10\Microsoft.AppCenter.Crashes.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.Crashes.iOS.Bindings, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AppCenter.Crashes.1.13.2\lib\Xamarin.iOS10\Microsoft.AppCenter.Crashes.iOS.Bindings.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AppCenter.iOS.Bindings, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AppCenter.1.13.2\lib\Xamarin.iOS10\Microsoft.AppCenter.iOS.Bindings.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Band.iOS">
       <HintPath>..\dependencies\msband\ios\Microsoft.Band.iOS.dll</HintPath>
     </Reference>
@@ -236,24 +254,6 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <Reference Include="Estimote.iOS.Proximity">
       <HintPath>..\packages\Estimote.iOS.Proximity.1.2.0\lib\xamarinios10\Estimote.iOS.Proximity.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.AppCenter">
-      <HintPath>..\packages\Microsoft.AppCenter.1.11.0\lib\Xamarin.iOS10\Microsoft.AppCenter.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter.iOS.Bindings">
-      <HintPath>..\packages\Microsoft.AppCenter.1.11.0\lib\Xamarin.iOS10\Microsoft.AppCenter.iOS.Bindings.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter.Analytics">
-      <HintPath>..\packages\Microsoft.AppCenter.Analytics.1.11.0\lib\Xamarin.iOS10\Microsoft.AppCenter.Analytics.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter.Analytics.iOS.Bindings">
-      <HintPath>..\packages\Microsoft.AppCenter.Analytics.1.11.0\lib\Xamarin.iOS10\Microsoft.AppCenter.Analytics.iOS.Bindings.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter.Crashes">
-      <HintPath>..\packages\Microsoft.AppCenter.Crashes.1.11.0\lib\Xamarin.iOS10\Microsoft.AppCenter.Crashes.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter.Crashes.iOS.Bindings">
-      <HintPath>..\packages\Microsoft.AppCenter.Crashes.1.11.0\lib\Xamarin.iOS10\Microsoft.AppCenter.Crashes.iOS.Bindings.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -379,7 +379,7 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-Small-50x50%401x.png" />
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-Small-50x50%402x.png" />
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-App-1024x1024%401x.png" />
-  </ItemGroup>
+	</ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\check.png" />
     <BundleResource Include="Resources\hamburger.png" />
