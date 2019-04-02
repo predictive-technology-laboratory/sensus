@@ -291,6 +291,7 @@ namespace Sensus.iOS
                 // start background task to (1) obtain any possible background processing time and (2) get
                 // notified when background time is about to expire. we used to hard code a fixed amount
                 // of time (~30 seconds per above link), but this might change without us knowing about it.
+                SensusServiceHelper.Get().Logger.Log("Starting background task for remote notification processing.", LoggingLevel.Normal, GetType());
                 receiveRemoteNotificationTaskId = application.BeginBackgroundTask(() =>
                 {
                     SensusServiceHelper.Get().Logger.Log("Cancelling token for remote notification processing due to iOS background processing limitations.", LoggingLevel.Normal, GetType());
@@ -319,6 +320,9 @@ namespace Sensus.iOS
 
                 await SensusContext.Current.Notifier.ProcessReceivedPushNotificationAsync(pushNotification, cancellationTokenSource.Token);
 
+                // even if the cancellation token was cancelled, we were still successful at downloading the updates.
+                // any amount of update application we were able to do in addition to the download is bonus. updates
+                // will continue to be applied on subsequent push notifications and health tests.
                 remoteNotificationResult = UIBackgroundFetchResult.NewData;
             }
             catch (Exception ex)
@@ -355,6 +359,7 @@ namespace Sensus.iOS
                 {
                     try
                     {
+                        SensusServiceHelper.Get().Logger.Log("Ending background task for remote notification processing.", LoggingLevel.Normal, GetType());
                         application.EndBackgroundTask(receiveRemoteNotificationTaskId.Value);
                     }
                     catch (Exception)
