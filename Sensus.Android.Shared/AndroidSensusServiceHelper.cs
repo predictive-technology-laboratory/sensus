@@ -210,28 +210,10 @@ namespace Sensus.Android
         {
             _actionsToRunUsingMainActivity = new List<Action<AndroidMainActivity>>();
             _userDeniedBluetoothEnable = false;
-        }
+            _wakeLock = (Application.Context.GetSystemService(global::Android.Content.Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, "SENSUS");
+            _deviceId = Settings.Secure.GetString(Application.Context.ContentResolver, Settings.Secure.AndroidId);
 
-        public void SetService(AndroidSensusService service)
-        {
-            _service = service;
-
-            if (_service == null)
-            {
-                if (_wakeLock != null)
-                {
-                    _wakeLock.Dispose();
-                    _wakeLock = null;
-                }
-            }
-            else
-            {
-                _wakeLock = (_service.GetSystemService(global::Android.Content.Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, "SENSUS");
-                _wakeLockAcquisitionCount = 0;
-                _deviceId = Settings.Secure.GetString(_service.ContentResolver, Settings.Secure.AndroidId);
-
-                Microsoft.AppCenter.AppCenter.SetUserId(_deviceId);
-            }
+            Microsoft.AppCenter.AppCenter.SetUserId(_deviceId);
         }
 
         #region main activity
