@@ -82,13 +82,13 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <CodesignEntitlements>EntitlementsProduction.plist</CodesignEntitlements>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <ConsolePause>false</ConsolePause>
-    <CodesignKey>iPhone Distribution</CodesignKey>
+    <CodesignKey>iPhone Distribution: UVA Apps, LLC (L8C6JE7MP8)</CodesignKey>
     <IpaPackageName></IpaPackageName>
     <DefineConstants>__IOS__;__MOBILE__;__UNIFIED__;RELEASE</DefineConstants>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <NoWarn>1701</NoWarn>
     <MtouchUseLlvm>true</MtouchUseLlvm>
-    <CodesignProvision>Automatic:AdHoc</CodesignProvision>
+    <CodesignProvision>Sensus Ad-Hoc</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <CodesignKey>iPhone Developer</CodesignKey>
