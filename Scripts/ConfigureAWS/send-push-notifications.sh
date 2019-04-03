@@ -102,11 +102,11 @@ delete_request () {
 
 # check options
 if [ $# -ne 4 ]; then
-    echo "Usage:  ./send-push-notifications.sh [s3 bucket name] [azure namespace] [azure hub]"
+    echo "Usage:  ./send-push-notifications.sh [s3 bucket name] [azure namespace] [azure hub] [azure key]"
     echo "\t[s3 bucket name]:  S3 bucket for remote data store (e.g.:  some-bucket). Do not include the s3:// prefix or trailing forward slashes."
     echo "\t[azure namespace]:  Azure push notification namespace."
     echo "\t[azure hub]:  Azure push notification hub."
-    echo "\t[azure key]:  Azure push notification full access key."
+    echo "\t[azure key]:  Azure push notification full access key (e.g., KtcrasdfsjelkfjsleeSCE2wnd9Z9qwXB1xM8U=)."
     echo ""
     exit 1
 fi
