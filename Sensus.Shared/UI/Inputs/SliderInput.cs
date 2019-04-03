@@ -272,6 +272,7 @@ namespace Sensus.UI.Inputs
 #endif
                 };
 
+                _incrementalValue = double.NaN;  // need this to ensure that the initial value selected by the user registers as a change.
                 _incrementalValueHasChanged = false;
 
                 _sliderLabel = CreateLabel(index);
@@ -282,7 +283,12 @@ namespace Sensus.UI.Inputs
 
                 _slider.Minimum = _minimum;
                 _slider.Maximum = _maximum;
-                _slider.Value = _minimum;  // set to minimum so that the slider does not indicate an initial value (e.g., in the case of ranges with a negative minimum)
+
+                // set the initial value to the minimum so that the slider bar progress fill does not reflect an 
+                // initial value of zero. the thumb has been hidden, but the fill will be rendered according to this
+                // value. this is needed with a slider range that has a negative minimum.
+                _slider.Value = _minimum;
+
                 _slider.ValueChanged += (sender, e) =>
                 {
                     double newIncrementalValue = GetIncrementalValue(e.NewValue);

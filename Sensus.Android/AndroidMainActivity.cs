@@ -105,6 +105,9 @@ namespace Sensus.Android
             _serviceConnection = new AndroidSensusServiceConnection();
             _serviceConnection.ServiceConnected += (o, e) =>
             {
+                // service was created/connected, so the service helper must exist.
+                SensusServiceHelper.Get().Logger.Log("Bound to Android service.", LoggingLevel.Normal, GetType());
+
                 // tell the service to finish this activity when it is stopped
                 e.Binder.OnServiceStop = Finish;
 
@@ -128,6 +131,9 @@ namespace Sensus.Android
                 Finish();
             };
 
+            // ensure the service is started any time the activity is created
+            AndroidSensusService.Start(false);
+
             await OpenIntentAsync(Intent);
         }
 
@@ -149,24 +155,30 @@ namespace Sensus.Android
             (Xamarin.Forms.Application.Current as App).MasterPage.IsVisible = false;
             (Xamarin.Forms.Application.Current as App).DetailPage.IsVisible = false;
 
-            // make sure that the service is running and bound any time the activity is resumed. the service is both started
-            // and bound, as we'd like the service to remain running and available to other apps even if the current activity unbinds.
-            Intent serviceIntent = AndroidSensusService.Start(false);
-            BindService(serviceIntent, _serviceConnection, Bind.AboveClient);
+            // ensure the service is bound any time the activity is resumed
+            BindService(AndroidSensusService.GetServiceIntent(false), _serviceConnection, Bind.AboveClient);
 
             // start new task to wait for connection, since we're currently on the UI thread, which the service connection needs in order to complete.
             await Task.Run(() =>
             {
                 // we've not seen the binding take more than a second or two; however, we want to be very careful not to block indefinitely
-                // here becaus the UI is currently disabled. if for some strange reason the binding does not work, bail out after 10 seconds
+                // here because the UI is currently disabled. if for some strange reason the binding does not work, bail out after 10 seconds
                 // and let the user interact with the UI. most likely, a crash will be coming very soon in this case, as the sensus service
                 // will probably not be running. again, this has not occurred in practice, but allowing the crash to occur will send us information
                 // through the crash analytics service and we'll be able to track it
-                _serviceBindWait.WaitOne(TimeSpan.FromSeconds(10000));
+                TimeSpan serviceBindTimeout = TimeSpan.FromSeconds(10000);
+                if (_serviceBindWait.WaitOne(serviceBindTimeout))
+                {
+                    SensusServiceHelper.Get().Logger.Log("Activity proceeding following service bind.", LoggingLevel.Normal, GetType());
+                }
+                else
+                {
+                    SensusException.Report("Timed out waiting " + serviceBindTimeout + " for the service to bind.");
+                }
 
                 SensusServiceHelper.Get().CancelPendingSurveysNotification();
 
-                // now that the service connection has been established, reenable UI.
+                // enable the UI
                 try
                 {
                     SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
@@ -230,10 +242,11 @@ namespace Sensus.Android
                 try
                 {
                     UnbindService(_serviceConnection);
+                    SensusServiceHelper.Get().Logger.Log("Unbound from Android service.", LoggingLevel.Normal, GetType());
                 }
                 catch (Exception ex)
                 {
-                    SensusServiceHelper.Get().Logger.Log("Failed to disconnection from service:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Failed to disconnect from service:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
             }
         }

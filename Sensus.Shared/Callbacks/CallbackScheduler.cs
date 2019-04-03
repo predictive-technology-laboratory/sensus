@@ -170,7 +170,10 @@ namespace Sensus.Callbacks
                 {
                     SensusServiceHelper.Get().Logger.Log("Attempting to service callback " + callback.Id + " from push notification.", LoggingLevel.Normal, GetType());
 
-                    // if the cancellation token is cancelled, cancel the callback
+                    // if the cancellation token becomes cancelled, then cancel the callback. note that, if the
+                    // token has already been cancelled, then the registered action will be run immediately resulting
+                    // in a pre-cancellation of the callback. this is okay, as the call below to service the callback
+                    // will short circuit and reschedule the callback for the next invocation.
                     cancellationToken.Register(() =>
                     {
                         CancelRaisedCallback(callback);

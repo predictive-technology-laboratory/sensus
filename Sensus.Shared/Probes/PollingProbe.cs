@@ -24,7 +24,6 @@ using Sensus.Callbacks;
 using Microsoft.AppCenter.Analytics;
 using Sensus.Extensions;
 using Sensus.Exceptions;
-using Sensus.Notifications;
 
 #if __IOS__
 using CoreLocation;
@@ -63,6 +62,20 @@ namespace Sensus.Probes
     /// </summary>
     public abstract class PollingProbe : Probe
     {
+
+#if __IOS__
+        // we used to instantiate the CLLocationManager as an instance-level field of this class,
+        // but these references are duplicative and all point to the same object. as a result, 
+        // we were seeing many warnings about unnecessary reinitialization. this is better done
+        // as a static member.
+        private static CLLocationManager SIGNIFICANT_CHANGE_LOCATION_MANAGER = new CLLocationManager
+        {
+            DistanceFilter = 5.0,
+            PausesLocationUpdatesAutomatically = false,
+            AllowsBackgroundLocationUpdates = true
+        };
+#endif
+
         private int _pollingSleepDurationMS;
         private int _pollingTimeoutMinutes;
         private bool _isPolling;
@@ -73,10 +86,6 @@ namespace Sensus.Probes
         private EventHandler<bool> _powerConnectionChanged;
         private bool _significantChangePoll;
         private bool _significantChangePollOverridesScheduledPolls;
-
-#if __IOS__
-        private CLLocationManager _locationManager;
-#endif
 
         /// <summary>
         /// How long to sleep (become inactive) between successive polling operations.
@@ -275,8 +284,7 @@ namespace Sensus.Probes
             _significantChangePollOverridesScheduledPolls = false;
 
 #if __IOS__
-            _locationManager = new CLLocationManager();
-            _locationManager.LocationsUpdated += async (sender, e) =>
+            SIGNIFICANT_CHANGE_LOCATION_MANAGER.LocationsUpdated += async (sender, e) =>
             {
                 try
                 {
@@ -390,7 +398,10 @@ namespace Sensus.Probes
             // on ios, notify the user about desired polling to encourage them to foreground the app.
             if (AlertUserWhenBackgrounded)
             {
-                _pollCallback.UserNotificationMessage = DisplayName.Substring(0, 1).ToUpper() + DisplayName.Substring(1).ToLower() + " data requested.";
+                // capitalize first character of data request message
+                string dataRequestMessage = DisplayName + " data requested.";
+                dataRequestMessage = dataRequestMessage[0].ToString().ToUpper() + dataRequestMessage.Substring(1).ToLower();
+                _pollCallback.UserNotificationMessage = dataRequestMessage;
 
                 // give the user some feedback when they tap the callback notification
                 _pollCallback.NotificationUserResponseMessage = "Data collected. Thanks!";
@@ -402,14 +413,11 @@ namespace Sensus.Probes
 #if __IOS__
             if (_significantChangePoll)
             {
-                _locationManager.RequestAlwaysAuthorization();
-                _locationManager.DistanceFilter = 5.0;
-                _locationManager.PausesLocationUpdatesAutomatically = false;
-                _locationManager.AllowsBackgroundLocationUpdates = true;
+                SIGNIFICANT_CHANGE_LOCATION_MANAGER.RequestAlwaysAuthorization();
 
                 if (CLLocationManager.LocationServicesEnabled)
                 {
-                    _locationManager.StartMonitoringSignificantLocationChanges();
+                    SIGNIFICANT_CHANGE_LOCATION_MANAGER.StartMonitoringSignificantLocationChanges();
 
                     if (_significantChangePollOverridesScheduledPolls)
                     {
@@ -448,7 +456,7 @@ namespace Sensus.Probes
 #if __IOS__
             if (_significantChangePoll)
             {
-                _locationManager.StopMonitoringSignificantLocationChanges();
+                SIGNIFICANT_CHANGE_LOCATION_MANAGER.StopMonitoringSignificantLocationChanges();
             }
 #endif
 

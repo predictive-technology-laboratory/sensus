@@ -1,30 +1,27 @@
 #!/bin/sh
 
-get_device_format() {
-    
+get_token_path() {
+
     # extract arguments
     local local_tokens_path=$1
     local device=$2
+    
+    echo "$local_tokens_path/${device}.json"
+}
 
-    cat "$local_tokens_path/${device}.json" | jq -r '.format'	
+get_device_format() {
+
+    cat $(get_token_path $1 $2) | jq -r '.format'	
 }
 
 get_device_token() {
-    
-    # extract arguments
-    local local_tokens_path=$1
-    local device=$2
 
-    cat "$local_tokens_path/${device}.json" | jq -r '.token'
+    cat $(get_token_path $1 $2) | jq -r '.token'
 }
 
 get_device_protocol() {
-    
-    # extract arguments
-    local local_tokens_path=$1
-    local device=$2
 
-    cat "$local_tokens_path/${device}.json" | jq -r '.protocol'
+    cat $(get_token_path $1 $2) | jq -r '.protocol'
 }
 
 push_via_azure () {
@@ -86,7 +83,7 @@ push_via_azure () {
     
     # send notification to azure
     curl --http1.1 --header "ServiceBusNotification-Format: $format" --header "ServiceBusNotification-DeviceHandle: $token" --header "x-ms-version: 2015-04" --header "Authorization: $sas" --header "Content-Type: application/json;charset=utf-8" --data "$data" -X POST "https://${namespace}.servicebus.windows.net/${hub}/messages/?direct&api-version=2015-04" &
-    echo -e "Notification requested.\n"
+
 }
 
 delete_request () {
@@ -360,13 +357,25 @@ for device_dir in $(find $local_updates_path -mindepth 1 -maxdepth 1 -not -empty
 do
 
     device=$(basename $device_dir)
+
+    # the token might have disappeared (e.g., if the protocol was stopped). clear updates 
+    # locally and from s3 if this is the case.
+    device_token_path=$(get_token_path $local_tokens_path $device)
+    if [ ! -f $device_token_path ]
+    then
+	echo "Token file does not exist for device ${device}. Clearing updates for this device."
+	rm -rf $device_dir
+	aws s3 rm --recursive $s3_updates_path/$device
+	continue
+    fi
+
+    # the token exists. send push notification.
     format=$(get_device_format $local_tokens_path $device)
     protocol=$(get_device_protocol $local_tokens_path $device)
     token=$(get_device_token $local_tokens_path $device)
+    push_via_azure $format "true" "\"$(uuidgen)\"" "" $protocol '""' '""' '""' $token
 
     echo $device
-
-    push_via_azure $format "true" "\"$(uuidgen)\"" "" $protocol '""' '""' '""' $token
 
 done
 

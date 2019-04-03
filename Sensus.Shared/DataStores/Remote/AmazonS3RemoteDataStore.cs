@@ -552,12 +552,12 @@ namespace Sensus.DataStores.Remote
             catch (Exception ex)
             {
                 string message = "Failed to write stream to Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message;
-                SensusServiceHelper.Get().Logger.Log(message + " " + ex.Message, LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                 throw new Exception(message, ex);
             }
         }
 
-        private async Task<List<string>> ListKeysAsync(AmazonS3Client s3, string prefix, bool mostRecentlyModifiedFirst)
+        private async Task<List<string>> ListKeysAsync(AmazonS3Client s3, string prefix, bool mostRecentlyModifiedFirst, CancellationToken cancellationToken)
         {
             try
             {
@@ -574,7 +574,7 @@ namespace Sensus.DataStores.Remote
 
                 do
                 {
-                    listResponse = await s3.ListObjectsV2Async(listRequest);
+                    listResponse = await s3.ListObjectsV2Async(listRequest, cancellationToken);
 
                     if (listResponse.HttpStatusCode != HttpStatusCode.OK)
                     {
@@ -602,7 +602,7 @@ namespace Sensus.DataStores.Remote
             catch (Exception ex)
             {
                 string message = "Failed to list keys in Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message;
-                SensusServiceHelper.Get().Logger.Log(message + " " + ex.Message, LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                 throw new Exception(message, ex);
             }
         }
@@ -621,7 +621,7 @@ namespace Sensus.DataStores.Remote
             catch (Exception ex)
             {
                 string message = "Failed to delete key from Amazon S3 bucket \"" + _bucket + "\":  " + ex.Message;
-                SensusServiceHelper.Get().Logger.Log(message + " " + ex.Message, LoggingLevel.Normal, GetType());
+                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                 throw new Exception(message, ex);
             }
         }
@@ -685,7 +685,9 @@ namespace Sensus.DataStores.Remote
             {
                 s3 = await CreateS3ClientAsync();
 
-                foreach (string updateKey in await ListKeysAsync(s3, PUSH_NOTIFICATIONS_UPDATES_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId, true))
+                // retrieve updates sorted with most recently modified first. this will let us keep only the most recent version
+                // of each update with the same id (note use of TryAdd below, which will only retain the first update per id).
+                foreach (string updateKey in await ListKeysAsync(s3, PUSH_NOTIFICATIONS_UPDATES_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId, true, cancellationToken))
                 {
                     try
                     {
@@ -693,7 +695,15 @@ namespace Sensus.DataStores.Remote
 
                         if (getResponse.HttpStatusCode == HttpStatusCode.OK)
                         {
-                            await DeleteAsync(s3, updateKey, cancellationToken);
+                            // catch any exceptions when trying to delete the update. we already retrieved it, and 
+                            // we might just be lacking connectivity or might have been cancelled. the update will
+                            // be pushed again in the future and we'll try deleting it again then.
+                            try
+                            {
+                                await DeleteAsync(s3, updateKey, cancellationToken);
+                            }
+                            catch (Exception)
+                            { }
 
                             string updatesJSON;
                             using (StreamReader reader = new StreamReader(getResponse.ResponseStream))
