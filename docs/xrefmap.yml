@@ -25161,18 +25161,6 @@ references:
   commentId: Overload:Sensus.iOS.AppDelegate.OpenUrl
   fullName: Sensus.iOS.AppDelegate.OpenUrl
   nameWithType: AppDelegate.OpenUrl
-- uid: Sensus.iOS.AppDelegate.ReceivedRemoteNotification(UIKit.UIApplication,Foundation.NSDictionary)
-  name: ReceivedRemoteNotification(UIApplication, NSDictionary)
-  href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_ReceivedRemoteNotification_UIKit_UIApplication_Foundation_NSDictionary_
-  commentId: M:Sensus.iOS.AppDelegate.ReceivedRemoteNotification(UIKit.UIApplication,Foundation.NSDictionary)
-  fullName: Sensus.iOS.AppDelegate.ReceivedRemoteNotification(UIKit.UIApplication, Foundation.NSDictionary)
-  nameWithType: AppDelegate.ReceivedRemoteNotification(UIApplication, NSDictionary)
-- uid: Sensus.iOS.AppDelegate.ReceivedRemoteNotification*
-  name: ReceivedRemoteNotification
-  href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_ReceivedRemoteNotification_
-  commentId: Overload:Sensus.iOS.AppDelegate.ReceivedRemoteNotification
-  fullName: Sensus.iOS.AppDelegate.ReceivedRemoteNotification
-  nameWithType: AppDelegate.ReceivedRemoteNotification
 - uid: Sensus.iOS.AppDelegate.RegisteredForRemoteNotifications(UIKit.UIApplication,Foundation.NSData)
   name: RegisteredForRemoteNotifications(UIApplication, NSData)
   href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_RegisteredForRemoteNotifications_UIKit_UIApplication_Foundation_NSData_
@@ -25185,18 +25173,6 @@ references:
   commentId: Overload:Sensus.iOS.AppDelegate.RegisteredForRemoteNotifications
   fullName: Sensus.iOS.AppDelegate.RegisteredForRemoteNotifications
   nameWithType: AppDelegate.RegisteredForRemoteNotifications
-- uid: Sensus.iOS.AppDelegate.WillEnterForeground(UIKit.UIApplication)
-  name: WillEnterForeground(UIApplication)
-  href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_WillEnterForeground_UIKit_UIApplication_
-  commentId: M:Sensus.iOS.AppDelegate.WillEnterForeground(UIKit.UIApplication)
-  fullName: Sensus.iOS.AppDelegate.WillEnterForeground(UIKit.UIApplication)
-  nameWithType: AppDelegate.WillEnterForeground(UIApplication)
-- uid: Sensus.iOS.AppDelegate.WillEnterForeground*
-  name: WillEnterForeground
-  href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_WillEnterForeground_
-  commentId: Overload:Sensus.iOS.AppDelegate.WillEnterForeground
-  fullName: Sensus.iOS.AppDelegate.WillEnterForeground
-  nameWithType: AppDelegate.WillEnterForeground
 - uid: Sensus.iOS.AppDelegate.WillTerminate(UIKit.UIApplication)
   name: WillTerminate(UIApplication)
   href: api/Sensus.iOS.AppDelegate.html#Sensus_iOS_AppDelegate_WillTerminate_UIKit_UIApplication_
