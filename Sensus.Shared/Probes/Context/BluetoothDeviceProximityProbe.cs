@@ -59,6 +59,7 @@ namespace Sensus.Probes.Context
 
         private int _scanDurationMS;
         private int _readDurationMS;
+        private string _serviceUUID;
 
         /// <summary>
         /// The length of time to scan for devices in proximity (in milliseconds). The longer the scan, the
@@ -115,6 +116,36 @@ namespace Sensus.Probes.Context
             }
         }
 
+        /// <summary>
+        /// The length of time to read identifiers from scanned devices (in milliseconds). The longer the read, the
+        /// more likely it is that all scanned devices will be read. However, note that, if the <see cref="Protocol"/> 
+        /// is configured to use [push notifications](xref:push_notifications), then the combination of 
+        /// <see cref="ScanDurationMS"/> and <see cref="ReadDurationMS"/> should not exceed 20 seconds, as there is 
+        /// limited time to complete all background processing. It is difficult to recommend a "best" value, but 
+        /// 10000ms seems like a reasonable read duration, all things considered.
+        /// </summary>
+        /// <value>The read time ms.</value>
+        [EntryIntegerUiProperty("Service ID", true, 6, true)]
+        public string ServiceUUID
+        {
+            get
+            {
+                return _serviceUUID;
+            }
+            set
+            {
+                if (Guid.TryParse(_serviceUUID, out Guid val) == false)
+                {
+                    val = Guid.NewGuid();
+                }
+
+                _serviceUUID = val.ToString();
+
+            }
+        }
+
+
+
         [JsonIgnore]
         public int ReadAttemptCount { get; set; }
 
@@ -135,6 +166,7 @@ namespace Sensus.Probes.Context
         {
             _scanDurationMS = (int)TimeSpan.FromSeconds(10).TotalMilliseconds;
             _readDurationMS = (int)TimeSpan.FromSeconds(10).TotalMilliseconds;
+            _serviceUUID = Protocol.Id;
         }
 
         protected override async Task InitializeAsync()
@@ -162,7 +194,7 @@ namespace Sensus.Probes.Context
                 SensusServiceHelper.Get().Logger.Log("Starting advertising.", LoggingLevel.Normal, GetType());
                 StartAdvertising();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 SensusServiceHelper.Get().Logger.Log("Exception while starting advertising:  " + ex, LoggingLevel.Normal, GetType());
             }

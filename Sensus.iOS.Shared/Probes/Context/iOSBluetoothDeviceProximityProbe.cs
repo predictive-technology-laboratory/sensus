@@ -79,7 +79,7 @@ namespace Sensus.iOS.Probes.Context
                                                                   CBAttributePermissions.Readable);
 
             // create service with device id characteristic
-            _deviceIdService = new CBMutableService(CBUUID.FromString(Protocol.Id), true);
+            _deviceIdService = new CBMutableService(CBUUID.FromString(ServiceUUID), true);
             _deviceIdService.Characteristics = new CBCharacteristic[] { _deviceIdCharacteristic };
         }
 
