@@ -60,10 +60,6 @@ namespace Sensus.Android.Probes.Context
     ///     platform for customization. The <see cref="BluetoothDeviceProximityProbe.ServiceUUID"/> values of these Protocols will remain equal
     ///     and this <see cref="AndroidBluetoothDeviceProximityProbe"/> will detect encounters across platforms.
     /// 
-    ///   * Create your Protocols separately on each platform and then set the <see cref="Protocol.Id"/> field on
-    ///     one platform (using the "Set Study Identifier" button) to match the <see cref="Protocol.Id"/> value
-    ///     of the other platform (obtained via "Copy Study Identifier").
-    /// 
     /// See the iOS subclass of <see cref="BluetoothDeviceProximityProbe"/> for additional information.
     /// </summary>
     public class AndroidBluetoothDeviceProximityProbe : BluetoothDeviceProximityProbe

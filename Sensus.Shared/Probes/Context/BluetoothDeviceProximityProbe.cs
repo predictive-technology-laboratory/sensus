@@ -117,15 +117,9 @@ namespace Sensus.Probes.Context
         }
 
         /// <summary>
-        /// The length of time to read identifiers from scanned devices (in milliseconds). The longer the read, the
-        /// more likely it is that all scanned devices will be read. However, note that, if the <see cref="Protocol"/> 
-        /// is configured to use [push notifications](xref:push_notifications), then the combination of 
-        /// <see cref="ScanDurationMS"/> and <see cref="ReadDurationMS"/> should not exceed 20 seconds, as there is 
-        /// limited time to complete all background processing. It is difficult to recommend a "best" value, but 
-        /// 10000ms seems like a reasonable read duration, all things considered.
+        /// The Service UUID is used to scan and advertise for other devices. The Service UUID on connecting devices should match
         /// </summary>
-        /// <value>The read time ms.</value>
-        [EntryIntegerUiProperty("Service ID", true, 6, true)]
+        [EntryStringUiProperty("Service UUID", true, 6, true)]
         public string ServiceUUID
         {
             get
@@ -134,12 +128,13 @@ namespace Sensus.Probes.Context
             }
             set
             {
-                if (Guid.TryParse(_serviceUUID, out Guid val) == false)
+                if (Guid.TryParse(value, out Guid val) == false)
                 {
-                    val = Guid.NewGuid();
+                    value = Guid.NewGuid().ToString();
+
                 }
 
-                _serviceUUID = val.ToString();
+                _serviceUUID = value;
 
             }
         }
@@ -166,7 +161,7 @@ namespace Sensus.Probes.Context
         {
             _scanDurationMS = (int)TimeSpan.FromSeconds(10).TotalMilliseconds;
             _readDurationMS = (int)TimeSpan.FromSeconds(10).TotalMilliseconds;
-            _serviceUUID = Protocol.Id;
+            _serviceUUID = Guid.NewGuid().ToString();
         }
 
         protected override async Task InitializeAsync()
