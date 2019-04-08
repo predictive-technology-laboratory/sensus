@@ -58,6 +58,16 @@ namespace Sensus.DataStores.Local
         private const int DEFAULT_BUFFER_SIZE_BYTES = 4096;
 
         /// <summary>
+        /// This is a default maximum local data storage that can be used before we start deleting the oldest data
+        /// </summary>
+        private const int DEFAULT_MAX_LOCAL_DATA_SIZE_MB = 2048;
+
+        /// <summary>
+        /// This is the default free storage percent that we maintain on the device before we start deleting the oldest data
+        /// </summary>
+        private const double DEFAULT_MIN_DEVICE_FREE_STORAGE_PERCENT = .20;
+
+        /// <summary>
         /// File extension to use for JSON files.
         /// </summary>
         private const string JSON_FILE_EXTENSION = ".json";
@@ -112,6 +122,8 @@ namespace Sensus.DataStores.Local
         private List<string> _pathsPreparedForRemote;
         private List<string> _pathsUnpreparedForRemote;
         private int _totalFilesPreparedForRemote;
+        private int _maxLocalDataSize;
+        private double _minDeviceFreeStoragePercent;
 
         /// <summary>
         /// Step 4:  Transmission to the <see cref="Remote.RemoteDataStore"/>.
@@ -183,6 +195,50 @@ namespace Sensus.DataStores.Local
                 }
 
                 _currentFileBufferSizeBytes = value;
+            }
+        }
+
+        [EntryIntegerUiProperty("Maximum local storage size in MB", true, 3, true)]
+        public int MaxLocalDataSize
+        {
+            get
+            {
+                return _maxLocalDataSize;
+            }
+            set
+            {
+                if (value < _currentFileBufferSizeBytes / 1024)
+                {
+                    _maxLocalDataSize = _currentFileBufferSizeBytes / 1024; //this should not be smaller than the buffer size
+                }
+                else
+                {
+                    _maxLocalDataSize = value;
+                }
+            }
+        }
+
+        [EntryDoubleUiProperty("Minimum available device storage in Percent (0.00-1.00)", true, 4, true)]
+        public double MinDeviceFreeStoragePercent
+        {
+            get
+            {
+                return _minDeviceFreeStoragePercent;
+            }
+            set
+            {
+                if (value < 0)
+                {
+                    _minDeviceFreeStoragePercent = 0.0;
+                }
+                else if (value > 1)
+                {
+                    _minDeviceFreeStoragePercent = 1.0;
+                }
+                else
+                {
+                    _minDeviceFreeStoragePercent = value;
+                }
             }
         }
 
@@ -279,6 +335,8 @@ namespace Sensus.DataStores.Local
             _writeBufferedDataToFileTask = null;
             _toWriteBuffer = new List<Datum>();
             _bufferedDataHaveBeenWrittenToFile = new AutoResetEvent(false);
+            _maxLocalDataSize = DEFAULT_MAX_LOCAL_DATA_SIZE_MB;
+            _minDeviceFreeStoragePercent = DEFAULT_MIN_DEVICE_FREE_STORAGE_PERCENT;
 
             // step 3:  compressed, encrypted file
             _compressionLevel = CompressionLevel.Optimal;
@@ -719,6 +777,11 @@ namespace Sensus.DataStores.Local
             return sizeMB;
         }
 
+        private double GetAvailablePercent()
+        {
+            return SensusServiceHelper.GetAvailableStoragePercent();
+        }
+
         public void Flush()
         {
             // there's a race condition between writing new data to the buffers and flushing them. enter an
@@ -905,6 +968,46 @@ namespace Sensus.DataStores.Local
             }
         }
 
+        private void ReduceFileSizeToLimits()
+        {
+            List<string> pathsUnpreparedForRemote;
+
+            UpdatePathsPreparedForRemote();
+
+            while (_pathsPreparedForRemote.Count > 1 && GetSizeMB() > _maxLocalDataSize)
+            {
+                if(DeleteOldestPreparedFile() == false)
+                {
+                    break;
+                }
+            }
+            while (_pathsPreparedForRemote.Count > 1 && GetAvailablePercent() < _minDeviceFreeStoragePercent)
+            {
+                if (DeleteOldestPreparedFile() == false)
+                {
+                    break;
+                }
+            }
+
+            UpdatePathsPreparedForRemote();
+
+        }
+
+        private bool  DeleteOldestPreparedFile()
+        {
+            lock (_pathsPreparedForRemote)
+            {
+                var toDelete = new DirectoryInfo(StorageDirectory).GetFiles("*.gz").Where(w => _pathsPreparedForRemote.Contains(w.FullName)).OrderByDescending(o => o.CreationTime).Select(s => s.FullName).FirstOrDefault();
+                if (toDelete != null)
+                {
+                    File.Delete(toDelete);
+                    _pathsPreparedForRemote.Remove(toDelete);
+                    return true;
+                }
+                return false;
+            }
+        }
+
         public override async Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
             // retry file preparation for any unprepared paths
@@ -919,6 +1022,19 @@ namespace Sensus.DataStores.Local
                 await PreparePathForRemoteAsync(pathUnpreparedForRemote, CancellationToken.None);
             }
 
+
+            double startFileSize = GetSizeMB(); //TODO:  This only gets prepared files, which i think it what we really care about.  We could use SensusServiceHelper.GetDirectorySizeMB(StorageDirectory); if we wanted to include the currently processing file
+            double endFileSize = startFileSize;
+            double availablePercentage = GetAvailablePercent();
+            if (startFileSize > _maxLocalDataSize ||
+                availablePercentage < _minDeviceFreeStoragePercent)
+            {
+                ReduceFileSizeToLimits();
+                endFileSize = GetSizeMB();
+                availablePercentage = GetAvailablePercent();
+            }
+
+
             HealthTestResult result = await base.TestHealthAsync(events);
 
             string eventName = TrackedEvent.Health + ":" + GetType().Name;
@@ -929,7 +1045,11 @@ namespace Sensus.DataStores.Local
                 { "Percent Closed Files Prepared For Remote", Convert.ToString(_totalFilesPreparedForRemote.RoundToWholePercentageOf(_totalFilesClosed, 5)) },
                 { "Percent Closed Files Written To Remote", Convert.ToString(_totalFilesWrittenToRemote.RoundToWholePercentageOf(_totalFilesClosed, 5)) },
                 { "Paths Unprepared For Remote", Convert.ToString(_pathsUnpreparedForRemote.Count) },
-                { "Prepared Files Size MB", Convert.ToString(Math.Round(GetSizeMB(), 0)) }
+                { "Prepared Files Size MB", Convert.ToString(Math.Round(GetSizeMB(), 0)) },
+                { "Maximum Files Size MB", Convert.ToString(_maxLocalDataSize) },
+                { "Available Disk Space Percent",  Convert.ToString(Math.Round(availablePercentage, 3)) },
+                { "Minimum Disk Space Percent",  Convert.ToString(Math.Round(_minDeviceFreeStoragePercent, 3)) },
+                { "Amount Reduced MB", Convert.ToString(startFileSize-endFileSize) },
             };
 
             Analytics.TrackEvent(eventName, properties);

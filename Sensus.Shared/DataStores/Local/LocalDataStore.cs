@@ -30,6 +30,7 @@ namespace Sensus.DataStores.Local
     {
         private bool _sizeTriggeredRemoteWriteRunning;
         private bool _writeToRemote;
+        private int _maxLocalDataUsage;
 
         private readonly object _sizeTriggeredRemoteWriteLocker = new object();
 

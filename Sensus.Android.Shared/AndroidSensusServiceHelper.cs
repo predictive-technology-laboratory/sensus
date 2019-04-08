@@ -212,6 +212,8 @@ namespace Sensus.Android
             _userDeniedBluetoothEnable = false;
             _wakeLock = (Application.Context.GetSystemService(global::Android.Content.Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, "SENSUS");
             _deviceId = Settings.Secure.GetString(Application.Context.ContentResolver, Settings.Secure.AndroidId);
+
+            Microsoft.AppCenter.AppCenter.SetUserId(_deviceId);
         }
 
         #region main activity

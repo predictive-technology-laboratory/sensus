@@ -283,6 +283,20 @@ namespace Sensus
             });
         }
 
+        public static double GetAvailableStoragePercent()
+        {
+            double totalFreeSpace = 0;
+            double totalSize = 0;
+            List<DriveInfo> drives = System.IO.DriveInfo.GetDrives().Where(w => w.IsReady == true && w.AvailableFreeSpace > 0).ToList();
+            foreach(var drive in drives)
+            {
+                totalFreeSpace += drive.TotalFreeSpace;
+                totalSize += drive.TotalSize;
+            }
+            var available = totalFreeSpace / totalSize;
+            return available;
+        }
+
         /// <remarks>
         /// For testing purposes only
         /// </remarks>
