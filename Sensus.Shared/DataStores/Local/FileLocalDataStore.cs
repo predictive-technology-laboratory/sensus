@@ -494,10 +494,7 @@ namespace Sensus.DataStores.Local
                                     // potentially hundreds of samples per second.
                                     lock (_dataBuffer)
                                     {
-                                        for (var i = 0; i < 100000; i++)
-                                        {
-                                            _toWriteBuffer.AddRange(_dataBuffer);
-                                        }
+                                        _toWriteBuffer.AddRange(_dataBuffer);
                                         _dataBuffer.Clear();
                                     }
 
@@ -977,26 +974,37 @@ namespace Sensus.DataStores.Local
 
             UpdatePathsPreparedForRemote();
 
-            while (_pathsPreparedForRemote.Count > 1 && GetSizeMB() > _maxLocalDataSize) //TODO:  Should I use SensusServiceHelper.GetDirectorySizeMB();
+            while (_pathsPreparedForRemote.Count > 1 && GetSizeMB() > _maxLocalDataSize)
             {
-                DeleteOldestPreparedFile();
+                if(DeleteOldestPreparedFile() == false)
+                {
+                    break;
+                }
             }
             while (_pathsPreparedForRemote.Count > 1 && GetAvailablePercent() < _minDeviceFreeStoragePercent)
             {
-                DeleteOldestPreparedFile();
+                if (DeleteOldestPreparedFile() == false)
+                {
+                    break;
+                }
             }
 
             UpdatePathsPreparedForRemote();
 
         }
 
-        private void DeleteOldestPreparedFile()
+        private bool  DeleteOldestPreparedFile()
         {
             lock (_pathsPreparedForRemote)
             {
-                var toDelete = _pathsPreparedForRemote.LastOrDefault();
-                System.IO.File.Delete(toDelete);
-                _pathsPreparedForRemote.Remove(toDelete);
+                var toDelete = new DirectoryInfo(StorageDirectory).GetFiles("*.gz").Where(w => _pathsPreparedForRemote.Contains(w.FullName)).OrderByDescending(o => o.CreationTime).Select(s => s.FullName).FirstOrDefault();
+                if (toDelete != null)
+                {
+                    File.Delete(toDelete);
+                    _pathsPreparedForRemote.Remove(toDelete);
+                    return true;
+                }
+                return false;
             }
         }
 
@@ -1014,7 +1022,8 @@ namespace Sensus.DataStores.Local
                 await PreparePathForRemoteAsync(pathUnpreparedForRemote, CancellationToken.None);
             }
 
-            double startFileSize = GetSizeMB();
+
+            double startFileSize = GetSizeMB(); //TODO:  This only gets prepared files, which i think it what we really care about.  We could use SensusServiceHelper.GetDirectorySizeMB(StorageDirectory); if we wanted to include the currently processing file
             double endFileSize = startFileSize;
             double availablePercentage = GetAvailablePercent();
             if (startFileSize > _maxLocalDataSize ||
