@@ -454,7 +454,7 @@ namespace Sensus.Callbacks
 #if __IOS__
             await CancelRemoteInvocationAsync(callback);
 #else
-                await Task.CompletedTask;
+            await Task.CompletedTask;
 #endif
 
             SensusServiceHelper.Get().Logger.Log("Unscheduled callback " + callback.Id + ".", LoggingLevel.Normal, GetType());

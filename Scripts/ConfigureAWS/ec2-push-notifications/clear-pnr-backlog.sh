@@ -9,7 +9,7 @@ then
     echo ""
     echo "Example:  Clear backlog for all iOS devices:"
     echo ""
-    echo "  ./list-devices.sh BUCKET | grep 'apple' | ./clear-pnr-backlog.sh"
+    echo "  ./list-devices.sh BUCKET | grep 'apple$' | ./clear-pnr-backlog.sh"
     echo ""
     exit 1
 fi
