@@ -1,5 +1,9 @@
+Below is the structure of an example JSON object for use as the content value
+within an update push notification. It lists the protocol settings to be updated
+as well as an optional user notification to display after applying the update.
+
 {
-  "updates" : 
+  "settings" : 
   [
     {
       "property-type" : "Sensus.Probes.ListeningProbe",

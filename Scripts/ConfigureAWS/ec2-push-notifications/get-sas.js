@@ -1,4 +1,6 @@
 // usage:  node ./get-sas.js [azure namespace] [azure hub] [key]
+// purpose:  generates a cryptographically signed shared access signature for the
+// azure push notification hub, with a specified expiration duration.
 var util = require('util');
 var crypto = require('crypto');
 

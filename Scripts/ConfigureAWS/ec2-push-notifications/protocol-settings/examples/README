@@ -1,0 +1,3 @@
+The scripts in this directory demonstrate how protocol setting updates are
+sent to devices via push notifications. These scripts should be run from
+this directory, as they reference scripts in parent directories.

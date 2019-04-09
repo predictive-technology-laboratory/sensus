@@ -105,25 +105,40 @@ rm tmp
 ##### Push Notifications #####
 ##############################
 
-# upload push notification processor and supporting tools
+# upload push notification processor
+echo "Uploading push notification processor..."
 scp -i $pemFileName send-push-notifications.sh ec2-user@$publicIP:~/
 ssh -i $pemFileName ec2-user@$publicIP "chmod +x send-push-notifications.sh"
 scp -i $pemFileName get-sas.js ec2-user@$publicIP:~/
-scp -i $pemFileName -r push-protocol-updates/* ec2-user@$publicIP:~/
-ssh -i $pemFileName ec2-user@$publicIP "sudo yum -y install jq emacs"
-ssh -i $pemFileName ec2-user@$publicIP "echo \"export EDITOR=\\\"emacs -nw\\\"\" >> ~/.bash_profile"
 ssh -i $pemFileName ec2-user@$publicIP "curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash && . ~/.nvm/nvm.sh && nvm install 8.11.2"
 
 # configure crontab to run push notification processor using the get-sas script
-sed "s/BUCKET/$bucket/" push-notification-crontab > tmp
+echo "Configuring push notification cron job..."
+sed "s/BUCKET/$bucket/" crontab-file > tmp
 sed "s/NAMESPACE/$5/" tmp > tmp2
 sed "s/HUB/$6/" tmp2 > tmp
 sed "s#KEY#$7#" tmp > tmp2
 mv tmp2 tmp
-scp -i $pemFileName tmp ec2-user@$publicIP:~/push-notification-crontab
-ssh -i $pemFileName ec2-user@$publicIP "crontab push-notification-crontab"
-ssh -i $pemFileName ec2-user@$publicIP "rm push-notification-crontab"
+scp -i $pemFileName tmp ec2-user@$publicIP:~/crontab-file
+ssh -i $pemFileName ec2-user@$publicIP "crontab crontab-file"
+ssh -i $pemFileName ec2-user@$publicIP "rm crontab-file"
 rm tmp
+
+# upload push notification updates
+echo "Upload push notification updates..."
+scp -i $pemFileName -r protocol-settings ec2-user@$publicIP:~/
+scp -i $pemFileName list-devices.sh ec2-user@$publicIP:~/
+scp -i $pemFileName request-message.sh ec2-user@$publicIP:~/
+scp -i $pemFileName request-update.sh ec2-user@$publicIP:~/
+scp -i $pemFileName update-survey-agent-policy.sh ec2-user@$publicIP:~/
+scp -i $pemFileName run-health-test.sh ec2-user@$publicIP:~/
+
+# miscellaneous configuration
+echo "Installing other stuff..."
+ssh -i $pemFileName ec2-user@$publicIP "sudo yum -y install jq emacs"
+ssh -i $pemFileName ec2-user@$publicIP "echo \"export EDITOR=\\\"emacs -nw\\\"\" >> ~/.bash_profile"
+
+
 
 # done
 echo "EC2 instance is ready at $publicIP using private PEM file ${pemFileName}."

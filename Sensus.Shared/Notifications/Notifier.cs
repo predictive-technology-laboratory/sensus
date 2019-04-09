@@ -314,7 +314,14 @@ namespace Sensus.Notifications
                         UserNotifications.UNUserNotificationCenter.Current.RemoveDeliveredNotifications(new[] { callbackId });
 #endif
 
-                        await SensusContext.Current.CallbackScheduler.ServiceCallbackFromPushNotificationAsync(callbackId, invocationId, cancellationToken);
+                        await SensusContext.Current.CallbackScheduler.RaiseCallbackAsync(callbackId, invocationId);
+                    }
+                    #endregion
+
+                    #region clear pnr backlog
+                    else if (pendingUpdate.Type == PushNotificationUpdateType.ClearPushNotificationRequestBacklog)
+                    {
+                        await ClearPushNotificationRequestBacklogAsync(cancellationToken);
                     }
                     #endregion
 
@@ -581,6 +588,24 @@ namespace Sensus.Notifications
 
         public async Task TestHealthAsync(CancellationToken cancellationToken)
         {
+            await ClearPushNotificationRequestBacklogAsync(cancellationToken);
+
+            await ApplyPendingUpdatesAsync(cancellationToken);
+
+            lock (_pendingUpdateProtocols)
+            {
+                string eventName = TrackedEvent.Health + ":" + GetType().Name;
+                Dictionary<string, string> properties = new Dictionary<string, string>
+                {
+                    { "Pending Updates", _pendingUpdateProtocols.Count.ToString() }
+                };
+
+                Analytics.TrackEvent(eventName, properties);
+            }
+        }
+
+        public async Task ClearPushNotificationRequestBacklogAsync(CancellationToken cancellationToken)
+        {
             #region send all outstanding push notification requests
             // gather up requests within lock, as we'll need to await below.
             List<PushNotificationRequest> pushNotificationRequestsToSend;
@@ -659,21 +684,6 @@ namespace Sensus.Notifications
                 Dictionary<string, string> properties = new Dictionary<string, string>
                 {
                     { "PNRs to Delete", _pushNotificationBackendKeysProtocolIdsToDelete.Count.ToString() }
-                };
-
-                Analytics.TrackEvent(eventName, properties);
-            }
-            #endregion
-
-            #region apply pending updates
-            await ApplyPendingUpdatesAsync(cancellationToken);
-
-            lock (_pendingUpdateProtocols)
-            {
-                string eventName = TrackedEvent.Health + ":" + GetType().Name;
-                Dictionary<string, string> properties = new Dictionary<string, string>
-                {
-                    { "Pending Updates", _pendingUpdateProtocols.Count.ToString() }
                 };
 
                 Analytics.TrackEvent(eventName, properties);

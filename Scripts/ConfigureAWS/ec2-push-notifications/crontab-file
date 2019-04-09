@@ -1,0 +1,10 @@
+PATH="/home/ec2-user/.nvm/versions/node/v8.11.2/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/ec2-user/.local/bin:/home/ec2-user/bin:/bin"
+
+# request a push notification that runs the health test on ios devices every hour. this is
+# important due to background termination and resumption dynamics on ios. this push notification
+# will help the app send scheduled callback push notification requests to s3 for processing by 
+# the backend.
+* */1 * * * cd /home/ec2-user && ./list-devices.sh BUCKET | grep 'apple' | ./run-health-test.sh
+
+# process push notifications
+*/5 * * * * cd /home/ec2-user && ./send-push-notifications.sh BUCKET NAMESPACE HUB KEY

@@ -57,6 +57,12 @@ namespace Sensus.Notifications
         /// <summary>
         /// The <see cref="PushNotificationUpdate.Content"/> value contains information about a <see cref="Callbacks.ScheduledCallback"/> that needs to run.
         /// </summary>
-        Callback
+        Callback,
+
+        /// <summary>
+        /// The <see cref="PushNotificationUpdate.Content"/> value will be empty. This type of <see cref="PushNotificationUpdate"/> indicates that
+        /// the app should attempt to clear its backlog of pending push notification requests.
+        /// </summary>
+        ClearPushNotificationRequestBacklog
     }
 }

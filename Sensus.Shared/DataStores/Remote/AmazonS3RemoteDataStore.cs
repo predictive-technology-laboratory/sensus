@@ -75,7 +75,6 @@ namespace Sensus.DataStores.Remote
     ///      aws s3 cp --recursive s3://BUCKET/FOLDER ~/data
     ///      ```
     /// 
-    ///   1. You can run [`dowload-from-s3.sh`](https://raw.githubusercontent.com/predictive-technology-laboratory/sensus/master/Scripts/ConfigureAWS/dowload-from-s3.sh).
     ///   1. You can use a third-party application like [Bucket Explorer](http://www.bucketexplorer.com) to browse and download data from Amazon S3.
     /// 
     /// # Deconfiguration

@@ -12,7 +12,7 @@ then
     echo ""
     echo "Example:  Set the before/after delay tolerance to somewhere in [0,30] minutes:"
     echo ""
-    echo "  ./list-devices.sh BUCKET | ./set-polling-delay-tolerance-random.sh $((1000*60*30))"
+    echo "  ../../list-devices.sh BUCKET | ./set-polling-delay-tolerance-random.sh $((1000*60*30))"
     echo ""
     exit 1
 fi

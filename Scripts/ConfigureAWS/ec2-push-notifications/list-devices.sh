@@ -8,6 +8,9 @@ then
     echo "Usage:  ./list-devices.sh [BUCKET]"
     echo ""
     echo "  [BUCKET]:  Name of S3 bucket for which to list devices."
+    echo ""
+    echo "Output:  One row per device, with each row containing the bucket, device identifier,"
+    echo "         protocol identifier, and format identifier (Apple or Google)."
     exit 1
 fi
 
