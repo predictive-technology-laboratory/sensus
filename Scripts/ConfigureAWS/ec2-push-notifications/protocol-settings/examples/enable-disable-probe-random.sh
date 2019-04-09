@@ -11,7 +11,7 @@ then
     echo ""
     echo "Example:  Randomly enable/disable all polling probes:"
     echo ""
-    echo "  ../../list-devices.sh BUCKET | ./enable-disable-probe-random.sh Sensus.Probes.PollingProbe"
+    echo "  ./list-devices.sh BUCKET | ./enable-disable-probe-random.sh Sensus.Probes.PollingProbe"
     echo ""
     exit 1
 fi
@@ -25,11 +25,11 @@ fi
 
 # create updates file
 updates_file=$(mktemp)
-echo -e "$(../format-setting.sh Sensus.Probes.Probe Enabled $1 $enable)"\
-        | ../format-settings.sh "$1 enabled:  ${enable}." > $updates_file
+echo -e "$(./format-setting.sh Sensus.Probes.Probe Enabled $1 $enable)"\
+        | ./format-settings.sh "$1 enabled:  ${enable}." > $updates_file
 
 # push updates file to devices
-cat - | ../../request-update.sh "Protocol" $updates_file "$1-enable-random"
+cat - | ./request-update.sh "Protocol" $updates_file "$1-enable-random"
 
 # clean up file
 rm $updates_file

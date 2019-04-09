@@ -25,7 +25,15 @@ do
     protocol=$(echo -e $bucket_device_protocol_format | cut -f3 -d ' ')
     format=$(echo -e $bucket_device_protocol_format | cut -f4 -d ' ')
 
+    # get update content from file. if a /dev/null file is passed, then
+    # the content will be empty. replace with empty JSON object if this
+    # is the case.
     update_content=$(<$updates_file)
+    if [[ "$update_content" = "" ]]
+    then
+	update_content="{}"
+    fi
+
     current_time_seconds=$(date +%s)
     request_file=$(mktemp)
     
