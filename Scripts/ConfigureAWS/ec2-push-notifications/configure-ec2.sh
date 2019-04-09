@@ -124,21 +124,19 @@ ssh -i $pemFileName ec2-user@$publicIP "crontab crontab-file"
 ssh -i $pemFileName ec2-user@$publicIP "rm crontab-file"
 rm tmp
 
-# upload push notification updates
+# upload push notification update scripts
 echo "Upload push notification updates..."
 scp -i $pemFileName -r protocol-settings ec2-user@$publicIP:~/
 scp -i $pemFileName list-devices.sh ec2-user@$publicIP:~/
 scp -i $pemFileName request-message.sh ec2-user@$publicIP:~/
 scp -i $pemFileName request-update.sh ec2-user@$publicIP:~/
 scp -i $pemFileName update-survey-agent-policy.sh ec2-user@$publicIP:~/
-scp -i $pemFileName run-health-test.sh ec2-user@$publicIP:~/
+scp -i $pemFileName clear-pnr-backlog.sh ec2-user@$publicIP:~/
 
-# miscellaneous configuration
+# install emacs
 echo "Installing other stuff..."
 ssh -i $pemFileName ec2-user@$publicIP "sudo yum -y install jq emacs"
 ssh -i $pemFileName ec2-user@$publicIP "echo \"export EDITOR=\\\"emacs -nw\\\"\" >> ~/.bash_profile"
-
-
 
 # done
 echo "EC2 instance is ready at $publicIP using private PEM file ${pemFileName}."
