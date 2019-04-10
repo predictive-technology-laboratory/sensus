@@ -7,7 +7,7 @@ uid: remote_updates
 After configuring [push notifications](xref:push_notifications), it is possible
 to send protocol update commands to devices. This article describes select updates
 that are directly supported (see the 
-[examples](https://github.com/predictive-technology-laboratory/sensus/tree/develop/Scripts/ConfigureAWS/push-protocol-updates/examples)
+[examples](https://github.com/predictive-technology-laboratory/sensus/tree/develop/Scripts/ConfigureAWS/ec2-push-notifications/protocol-settings/examples)
 directory for a complete list.
 
   * Polling delay tolerance:  Use the following command within the home directory of your 
@@ -33,5 +33,5 @@ directory for a complete list.
   to enable/disable, and `ENABLE` is either `true` or `false`.
   
 The remote update capability is entirely generalized. See the 
-[scripts](https://github.com/predictive-technology-laboratory/sensus/tree/develop/Scripts/ConfigureAWS/push-protocol-updates)
+[scripts](https://github.com/predictive-technology-laboratory/sensus/tree/develop/Scripts/ConfigureAWS/ec2-push-notifications/protocol-settings)
 for how to extend the above set of commands to update any settings of interest.

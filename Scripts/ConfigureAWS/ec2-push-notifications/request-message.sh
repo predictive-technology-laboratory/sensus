@@ -1,22 +1,20 @@
 #!/bin/sh
 
-if [[ $# -ne 3 ]]
+if [[ $# -ne 2 ]]
 then
     echo ""
-    echo "Purpose:  Requests push notifications. Reads devices from standard input."
+    echo "Purpose:  Requests user-facing push notifications. Reads devices from standard input."
     echo ""
-    echo "Usage:  ./request-push-notifications.sh [TITLE] [BODY] [SOUND]"
+    echo "Usage:  ./request-message.sh [TITLE] [BODY]"
     echo ""
     echo "  [TITLE]:  Title of push notifications."
     echo "   [BODY]:  Message body of notifications."
-    echo "  [SOUND]:  Sound to play. The only supported value is \"default\"."
     echo ""
     exit 1
 fi
 
 title=$1
 body=$2
-sound=$3
 
 while read bucket_device_protocol_format
 do
@@ -28,7 +26,6 @@ do
     id=$(uuidgen)
     current_time_seconds=$(date +%s)
     request_file=$(mktemp)
-    
 
     echo \
 "{"\
@@ -37,12 +34,15 @@ do
 "\"protocol\":\"$protocol\","\
 "\"title\":\"$title\","\
 "\"body\":\"$body\","\
-"\"sound\":\"$sound\","\
+"\"sound\":\"default\","\
 "\"format\":\"$format\","\
 "\"creation-time\":$current_time_seconds,"\
 "\"time\":$current_time_seconds"\
 "}" > $request_file
 
+    # upload to s3 folder and remove local file. use the request identifier
+    # as the s3 file name, so that subsequent requests with the same identifier
+    # overwrite the older ones.
     aws s3 cp $request_file s3://$bucket/push-notifications/requests/${id}.json
     rm $request_file
 

@@ -1,0 +1,2 @@
+The files in this directory will configure/deconfigure an AWS S3 bucket for 
+receipt of data from the SensusMobile app. See each script for more information.

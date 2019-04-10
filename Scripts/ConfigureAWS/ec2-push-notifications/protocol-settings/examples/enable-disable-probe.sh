@@ -19,11 +19,11 @@ fi
 
 # create updates file
 updates_file=$(mktemp)
-echo -e "$(./format-protocol-update.sh Sensus.Probes.Probe Enabled $1 $2)"\
-        | ./format-protocol-updates.sh "$1 enabled:  ${2}." > $updates_file
+echo -e "$(./format-setting.sh Sensus.Probes.Probe Enabled $1 $2)"\
+        | ./format-settings.sh "$1 enabled:  ${2}." > $updates_file
 
 # push updates file to devices
-cat - | ./push-updates.sh "Protocol" $updates_file "$1-enable-disable"
+cat - | ./request-update.sh "Protocol" $updates_file "$1-enable-disable"
 
 # clean up file
 rm $updates_file

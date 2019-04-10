@@ -29,7 +29,8 @@ namespace Sensus.Notifications
         public string Id { get; set; }
 
         /// <summary>
-        /// Update type.
+        /// Update type. See <see cref="PushNotificationUpdateType"/> for the <see cref="Content"/> values to expect for
+        /// each <see cref="Type"/>.
         /// </summary>
         /// <value>The type.</value>
         [JsonProperty(PropertyName = "type")]
@@ -37,7 +38,8 @@ namespace Sensus.Notifications
         public PushNotificationUpdateType Type { get; set; }
 
         /// <summary>
-        /// Update content.
+        /// Update content. See <see cref="PushNotificationUpdateType"/> for the <see cref="Content"/> values to expect for
+        /// each <see cref="Type"/>.
         /// </summary>
         /// <value>The content.</value>
         [JsonProperty(PropertyName = "content")]

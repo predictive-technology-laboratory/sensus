@@ -3,9 +3,10 @@
 if [[ $# -ne 1 ]]
 then
     echo ""
-    echo "Purpose:  Formats JSON update commands into full update JSON payload. Reads JSON update commands from standard input."
+    echo "Purpose:  Formats JSON setting updates into a complete JSON update content payload. Reads"
+    echo "          JSON setting updates from standard input."
     echo ""
-    echo "Usage:  ./format-protocol-updates.sh [MESSAGE]"
+    echo "Usage:  ./format-settings.sh [MESSAGE]"
     echo ""
     exit 1
 fi

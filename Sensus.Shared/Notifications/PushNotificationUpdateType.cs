@@ -57,6 +57,19 @@ namespace Sensus.Notifications
         /// <summary>
         /// The <see cref="PushNotificationUpdate.Content"/> value contains information about a <see cref="Callbacks.ScheduledCallback"/> that needs to run.
         /// </summary>
-        Callback
+        Callback,
+
+        /// <summary>
+        /// The <see cref="PushNotificationUpdate.Content"/> value will be empty. This type of <see cref="PushNotificationUpdate"/> indicates that
+        /// the app should attempt to clear its backlog of pending push notification requests. This is important due to background termination and 
+        /// resumption dynamics on iOS. iOS will typically terminate the app overnight and during other periods of prolonged phone inactivity. At
+        /// some point, iOS will then let a push notification through, which will relaunch the app into the background. Because the relaunch 
+        /// occurs in the background, limited time is provided to the app. In response, we avoid performing certain long-running operations like
+        /// the submission of push notification requests. We hold on to these requests and let the app relaunch as quickly as possible. However, 
+        /// because the push notification requests are held back, subsequent push notifications will be discontinued thus cutting off most periodic
+        /// operations of the app. The push notification backend is therefore configured to periodically send an update with this type. Upon receipt,
+        /// the app will attempt to clear the backlog of push notifications that have been held back and thereby resume normal operation.
+        /// </summary>
+        ClearPushNotificationRequestBacklog
     }
 }

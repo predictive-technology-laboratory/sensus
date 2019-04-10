@@ -1,0 +1,3 @@
+The files in this directory will configure/deconfigure an AWS EC2 instance
+as the push notification backend for the SensusMobile app. See each script 
+for more information.

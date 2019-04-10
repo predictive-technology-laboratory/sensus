@@ -63,7 +63,7 @@ namespace Sensus.iOS.Callbacks
                 {
                     iOSNotifier notifier = SensusContext.Current.Notifier as iOSNotifier;
                     notifier.CancelNotification(callback.Id);
-                    await ServiceCallbackAsync(callback, callback.InvocationId);
+                    await RaiseCallbackAsync(callback, callback.InvocationId);
                 }
                 // all silent notifications (e.g., those for health tests) were cancelled when the app entered background. reissue them now.
                 // if the notification has already been issued, it will simply be replaced with itself (no change).
@@ -114,44 +114,36 @@ namespace Sensus.iOS.Callbacks
             return isCallback?.BoolValue ?? false;
         }
 
-        public async Task ServiceCallbackAsync(NSDictionary callbackInfo)
+        public async Task RaiseCallbackAsync(NSDictionary callbackInfo)
         {
             ScheduledCallback callback = TryGetCallback(callbackInfo);
             string invocationId = callbackInfo?.ValueForKey(new NSString(SENSUS_CALLBACK_INVOCATION_ID_KEY)) as NSString;
-            await ServiceCallbackAsync(callback, invocationId);
+            await RaiseCallbackAsync(callback, invocationId);
         }
 
-        public override async Task ServiceCallbackAsync(ScheduledCallback callback, string invocationId)
+        public override async Task RaiseCallbackAsync(ScheduledCallback callback, string invocationId)
         {
-            if (callback == null)
-            {
-                SensusServiceHelper.Get().Logger.Log("Attempted to service null callback.", LoggingLevel.Normal, GetType());
-                return;
-            }
-
-            SensusServiceHelper.Get().Logger.Log("Servicing callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
-
-            // start background task for servicing callback
-            nint serviceCallbackTaskId = -1;
+            // start a background task for raising the callback
+            nint raiseCallbackTaskId = -1;
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
                 SensusServiceHelper.Get().Logger.Log("Starting background task for callback.", LoggingLevel.Normal, GetType());
 
-                serviceCallbackTaskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
+                raiseCallbackTaskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
                 {
                     // if we're out of time running in the background, cancel the callback.
                     CancelRaisedCallback(callback);
                 });
             });
 
-            await RaiseCallbackAsync(callback, invocationId);
+            await base.RaiseCallbackAsync(callback, invocationId);
 
-            // end the background task
+            // end the background task for raising the callback
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
                 SensusServiceHelper.Get().Logger.Log("Ending background task for callback.", LoggingLevel.Normal, GetType());
 
-                UIApplication.SharedApplication.EndBackgroundTask(serviceCallbackTaskId);
+                UIApplication.SharedApplication.EndBackgroundTask(raiseCallbackTaskId);
             });
         }
 

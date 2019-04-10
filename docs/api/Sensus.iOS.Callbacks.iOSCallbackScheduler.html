@@ -116,10 +116,7 @@
       <a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_TryGetCallback_System_String_">CallbackScheduler.TryGetCallback(String)</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_ServiceCallbackFromPushNotificationAsync_System_String_System_String_System_Threading_CancellationToken_">CallbackScheduler.ServiceCallbackFromPushNotificationAsync(String, String, CancellationToken)</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_">CallbackScheduler.RaiseCallbackAsync(ScheduledCallback, String)</a>
+      <a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_System_String_System_String_">CallbackScheduler.RaiseCallbackAsync(String, String)</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_TestHealth">CallbackScheduler.TestHealth()</a>
@@ -308,6 +305,97 @@ a notification if its fire date is in the past by the time it gets around to doi
   </table>
   
   
+  <a id="Sensus_iOS_Callbacks_iOSCallbackScheduler_RaiseCallbackAsync_" data-uid="Sensus.iOS.Callbacks.iOSCallbackScheduler.RaiseCallbackAsync*"></a>
+  <h4 id="Sensus_iOS_Callbacks_iOSCallbackScheduler_RaiseCallbackAsync_Foundation_NSDictionary_" data-uid="Sensus.iOS.Callbacks.iOSCallbackScheduler.RaiseCallbackAsync(Foundation.NSDictionary)">RaiseCallbackAsync(NSDictionary)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task RaiseCallbackAsync(NSDictionary callbackInfo)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Foundation.NSDictionary</span></td>
+        <td><span class="parametername">callbackInfo</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_iOS_Callbacks_iOSCallbackScheduler_RaiseCallbackAsync_" data-uid="Sensus.iOS.Callbacks.iOSCallbackScheduler.RaiseCallbackAsync*"></a>
+  <h4 id="Sensus_iOS_Callbacks_iOSCallbackScheduler_RaiseCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_" data-uid="Sensus.iOS.Callbacks.iOSCallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String)">RaiseCallbackAsync(ScheduledCallback, String)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override Task RaiseCallbackAsync(ScheduledCallback callback, string invocationId)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a></td>
+        <td><span class="parametername">callback</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">invocationId</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_">CallbackScheduler.RaiseCallbackAsync(ScheduledCallback, String)</a></div>
+  
+  
   <a id="Sensus_iOS_Callbacks_iOSCallbackScheduler_ReissueSilentNotificationAsync_" data-uid="Sensus.iOS.Callbacks.iOSCallbackScheduler.ReissueSilentNotificationAsync*"></a>
   <h4 id="Sensus_iOS_Callbacks_iOSCallbackScheduler_ReissueSilentNotificationAsync_System_String_" data-uid="Sensus.iOS.Callbacks.iOSCallbackScheduler.ReissueSilentNotificationAsync(System.String)">ReissueSilentNotificationAsync(String)</h4>
   <div class="markdown level1 summary"></div>
@@ -348,97 +436,6 @@ a notification if its fire date is in the past by the time it gets around to doi
       </tr>
     </tbody>
   </table>
-  
-  
-  <a id="Sensus_iOS_Callbacks_iOSCallbackScheduler_ServiceCallbackAsync_" data-uid="Sensus.iOS.Callbacks.iOSCallbackScheduler.ServiceCallbackAsync*"></a>
-  <h4 id="Sensus_iOS_Callbacks_iOSCallbackScheduler_ServiceCallbackAsync_Foundation_NSDictionary_" data-uid="Sensus.iOS.Callbacks.iOSCallbackScheduler.ServiceCallbackAsync(Foundation.NSDictionary)">ServiceCallbackAsync(NSDictionary)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task ServiceCallbackAsync(NSDictionary callbackInfo)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">Foundation.NSDictionary</span></td>
-        <td><span class="parametername">callbackInfo</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_iOS_Callbacks_iOSCallbackScheduler_ServiceCallbackAsync_" data-uid="Sensus.iOS.Callbacks.iOSCallbackScheduler.ServiceCallbackAsync*"></a>
-  <h4 id="Sensus_iOS_Callbacks_iOSCallbackScheduler_ServiceCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_" data-uid="Sensus.iOS.Callbacks.iOSCallbackScheduler.ServiceCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String)">ServiceCallbackAsync(ScheduledCallback, String)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override Task ServiceCallbackAsync(ScheduledCallback callback, string invocationId)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a></td>
-        <td><span class="parametername">callback</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">invocationId</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_ServiceCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_">CallbackScheduler.ServiceCallbackAsync(ScheduledCallback, String)</a></div>
   
   
   <a id="Sensus_iOS_Callbacks_iOSCallbackScheduler_TryGetCallback_" data-uid="Sensus.iOS.Callbacks.iOSCallbackScheduler.TryGetCallback*"></a>

@@ -113,9 +113,8 @@ a folder named <code>FOLDER</code>, you can download all of your Sensus data in 
 <li><p>You can execute the following command to download everything to a directory named <code>data</code> on your desktop:</p>
 <pre><code>aws s3 cp --recursive s3://BUCKET/FOLDER ~/data
 </code></pre></li>
-<li><p>You can run <a href="https://raw.githubusercontent.com/predictive-technology-laboratory/sensus/master/Scripts/ConfigureAWS/dowload-from-s3.sh"><code>dowload-from-s3.sh</code></a>.</p>
+<li><p>You can use a third-party application like <a href="http://www.bucketexplorer.com">Bucket Explorer</a> to browse and download data from Amazon S3.</p>
 </li>
-<li>You can use a third-party application like <a href="http://www.bucketexplorer.com">Bucket Explorer</a> to browse and download data from Amazon S3.</li>
 </ol>
 <h1 id="deconfiguration">Deconfiguration</h1>
 <p>If you are finished collecting data and you would like to prevent any future data submission, you can deconfigure the IAM group and user
@@ -560,7 +559,7 @@ public string PinnedServiceURL { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[ListUiProperty(null, true, 1, new object[]{&quot;us-east-2&quot;, &quot;us-east-1&quot;, &quot;us-west-1&quot;, &quot;us-west-2&quot;, &quot;ca-central-1&quot;, &quot;ap-south-1&quot;, &quot;ap-northeast-2&quot;, &quot;ap-southeast-1&quot;, &quot;ap-southeast-2&quot;, &quot;ap-northeast-1&quot;, &quot;eu-central-1&quot;, &quot;eu-west-1&quot;, &quot;eu-west-2&quot;, &quot;sa-east-1&quot;, &quot;us-gov-west-1&quot;}, true)]
+    <pre><code class="lang-csharp hljs">[ListUiProperty(null, true, 1, new object[]{&quot;us-east-1&quot;, &quot;us-east-2&quot;, &quot;us-west-1&quot;, &quot;us-west-2&quot;, &quot;ca-central-1&quot;, &quot;ap-south-1&quot;, &quot;ap-northeast-2&quot;, &quot;ap-southeast-1&quot;, &quot;ap-southeast-2&quot;, &quot;ap-northeast-1&quot;, &quot;eu-central-1&quot;, &quot;eu-west-1&quot;, &quot;eu-west-2&quot;, &quot;sa-east-1&quot;, &quot;us-gov-west-1&quot;}, true)]
 public string Region { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>

@@ -22,6 +22,6 @@ policy_file=$(mktemp)
 echo "{\"p\":$p}" > $policy_file
 
 # push updates file to devices
-cat - | ./push-updates.sh "SurveyAgentPolicy" $policy_file "survey-agent-policy"
+cat - | ./request-update.sh "SurveyAgentPolicy" $policy_file "survey-agent-policy"
 
 rm $policy_file
