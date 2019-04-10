@@ -283,7 +283,7 @@ do
     if [[ $update = null ]]
     then
 
-	echo "Pushing non-update notification."
+	echo -e "Pushing non-update notification.\n"
 
 	# the backend key is the file name without the extension. this value
         # is used by the app upon receipt to delete the push notification
