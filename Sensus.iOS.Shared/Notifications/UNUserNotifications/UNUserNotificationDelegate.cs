@@ -41,7 +41,7 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
             iOSCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as iOSCallbackScheduler;
             if (callbackScheduler.IsCallback(notificationInfo))
             {
-                await callbackScheduler.ServiceCallbackAsync(notificationInfo);
+                await callbackScheduler.RaiseCallbackAsync(notificationInfo);
                 completionHandler?.Invoke(UNNotificationPresentationOptions.None);
             }
             else if (identifier == Notifier.PENDING_SURVEY_TEXT_NOTIFICATION_ID)

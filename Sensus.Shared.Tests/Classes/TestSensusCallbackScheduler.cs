@@ -12,20 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Threading.Tasks;
 using Sensus.Callbacks;
-using System.Threading;
 
 namespace Sensus.Tests.Classes
 {
     public class TestSensusCallbackScheduler : CallbackScheduler
     {
-        public override Task ServiceCallbackAsync(ScheduledCallback callback, string invocationId)
-        {
-            return Task.CompletedTask;
-        }
-
         protected override Task RequestLocalInvocationAsync(ScheduledCallback callback)
         {
             return Task.CompletedTask;

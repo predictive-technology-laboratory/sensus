@@ -1486,6 +1486,18 @@ references:
   commentId: Overload:Sensus.Android.Callbacks.AndroidCallbackScheduler.IsCallback
   fullName: Sensus.Android.Callbacks.AndroidCallbackScheduler.IsCallback
   nameWithType: AndroidCallbackScheduler.IsCallback
+- uid: Sensus.Android.Callbacks.AndroidCallbackScheduler.RaiseCallbackAsync(Android.Content.Intent)
+  name: RaiseCallbackAsync(Intent)
+  href: api/Sensus.Android.Callbacks.AndroidCallbackScheduler.html#Sensus_Android_Callbacks_AndroidCallbackScheduler_RaiseCallbackAsync_Android_Content_Intent_
+  commentId: M:Sensus.Android.Callbacks.AndroidCallbackScheduler.RaiseCallbackAsync(Android.Content.Intent)
+  fullName: Sensus.Android.Callbacks.AndroidCallbackScheduler.RaiseCallbackAsync(Android.Content.Intent)
+  nameWithType: AndroidCallbackScheduler.RaiseCallbackAsync(Intent)
+- uid: Sensus.Android.Callbacks.AndroidCallbackScheduler.RaiseCallbackAsync*
+  name: RaiseCallbackAsync
+  href: api/Sensus.Android.Callbacks.AndroidCallbackScheduler.html#Sensus_Android_Callbacks_AndroidCallbackScheduler_RaiseCallbackAsync_
+  commentId: Overload:Sensus.Android.Callbacks.AndroidCallbackScheduler.RaiseCallbackAsync
+  fullName: Sensus.Android.Callbacks.AndroidCallbackScheduler.RaiseCallbackAsync
+  nameWithType: AndroidCallbackScheduler.RaiseCallbackAsync
 - uid: Sensus.Android.Callbacks.AndroidCallbackScheduler.RequestLocalInvocationAsync(Sensus.Callbacks.ScheduledCallback)
   name: RequestLocalInvocationAsync(ScheduledCallback)
   href: api/Sensus.Android.Callbacks.AndroidCallbackScheduler.html#Sensus_Android_Callbacks_AndroidCallbackScheduler_RequestLocalInvocationAsync_Sensus_Callbacks_ScheduledCallback_
@@ -1498,24 +1510,6 @@ references:
   commentId: Overload:Sensus.Android.Callbacks.AndroidCallbackScheduler.RequestLocalInvocationAsync
   fullName: Sensus.Android.Callbacks.AndroidCallbackScheduler.RequestLocalInvocationAsync
   nameWithType: AndroidCallbackScheduler.RequestLocalInvocationAsync
-- uid: Sensus.Android.Callbacks.AndroidCallbackScheduler.ServiceCallbackAsync(Android.Content.Intent)
-  name: ServiceCallbackAsync(Intent)
-  href: api/Sensus.Android.Callbacks.AndroidCallbackScheduler.html#Sensus_Android_Callbacks_AndroidCallbackScheduler_ServiceCallbackAsync_Android_Content_Intent_
-  commentId: M:Sensus.Android.Callbacks.AndroidCallbackScheduler.ServiceCallbackAsync(Android.Content.Intent)
-  fullName: Sensus.Android.Callbacks.AndroidCallbackScheduler.ServiceCallbackAsync(Android.Content.Intent)
-  nameWithType: AndroidCallbackScheduler.ServiceCallbackAsync(Intent)
-- uid: Sensus.Android.Callbacks.AndroidCallbackScheduler.ServiceCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String)
-  name: ServiceCallbackAsync(ScheduledCallback, String)
-  href: api/Sensus.Android.Callbacks.AndroidCallbackScheduler.html#Sensus_Android_Callbacks_AndroidCallbackScheduler_ServiceCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_
-  commentId: M:Sensus.Android.Callbacks.AndroidCallbackScheduler.ServiceCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String)
-  fullName: Sensus.Android.Callbacks.AndroidCallbackScheduler.ServiceCallbackAsync(Sensus.Callbacks.ScheduledCallback, System.String)
-  nameWithType: AndroidCallbackScheduler.ServiceCallbackAsync(ScheduledCallback, String)
-- uid: Sensus.Android.Callbacks.AndroidCallbackScheduler.ServiceCallbackAsync*
-  name: ServiceCallbackAsync
-  href: api/Sensus.Android.Callbacks.AndroidCallbackScheduler.html#Sensus_Android_Callbacks_AndroidCallbackScheduler_ServiceCallbackAsync_
-  commentId: Overload:Sensus.Android.Callbacks.AndroidCallbackScheduler.ServiceCallbackAsync
-  fullName: Sensus.Android.Callbacks.AndroidCallbackScheduler.ServiceCallbackAsync
-  nameWithType: AndroidCallbackScheduler.ServiceCallbackAsync
 - uid: Sensus.Android.Callbacks.AndroidCallbackScheduler.TryGetCallback(Android.Content.Intent)
   name: TryGetCallback(Intent)
   href: api/Sensus.Android.Callbacks.AndroidCallbackScheduler.html#Sensus_Android_Callbacks_AndroidCallbackScheduler_TryGetCallback_Android_Content_Intent_
@@ -21517,6 +21511,12 @@ references:
   commentId: M:Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String)
   fullName: Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback, System.String)
   nameWithType: CallbackScheduler.RaiseCallbackAsync(ScheduledCallback, String)
+- uid: Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync(System.String,System.String)
+  name: RaiseCallbackAsync(String, String)
+  href: api/Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_System_String_System_String_
+  commentId: M:Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync(System.String,System.String)
+  fullName: Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync(System.String, System.String)
+  nameWithType: CallbackScheduler.RaiseCallbackAsync(String, String)
 - uid: Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync*
   name: RaiseCallbackAsync
   href: api/Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_
@@ -21559,30 +21559,6 @@ references:
   commentId: F:Sensus.Callbacks.CallbackScheduler.SENSUS_CALLBACK_KEY
   fullName: Sensus.Callbacks.CallbackScheduler.SENSUS_CALLBACK_KEY
   nameWithType: CallbackScheduler.SENSUS_CALLBACK_KEY
-- uid: Sensus.Callbacks.CallbackScheduler.ServiceCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String)
-  name: ServiceCallbackAsync(ScheduledCallback, String)
-  href: api/Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_ServiceCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_
-  commentId: M:Sensus.Callbacks.CallbackScheduler.ServiceCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String)
-  fullName: Sensus.Callbacks.CallbackScheduler.ServiceCallbackAsync(Sensus.Callbacks.ScheduledCallback, System.String)
-  nameWithType: CallbackScheduler.ServiceCallbackAsync(ScheduledCallback, String)
-- uid: Sensus.Callbacks.CallbackScheduler.ServiceCallbackAsync*
-  name: ServiceCallbackAsync
-  href: api/Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_ServiceCallbackAsync_
-  commentId: Overload:Sensus.Callbacks.CallbackScheduler.ServiceCallbackAsync
-  fullName: Sensus.Callbacks.CallbackScheduler.ServiceCallbackAsync
-  nameWithType: CallbackScheduler.ServiceCallbackAsync
-- uid: Sensus.Callbacks.CallbackScheduler.ServiceCallbackFromPushNotificationAsync(System.String,System.String,System.Threading.CancellationToken)
-  name: ServiceCallbackFromPushNotificationAsync(String, String, CancellationToken)
-  href: api/Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_ServiceCallbackFromPushNotificationAsync_System_String_System_String_System_Threading_CancellationToken_
-  commentId: M:Sensus.Callbacks.CallbackScheduler.ServiceCallbackFromPushNotificationAsync(System.String,System.String,System.Threading.CancellationToken)
-  fullName: Sensus.Callbacks.CallbackScheduler.ServiceCallbackFromPushNotificationAsync(System.String, System.String, System.Threading.CancellationToken)
-  nameWithType: CallbackScheduler.ServiceCallbackFromPushNotificationAsync(String, String, CancellationToken)
-- uid: Sensus.Callbacks.CallbackScheduler.ServiceCallbackFromPushNotificationAsync*
-  name: ServiceCallbackFromPushNotificationAsync
-  href: api/Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_ServiceCallbackFromPushNotificationAsync_
-  commentId: Overload:Sensus.Callbacks.CallbackScheduler.ServiceCallbackFromPushNotificationAsync
-  fullName: Sensus.Callbacks.CallbackScheduler.ServiceCallbackFromPushNotificationAsync
-  nameWithType: CallbackScheduler.ServiceCallbackFromPushNotificationAsync
 - uid: Sensus.Callbacks.CallbackScheduler.TestHealth
   name: TestHealth()
   href: api/Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_TestHealth
@@ -25281,6 +25257,24 @@ references:
   commentId: Overload:Sensus.iOS.Callbacks.iOSCallbackScheduler.IsCallback
   fullName: Sensus.iOS.Callbacks.iOSCallbackScheduler.IsCallback
   nameWithType: iOSCallbackScheduler.IsCallback
+- uid: Sensus.iOS.Callbacks.iOSCallbackScheduler.RaiseCallbackAsync(Foundation.NSDictionary)
+  name: RaiseCallbackAsync(NSDictionary)
+  href: api/Sensus.iOS.Callbacks.iOSCallbackScheduler.html#Sensus_iOS_Callbacks_iOSCallbackScheduler_RaiseCallbackAsync_Foundation_NSDictionary_
+  commentId: M:Sensus.iOS.Callbacks.iOSCallbackScheduler.RaiseCallbackAsync(Foundation.NSDictionary)
+  fullName: Sensus.iOS.Callbacks.iOSCallbackScheduler.RaiseCallbackAsync(Foundation.NSDictionary)
+  nameWithType: iOSCallbackScheduler.RaiseCallbackAsync(NSDictionary)
+- uid: Sensus.iOS.Callbacks.iOSCallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String)
+  name: RaiseCallbackAsync(ScheduledCallback, String)
+  href: api/Sensus.iOS.Callbacks.iOSCallbackScheduler.html#Sensus_iOS_Callbacks_iOSCallbackScheduler_RaiseCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_
+  commentId: M:Sensus.iOS.Callbacks.iOSCallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String)
+  fullName: Sensus.iOS.Callbacks.iOSCallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback, System.String)
+  nameWithType: iOSCallbackScheduler.RaiseCallbackAsync(ScheduledCallback, String)
+- uid: Sensus.iOS.Callbacks.iOSCallbackScheduler.RaiseCallbackAsync*
+  name: RaiseCallbackAsync
+  href: api/Sensus.iOS.Callbacks.iOSCallbackScheduler.html#Sensus_iOS_Callbacks_iOSCallbackScheduler_RaiseCallbackAsync_
+  commentId: Overload:Sensus.iOS.Callbacks.iOSCallbackScheduler.RaiseCallbackAsync
+  fullName: Sensus.iOS.Callbacks.iOSCallbackScheduler.RaiseCallbackAsync
+  nameWithType: iOSCallbackScheduler.RaiseCallbackAsync
 - uid: Sensus.iOS.Callbacks.iOSCallbackScheduler.ReissueSilentNotificationAsync(System.String)
   name: ReissueSilentNotificationAsync(String)
   href: api/Sensus.iOS.Callbacks.iOSCallbackScheduler.html#Sensus_iOS_Callbacks_iOSCallbackScheduler_ReissueSilentNotificationAsync_System_String_
@@ -25293,24 +25287,6 @@ references:
   commentId: Overload:Sensus.iOS.Callbacks.iOSCallbackScheduler.ReissueSilentNotificationAsync
   fullName: Sensus.iOS.Callbacks.iOSCallbackScheduler.ReissueSilentNotificationAsync
   nameWithType: iOSCallbackScheduler.ReissueSilentNotificationAsync
-- uid: Sensus.iOS.Callbacks.iOSCallbackScheduler.ServiceCallbackAsync(Foundation.NSDictionary)
-  name: ServiceCallbackAsync(NSDictionary)
-  href: api/Sensus.iOS.Callbacks.iOSCallbackScheduler.html#Sensus_iOS_Callbacks_iOSCallbackScheduler_ServiceCallbackAsync_Foundation_NSDictionary_
-  commentId: M:Sensus.iOS.Callbacks.iOSCallbackScheduler.ServiceCallbackAsync(Foundation.NSDictionary)
-  fullName: Sensus.iOS.Callbacks.iOSCallbackScheduler.ServiceCallbackAsync(Foundation.NSDictionary)
-  nameWithType: iOSCallbackScheduler.ServiceCallbackAsync(NSDictionary)
-- uid: Sensus.iOS.Callbacks.iOSCallbackScheduler.ServiceCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String)
-  name: ServiceCallbackAsync(ScheduledCallback, String)
-  href: api/Sensus.iOS.Callbacks.iOSCallbackScheduler.html#Sensus_iOS_Callbacks_iOSCallbackScheduler_ServiceCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_
-  commentId: M:Sensus.iOS.Callbacks.iOSCallbackScheduler.ServiceCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String)
-  fullName: Sensus.iOS.Callbacks.iOSCallbackScheduler.ServiceCallbackAsync(Sensus.Callbacks.ScheduledCallback, System.String)
-  nameWithType: iOSCallbackScheduler.ServiceCallbackAsync(ScheduledCallback, String)
-- uid: Sensus.iOS.Callbacks.iOSCallbackScheduler.ServiceCallbackAsync*
-  name: ServiceCallbackAsync
-  href: api/Sensus.iOS.Callbacks.iOSCallbackScheduler.html#Sensus_iOS_Callbacks_iOSCallbackScheduler_ServiceCallbackAsync_
-  commentId: Overload:Sensus.iOS.Callbacks.iOSCallbackScheduler.ServiceCallbackAsync
-  fullName: Sensus.iOS.Callbacks.iOSCallbackScheduler.ServiceCallbackAsync
-  nameWithType: iOSCallbackScheduler.ServiceCallbackAsync
 - uid: Sensus.iOS.Callbacks.iOSCallbackScheduler.TryGetCallback(Foundation.NSDictionary)
   name: TryGetCallback(NSDictionary)
   href: api/Sensus.iOS.Callbacks.iOSCallbackScheduler.html#Sensus_iOS_Callbacks_iOSCallbackScheduler_TryGetCallback_Foundation_NSDictionary_
@@ -29226,6 +29202,18 @@ references:
   commentId: Overload:Sensus.Notifications.Notifier.CancelNotification
   fullName: Sensus.Notifications.Notifier.CancelNotification
   nameWithType: Notifier.CancelNotification
+- uid: Sensus.Notifications.Notifier.ClearPushNotificationRequestBacklogAsync(System.Threading.CancellationToken)
+  name: ClearPushNotificationRequestBacklogAsync(CancellationToken)
+  href: api/Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_ClearPushNotificationRequestBacklogAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.Notifications.Notifier.ClearPushNotificationRequestBacklogAsync(System.Threading.CancellationToken)
+  fullName: Sensus.Notifications.Notifier.ClearPushNotificationRequestBacklogAsync(System.Threading.CancellationToken)
+  nameWithType: Notifier.ClearPushNotificationRequestBacklogAsync(CancellationToken)
+- uid: Sensus.Notifications.Notifier.ClearPushNotificationRequestBacklogAsync*
+  name: ClearPushNotificationRequestBacklogAsync
+  href: api/Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_ClearPushNotificationRequestBacklogAsync_
+  commentId: Overload:Sensus.Notifications.Notifier.ClearPushNotificationRequestBacklogAsync
+  fullName: Sensus.Notifications.Notifier.ClearPushNotificationRequestBacklogAsync
+  nameWithType: Notifier.ClearPushNotificationRequestBacklogAsync
 - uid: Sensus.Notifications.Notifier.DeletePushNotificationRequestAsync(System.Guid,Sensus.Protocol,System.Threading.CancellationToken)
   name: DeletePushNotificationRequestAsync(Guid, Protocol, CancellationToken)
   href: api/Sensus.Notifications.Notifier.html#Sensus_Notifications_Notifier_DeletePushNotificationRequestAsync_System_Guid_Sensus_Protocol_System_Threading_CancellationToken_
@@ -29673,6 +29661,12 @@ references:
   commentId: F:Sensus.Notifications.PushNotificationUpdateType.Callback
   fullName: Sensus.Notifications.PushNotificationUpdateType.Callback
   nameWithType: PushNotificationUpdateType.Callback
+- uid: Sensus.Notifications.PushNotificationUpdateType.ClearPushNotificationRequestBacklog
+  name: ClearPushNotificationRequestBacklog
+  href: api/Sensus.Notifications.PushNotificationUpdateType.html#Sensus_Notifications_PushNotificationUpdateType_ClearPushNotificationRequestBacklog
+  commentId: F:Sensus.Notifications.PushNotificationUpdateType.ClearPushNotificationRequestBacklog
+  fullName: Sensus.Notifications.PushNotificationUpdateType.ClearPushNotificationRequestBacklog
+  nameWithType: PushNotificationUpdateType.ClearPushNotificationRequestBacklog
 - uid: Sensus.Notifications.PushNotificationUpdateType.Protocol
   name: Protocol
   href: api/Sensus.Notifications.PushNotificationUpdateType.html#Sensus_Notifications_PushNotificationUpdateType_Protocol

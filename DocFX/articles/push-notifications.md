@@ -46,7 +46,7 @@ Configure the Apple Push Notification Service following the official Apple docum
    name of the bucket that results from this step (e.g., test-bucket-293843-234234-23234234).
 
 ## AWS EC2
-1. Configure your AWS EC2 instance using the `configure-ec2.sh` script within the 
+1. Configure your AWS EC2 instance using the `ec2-push-notifications/configure-ec2.sh` script within the 
    [configuration](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS.zip)
    archive. This script requires you to install the AWS CLI and the `jq` command line program. When supplying the bucket
    name, use the name obtained from the previous step.

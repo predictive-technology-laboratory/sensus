@@ -265,8 +265,13 @@
   
   <a id="Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_" data-uid="Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync*"></a>
   <h4 id="Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_" data-uid="Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String)">RaiseCallbackAsync(ScheduledCallback, String)</h4>
-  <div class="markdown level1 summary"><p>Raises a callback. This involves initiating the callback, setting up cancellation timing for the callback&apos;s actions, and scheduling the next
-invocation of the callback in the case of repeating callbacks.</p>
+  <div class="markdown level1 summary"><p>Raises a <a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a>. This involves initiating the <a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a>, setting up cancellation timing 
+for the callback&apos;s action based on the <a class="xref" href="Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_Timeout">Timeout</a>, and scheduling the next invocation of the
+<a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a> in the case of repeating <a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a>s. See <a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_CancelRaisedCallback_Sensus_Callbacks_ScheduledCallback_">CancelRaisedCallback(ScheduledCallback)</a> 
+for how to cancel a <a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a> after it has been raised. Unlike other methods called via the app&apos;s entry points 
+(e.g., push notifications, alarms, etc.), this method does not take a <span class="xref">System.Threading.CancellationToken</span>. The reason for this is that 
+raising <a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a>s is done from several locations, and cancellation is only needed due to background considerations
+on iOS. So we&apos;ve centralized background-sensitive cancellation into the iOS override of this method.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -309,6 +314,57 @@ invocation of the callback in the case of repeating callbacks.</p>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
         <td><p>Async task</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_" data-uid="Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync*"></a>
+  <h4 id="Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_System_String_System_String_" data-uid="Sensus.Callbacks.CallbackScheduler.RaiseCallbackAsync(System.String,System.String)">RaiseCallbackAsync(String, String)</h4>
+  <div class="markdown level1 summary"><p>See <a class="xref" href="Sensus.Callbacks.CallbackScheduler.html#Sensus_Callbacks_CallbackScheduler_RaiseCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_">RaiseCallbackAsync(ScheduledCallback, String)</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task RaiseCallbackAsync(string callbackId, string invocationId)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">callbackId</span></td>
+        <td><p>Callback identifier.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">invocationId</span></td>
+        <td><p>Invocation identifier.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><p>Task.</p>
 </td>
       </tr>
     </tbody>
@@ -393,105 +449,6 @@ invocation of the callback in the case of repeating callbacks.</p>
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Sensus.Callbacks.ScheduledCallbackState.html">ScheduledCallbackState</a>&gt;</td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_Callbacks_CallbackScheduler_ServiceCallbackAsync_" data-uid="Sensus.Callbacks.CallbackScheduler.ServiceCallbackAsync*"></a>
-  <h4 id="Sensus_Callbacks_CallbackScheduler_ServiceCallbackAsync_Sensus_Callbacks_ScheduledCallback_System_String_" data-uid="Sensus.Callbacks.CallbackScheduler.ServiceCallbackAsync(Sensus.Callbacks.ScheduledCallback,System.String)">ServiceCallbackAsync(ScheduledCallback, String)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract Task ServiceCallbackAsync(ScheduledCallback callback, string invocationId)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a></td>
-        <td><span class="parametername">callback</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">invocationId</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_Callbacks_CallbackScheduler_ServiceCallbackFromPushNotificationAsync_" data-uid="Sensus.Callbacks.CallbackScheduler.ServiceCallbackFromPushNotificationAsync*"></a>
-  <h4 id="Sensus_Callbacks_CallbackScheduler_ServiceCallbackFromPushNotificationAsync_System_String_System_String_System_Threading_CancellationToken_" data-uid="Sensus.Callbacks.CallbackScheduler.ServiceCallbackFromPushNotificationAsync(System.String,System.String,System.Threading.CancellationToken)">ServiceCallbackFromPushNotificationAsync(String, String, CancellationToken)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Task ServiceCallbackFromPushNotificationAsync(string callbackId, string invocationId, CancellationToken cancellationToken)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">callbackId</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">invocationId</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Threading.CancellationToken</span></td>
-        <td><span class="parametername">cancellationToken</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
         <td></td>
       </tr>
     </tbody>

@@ -1,0 +1,8 @@
+PATH="/home/ec2-user/.nvm/versions/node/v8.11.2/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/ec2-user/.local/bin:/home/ec2-user/bin:/bin"
+
+# clear the pnr backlog on ios devices. see API docs for ClearPushNotificationRequestBacklog for more information.
+# the format specifier (apple or gcm) comes at the end of each line output by list-devices.sh
+0 * * * * cd /home/ec2-user && ./list-devices.sh BUCKET | grep 'apple$' | ./clear-pnr-backlog.sh
+
+# process push notifications
+*/5 * * * * cd /home/ec2-user && ./send-push-notifications.sh BUCKET NAMESPACE HUB KEY

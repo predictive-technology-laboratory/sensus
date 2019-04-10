@@ -1,0 +1,46 @@
+This is not a valid JSON file; rather, this file explains the valid formats
+of JSON files that can be used to request push notifications to a device
+running Sensus. The general concept of operation is that files in the following 
+formats are placed into the AWS S3 bucket that has been configured for use
+with the SensusMobile app (using the s3-remote-data-store scripts). Specifically,
+these files are uploaded into the BUCKET/push-notifications/requests directory.
+Periodically, the EC2 push notification backend (configured using the 
+ec2-push-notifications scripts) runs a script that pulls down and processes
+all requests in this directory.
+
+Use the following request format to send a user-facing message directly to a 
+device. The title and body should be relatively short, as push notification 
+payloads must be only a few KBs.
+
+{
+  "id": "0ed96702-f316-4d3a-a63f-fd1da511180b",        # request id. if multiple requests have the same id, then the one with the largest value of creation-time will be delivered to the app.
+  "device": "7D0AB854-6FF4-4DF5-A970-CAFE81E18B30",    # device id. this is the same as the DeviceId field contained in data payloads uploaded by the SensusMobile app.
+  "protocol": "9870b48d-4a0f-46e9-bda9-bfd52241a913",  # protocol id. this is the same as the ProtocolId field contained in data payloads uploaded by the SensusMobile app.
+  "title": "XXXX",                                     # notification body
+  "body": "XXXX",                                      # notification text
+  "sound": "default",                                  # sound to play. leave blank for no sound. only the "default" sound is currently supported.
+  "format": "apple",                                   # or "gcm" for android
+  "creation-time":  1533831164,                        # unix time (seconds) at which the request was created.
+  "time": 1534831164                                   # unix time (seconds) at which the notification should be delivered.
+}
+
+Use the following request format to deliver updates of arbitrary size to a 
+device. Note that each update must identify a protocol to which the update 
+should be delivered. This format does not permit a title, body, or sound. See
+the documentation for Sensus.Notifications.PushNotificationUpdate for further
+details.
+
+{
+  "id": "0ed96702-f316-4d3a-a63f-fd1da511180b",
+  "device": "7D0AB854-6FF4-4DF5-A970-CAFE81E18B30",
+  "protocol": "9870b48d-4a0f-46e9-bda9-bfd52241a913",
+  "format": "apple",
+  "creation-time":  1533831164,
+  "time": 1534831164,
+  "update":
+  {
+    "type": "XXXX",    # update type. see https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Notifications.PushNotificationUpdateType.html for possible values (e.g., Protocol, SurveyAgentPolicy, etc.).
+    "content": "XXXX"  # update content corresponding to the update type. XXXX must be a JSON object. see https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Notifications.PushNotificationUpdateType.html for the expected content values.
+  }
+}
+ 
