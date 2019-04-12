@@ -163,6 +163,16 @@ namespace Sensus.iOS
             }
         }
 
+        public override void KeepDeviceAwake()
+        {
+            
+        }
+
+        public override void LetDeviceSleep()
+        {
+    
+        }
+
         protected override Task ProtectedFlashNotificationAsync(string message)
         {
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>

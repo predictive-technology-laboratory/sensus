@@ -7,5 +7,9 @@ namespace Sensus
         ILogger Logger { get; }
 
         Task FlashNotificationAsync(string message);
+
+        void KeepDeviceAwake();
+
+        void LetDeviceSleep();
     }
 }
