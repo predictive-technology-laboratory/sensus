@@ -30,6 +30,7 @@ using TTGSnackBar;
 using WindowsAzure.Messaging;
 using Newtonsoft.Json;
 using Sensus.Exceptions;
+using Plugin.Geolocator.Abstractions;
 
 namespace Sensus.iOS
 {
@@ -163,14 +164,19 @@ namespace Sensus.iOS
             }
         }
 
-        public override void KeepDeviceAwake()
+        public override async Task KeepDeviceAwakeAsync()
         {
-            
+            await GpsReceiver.Get().AddListenerAsync(KeepAwakePositionChanged, false);
         }
 
-        public override void LetDeviceSleep()
+        public override async Task LetDeviceSleepAsync()
         {
-    
+            await GpsReceiver.Get().RemoveListenerAsync(KeepAwakePositionChanged);
+        }
+
+        private void KeepAwakePositionChanged(object sender, PositionEventArgs position)
+        {
+            Logger.Log("Received keep-awake position change.", LoggingLevel.Normal, GetType());
         }
 
         protected override Task ProtectedFlashNotificationAsync(string message)

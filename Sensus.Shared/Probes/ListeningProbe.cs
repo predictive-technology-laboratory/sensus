@@ -262,7 +262,7 @@ namespace Sensus.Probes
             // only keep device awake if we're not already running.
             if (!Running && _keepDeviceAwake)
             {
-                SensusServiceHelper.Get().KeepDeviceAwake();
+                await SensusServiceHelper.Get().KeepDeviceAwakeAsync();
                 _deviceAwake = true;
             }
 
@@ -281,7 +281,7 @@ namespace Sensus.Probes
 
             if (_deviceAwake)
             {
-                SensusServiceHelper.Get().LetDeviceSleep();
+                await SensusServiceHelper.Get().LetDeviceSleepAsync();
                 _deviceAwake = false;
             }
         }

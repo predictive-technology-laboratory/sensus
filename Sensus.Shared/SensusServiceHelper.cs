@@ -585,9 +585,9 @@ namespace Sensus
 
         #region platform-specific methods. this functionality cannot be implemented in a cross-platform way. it must be done separately for each platform. we are gradually migrating this functionality into the ISensusContext object.
 
-        public abstract void KeepDeviceAwake();
+        public abstract Task KeepDeviceAwakeAsync();
 
-        public abstract void LetDeviceSleep();
+        public abstract Task LetDeviceSleepAsync();
 
         protected abstract Task ProtectedFlashNotificationAsync(string message);
 

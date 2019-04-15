@@ -56,7 +56,7 @@ namespace Sensus.Android.Notifications
 
                 // acquire wake lock before this method returns to ensure that the device does not sleep prematurely, 
                 // interrupting any execution requested by the push notification. the service 
-                serviceHelper.KeepDeviceAwake();
+                serviceHelper.KeepDeviceAwakeAsync().Wait();
 
                 PushNotification pushNotification = new PushNotification
                 {
@@ -83,7 +83,7 @@ namespace Sensus.Android.Notifications
             }
             finally
             {
-                serviceHelper?.LetDeviceSleep();
+                serviceHelper?.LetDeviceSleepAsync().Wait();
             }
         }
     }

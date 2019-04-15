@@ -126,12 +126,12 @@ namespace Sensus.Tests.Classes
             throw new NotImplementedException();
         }
 
-        public override void KeepDeviceAwake()
+        public override Task KeepDeviceAwakeAsync()
         {
             throw new NotImplementedException();
         }
 
-        public override void LetDeviceSleep()
+        public override Task LetDeviceSleepAsync()
         {
             throw new NotImplementedException();
         }

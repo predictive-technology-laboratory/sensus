@@ -18,7 +18,7 @@
       "Resource": [
         "arn:aws:s3:::bucketName/push-notifications/*",
         "arn:aws:s3:::bucketName/adaptive-ema-policies/*",
-	"arn:aws:s3:::bucketName/sensing-policies/*"
+        "arn:aws:s3:::bucketName/sensing-policies/*"
       ]
     }
   ]

@@ -522,15 +522,13 @@ namespace Sensus
 
         public static List<SensingAgent> GetAgents()
         {
-            throw new NotImplementedException();
-
-            /*// get agents from the current assembly. they must be linked at compile time.
-            return Assembly.GetAssembly(typeof(ExampleSensingAgent.ExampleMovementSensingAgent))
+            // get agents from the current assembly. they must be linked at compile time.
+            return Assembly.GetExecutingAssembly()
                            .GetTypes()
                            .Where(t => !t.IsAbstract && t.IsInstanceOfType(typeof(SensingAgent)))
                            .Select(Activator.CreateInstance)
                            .Cast<SensingAgent>()
-                           .ToList();*/
+                           .ToList();
         }
 
 #endif

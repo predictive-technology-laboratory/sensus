@@ -21,7 +21,7 @@ using Sensus;
 using Sensus.Probes.Movement;
 using System.Linq;
 
-namespace ExampleSensingAgent.Shared
+namespace ExampleSensingAgent
 {
     public class ExampleAccelerationSensingAgent : SensingAgent
     {
@@ -70,7 +70,7 @@ namespace ExampleSensingAgent.Shared
             }
         }
 
-        public override Task<CompletionAction> ActAsync(string actionId, CancellationToken cancellationToken)
+        public override async Task<CompletionAction> ActAsync(string actionId, CancellationToken cancellationToken)
         {
             List<IAccelerometerDatum> accelerometerData;
 
@@ -82,7 +82,7 @@ namespace ExampleSensingAgent.Shared
                 }
                 else
                 {
-                    return Task.FromResult<CompletionAction>(null);
+                    return null;
                 }
             }
 
@@ -92,18 +92,16 @@ namespace ExampleSensingAgent.Shared
 
             if (averageLinearMagnitude > 1)
             {
-                SensusServiceHelper.KeepDeviceAwake();
+                await SensusServiceHelper.KeepDeviceAwakeAsync();
 
-                completionAction = new CompletionAction(completionActionCancellationToken =>
+                completionAction = new CompletionAction(async completionActionCancellationToken =>
                 {
-                    SensusServiceHelper.LetDeviceSleep();
-
-                    return Task.CompletedTask;
+                    await SensusServiceHelper.LetDeviceSleepAsync();
 
                 }, TimeSpan.FromSeconds(30));
             }
 
-            return Task.FromResult(completionAction);
+            return completionAction;
         }
     }
 }

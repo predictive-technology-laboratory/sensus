@@ -6,7 +6,7 @@
     <SharedGUID>{59AAA3F8-2B88-4771-A2E1-D413A1F9E861}</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>ExampleSensingAgent.Shared</Import_RootNamespace>
+    <Import_RootNamespace>ExampleSensingAgent</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)ExampleAccelerationSensingAgent.cs" />

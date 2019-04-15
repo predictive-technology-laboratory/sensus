@@ -8,8 +8,8 @@ namespace Sensus
 
         Task FlashNotificationAsync(string message);
 
-        void KeepDeviceAwake();
+        Task KeepDeviceAwakeAsync();
 
-        void LetDeviceSleep();
+        Task LetDeviceSleepAsync();
     }
 }
