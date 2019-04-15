@@ -80,6 +80,7 @@ namespace Sensus
         public const int GPS_DEFAULT_DEFERRAL_DISTANCE_METERS = 500;
         public const int GPS_DEFAULT_DEFERRAL_TIME_MINUTES = 5;
         public const string MANAGED_URL_STRING = "managed";
+        public const string SENSING_AGENT_COMPLETION_CALLBACK_ID_SUFFIX = "sensing-agent-completion-callback";
         private readonly Regex NON_ALPHANUMERIC_REGEX = new Regex("[^a-zA-Z0-9]");
 
         public static async Task<Protocol> CreateAsync(string name)
@@ -2060,18 +2061,29 @@ namespace Sensus
                 // if the sensing agent has requested actions at regular intervals, schedule a repeating callback.
                 if (Agent?.ActionInterval != null)
                 {
-                    _agentIntervalActionScheduledCallback = new ScheduledCallback(async callbackCancellationToken =>
+                    _agentIntervalActionScheduledCallback = new ScheduledCallback(async actionCancellationToken =>
                     {
-                        /*Tuple<Task, TimeSpan> completionActionDelay = await Agent.ActAsync(callbackCancellationToken);
+                        string actionId = _agentIntervalActionScheduledCallback.InvocationId;
 
-                        if (completionActionDelay != null)
+                        // ask the sensing agent to act
+                        SensusServiceHelper.Get().Logger.Log("Asking the sensing agent to act (" + actionId + ").", LoggingLevel.Normal, GetType());
+                        SensingAgent.CompletionAction completionAction = await Agent.ActAsync(actionId, actionCancellationToken);
+
+                        // if the sensing agent returned a completion action, then schedule it now.
+                        if (completionAction != null)
                         {
+                            string completionActionId = actionId + "-" + SENSING_AGENT_COMPLETION_CALLBACK_ID_SUFFIX;
+
                             ScheduledCallback completionActionCallback = new ScheduledCallback(async completionActionCancellationToken =>
-                        {
-                            await completionActionDelay.Item1;
-                        }, completionActionDelay.Item2, _agent.Id, _id, this, null, _agent.ActionIntervalToleranceBefore, _agent.ActionIntervalToleranceAfter);
-                        }*/
-                    }, Agent.ActionInterval.Value, Agent.ActionInterval.Value, Agent.Id, Id, this, null, Agent.ActionIntervalToleranceBefore.GetValueOrDefault(), Agent.ActionIntervalToleranceAfter.GetValueOrDefault());
+                            {
+                                await completionAction.ActionAsync(completionActionCancellationToken);
+
+                            }, completionAction.Delay ?? TimeSpan.Zero, completionActionId, _id, this, null, Agent.ActionIntervalToleranceBefore.GetValueOrDefault(), Agent.ActionIntervalToleranceAfter.GetValueOrDefault());
+
+                            await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(completionActionCallback);
+                        }
+
+                    }, Agent.ActionInterval.Value, Agent.ActionInterval.Value, Agent.Id, _id, this, null, Agent.ActionIntervalToleranceBefore.GetValueOrDefault(), Agent.ActionIntervalToleranceAfter.GetValueOrDefault());
 
                     await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_agentIntervalActionScheduledCallback);
                 }
@@ -2671,6 +2683,15 @@ namespace Sensus
                     }
                 }
 
+                // cancel callbacks associated with the sensing agent, if there is one.
+                if (_agentIntervalActionScheduledCallback != null)
+                {
+                    await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_agentIntervalActionScheduledCallback);
+                    _agentIntervalActionScheduledCallback = null;
+
+                    await SensusContext.Current.CallbackScheduler.UnscheduleCallbacksAsync(new Regex(".+" + SENSING_AGENT_COMPLETION_CALLBACK_ID_SUFFIX + "$"));
+                }
+
                 await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(CancellationToken.None);
             }
             catch (Exception ex)
@@ -2782,7 +2803,21 @@ namespace Sensus
 
         public async Task UpdateSensingAgentPolicyAsync(CancellationToken cancellationToken)
         {
-            throw new Exception();
+            JObject policy = await RemoteDataStore.GetSensingAgentPolicyAsync(cancellationToken);
+
+            await UpdateSensingAgentPolicyAsync(policy);
+        }
+
+        public async Task UpdateSensingAgentPolicyAsync(JObject policy)
+        {
+            if (Agent != null)
+            {
+                await Agent.SetPolicyAsync(policy);
+
+                // save policy within app state (agent itself is not serialized)
+                AgentPolicy = policy;
+                await SensusServiceHelper.Get().SaveAsync();
+            }
         }
     }
 }

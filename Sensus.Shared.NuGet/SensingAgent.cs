@@ -24,6 +24,28 @@ namespace Sensus
     /// </summary>
     public abstract class SensingAgent
     {
+        /// <summary>
+        /// Action to take after <see cref="Delay"/>, in order to transition sensing to a subsequent state. The intent
+        /// of the <see cref="CompletionAction"/> is to transition sensing into a subsequent state and thereby terminate 
+        /// the action invoked by <see cref="ActAsync(string, CancellationToken)"/>.
+        /// </summary>
+        public class CompletionAction
+        {
+            public Func<CancellationToken, Task> ActionAsync { get; set; }
+            public TimeSpan? Delay { get; set; }
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="T:Sensus.SensingAgent.CompletionAction"/> class.
+            /// </summary>
+            /// <param name="actionAsync">Action.</param>
+            /// <param name="delay">Delay. If <c>null</c> then the passsed action will be scheduled for immediate execution.</param>
+            public CompletionAction(Func<CancellationToken, Task> actionAsync, TimeSpan? delay)
+            {
+                ActionAsync = actionAsync;
+                Delay = delay;
+            }
+        }
+
         private ISensusServiceHelper _sensusServiceHelper;
         private IProtocol _protocol;
 
@@ -40,7 +62,7 @@ namespace Sensus
         public abstract string Id { get; }
 
         /// <summary>
-        /// Interval of time between successive calls to <see cref="ActAsync(CancellationToken)"/>.
+        /// Interval of time between successive calls to <see cref="ActAsync(string, CancellationToken)"/>.
         /// </summary>
         /// <value>The action interval.</value>
         public abstract TimeSpan? ActionInterval { get; }
@@ -60,17 +82,31 @@ namespace Sensus
         public abstract TimeSpan? ActionIntervalToleranceAfter { get; }
 
         /// <summary>
+        /// Gets the sensus service helper.
+        /// </summary>
+        /// <value>The sensus service helper.</value>
+        protected ISensusServiceHelper SensusServiceHelper => _sensusServiceHelper;
+
+        /// <summary>
         /// Initializes the <see cref="SensingAgent"/>. This is called when the <see cref="IProtocol"/> associated with this
         /// <see cref="SensingAgent"/> is started.
         /// </summary>
         /// <param name="sensusServiceHelper">A reference to the service helper, which provides access to the app's core functionality.</param>
         /// <param name="protocol">A reference to the <see cref="IProtocol"/> associated with this <see cref="SensingAgent"/>.</param>
-        public virtual Task InitializeAsync(ISensusServiceHelper sensusServiceHelper, IProtocol protocol)
+        public virtual async Task InitializeAsync(ISensusServiceHelper sensusServiceHelper, IProtocol protocol)
         {
             _sensusServiceHelper = sensusServiceHelper;
             _protocol = protocol;
 
-            return Task.CompletedTask;
+            // download the initial policy
+            try
+            {
+                await _protocol.UpdateSensingAgentPolicyAsync(CancellationToken.None);
+            }
+            catch (Exception ex)
+            {
+                _sensusServiceHelper?.Logger.Log("Exception while downloading the policy:  " + ex.Message, LoggingLevel.Normal, GetType());
+            }
         }
 
         /// <summary>
@@ -95,9 +131,9 @@ namespace Sensus
         /// <summary>
         /// Requests that the <see cref="SensingAgent"/> consider taking an action.
         /// </summary>
-        /// <returns>A follow-up <see cref="Task"/> to run after duration indicated by <see cref="TimeSpan"/>, to conclude the 
-        /// action.</returns>
+        /// <param name="actionId">Unique identifier for the action to be taken within this method.</param>
+        /// <returns>A <see cref="CompletionAction"/> to be executed following the current action.</returns>
         /// <param name="cancellationToken">Cancellation token.</param>
-        public abstract Task<Tuple<Task, TimeSpan>> ActAsync(CancellationToken cancellationToken);
+        public abstract Task<CompletionAction> ActAsync(string actionId, CancellationToken cancellationToken);
     }
 }
