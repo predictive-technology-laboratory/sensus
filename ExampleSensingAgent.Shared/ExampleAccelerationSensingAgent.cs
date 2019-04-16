@@ -27,7 +27,7 @@ namespace ExampleSensingAgent
     {
         private Dictionary<Type, Queue<IDatum>> _typeData;
 
-        public override string Description => "Acceleration Sensing Agent";
+        public override string Description => "Avg. Linear Magnitude";
 
         public override string Id => "Acceleration";
 
@@ -102,6 +102,11 @@ namespace ExampleSensingAgent
             }
 
             return completionAction;
+        }
+
+        public override string ToString()
+        {
+            return Id + ":  " + Description;
         }
     }
 }

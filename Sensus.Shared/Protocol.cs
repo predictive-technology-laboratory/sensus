@@ -525,7 +525,7 @@ namespace Sensus
             // get agents from the current assembly. they must be linked at compile time.
             return Assembly.GetExecutingAssembly()
                            .GetTypes()
-                           .Where(t => !t.IsAbstract && t.IsInstanceOfType(typeof(SensingAgent)))
+                           .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(SensingAgent)))
                            .Select(Activator.CreateInstance)
                            .Cast<SensingAgent>()
                            .ToList();
