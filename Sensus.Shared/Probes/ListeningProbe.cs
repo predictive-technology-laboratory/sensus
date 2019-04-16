@@ -88,13 +88,32 @@ namespace Sensus.Probes
         }
 
         /// <summary>
-        /// Whether or not to keep the device awake while listening for readings while Sensus is backgrounded. If enabled, readings 
-        /// will be delivered to Sensus in the background; however, more power will be consumed because the processor will not be allowed to sleep. If disabled,
-        /// readings will be paused when Sensus is backgrounded. This will conserve power because the processor will be allowed to sleep, but readings will be 
-        /// delayed and possibly dropped entirely. When the device wakes up, some readings that were cached while asleep may be delivered in bulk to Sensus. 
-        /// This bulk delivery may not include all readings, and the readings delivered in bulk will have their <see cref="Datum.Timestamp"/> fields set to the
-        /// time of bulk delivery rather than the time the reading originated. Even a single listening probe with this setting turned on will be sufficient to 
-        /// keep the processor awake and delivering readings to all listening probes in all protocols within Sensus.
+        /// Whether or not to keep the device awake and listening for readings, regardless of whether Sensus is backgrounded and the device
+        /// is locked and idle. If enabled, then readings will be delivered to Sensus regardless of these states; however, more power will 
+        /// be consumed because the processor will not be allowed to sleep. If disabled, then the effect depends on the operating system 
+        /// and state of the device:
+        /// 
+        /// Android:  If disabled, then readings will be paused when the device enters the sleeping state (i.e., when it is locked and
+        /// inactive). When the device wakes up (i.e., is unlocked or being actively used), then some readings that were cached while 
+        /// asleep may be delivered in bulk to Sensus. This bulk delivery may not include all readings, and the readings delivered in 
+        /// bulk will have their <see cref="Datum.Timestamp"/> fields set to the time of bulk delivery rather than the time the reading 
+        /// originated.
+        /// 
+        /// iOS:  If disabled, then readings will be paused when the app enters the background state (e.g., by hitting the home button), 
+        /// regardless of whether the phone is unlocked and actively being used. The only way to resume readings in this case is for the 
+        /// user to bring the app to the foreground.
+        /// 
+        /// In any case above, if readings are paused then power will be conserved. If readings are flowing, then the CPU will be active 
+        /// and will likely consume significant battery power. Furthermore, even a single <see cref="ListeningProbe"/> with this setting 
+        /// enabled will be sufficient to keep readings flowing for all <see cref="ListeningProbe"/>s in all <see cref="Protocol"/>s 
+        /// within Sensus. It is not possible to enable this setting for just one of many enabled <see cref="ListeningProbe"/>s.
+        /// 
+        /// Lastly, there are a few exceptions to the above as regards iOS. Certain <see cref="ListeningProbe"/>s will force the the CPU
+        /// to remain awake and all readings to remain flowing on iOS. Currently these are the iOS implementation of
+        /// <see cref="Probes.Location.CompassProbe"/> as well as <see cref="Probes.Location.ListeningLocationProbe"/>, 
+        /// <see cref="Probes.Location.ListeningPointsOfInterestProximityProbe"/>, and <see cref="Probes.Movement.ListeningSpeedProbe"/>.
+        /// If any one of these is enabled on iOS, then readings will continue to flow for all <see cref="ListeningProbe"/>s regardless
+        /// of the value for <see cref="KeepDeviceAwake"/>.
         /// </summary>
         /// <value><c>true</c> to keep device awake; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("Keep Device Awake:", true, int.MaxValue - 1)]
@@ -137,6 +156,12 @@ namespace Sensus.Probes
 
         [JsonIgnore]
         protected abstract string DeviceAsleepWarning { get; }
+
+        [JsonIgnore]
+        protected virtual bool SignificantBatteryImpact
+        {
+            get { return _keepDeviceAwake; }
+        }
 
         protected override double RawParticipation
         {
@@ -246,7 +271,8 @@ namespace Sensus.Probes
         {
             get
             {
-                return DisplayName + ":  " + (_maxDataStoresPerSecond.HasValue ? _maxDataStoresPerSecond.Value + " / sec." : "When it changes.");
+                return DisplayName + ":  " + (_maxDataStoresPerSecond.HasValue ? _maxDataStoresPerSecond.Value + " / sec." : "When it changes.") +
+                                             (SignificantBatteryImpact ? " This sensor will have a significant negative impact on battery life." : "");
             }
         }
 

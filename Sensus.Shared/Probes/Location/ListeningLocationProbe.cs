@@ -28,18 +28,6 @@ namespace Sensus.Probes.Location
     {
         private EventHandler<PositionEventArgs> _positionChangedHandler;
 
-        /// <summary>
-        /// This <see cref="Probe"/> uses continuous GPS listening and will have a significant negative impact on battery life.
-        /// </summary>
-        /// <value>The collection description.</value>
-        public override string CollectionDescription
-        {
-            get
-            {
-                return base.CollectionDescription + " Please note that this sensor will have a significant negative impact on battery life.";
-            }
-        }
-
         [JsonIgnore]
         protected override bool DefaultKeepDeviceAwake
         {
@@ -66,6 +54,11 @@ namespace Sensus.Probes.Location
                 return "This setting does not affect iOS. Android devices will sleep and pause updates.";
             }
         }
+
+        /// <summary>
+        /// This <see cref="Probe"/> uses continuous GPS listening and will have a significant negative impact on battery life.
+        /// </summary>
+        protected override bool SignificantBatteryImpact => true;
 
         public sealed override string DisplayName
         {

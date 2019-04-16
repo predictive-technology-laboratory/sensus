@@ -157,6 +157,19 @@ namespace Sensus.Callbacks
         }
 
         /// <summary>
+        /// Raises each <see cref="ScheduledCallback"/> whose <see cref="ScheduledCallback.Id"/> matches a pattern.
+        /// </summary>
+        /// <returns>Task.</returns>
+        /// <param name="idPattern">Identifier pattern.</param>
+        public async Task RaiseCallbacksAsync(Regex idPattern)
+        {
+            foreach (ScheduledCallback callback in _idCallback.Values.Where(callback => idPattern.IsMatch(callback.Id)))
+            {
+                await RaiseCallbackAsync(callback, callback.InvocationId);
+            }
+        }
+
+        /// <summary>
         /// See <see cref="RaiseCallbackAsync(ScheduledCallback, string)"/>.
         /// </summary>
         /// <returns>Task.</returns>
@@ -459,6 +472,21 @@ namespace Sensus.Callbacks
 #endif
 
             SensusServiceHelper.Get().Logger.Log("Unscheduled callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
+        }
+
+        /// <summary>
+        /// Unschedules the callback.
+        /// </summary>
+        /// <returns>Task.</returns>
+        /// <param name="id">Identifier.</param>
+        public async Task UnscheduleCallbackAsync(string id)
+        {
+            ScheduledCallback callback = TryGetCallback(id);
+
+            if (callback != null)
+            {
+                await UnscheduleCallbackAsync(callback);
+            }
         }
 
         /// <summary>

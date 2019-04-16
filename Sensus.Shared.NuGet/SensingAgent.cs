@@ -25,24 +25,50 @@ namespace Sensus
     public abstract class SensingAgent
     {
         /// <summary>
-        /// Action to take after <see cref="Delay"/>, in order to transition sensing to a subsequent state. The intent
-        /// of the <see cref="CompletionAction"/> is to transition sensing into a subsequent state and thereby terminate 
-        /// the action invoked by <see cref="ActAsync(string, CancellationToken)"/>.
+        /// Action to every <see cref="CompletionActionInterval"/>, in order to check whether sensing work requested by
+        /// the <see cref="SensingAgent"/> has completed. The intent of the <see cref="CompletionAction"/> is to transition 
+        /// sensing into a subsequent state and thereby terminate the sensing invoked by <see cref="ActAsync(string, CancellationToken)"/>.
         /// </summary>
         public class CompletionAction
         {
-            public Func<CancellationToken, Task> ActionAsync { get; set; }
-            public TimeSpan? Delay { get; set; }
+            /// <summary>
+            /// Results that can be returned by a <see cref="CompletionAction"/>.
+            /// </summary>
+            public enum Result
+            {
+                /// <summary>
+                /// The <see cref="SensingAgent"/> has not yet <see cref="Finished"/> its work and wishes to
+                /// <see cref="Continue"/> sensing as previously determined.
+                /// </summary>
+                Continue,
+
+                /// <summary>
+                /// The <see cref="SensingAgent"/> has completed sensing and transitioned the sensing settings
+                /// into their desired follow-up state.
+                /// </summary>
+                Finished
+            }
+
+            /// <summary>
+            /// Completion action to be run periodically to determine when sensing work requested by the <see cref="SensingAgent"/>
+            /// has concluded. Should return <c>true</c> if the action completed and should no longer be checked. Should return
+            /// <see cref="Result.Continue"/> if the sensing work requested by the <see cref="SensingAgent"/> has not yet completed 
+            /// and should continue; or <see cref="Result.Finished"/> if sensing work has completed.
+            /// </summary>
+            public delegate Task<Result> CompletionActionAsyncDelegate(CancellationToken cancellationToken);
+
+            public CompletionActionAsyncDelegate ActionAsync { get; set; }
+            public TimeSpan CompletionActionInterval { get; set; }
 
             /// <summary>
             /// Initializes a new instance of the <see cref="T:Sensus.SensingAgent.CompletionAction"/> class.
             /// </summary>
             /// <param name="actionAsync">Action.</param>
-            /// <param name="delay">Delay. If <c>null</c> then the passsed action will be scheduled for immediate execution.</param>
-            public CompletionAction(Func<CancellationToken, Task> actionAsync, TimeSpan? delay)
+            /// <param name="completionActionInterval">Completion action interval.</param>
+            public CompletionAction(CompletionActionAsyncDelegate actionAsync, TimeSpan completionActionInterval)
             {
                 ActionAsync = actionAsync;
-                Delay = delay;
+                CompletionActionInterval = completionActionInterval;
             }
         }
 
@@ -88,6 +114,12 @@ namespace Sensus
         protected ISensusServiceHelper SensusServiceHelper => _sensusServiceHelper;
 
         /// <summary>
+        /// Gets the protocol.
+        /// </summary>
+        /// <value>The protocol.</value>
+        protected IProtocol Protocol => _protocol;
+
+        /// <summary>
         /// Initializes the <see cref="SensingAgent"/>. This is called when the <see cref="IProtocol"/> associated with this
         /// <see cref="SensingAgent"/> is started.
         /// </summary>
@@ -121,6 +153,20 @@ namespace Sensus
         /// </summary>
         /// <param name="policy">Policy.</param>
         public abstract Task SetPolicyAsync(JObject policy);
+
+        /// <summary>
+        /// Instructs the current <see cref="SensingAgent"/> to observe data for a duration of time. Any <see cref="IDatum"/> stored
+        /// by the <see cref="IProtocol"/> associated with this <see cref="SensingAgent"/> will be relayed to the <see cref="SensingAgent"/>
+        /// via the <see cref="ObserveAsync(IDatum)"/> method.
+        /// </summary>
+        /// <returns>The async.</returns>
+        /// <param name="duration">Duration.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public async Task ObserveAsync(TimeSpan duration, CancellationToken cancellationToken)
+        {
+            SensusServiceHelper.Logger.Log("Sensing agent " + Id + " is observing data for " + duration + ".", LoggingLevel.Normal, GetType());
+            await Task.Delay(duration, cancellationToken);
+        }
 
         /// <summary>
         /// Asks the agent to observe an <see cref="IDatum"/> object that was generated by Sensus.
