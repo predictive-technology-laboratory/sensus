@@ -514,11 +514,27 @@ namespace Sensus.Probes
             Protocol.TryGetProbe(typeof(ScriptProbe), out Probe scriptProbe);
             if (scriptProbe?.Enabled ?? false)
             {
-                await ((scriptProbe as ScriptProbe).Agent?.ObserveAsync(datum) ?? Task.CompletedTask);
+                // agents might be third-party and badly behaving...catch their exceptions.
+                try
+                {
+                    await ((scriptProbe as ScriptProbe).Agent?.ObserveAsync(datum) ?? Task.CompletedTask);
+                }
+                catch(Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while script probe agent was observing datum:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
             }
 
-            // let the protocol's sensing agent observe the data, and schedule any returned action completion check
-            await Protocol.ScheduleAgentActionCompletionCheckAsync(await Protocol.Agent?.ObserveAsync(datum));
+            // let the protocol's sensing agent observe the data, and schedule any returned action completion 
+            // check. agents might be third-party and badly behaving...catch their exceptions.
+            try
+            {
+                await Protocol.ScheduleAgentActionCompletionCheckAsync(await Protocol.Agent?.ObserveAsync(datum));
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while sensing agent was observing datum:  " + ex.Message, LoggingLevel.Normal, GetType());
+            }
         }
 
         /// <summary>
