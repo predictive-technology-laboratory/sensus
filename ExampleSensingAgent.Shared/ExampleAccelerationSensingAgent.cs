@@ -20,6 +20,7 @@ using Newtonsoft.Json.Linq;
 using Sensus;
 using Sensus.Probes.Movement;
 using System.Linq;
+using Sensus.Probes.Location;
 
 namespace ExampleSensingAgent
 {
@@ -30,7 +31,9 @@ namespace ExampleSensingAgent
         private TimeSpan _observationDuration;
         private double _threshold;
         private TimeSpan _completionActionInterval;
-        private bool _executingAction;
+        private State _state;
+
+        private readonly object _stateLocker = new object();
 
         public override string Description => "Continuous for " + _completionActionInterval + " if ALM > " + _threshold + " for " + _observationDuration;
 
@@ -49,6 +52,7 @@ namespace ExampleSensingAgent
             _observationDuration = TimeSpan.FromSeconds(5);
             _threshold = 0.5;
             _completionActionInterval = TimeSpan.FromSeconds(30);
+            _state = State.Idle;
         }
 
         public override Task SetPolicyAsync(JObject policy)
@@ -61,7 +65,7 @@ namespace ExampleSensingAgent
             return Task.CompletedTask;
         }
 
-        public override Task ObserveAsync(IDatum datum)
+        public override async Task<CompletionAction> ObserveAsync(IDatum datum)
         {
             lock (_typeData)
             {
@@ -79,17 +83,45 @@ namespace ExampleSensingAgent
                 {
                     data.Dequeue();
                 }
-
-                return Task.CompletedTask;
             }
+
+            if (datum is IProximityDatum)
+            {
+                IProximityDatum proximityDatum = datum as IProximityDatum;
+
+                if (proximityDatum.Distance < proximityDatum.MaxDistance)
+                {
+                    lock (_stateLocker)
+                    {
+                        if (_state == State.Idle)
+                        {
+                            _state = State.ActionOngoing;
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+
+                    return await TransitionToOngoingAsync();
+                }
+            }
+
+            return null;
         }
 
-        public override async Task<CompletionAction> ActAsync(string actionId, CancellationToken cancellationToken)
+        public override async Task<CompletionAction> ActAsync(CancellationToken cancellationToken)
         {
-            // do nothing if the agent is already executing an action
-            if (_executingAction)
+            lock (_stateLocker)
             {
-                return null;
+                if (_state == State.Idle)
+                {
+                    _state = State.Observing;
+                }
+                else
+                {
+                    return null;
+                }
             }
 
             // clear data queues so that observation is fresh
@@ -103,33 +135,34 @@ namespace ExampleSensingAgent
             // passed cancellation token.
             await ObserveAsync(_observationDuration, cancellationToken);
 
-            CompletionAction completionAction = null;
-
             if (GetAbsoluteDeviationOfAverageLinearMagnitude().GetValueOrDefault() > _threshold)
             {
-                await SensusServiceHelper.KeepDeviceAwakeAsync();
-
-                completionAction = new CompletionAction(async completionActionCancellationToken =>
-                {
-                    // if the protocol is still running, then check the criterion value against the threshold
-                    // and continue sensing if a positive result is obtained.
-                    if (Protocol.State == ProtocolState.Running && GetAbsoluteDeviationOfAverageLinearMagnitude() > _threshold)
-                    {
-                        return CompletionAction.Result.Continue;
-                    }
-                    // the completion action might be executing because the protocol is shutting down. if this 
-                    // is the case (i.e., protocol is not running), then complete sensing and bail out.
-                    else
-                    {
-                        await SensusServiceHelper.LetDeviceSleepAsync();
-                        _executingAction = false;
-                        return CompletionAction.Result.Finished;
-                    }
-
-                }, _completionActionInterval);
+                return await TransitionToOngoingAsync();
             }
+            else
+            {
+                _state = State.Idle;
+                return null;
+            }
+        }
 
-            return completionAction;
+        private async Task<CompletionAction> TransitionToOngoingAsync()
+        {
+            _state = State.ActionOngoing;
+
+            await SensusServiceHelper.KeepDeviceAwakeAsync();
+
+            return new CompletionAction(async completionActionCancellationToken =>
+            {
+                if (Protocol.State != ProtocolState.Running || GetAbsoluteDeviationOfAverageLinearMagnitude() < _threshold)
+                {
+                    await SensusServiceHelper.LetDeviceSleepAsync();
+                    _state = State.Idle;
+                }
+
+                return _state;
+
+            }, _completionActionInterval);
         }
 
         private double? GetAbsoluteDeviationOfAverageLinearMagnitude()
