@@ -518,7 +518,7 @@ namespace Sensus.Probes
             }
 
             // let the protocol's sensing agent observe the data, and schedule any returned action completion check
-            await Protocol.ScheduleActionCompletionCheckAsync(await Protocol.Agent?.ObserveAsync(datum));
+            await Protocol.ScheduleAgentActionCompletionCheckAsync(await Protocol.Agent?.ObserveAsync(datum));
         }
 
         /// <summary>

@@ -23,7 +23,6 @@ using Sensus.Exceptions;
 using Sensus.Extensions;
 using System.Linq;
 using System.Text.RegularExpressions;
-using static Sensus.SensingAgent;
 
 #if __IOS__
 using Sensus.Notifications;

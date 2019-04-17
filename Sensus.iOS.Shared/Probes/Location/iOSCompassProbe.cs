@@ -28,7 +28,7 @@ namespace Sensus.iOS.Probes.Location
         /// <summary>
         /// This <see cref="Sensus.Probes.Probe"/> uses continuous GPS listening and will have a significant negative impact on battery life.
         /// </summary>
-        protected override bool SignificantBatteryImpact => true;
+        protected override bool WillHaveSignificantNegativeImpactOnBattery => true;
 
         public iOSCompassProbe()
         {

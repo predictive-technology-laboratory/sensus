@@ -81,7 +81,7 @@ namespace Sensus
         public const int GPS_DEFAULT_DEFERRAL_DISTANCE_METERS = 500;
         public const int GPS_DEFAULT_DEFERRAL_TIME_MINUTES = 5;
         public const string MANAGED_URL_STRING = "managed";
-        public const string SENSING_AGENT_COMPLETION_CALLBACK_ID_SUFFIX = "sensing-agent-completion-callback";
+        private const string SENSING_AGENT_ACTION_COMPLETION_CHECK_CALLBACK_ID_SUFFIX = "sensing-agent-completion-callback";
         private readonly Regex NON_ALPHANUMERIC_REGEX = new Regex("[^a-zA-Z0-9]");
 
         public static async Task<Protocol> CreateAsync(string name)
@@ -2065,7 +2065,7 @@ namespace Sensus
                         // ask the sensing agent to act
                         SensusServiceHelper.Get().Logger.Log("Asking the sensing agent to act.", LoggingLevel.Normal, GetType());
                         ActionCompletionCheck actionCompletionCheck = await Agent.ActAsync(actionCancellationToken);
-                        await ScheduleActionCompletionCheckAsync(actionCompletionCheck);
+                        await ScheduleAgentActionCompletionCheckAsync(actionCompletionCheck);
 
                     }, Agent.ActionInterval.Value, Agent.ActionInterval.Value, Agent.Id, _id, this, null, Agent.ActionIntervalToleranceBefore.GetValueOrDefault(), Agent.ActionIntervalToleranceAfter.GetValueOrDefault())
                     {
@@ -2123,14 +2123,14 @@ namespace Sensus
             await (_protocolStartFinishedAsync?.Invoke(_state) ?? Task.CompletedTask);
         }
 
-        public async Task ScheduleActionCompletionCheckAsync(ActionCompletionCheck actionCompletionCheck)
+        public async Task ScheduleAgentActionCompletionCheckAsync(ActionCompletionCheck actionCompletionCheck)
         {
             if (actionCompletionCheck != null)
             {
                 ScheduledCallback actionCompletionCheckCallback = new ScheduledCallback(null,                                                                           // this is a repeating callback that is self-cancelling. see code below that self-unschedules using the callback id. if we included the callback action here (instead of null), then we wouldn't have access to the callback id within the action.
                                                                                         actionCompletionCheck.CheckInterval,
                                                                                         actionCompletionCheck.CheckInterval,
-                                                                                        Guid.NewGuid().ToString() + "." + SENSING_AGENT_COMPLETION_CALLBACK_ID_SUFFIX,  // add a distinguishing suffix so we can raise/unschedule all completion callbacks later
+                                                                                        Guid.NewGuid().ToString() + "." + SENSING_AGENT_ACTION_COMPLETION_CHECK_CALLBACK_ID_SUFFIX,  // add a distinguishing suffix so we can raise/unschedule all completion callbacks later
                                                                                         _id,
                                                                                         this,
                                                                                         null,
@@ -2729,12 +2729,12 @@ namespace Sensus
                     // of which the first and last components are known at all times. the middle component is unique to
                     // each completion check callback and is random. thus, form a regex to account for the middle and 
                     // cancel each callback whose id matches.
-                    Regex completionCallbackIdPattern = new Regex("^" + _id + ".+" + SENSING_AGENT_COMPLETION_CALLBACK_ID_SUFFIX + "$");
+                    Regex completionCallbackIdPattern = new Regex("^" + _id + ".+" + SENSING_AGENT_ACTION_COMPLETION_CHECK_CALLBACK_ID_SUFFIX + "$");
                     await SensusContext.Current.CallbackScheduler.RaiseCallbacksAsync(completionCallbackIdPattern);
 
                     // having raised the action completion check callbacks while the protocol is not in the running state
                     // should, in principle, cause the callbacks to self-cancel. double-check that all have done so with
-                    // an explicit call to unschedule.
+                    // an explicit call to unschedule callbacks with ids matching the action completion pattern.
                     await SensusContext.Current.CallbackScheduler.UnscheduleCallbacksAsync(completionCallbackIdPattern);
                 }
 

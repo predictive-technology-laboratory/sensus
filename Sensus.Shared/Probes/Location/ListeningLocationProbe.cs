@@ -58,7 +58,7 @@ namespace Sensus.Probes.Location
         /// <summary>
         /// This <see cref="Probe"/> uses continuous GPS listening and will have a significant negative impact on battery life.
         /// </summary>
-        protected override bool SignificantBatteryImpact => true;
+        protected override bool WillHaveSignificantNegativeImpactOnBattery => true;
 
         public sealed override string DisplayName
         {

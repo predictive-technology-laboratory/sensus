@@ -157,8 +157,16 @@ namespace Sensus.Probes
         [JsonIgnore]
         protected abstract string DeviceAsleepWarning { get; }
 
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="T:Sensus.Probes.ListeningProbe"/>, in its current
+        /// configuration, will have a significant negative impact on battery. This can be the case if, e.g., 
+        /// the probe has enabled <see cref="KeepDeviceAwake"/>, or if the probe depends on hardware/software 
+        /// that is inherently battery hungry (e.g., <see cref="Location.ListeningLocationProbe"/> and the iOS
+        /// version of the <see cref="Location.CompassProbe"/>, which depends on the GPS subsystem).
+        /// </summary>
+        /// <value><c>true</c> if has significant negative impact on battery; otherwise, <c>false</c>.</value>
         [JsonIgnore]
-        protected virtual bool SignificantBatteryImpact
+        protected virtual bool WillHaveSignificantNegativeImpactOnBattery
         {
             get { return _keepDeviceAwake; }
         }
@@ -272,7 +280,7 @@ namespace Sensus.Probes
             get
             {
                 return DisplayName + ":  " + (_maxDataStoresPerSecond.HasValue ? _maxDataStoresPerSecond.Value + " / sec." : "When it changes.") +
-                                             (SignificantBatteryImpact ? " This sensor will have a significant negative impact on battery life." : "");
+                                             (WillHaveSignificantNegativeImpactOnBattery ? " This sensor will have a significant negative impact on battery life." : "");
             }
         }
 
