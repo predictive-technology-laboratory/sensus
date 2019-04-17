@@ -30,12 +30,12 @@ namespace ExampleSensingAgent
         private TimeSpan? _actionInterval;
         private TimeSpan _observationDuration;
         private double _threshold;
-        private TimeSpan _completionActionInterval;
-        private State _state;
+        private TimeSpan _actionCompletionCheckInterval;
+        private SensingAgentState _state;
 
         private readonly object _stateLocker = new object();
 
-        public override string Description => "Continuous for " + _completionActionInterval + " if ALM > " + _threshold + " for " + _observationDuration;
+        public override string Description => "Continuous for " + _actionCompletionCheckInterval + " if ALM > " + _threshold + " for " + _observationDuration;
 
         public override string Id => "Acceleration";
 
@@ -51,8 +51,8 @@ namespace ExampleSensingAgent
             _actionInterval = TimeSpan.FromSeconds(10);
             _observationDuration = TimeSpan.FromSeconds(5);
             _threshold = 0.5;
-            _completionActionInterval = TimeSpan.FromSeconds(30);
-            _state = State.Idle;
+            _actionCompletionCheckInterval = TimeSpan.FromSeconds(5);
+            _state = SensingAgentState.Idle;
         }
 
         public override Task SetPolicyAsync(JObject policy)
@@ -60,13 +60,14 @@ namespace ExampleSensingAgent
             _actionInterval = TimeSpan.Parse(policy.GetValue("action-interval").ToString());
             _observationDuration = TimeSpan.Parse(policy.GetValue("observation-duration").ToString());
             _threshold = double.Parse(policy.GetValue("threshold").ToString());
-            _completionActionInterval = TimeSpan.Parse(policy.GetValue("completion-action-interval").ToString());
+            _actionCompletionCheckInterval = TimeSpan.Parse(policy.GetValue("action-completion-check-interval").ToString());
 
             return Task.CompletedTask;
         }
 
-        public override async Task<CompletionAction> ObserveAsync(IDatum datum)
+        public override async Task<ActionCompletionCheck> ObserveAsync(IDatum datum)
         {
+            // accumulate data by type for later analysis
             lock (_typeData)
             {
                 Type datumType = datum.GetType();
@@ -85,38 +86,49 @@ namespace ExampleSensingAgent
                 }
             }
 
+            ActionCompletionCheck actionCompletionCheck = null;
+
+            // example of how to initiate a sensing control action in response to observed data
             if (datum is IProximityDatum)
             {
                 IProximityDatum proximityDatum = datum as IProximityDatum;
 
+                // check whether the device is near a surface (e.g., face)
                 if (proximityDatum.Distance < proximityDatum.MaxDistance)
                 {
+                    bool initiateAction = false;
+
                     lock (_stateLocker)
                     {
-                        if (_state == State.Idle)
+                        // only initiate action if we're currently idle, so we don't stomp on
+                        // the action interval loop's observation-action sequence. essentially
+                        // we'll only be idle here if incoming data are opportunistically rather
+                        // than directly observed.
+                        if (_state == SensingAgentState.Idle)
                         {
-                            _state = State.ActionOngoing;
-                        }
-                        else
-                        {
-                            return null;
+                            _state = SensingAgentState.ActionOngoing;
+                            initiateAction = true;
                         }
                     }
 
-                    return await TransitionToOngoingAsync();
+                    if (initiateAction)
+                    {
+                        actionCompletionCheck = await InitiateSensingControlAsync();
+                    }
                 }
             }
 
-            return null;
+            return actionCompletionCheck;
         }
 
-        public override async Task<CompletionAction> ActAsync(CancellationToken cancellationToken)
+        public override async Task<ActionCompletionCheck> ActAsync(CancellationToken cancellationToken)
         {
             lock (_stateLocker)
             {
-                if (_state == State.Idle)
+                // only observe if we're currently idle
+                if (_state == SensingAgentState.Idle)
                 {
-                    _state = State.Observing;
+                    _state = SensingAgentState.Observing;
                 }
                 else
                 {
@@ -124,7 +136,7 @@ namespace ExampleSensingAgent
                 }
             }
 
-            // clear data queues so that observation is fresh
+            // clear data queues for a fresh observation
             lock (_typeData)
             {
                 _typeData.Clear();
@@ -135,34 +147,43 @@ namespace ExampleSensingAgent
             // passed cancellation token.
             await ObserveAsync(_observationDuration, cancellationToken);
 
-            if (GetAbsoluteDeviationOfAverageLinearMagnitude().GetValueOrDefault() > _threshold)
+            ActionCompletionCheck actionCompletionCheck = null;
+
+            if (GetAbsoluteDeviationOfAverageLinearMagnitude().GetValueOrDefault() >= _threshold)
             {
-                return await TransitionToOngoingAsync();
+                actionCompletionCheck = await InitiateSensingControlAsync();
             }
             else
             {
-                _state = State.Idle;
-                return null;
+                _state = SensingAgentState.Idle;
             }
+
+            return actionCompletionCheck;
         }
 
-        private async Task<CompletionAction> TransitionToOngoingAsync()
+        private async Task<ActionCompletionCheck> InitiateSensingControlAsync()
         {
-            _state = State.ActionOngoing;
+            _state = SensingAgentState.ActionOngoing;
 
             await SensusServiceHelper.KeepDeviceAwakeAsync();
 
-            return new CompletionAction(async completionActionCancellationToken =>
+            return new ActionCompletionCheck(async actionCompletionCheckCancellationToken =>
             {
+                // the current check is called when a protocol is shutting down, in which case we should complete
+                // the action and return to idle. in addition, the current check is called periodically while the
+                // protocol remains running. if the action criterion value has fallen below the threshold, then
+                // complete the action and return to idle. if neither of these is the case (i.e., the protocol is 
+                // running and the action criterion remains at or above the threshold), then maintain the current
+                // state and do nothing.
                 if (Protocol.State != ProtocolState.Running || GetAbsoluteDeviationOfAverageLinearMagnitude() < _threshold)
                 {
                     await SensusServiceHelper.LetDeviceSleepAsync();
-                    _state = State.Idle;
+                    _state = SensingAgentState.Idle;
                 }
 
                 return _state;
 
-            }, _completionActionInterval);
+            }, _actionCompletionCheckInterval, "Sensus would like to check on a sensing task. Please open this notification", "Check complete. Thanks!");
         }
 
         private double? GetAbsoluteDeviationOfAverageLinearMagnitude()

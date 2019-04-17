@@ -40,7 +40,6 @@ namespace Sensus.Callbacks
     {
         public const string SENSUS_CALLBACK_KEY = "SENSUS-CALLBACK";
         public const string SENSUS_CALLBACK_INVOCATION_ID_KEY = "SENSUS-CALLBACK-INVOCATION-ID";
-        public const string SENSING_AGENT_COMPLETION_CALLBACK_ID_SUFFIX = "sensing-agent-completion-callback";
 
         private ConcurrentDictionary<string, ScheduledCallback> _idCallback;
 
@@ -89,36 +88,6 @@ namespace Sensus.Callbacks
             }
 
             return callback.State;
-        }
-
-        public async Task ScheduleCallbackAsync(CompletionAction completionAction, Protocol protocol)
-        {
-            if (completionAction != null)
-            {
-                string actionId = Guid.NewGuid().ToString() + "." + SENSING_AGENT_COMPLETION_CALLBACK_ID_SUFFIX;
-
-                ScheduledCallback completionActionCallback = new ScheduledCallback(async completionActionCancellationToken =>
-                {
-                    // if the sensing is complete, then cancel the repeating callback.
-                    if (await completionAction.ActionAsync(completionActionCancellationToken) == SensingAgent.State.Idle)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Sensing agent has completed sensing. Cancelling repeating callback.", LoggingLevel.Normal, GetType());
-                        await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(protocol.Id + "." + actionId);
-                    }
-
-                }, completionAction.CompletionActionInterval, completionAction.CompletionActionInterval, actionId, protocol.Id, protocol, null, TimeSpan.Zero, TimeSpan.Zero)
-                {
-#if __IOS__
-                    // we don't want the scheduled callback to be silent, as such callbacks are cancelled on ios when the app
-                    // is backgrounded. in any case, we want them to grab the user's attention. this is not needed on android,
-                    // as the scheduled callback will be run regardless of app/device state.
-                    UserNotificationMessage = "Sensus has completed a sensing task. Please open to confirm.",
-                    NotificationUserResponseMessage = "The task was completed. Thanks!."
-#endif
-                };
-
-                await ScheduleCallbackAsync(completionActionCallback);
-            }
         }
 
         /// <summary>

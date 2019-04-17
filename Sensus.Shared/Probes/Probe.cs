@@ -517,8 +517,8 @@ namespace Sensus.Probes
                 await ((scriptProbe as ScriptProbe).Agent?.ObserveAsync(datum) ?? Task.CompletedTask);
             }
 
-            // let the protocol's sensing agent observe the data, and schedule any return completion action.
-            await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(await Protocol.Agent?.ObserveAsync(datum), Protocol);
+            // let the protocol's sensing agent observe the data, and schedule any returned action completion check
+            await Protocol.ScheduleActionCompletionCheckAsync(await Protocol.Agent?.ObserveAsync(datum));
         }
 
         /// <summary>
