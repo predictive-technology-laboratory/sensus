@@ -39,7 +39,7 @@ namespace Sensus.Probes.Movement
         {
             get
             {
-                return "This setting does not affect iOS. Android devices will use additional power to report all updates.";
+                return "Devices will use additional power to report all updates.";
             }
         }
 
@@ -48,7 +48,7 @@ namespace Sensus.Probes.Movement
         {
             get
             {
-                return "This setting does not affect iOS. Android devices will sleep and pause updates.";
+                return "Devices will sleep and pause updates.";
             }
         }
 

@@ -732,7 +732,7 @@ namespace Sensus.Android
 
         #region device awake / sleep
 
-        public void KeepDeviceAwake()
+        public override Task KeepDeviceAwakeAsync()
         {
             if (_wakeLock != null)
             {
@@ -756,9 +756,11 @@ namespace Sensus.Android
                     }
                 }
             }
+
+            return Task.CompletedTask;
         }
 
-        public void LetDeviceSleep()
+        public override Task LetDeviceSleepAsync()
         {
             if (_wakeLock != null)
             {
@@ -790,12 +792,14 @@ namespace Sensus.Android
                     }
                     else
                     {
-                        SensusException.Report("Attempted to call " + nameof(LetDeviceSleep) + ", but the wake lock is not currently held.");
+                        SensusException.Report("Attempted to call " + nameof(LetDeviceSleepAsync) + ", but the wake lock is not currently held.");
 
                         _wakeLockTimestamp = null;
                     }
                 }
             }
+
+            return Task.CompletedTask;
         }
 
         #endregion

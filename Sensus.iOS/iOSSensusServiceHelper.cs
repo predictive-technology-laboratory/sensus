@@ -30,6 +30,7 @@ using TTGSnackBar;
 using WindowsAzure.Messaging;
 using Newtonsoft.Json;
 using Sensus.Exceptions;
+using Plugin.Geolocator.Abstractions;
 
 namespace Sensus.iOS
 {
@@ -43,6 +44,9 @@ namespace Sensus.iOS
         private readonly string _deviceModel;
         private readonly string _operatingSystem;
         private NSData _pushNotificationTokenData;
+        private bool _keepAwakeEnabled;
+
+        private object _keepAwakeLocker = new object();
 
         public override bool IsCharging
         {
@@ -161,6 +165,49 @@ namespace Sensus.iOS
             {
 
             }
+        }
+
+        public override async Task KeepDeviceAwakeAsync()
+        {
+            lock (_keepAwakeLocker)
+            {
+                if (_keepAwakeEnabled)
+                { 
+                    Logger.Log("Attempted to keep device awake, but keep-awake is already enabled.", LoggingLevel.Normal, GetType());
+                    return;
+                }
+                else
+                {
+                    _keepAwakeEnabled = true;
+                }
+            }
+
+            Logger.Log("Enabling keep-awake by adding GPS listener.", LoggingLevel.Normal, GetType());
+            await GpsReceiver.Get().AddListenerAsync(KeepAwakePositionChanged, false);
+        }
+
+        public override async Task LetDeviceSleepAsync()
+        {
+            lock (_keepAwakeLocker)
+            {
+                if (_keepAwakeEnabled)
+                {
+                    _keepAwakeEnabled = false;
+                }
+                else
+                {
+                    Logger.Log("Attempted to let device sleep, but keep-awake was already disabled.", LoggingLevel.Normal, GetType());
+                    return;
+                }
+            }
+
+            Logger.Log("Disabling keep-awake by removing GPS listener.", LoggingLevel.Normal, GetType());
+            await GpsReceiver.Get().RemoveListenerAsync(KeepAwakePositionChanged);
+        }
+
+        private void KeepAwakePositionChanged(object sender, PositionEventArgs position)
+        {
+            Logger.Log("Received keep-awake position change.", LoggingLevel.Normal, GetType());
         }
 
         protected override Task ProtectedFlashNotificationAsync(string message)

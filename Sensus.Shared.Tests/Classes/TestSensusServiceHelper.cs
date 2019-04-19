@@ -126,6 +126,16 @@ namespace Sensus.Tests.Classes
             throw new NotImplementedException();
         }
 
+        public override Task KeepDeviceAwakeAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task LetDeviceSleepAsync()
+        {
+            throw new NotImplementedException();
+        }
+
         protected override Task ProtectedFlashNotificationAsync(string message)
         {
             throw new NotImplementedException();

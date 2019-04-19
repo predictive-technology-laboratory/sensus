@@ -51,6 +51,7 @@ using Sensus.Exceptions;
 using Sensus.Extensions;
 using Plugin.Geolocator.Abstractions;
 using Newtonsoft.Json.Linq;
+using static Sensus.SensingAgent;
 
 #if __IOS__
 using HealthKit;
@@ -80,6 +81,7 @@ namespace Sensus
         public const int GPS_DEFAULT_DEFERRAL_DISTANCE_METERS = 500;
         public const int GPS_DEFAULT_DEFERRAL_TIME_MINUTES = 5;
         public const string MANAGED_URL_STRING = "managed";
+        private const string SENSING_AGENT_ACTION_COMPLETION_CHECK_CALLBACK_ID_SUFFIX = "sensing-agent-completion-callback";
         private readonly Regex NON_ALPHANUMERIC_REGEX = new Regex("[^a-zA-Z0-9]");
 
         public static async Task<Protocol> CreateAsync(string name)
@@ -486,6 +488,52 @@ namespace Sensus
             }
         }
 
+#if __ANDROID__
+
+        // android allows us to dynamically load code assemblies, but iOS does not. so, the current approach
+        // is to only support dynamic loading on android and force compile-time assembly inclusion on ios.
+
+        public static SensingAgent GetAgent(byte[] assemblyBytes, string agentId)
+        {
+            return GetAgents(assemblyBytes).SingleOrDefault(agent => agent.Id == agentId);
+        }
+
+        public static List<SensingAgent> GetAgents(byte[] assemblyBytes)
+        {
+            return Assembly.Load(assemblyBytes)
+                           .GetTypes()
+                           .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(SensingAgent)))
+                           .Select(Activator.CreateInstance)
+                           .Cast<SensingAgent>()
+                           .ToList();
+        }
+
+        /// <summary>
+        /// Bytes of the assembly in which the <see cref="Agent"/> is contained.
+        /// </summary>
+        /// <value>The agent assembly bytes.</value>
+        public byte[] AgentAssemblyBytes { get; set; }
+
+#elif __IOS__
+
+        public static SensingAgent GetAgent(string agentId)
+        {
+            return GetAgents().SingleOrDefault(agent => agent.Id == agentId);
+        }
+
+        public static List<SensingAgent> GetAgents()
+        {
+            // get agents from the current assembly. they must be linked at compile time.
+            return Assembly.GetExecutingAssembly()
+                           .GetTypes()
+                           .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(SensingAgent)))
+                           .Select(Activator.CreateInstance)
+                           .Cast<SensingAgent>()
+                           .ToList();
+        }
+
+#endif
+
         #endregion
 
         public event EventHandler<ProtocolState> StateChanged;
@@ -535,6 +583,10 @@ namespace Sensus
         private Func<Task> _protocolStartInitiatedAsync;
         private Func<double, Task> _protocolStartAddProgressAsync;
         private Func<ProtocolState, Task> _protocolStartFinishedAsync;
+
+        // sensing agent
+        private SensingAgent _agent;
+        private ScheduledCallback _agentIntervalActionScheduledCallback;
 
         /// <summary>
         /// The study's identifier. All studies on the same device must have unique identifiers. Certain <see cref="Probe"/>s
@@ -1556,6 +1608,64 @@ namespace Sensus
         }
 
         /// <summary>
+        /// Gets or sets the sensing control agent. See [here](xref:sensing_agent) for more information.
+        /// </summary>
+        /// <value>The agent.</value>
+        [JsonIgnore]
+        public SensingAgent Agent
+        {
+            get
+            {
+                // attempt to lazy-load the agent if there is none and we an agent id
+                if (_agent == null && !string.IsNullOrWhiteSpace(AgentId))
+                {
+                    try
+                    {
+#if __ANDROID__
+                        // also require an assembly on android, which is where we get the agents from.
+                        if (AgentAssemblyBytes != null)
+                        {
+                            _agent = GetAgent(AgentAssemblyBytes, AgentId);
+                        }
+#elif __IOS__
+                        // there is no assembly in ios per apple restrictions on dynamically loaded code. agents are baked into the app instead.
+                        _agent = GetAgent(AgentId);
+#endif
+
+                        // set the agent's policy if we previously received one (e.g., via push notification)
+                        if (AgentPolicy != null)
+                        {
+                            _agent.SetPolicyAsync(AgentPolicy).Wait();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get()?.Logger.Log("Exception while loading agent:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                }
+
+                return _agent;
+            }
+            set
+            {
+                _agent = value;
+                AgentId = _agent?.Id;
+            }
+        }
+
+        /// <summary>
+        /// Id of the <see cref="Agent"/> to use.
+        /// </summary>
+        /// <value>The agent identifier.</value>
+        public string AgentId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the agent policy.
+        /// </summary>
+        /// <value>The agent policy JSON.</value>
+        public JObject AgentPolicy { get; set; }
+
+        /// <summary>
         /// For JSON deserialization
         /// </summary>
         private Protocol()
@@ -1944,6 +2054,33 @@ namespace Sensus
                     }
                 }
 
+                // start sensing agent if there is one
+                await (Agent?.InitializeAsync(SensusServiceHelper.Get(), this) ?? Task.CompletedTask);
+
+                // if the sensing agent has requested actions at regular intervals, then schedule a repeating callback.
+                if (Agent?.ActionInterval != null)
+                {
+                    _agentIntervalActionScheduledCallback = new ScheduledCallback(async actionCancellationToken =>
+                    {
+                        // ask the sensing agent to act
+                        SensusServiceHelper.Get().Logger.Log("Asking the sensing agent to act.", LoggingLevel.Normal, GetType());
+                        ControlCompletionCheck controlCompletionCheck = await Agent.ActAsync(actionCancellationToken);
+                        await ScheduleAgentControlCompletionCheckAsync(controlCompletionCheck);
+
+                    }, Agent.ActionInterval.Value, Agent.ActionInterval.Value, Agent.Id, _id, this, null, Agent.ActionIntervalToleranceBefore.GetValueOrDefault(), Agent.ActionIntervalToleranceAfter.GetValueOrDefault())
+                    {
+#if __IOS__
+                        // we don't want the scheduled callback to be silent, as such callbacks are cancelled on ios when the app
+                        // is backgrounded. in any case, we want them to grab the user's attention. this is not needed on android,
+                        // as the scheduled callback will be run regardless of app/device state.
+                        UserNotificationMessage = "Sensus would like to measure your environment. Please open this notification.",
+                        NotificationUserResponseMessage = "Measuring environment. You may close this alert."
+#endif
+                    };
+
+                    await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_agentIntervalActionScheduledCallback);
+                }
+
                 // wrap up if there was no start-cancelling exception
                 if (cancelStartException == null)
                 {
@@ -1984,6 +2121,44 @@ namespace Sensus
             }
 
             await (_protocolStartFinishedAsync?.Invoke(_state) ?? Task.CompletedTask);
+        }
+
+        public async Task ScheduleAgentControlCompletionCheckAsync(ControlCompletionCheck controlCompletionCheck)
+        {
+            if (controlCompletionCheck != null)
+            {
+                ScheduledCallback controlCompletionCheckCallback = new ScheduledCallback(null,                                                                           // this is a repeating callback that is self-cancelling. see code below that self-unschedules using the callback id. if we included the callback action here (instead of null), then we wouldn't have access to the callback id within the action.
+                                                                                        controlCompletionCheck.CheckControlCompletionInterval,
+                                                                                        controlCompletionCheck.CheckControlCompletionInterval,
+                                                                                        Guid.NewGuid().ToString() + "." + SENSING_AGENT_ACTION_COMPLETION_CHECK_CALLBACK_ID_SUFFIX,  // add a distinguishing suffix so we can raise/unschedule all completion callbacks later
+                                                                                        _id,
+                                                                                        this,
+                                                                                        null,
+                                                                                        Agent.ActionIntervalToleranceBefore ?? TimeSpan.Zero,
+                                                                                        Agent.ActionIntervalToleranceAfter ?? TimeSpan.Zero)
+                {
+#if __IOS__
+                    // we don't want the scheduled callback to be silent, as such callbacks are cancelled on ios when the app
+                    // is backgrounded. in any case, we want them to grab the user's attention. this is not needed on android,
+                    // as the scheduled callback will be run regardless of app/device state.
+                    UserNotificationMessage = controlCompletionCheck.UserNotificationMessage,
+                    NotificationUserResponseMessage = controlCompletionCheck.NotificationUserResponseMessage
+#endif
+                };
+
+                // set check action, now that we have the callback id used to self-cancel.
+                controlCompletionCheckCallback.ActionAsync = async completionActionCancellationToken =>
+                {
+                    // if the sensing agent has returned to idle, then self-cancel the repeating callback as the control has ended.
+                    if (await controlCompletionCheck.CheckControlCompletionAsync(completionActionCancellationToken) == SensingAgentState.Idle)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Sensing agent has ended control and returned to idle. Self-cancelling repeating callback.", LoggingLevel.Normal, GetType());
+                        await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(controlCompletionCheckCallback.Id);
+                    }
+                };
+
+                await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(controlCompletionCheckCallback);
+            }
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -2539,6 +2714,30 @@ namespace Sensus
                     }
                 }
 
+                if (_agentIntervalActionScheduledCallback != null)
+                {
+                    // cancel interval action callback ssociated with the sensing agent, if there is one.
+                    await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_agentIntervalActionScheduledCallback);
+                    _agentIntervalActionScheduledCallback = null;
+
+                    // raise and unschedule any outstanding control completion checks. this needs to be done in order to 
+                    // properly conclude any ongoing sensing control (e.g., by letting the device sleep again, reverting 
+                    // sampling rates, etc.). the format of control completion check callback ids is as follows:  
+                    //
+                    //   [protocol id].[control completion check callback id].[suffix]
+                    //
+                    // of which the first and last components are known at all times. the middle component is unique to
+                    // each completion check callback and is random. thus, form a regex to account for the middle and 
+                    // cancel each callback whose id matches.
+                    Regex completionCallbackIdPattern = new Regex("^" + _id + ".+" + SENSING_AGENT_ACTION_COMPLETION_CHECK_CALLBACK_ID_SUFFIX + "$");
+                    await SensusContext.Current.CallbackScheduler.RaiseCallbacksAsync(completionCallbackIdPattern);
+
+                    // having raised the control completion check callbacks while the protocol is not in the running state
+                    // should, in principle, cause the callbacks to self-cancel. double-check that all have done so with
+                    // an explicit call to unschedule callbacks with ids matching the control completion pattern.
+                    await SensusContext.Current.CallbackScheduler.UnscheduleCallbacksAsync(completionCallbackIdPattern);
+                }
+
                 await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(CancellationToken.None);
             }
             catch (Exception ex)
@@ -2645,6 +2844,25 @@ namespace Sensus
                     scriptProbe.AgentPolicy = policy;
                     await SensusServiceHelper.Get().SaveAsync();
                 }
+            }
+        }
+
+        public async Task UpdateSensingAgentPolicyAsync(CancellationToken cancellationToken)
+        {
+            JObject policy = await RemoteDataStore.GetSensingAgentPolicyAsync(cancellationToken);
+
+            await UpdateSensingAgentPolicyAsync(policy);
+        }
+
+        public async Task UpdateSensingAgentPolicyAsync(JObject policy)
+        {
+            if (Agent != null)
+            {
+                await Agent.SetPolicyAsync(policy);
+
+                // save policy within app state (agent itself is not serialized)
+                AgentPolicy = policy;
+                await SensusServiceHelper.Get().SaveAsync();
             }
         }
     }

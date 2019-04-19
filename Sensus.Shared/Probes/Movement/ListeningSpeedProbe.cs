@@ -29,18 +29,6 @@ namespace Sensus.Probes.Movement
 
         private readonly object _locker = new object();
 
-        /// <summary>
-        /// This <see cref="Probe"/> uses continuous GPS listening and will have a significant negative impact on battery life.
-        /// </summary>
-        /// <value>The collection description.</value>
-        public override string CollectionDescription
-        {
-            get
-            {
-                return base.CollectionDescription + " Please note that this sensor will have a significant negative impact on battery life.";
-            }
-        }
-
         [JsonIgnore]
         protected override bool DefaultKeepDeviceAwake
         {
@@ -67,6 +55,11 @@ namespace Sensus.Probes.Movement
                 return "This setting does not affect iOS. Android devices will sleep and pause updates.";
             }
         }
+
+        /// <summary>
+        /// This <see cref="Probe"/> uses continuous GPS listening and will have a significant negative impact on battery life.
+        /// </summary>
+        protected override bool WillHaveSignificantNegativeImpactOnBattery => true;
 
         public sealed override string DisplayName
         {

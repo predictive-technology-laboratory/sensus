@@ -22,6 +22,7 @@ using Sensus.Context;
 using Sensus.Exceptions;
 using Sensus.Extensions;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 #if __IOS__
 using Sensus.Notifications;
@@ -153,6 +154,19 @@ namespace Sensus.Callbacks
             ScheduledCallback callback;
             _idCallback.TryGetValue(id, out callback);
             return callback;
+        }
+
+        /// <summary>
+        /// Raises each <see cref="ScheduledCallback"/> whose <see cref="ScheduledCallback.Id"/> matches a pattern.
+        /// </summary>
+        /// <returns>Task.</returns>
+        /// <param name="idPattern">Identifier pattern.</param>
+        public async Task RaiseCallbacksAsync(Regex idPattern)
+        {
+            foreach (ScheduledCallback callback in _idCallback.Values.Where(callback => idPattern.IsMatch(callback.Id)))
+            {
+                await RaiseCallbackAsync(callback, callback.InvocationId);
+            }
         }
 
         /// <summary>
@@ -458,6 +472,34 @@ namespace Sensus.Callbacks
 #endif
 
             SensusServiceHelper.Get().Logger.Log("Unscheduled callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
+        }
+
+        /// <summary>
+        /// Unschedules the callback.
+        /// </summary>
+        /// <returns>Task.</returns>
+        /// <param name="id">Identifier.</param>
+        public async Task UnscheduleCallbackAsync(string id)
+        {
+            ScheduledCallback callback = TryGetCallback(id);
+
+            if (callback != null)
+            {
+                await UnscheduleCallbackAsync(callback);
+            }
+        }
+
+        /// <summary>
+        /// Unschedules each <see cref="ScheduledCallback"/> whose <see cref="ScheduledCallback.Id"/> matches a pattern.
+        /// </summary>
+        /// <returns>Task.</returns>
+        /// <param name="idPattern">Identifier pattern.</param>
+        public async Task UnscheduleCallbacksAsync(Regex idPattern)
+        {
+            foreach (ScheduledCallback callback in _idCallback.Values.Where(callback => idPattern.IsMatch(callback.Id)))
+            {
+                await UnscheduleCallbackAsync(callback);
+            }
         }
     }
 }

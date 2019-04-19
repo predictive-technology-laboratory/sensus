@@ -34,7 +34,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AndroidSupportedAbis>x86;armeabi-v7a</AndroidSupportedAbis>
+    <AndroidSupportedAbis>x86;armeabi-v7a;arm64-v8a</AndroidSupportedAbis>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <DocumentationFile>bin\Debug\SensusAndroid.xml</DocumentationFile>
     <AndroidUseSharedRuntime>true</AndroidUseSharedRuntime>
@@ -339,7 +339,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
       <Aliases>indoor,global</Aliases>
     </Reference>
     <Reference Include="Sensus.Shared.NuGet">
-      <HintPath>..\packages\Sensus.1.21.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
+      <HintPath>..\packages\Sensus.1.41.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
