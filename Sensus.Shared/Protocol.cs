@@ -502,7 +502,7 @@ namespace Sensus
         {
             return Assembly.Load(assemblyBytes)
                            .GetTypes()
-                           .Where(t => !t.IsAbstract && t.IsInstanceOfType(typeof(SensingAgent)))
+                           .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(SensingAgent)))
                            .Select(Activator.CreateInstance)
                            .Cast<SensingAgent>()
                            .ToList();

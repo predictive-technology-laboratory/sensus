@@ -28,6 +28,7 @@ using System.ComponentModel;
 using Sensus.Extensions;
 using Sensus.Exceptions;
 using Sensus.Probes.User.Scripts;
+using static Sensus.SensingAgent;
 
 namespace Sensus.Probes
 {
@@ -529,7 +530,7 @@ namespace Sensus.Probes
             // completion check. agents might be third-party and badly behaving...catch their exceptions.
             try
             {
-                await Protocol.ScheduleAgentControlCompletionCheckAsync(await Protocol.Agent?.ObserveAsync(datum));
+                await Protocol.ScheduleAgentControlCompletionCheckAsync(await (Protocol.Agent?.ObserveAsync(datum) ?? Task.FromResult<ControlCompletionCheck>(null)));
             }
             catch (Exception ex)
             {
