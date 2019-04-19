@@ -1608,7 +1608,7 @@ namespace Sensus
         }
 
         /// <summary>
-        /// Gets or sets the sensing control agent. See [here](xref:sensing_agent) for more information.
+        /// Gets or sets the sensing control agent. See [here](xref:adaptive_sensing) for more information.
         /// </summary>
         /// <value>The agent.</value>
         [JsonIgnore]

@@ -6068,11 +6068,23 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "articles/adaptive-sensing.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/adaptive-sensing.html",
+          "hash": "buTQRqBynKCJ7obAddM7FQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "articles/adaptive-surveys.md",
       "output": {
         ".html": {
           "relative_path": "articles/adaptive-surveys.html",
-          "hash": "FFOZByAFplzaWzhlJow+Mg=="
+          "hash": "05nTj5VtzI2+nrxpHGzOIQ=="
         }
       },
       "is_incremental": true,
@@ -6348,7 +6360,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/toc.html",
-          "hash": "0kc27WqhSRubFjS7rX/rjQ=="
+          "hash": "OhJ75gW6vfjf90z5Yfaqgg=="
         }
       },
       "is_incremental": false,
@@ -6360,6 +6372,17 @@
       "output": {
         "resource": {
           "relative_path": "images/GitHubBanner.png"
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Resource",
+      "source_relative_path": "images/adaptive-sensing-state-diagram.png",
+      "output": {
+        "resource": {
+          "relative_path": "images/adaptive-sensing-state-diagram.png"
         }
       },
       "is_incremental": false,

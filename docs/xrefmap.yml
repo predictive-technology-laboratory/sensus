@@ -1,6 +1,9 @@
 ### YamlMime:XRefMap
 sorted: true
 references:
+- uid: adaptive_sensing
+  name: Adaptive Sensing
+  href: articles/adaptive-sensing.html
 - uid: adaptive_surveys
   name: Adaptive Surveys
   href: articles/adaptive-surveys.html
