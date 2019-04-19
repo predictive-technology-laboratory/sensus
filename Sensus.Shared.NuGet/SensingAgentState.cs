@@ -27,17 +27,17 @@ namespace Sensus
         OpportunisticControl,
 
         /// <summary>
-        /// The <see cref="SensingAgent"/> is directly observing to determine whether <see cref="DirectControl"/> is desired.
+        /// The <see cref="SensingAgent"/> is actively observing to determine whether <see cref="ActiveControl"/> is desired.
         /// </summary>
-        DirectObservation,
+        ActiveObservation,
 
         /// <summary>
-        /// The <see cref="SensingAgent"/> is controlling sensing in response to <see cref="DirectObservation"/>.
+        /// The <see cref="SensingAgent"/> is controlling sensing in response to <see cref="ActiveObservation"/>.
         /// </summary>
-        DirectControl,
+        ActiveControl,
 
         /// <summary>
-        /// The <see cref="SensingAgent"/> is ending sensing control (either <see cref="OpportunisticControl"/> or <see cref="DirectControl"/>).
+        /// The <see cref="SensingAgent"/> is ending sensing control (either <see cref="OpportunisticControl"/> or <see cref="ActiveControl"/>).
         /// </summary>
         EndingControl
     }

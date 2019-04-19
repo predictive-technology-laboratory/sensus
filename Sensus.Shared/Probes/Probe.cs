@@ -525,11 +525,11 @@ namespace Sensus.Probes
                 }
             }
 
-            // let the protocol's sensing agent observe the data, and schedule any returned action completion 
-            // check. agents might be third-party and badly behaving...catch their exceptions.
+            // let the protocol's sensing agent observe the data, and schedule any returned control
+            // completion check. agents might be third-party and badly behaving...catch their exceptions.
             try
             {
-                await Protocol.ScheduleAgentActionCompletionCheckAsync(await Protocol.Agent?.ObserveAsync(datum));
+                await Protocol.ScheduleAgentControlCompletionCheckAsync(await Protocol.Agent?.ObserveAsync(datum));
             }
             catch (Exception ex)
             {

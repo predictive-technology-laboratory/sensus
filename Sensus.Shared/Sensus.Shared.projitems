@@ -276,6 +276,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotificationUpdate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotificationUpdateType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotification.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\SensingAgentPage.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />

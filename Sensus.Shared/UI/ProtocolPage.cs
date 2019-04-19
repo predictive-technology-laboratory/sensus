@@ -344,6 +344,23 @@ namespace Sensus.UI
 
                 await SensusServiceHelper.Get().FlashNotificationAsync("Sensing agent cleared.");
             };
+
+            Button viewAgentStateButton = new Button
+            {
+                Text = "View Agent State",
+                FontSize = 20,
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
+
+            viewAgentStateButton.Clicked += async (sender, e) =>
+            {
+                if (_protocol.Agent != null)
+                {
+                    await Navigation.PushAsync(new SensingAgentPage(_protocol.Agent));
+                }
+            };
+
+            views.Add(viewAgentStateButton);
             #endregion
 
             #region lock
