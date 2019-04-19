@@ -86,46 +86,22 @@ namespace ExampleSensingAgent
                 }
             }
 
+            // initiate sensing control if device is near a surface (e.g., face)
             ActionCompletionCheck actionCompletionCheck = null;
-
-            // example of how to initiate a sensing control action in response to observed data
             if (datum is IProximityDatum)
             {
                 IProximityDatum proximityDatum = datum as IProximityDatum;
 
-                // check whether the device is near a surface (e.g., face)
                 if (proximityDatum.Distance < proximityDatum.MaxDistance)
                 {
-                    bool initiateSensingControl = false;
-
-                    lock (_stateLocker)
+                    try
                     {
-                        // only initiate action if we're currently idle, so we don't stomp on
-                        // the action interval loop's observation-action sequence. essentially
-                        // we'll only be idle here if incoming data are opportunistically rather
-                        // than directly observed.
-                        if (_state == SensingAgentState.Idle)
-                        {
-                            _state = SensingAgentState.ActionOngoing;
-                            initiateSensingControl = true;
-                        }
+                        actionCompletionCheck = await BeginControlAsync(SensingAgentState.OpportunisticControl);
                     }
-
-                    if (initiateSensingControl)
+                    catch (Exception ex)
                     {
-                        // guarantee that this method leaves the agent in a viable state by catching any
-                        // exceptions below and terminating sensing control if needed.
-                        try
-                        {
-                            actionCompletionCheck = await InitiateSensingControlAsync();
-                        }
-                        catch (Exception ex)
-                        {
-                            // if anything goes wrong, ensure that we terminate sensing control and leave ourselves in a viable state.
-                            SensusServiceHelper.Logger.Log("Exception while observing/acting:  " + ex.Message, LoggingLevel.Normal, GetType());
-                            await TerminateSensingControl(CancellationToken.None);
-                            throw ex;
-                        }
+                        await EndControl(CancellationToken.None);
+                        throw ex;
                     }
                 }
             }
@@ -135,94 +111,140 @@ namespace ExampleSensingAgent
 
         public override async Task<ActionCompletionCheck> ActAsync(CancellationToken cancellationToken)
         {
-            lock (_stateLocker)
-            {
-                // only observe if we're currently idle
-                if (_state == SensingAgentState.Idle)
-                {
-                    _state = SensingAgentState.Observing;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-
             try
             {
-                // clear observed data so that a fresh observation is obtained for action
-                ClearObservedData();
-
-                // observe data for a window of time. the current method is run as a scheduled callback, so we're guaranteed
-                // to have some amount of background time. watch out for background time expiration on iOS by monitoring the
-                // passed cancellation token.
-                await ObserveAsync(_observationDuration, cancellationToken);
-
                 ActionCompletionCheck actionCompletionCheck = null;
 
-                if (GetAbsoluteDeviationOfAverageLinearMagnitude().GetValueOrDefault() >= _threshold)
+                if (TransitionToNewState(SensingAgentState.DirectObservation))
                 {
-                    actionCompletionCheck = await InitiateSensingControlAsync();
-                    _state = SensingAgentState.ActionOngoing;
-                }
-                else
-                {
-                    _state = SensingAgentState.Idle;
+                    // clear observed data so that a fresh observation is obtained for action
+                    ClearObservedData();
+
+                    // observe data for a window of time. the current method is run as a scheduled callback, so we're guaranteed
+                    // to have some amount of background time. watch out for background time expiration on iOS by monitoring the
+                    // passed cancellation token.
+                    await ObserveAsync(_observationDuration, cancellationToken);
+
+                    if (GetAbsoluteDeviationOfAverageLinearMagnitude().GetValueOrDefault() >= _threshold)
+                    {
+                        actionCompletionCheck = await BeginControlAsync(SensingAgentState.DirectControl);
+                    }
+                    else
+                    {
+                        TransitionToNewState(SensingAgentState.Idle);
+                    }
                 }
 
                 return actionCompletionCheck;
             }
             catch (Exception ex)
             {
-                // if anything goes wrong, ensure that we terminate sensing control and leave ourselves in a viable state.
-                SensusServiceHelper.Logger.Log("Exception while observing/acting:  " + ex.Message, LoggingLevel.Normal, GetType());
-                await TerminateSensingControl(cancellationToken);
+                // if anything goes wrong, ensure that we terminate sensing control and leave ourselves in the idle state.
+                await EndControl(cancellationToken);
                 throw ex;
             }
         }
 
-        private async Task<ActionCompletionCheck> InitiateSensingControlAsync()
+        private async Task<ActionCompletionCheck> BeginControlAsync(SensingAgentState controlState)
         {
-            // clear observed data so that the first completion check is based on fresh data
-            ClearObservedData();
+            ActionCompletionCheck actionCompletionCheck = null;
 
-            await SensusServiceHelper.KeepDeviceAwakeAsync();
-
-            return new ActionCompletionCheck(async actionCompletionCheckCancellationToken =>
+            if (TransitionToNewState(controlState))
             {
-                // the current check is called when a protocol is shutting down, in which case we should complete
-                // the action and return to idle. in addition, the current check is called periodically while the
-                // protocol remains running. if the action criterion value has fallen below the threshold, then
-                // complete the action and return to idle. if neither of these is the case (i.e., the protocol is 
-                // running and the action criterion remains at or above the threshold), then maintain the current
-                // state and do nothing.
-                if (Protocol.State == ProtocolState.Running && GetAbsoluteDeviationOfAverageLinearMagnitude() >= _threshold)
-                {
-                    // clear out the currently observed data so that the next check will be based on fresh data
-                    ClearObservedData();
-                }
-                else
-                {
-                    await TerminateSensingControl(actionCompletionCheckCancellationToken);
-                }
+                // clear observed data so that the first completion check is based on fresh data
+                ClearObservedData();
 
-                return _state;
+                await SensusServiceHelper.KeepDeviceAwakeAsync();
 
-            }, _actionCompletionCheckInterval, "Sensus would like to check on a sensing task. Please open this notification", "Check complete. Thanks!");
+                actionCompletionCheck = new ActionCompletionCheck(async actionCompletionCheckCancellationToken =>
+                {
+                    // the current check is called when a protocol is shutting down, in which case we should complete
+                    // the action and return to idle. in addition, the current check is called periodically while the
+                    // protocol remains running. if the action criterion value has fallen below the threshold, then
+                    // complete the action and return to idle. if neither of these is the case (i.e., the protocol is 
+                    // running and the action criterion remains at or above the threshold), then maintain the current
+                    // state and do nothing.
+                    if (Protocol.State == ProtocolState.Running && GetAbsoluteDeviationOfAverageLinearMagnitude() >= _threshold)
+                    {
+                        // clear out the currently observed data so that the next check will be based on fresh data
+                        ClearObservedData();
+                    }
+                    else
+                    {
+                        await EndControl(actionCompletionCheckCancellationToken);
+                    }
+
+                    return _state;
+
+                }, _actionCompletionCheckInterval, "Sensus would like to check on a sensing task. Please open this notification", "Check complete. Thanks!");
+            }
+
+            return actionCompletionCheck;
         }
 
-        private async Task TerminateSensingControl(CancellationToken cancellationToken)
+        private async Task EndControl(CancellationToken cancellationToken)
         {
             try
             {
-                // clear observed data to conserve memory
-                ClearObservedData();
+                if (TransitionToNewState(SensingAgentState.EndingControl))
+                {
+                    // clear observed data to conserve memory
+                    ClearObservedData();
 
-                await SensusServiceHelper.LetDeviceSleepAsync();
+                    await SensusServiceHelper.LetDeviceSleepAsync();
+                }
             }
             finally
             {
-                _state = SensingAgentState.Idle;
+                TransitionToNewState(SensingAgentState.Idle);
+            }
+        }
+
+        private bool TransitionToNewState(SensingAgentState newState)
+        {
+            lock (_stateLocker)
+            {
+                bool transitionToNewState = false;
+
+                if (_state != newState)
+                {
+                    if (_state == SensingAgentState.Idle)
+                    {
+                        transitionToNewState = newState == SensingAgentState.OpportunisticControl ||
+                                               newState == SensingAgentState.DirectObservation ||
+                                               newState == SensingAgentState.EndingControl;
+                    }
+                    else if (_state == SensingAgentState.OpportunisticControl)
+                    {
+                        transitionToNewState = newState == SensingAgentState.EndingControl;
+                    }
+                    else if (_state == SensingAgentState.DirectObservation)
+                    {
+                        transitionToNewState = newState == SensingAgentState.DirectControl ||
+                                               newState == SensingAgentState.Idle ||
+                                               newState == SensingAgentState.EndingControl;
+                    }
+                    else if (_state == SensingAgentState.DirectControl)
+                    {
+                        transitionToNewState = newState == SensingAgentState.EndingControl;
+                    }
+                    else if (_state == SensingAgentState.EndingControl)
+                    {
+                        transitionToNewState = newState == SensingAgentState.Idle;
+                    }
+                }
+
+                if (transitionToNewState)
+                {
+                    SensusServiceHelper.Logger.Log("Sensing agent is transitioning from " + _state + " to " + newState + ".", LoggingLevel.Normal, GetType());
+                    _state = newState;
+                }
+                else
+                {
+                    SensusServiceHelper.Logger.Log("Sensing agent is prohibited from transitioning from " + _state + " to " + newState + ".", LoggingLevel.Normal, GetType());
+                }
+
+                return transitionToNewState;
             }
         }
 

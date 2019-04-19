@@ -17,18 +17,28 @@ namespace Sensus
     public enum SensingAgentState
     {
         /// <summary>
-        /// The <see cref="SensingAgent"/> is not engaged in either direct observation or an ongoing action.
+        /// The <see cref="SensingAgent"/> is neither observing data nor controlling sensing.
         /// </summary>
         Idle,
 
         /// <summary>
-        /// The <see cref="SensingAgent"/> is directly observing data.
+        /// The <see cref="SensingAgent"/> is controlling sensing in response to opportunistic observation.
         /// </summary>
-        Observing,
+        OpportunisticControl,
 
         /// <summary>
-        /// On the basis of observed data, the <see cref="SensingAgent"/> is currently executing a sensing control action.
+        /// The <see cref="SensingAgent"/> is directly observing to determine whether <see cref="DirectControl"/> is desired.
         /// </summary>
-        ActionOngoing
+        DirectObservation,
+
+        /// <summary>
+        /// The <see cref="SensingAgent"/> is controlling sensing in response to <see cref="DirectObservation"/>.
+        /// </summary>
+        DirectControl,
+
+        /// <summary>
+        /// The <see cref="SensingAgent"/> is ending sensing control (either <see cref="OpportunisticControl"/> or <see cref="DirectControl"/>).
+        /// </summary>
+        EndingControl
     }
 }
