@@ -371,6 +371,51 @@ on iOS. So we&apos;ve centralized background-sensitive cancellation into the iOS
   </table>
   
   
+  <a id="Sensus_Callbacks_CallbackScheduler_RaiseCallbacksAsync_" data-uid="Sensus.Callbacks.CallbackScheduler.RaiseCallbacksAsync*"></a>
+  <h4 id="Sensus_Callbacks_CallbackScheduler_RaiseCallbacksAsync_System_Text_RegularExpressions_Regex_" data-uid="Sensus.Callbacks.CallbackScheduler.RaiseCallbacksAsync(System.Text.RegularExpressions.Regex)">RaiseCallbacksAsync(Regex)</h4>
+  <div class="markdown level1 summary"><p>Raises each <a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a> whose <a class="xref" href="Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_Id">Id</a> matches a pattern.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task RaiseCallbacksAsync(Regex idPattern)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Text.RegularExpressions.Regex</span></td>
+        <td><span class="parametername">idPattern</span></td>
+        <td><p>Identifier pattern.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><p>Task.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Callbacks_CallbackScheduler_RequestLocalInvocationAsync_" data-uid="Sensus.Callbacks.CallbackScheduler.RequestLocalInvocationAsync*"></a>
   <h4 id="Sensus_Callbacks_CallbackScheduler_RequestLocalInvocationAsync_Sensus_Callbacks_ScheduledCallback_" data-uid="Sensus.Callbacks.CallbackScheduler.RequestLocalInvocationAsync(Sensus.Callbacks.ScheduledCallback)">RequestLocalInvocationAsync(ScheduledCallback)</h4>
   <div class="markdown level1 summary"></div>
@@ -546,6 +591,96 @@ on iOS. So we&apos;ve centralized background-sensitive cancellation into the iOS
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
         <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Callbacks_CallbackScheduler_UnscheduleCallbackAsync_" data-uid="Sensus.Callbacks.CallbackScheduler.UnscheduleCallbackAsync*"></a>
+  <h4 id="Sensus_Callbacks_CallbackScheduler_UnscheduleCallbackAsync_System_String_" data-uid="Sensus.Callbacks.CallbackScheduler.UnscheduleCallbackAsync(System.String)">UnscheduleCallbackAsync(String)</h4>
+  <div class="markdown level1 summary"><p>Unschedules the callback.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task UnscheduleCallbackAsync(string id)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">id</span></td>
+        <td><p>Identifier.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><p>Task.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Callbacks_CallbackScheduler_UnscheduleCallbacksAsync_" data-uid="Sensus.Callbacks.CallbackScheduler.UnscheduleCallbacksAsync*"></a>
+  <h4 id="Sensus_Callbacks_CallbackScheduler_UnscheduleCallbacksAsync_System_Text_RegularExpressions_Regex_" data-uid="Sensus.Callbacks.CallbackScheduler.UnscheduleCallbacksAsync(System.Text.RegularExpressions.Regex)">UnscheduleCallbacksAsync(Regex)</h4>
+  <div class="markdown level1 summary"><p>Unschedules each <a class="xref" href="Sensus.Callbacks.ScheduledCallback.html">ScheduledCallback</a> whose <a class="xref" href="Sensus.Callbacks.ScheduledCallback.html#Sensus_Callbacks_ScheduledCallback_Id">Id</a> matches a pattern.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task UnscheduleCallbacksAsync(Regex idPattern)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Text.RegularExpressions.Regex</span></td>
+        <td><span class="parametername">idPattern</span></td>
+        <td><p>Identifier pattern.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><p>Task.</p>
+</td>
       </tr>
     </tbody>
   </table>

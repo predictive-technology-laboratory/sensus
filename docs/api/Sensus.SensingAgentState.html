@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Class ProtocolState
+    <title>Class SensingAgentState
    | Sensus Documentation </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Class ProtocolState
+    <meta name="title" content="Class SensingAgentState
    | Sensus Documentation ">
     <meta name="generator" content="docfx 2.38.1.0">
     
@@ -78,38 +78,35 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Sensus.ProtocolState">
+            <article class="content wrap" id="_content" data-uid="Sensus.SensingAgentState">
   
   
-  <h1 id="Sensus_ProtocolState" data-uid="Sensus.ProtocolState" class="text-break">Class ProtocolState
+  <h1 id="Sensus_SensingAgentState" data-uid="Sensus.SensingAgentState" class="text-break">Class SensingAgentState
   </h1>
-  <div class="markdown level0 summary"><p>Protocol state.</p>
-</div>
+  <div class="markdown level0 summary"></div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
-    <div class="level1"><span class="xref">ProtocolState</span></div>
+    <div class="level1"><span class="xref">SensingAgentState</span></div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.html">Sensus</a></h6>
   <h6><strong>Assembly</strong>: Sensus.Shared.NuGet.dll</h6>
-  <h5 id="Sensus_ProtocolState_syntax">Syntax</h5>
+  <h5 id="Sensus_SensingAgentState_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public sealed class ProtocolState : Enum</code></pre>
+    <pre><code class="lang-csharp hljs">public sealed class SensingAgentState : Enum</code></pre>
   </div>
   <h3 id="fields">Fields
   </h3>
   
   
-  <h4 id="Sensus_ProtocolState_Paused" data-uid="Sensus.ProtocolState.Paused">Paused</h4>
-  <div class="markdown level1 summary"><p>The protocol has been paused, which means that it is not storing data and is not registered as <a class="xref" href="Sensus.ProtocolState.html#Sensus_ProtocolState_Running">Running</a>, but is
-active in other ways (e.g., surveys will fire, push notifications will be received, data will be transmitted to the
-remote data store.</p>
+  <h4 id="Sensus_SensingAgentState_ActiveControl" data-uid="Sensus.SensingAgentState.ActiveControl">ActiveControl</h4>
+  <div class="markdown level1 summary"><p>The <a class="xref" href="Sensus.SensingAgent.html">SensingAgent</a> is controlling sensing in response to <a class="xref" href="Sensus.SensingAgentState.html#Sensus_SensingAgentState_ActiveObservation">ActiveObservation</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const ProtocolState Paused</code></pre>
+    <pre><code class="lang-csharp hljs">public const SensingAgentState ActiveControl</code></pre>
   </div>
   <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -121,20 +118,20 @@ remote data store.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.ProtocolState.html">ProtocolState</a></td>
+        <td><a class="xref" href="Sensus.SensingAgentState.html">SensingAgentState</a></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   
   
-  <h4 id="Sensus_ProtocolState_Running" data-uid="Sensus.ProtocolState.Running">Running</h4>
-  <div class="markdown level1 summary"><p>The <a class="xref" href="Sensus.IProtocol.html">IProtocol</a> has started and is a candidate for <a class="xref" href="Sensus.ProtocolState.html#Sensus_ProtocolState_Stopping">Stopping</a>.</p>
+  <h4 id="Sensus_SensingAgentState_ActiveObservation" data-uid="Sensus.SensingAgentState.ActiveObservation">ActiveObservation</h4>
+  <div class="markdown level1 summary"><p>The <a class="xref" href="Sensus.SensingAgent.html">SensingAgent</a> is actively observing to determine whether <a class="xref" href="Sensus.SensingAgentState.html#Sensus_SensingAgentState_ActiveControl">ActiveControl</a> is desired.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const ProtocolState Running</code></pre>
+    <pre><code class="lang-csharp hljs">public const SensingAgentState ActiveObservation</code></pre>
   </div>
   <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -146,20 +143,20 @@ remote data store.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.ProtocolState.html">ProtocolState</a></td>
+        <td><a class="xref" href="Sensus.SensingAgentState.html">SensingAgentState</a></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   
   
-  <h4 id="Sensus_ProtocolState_Starting" data-uid="Sensus.ProtocolState.Starting">Starting</h4>
-  <div class="markdown level1 summary"><p>The <a class="xref" href="Sensus.IProtocol.html">IProtocol</a> is starting up and will soon become <a class="xref" href="Sensus.ProtocolState.html#Sensus_ProtocolState_Running">Running</a>.</p>
+  <h4 id="Sensus_SensingAgentState_EndingControl" data-uid="Sensus.SensingAgentState.EndingControl">EndingControl</h4>
+  <div class="markdown level1 summary"><p>The <a class="xref" href="Sensus.SensingAgent.html">SensingAgent</a> is ending sensing control (either <a class="xref" href="Sensus.SensingAgentState.html#Sensus_SensingAgentState_OpportunisticControl">OpportunisticControl</a> or <a class="xref" href="Sensus.SensingAgentState.html#Sensus_SensingAgentState_ActiveControl">ActiveControl</a>).</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const ProtocolState Starting</code></pre>
+    <pre><code class="lang-csharp hljs">public const SensingAgentState EndingControl</code></pre>
   </div>
   <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -171,20 +168,20 @@ remote data store.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.ProtocolState.html">ProtocolState</a></td>
+        <td><a class="xref" href="Sensus.SensingAgentState.html">SensingAgentState</a></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   
   
-  <h4 id="Sensus_ProtocolState_Stopped" data-uid="Sensus.ProtocolState.Stopped">Stopped</h4>
-  <div class="markdown level1 summary"><p>The <a class="xref" href="Sensus.IProtocol.html">IProtocol</a> is stopped and is a candidate for <a class="xref" href="Sensus.ProtocolState.html#Sensus_ProtocolState_Starting">Starting</a>.</p>
+  <h4 id="Sensus_SensingAgentState_Idle" data-uid="Sensus.SensingAgentState.Idle">Idle</h4>
+  <div class="markdown level1 summary"><p>The <a class="xref" href="Sensus.SensingAgent.html">SensingAgent</a> is neither observing data nor controlling sensing.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const ProtocolState Stopped</code></pre>
+    <pre><code class="lang-csharp hljs">public const SensingAgentState Idle</code></pre>
   </div>
   <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -196,20 +193,20 @@ remote data store.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.ProtocolState.html">ProtocolState</a></td>
+        <td><a class="xref" href="Sensus.SensingAgentState.html">SensingAgentState</a></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   
   
-  <h4 id="Sensus_ProtocolState_Stopping" data-uid="Sensus.ProtocolState.Stopping">Stopping</h4>
-  <div class="markdown level1 summary"><p>The <a class="xref" href="Sensus.IProtocol.html">IProtocol</a> is in the middle of stopping and will soon become <a class="xref" href="Sensus.ProtocolState.html#Sensus_ProtocolState_Stopped">Stopped</a>.</p>
+  <h4 id="Sensus_SensingAgentState_OpportunisticControl" data-uid="Sensus.SensingAgentState.OpportunisticControl">OpportunisticControl</h4>
+  <div class="markdown level1 summary"><p>The <a class="xref" href="Sensus.SensingAgent.html">SensingAgent</a> is controlling sensing in response to opportunistic observation.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public const ProtocolState Stopping</code></pre>
+    <pre><code class="lang-csharp hljs">public const SensingAgentState OpportunisticControl</code></pre>
   </div>
   <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -221,14 +218,14 @@ remote data store.</p>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.ProtocolState.html">ProtocolState</a></td>
+        <td><a class="xref" href="Sensus.SensingAgentState.html">SensingAgentState</a></td>
         <td></td>
       </tr>
     </tbody>
   </table>
   
   
-  <h4 id="Sensus_ProtocolState_value__" data-uid="Sensus.ProtocolState.value__">value__</h4>
+  <h4 id="Sensus_SensingAgentState_value__" data-uid="Sensus.SensingAgentState.value__">value__</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>

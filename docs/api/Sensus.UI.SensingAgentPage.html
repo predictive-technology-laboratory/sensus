@@ -5,10 +5,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Interface ISensusServiceHelper
+    <title>Class SensingAgentPage
    | Sensus Documentation </title>
     <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Interface ISensusServiceHelper
+    <meta name="title" content="Class SensingAgentPage
    | Sensus Documentation ">
     <meta name="generator" content="docfx 2.38.1.0">
     
@@ -78,57 +78,35 @@
         </div>
         <div class="article row grid-right">
           <div class="col-md-10">
-            <article class="content wrap" id="_content" data-uid="Sensus.ISensusServiceHelper">
+            <article class="content wrap" id="_content" data-uid="Sensus.UI.SensingAgentPage">
   
   
-  <h1 id="Sensus_ISensusServiceHelper" data-uid="Sensus.ISensusServiceHelper" class="text-break">Interface ISensusServiceHelper
+  <h1 id="Sensus_UI_SensingAgentPage" data-uid="Sensus.UI.SensingAgentPage" class="text-break">Class SensingAgentPage
   </h1>
   <div class="markdown level0 summary"></div>
   <div class="markdown level0 conceptual"></div>
-  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.html">Sensus</a></h6>
-  <h6><strong>Assembly</strong>: Sensus.Shared.NuGet.dll</h6>
-  <h5 id="Sensus_ISensusServiceHelper_syntax">Syntax</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public interface ISensusServiceHelper</code></pre>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">SensingAgentPage</span></div>
   </div>
-  <h3 id="properties">Properties
+  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.UI.html">Sensus.UI</a></h6>
+  <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
+  <h5 id="Sensus_UI_SensingAgentPage_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class SensingAgentPage : ContentPage</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
   </h3>
   
   
-  <a id="Sensus_ISensusServiceHelper_Logger_" data-uid="Sensus.ISensusServiceHelper.Logger*"></a>
-  <h4 id="Sensus_ISensusServiceHelper_Logger" data-uid="Sensus.ISensusServiceHelper.Logger">Logger</h4>
+  <a id="Sensus_UI_SensingAgentPage__ctor_" data-uid="Sensus.UI.SensingAgentPage.#ctor*"></a>
+  <h4 id="Sensus_UI_SensingAgentPage__ctor_Sensus_SensingAgent_" data-uid="Sensus.UI.SensingAgentPage.#ctor(Sensus.SensingAgent)">SensingAgentPage(SensingAgent)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">ILogger Logger { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a class="xref" href="Sensus.ILogger.html">ILogger</a></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h3 id="methods">Methods
-  </h3>
-  
-  
-  <a id="Sensus_ISensusServiceHelper_FlashNotificationAsync_" data-uid="Sensus.ISensusServiceHelper.FlashNotificationAsync*"></a>
-  <h4 id="Sensus_ISensusServiceHelper_FlashNotificationAsync_System_String_" data-uid="Sensus.ISensusServiceHelper.FlashNotificationAsync(System.String)">FlashNotificationAsync(String)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Task FlashNotificationAsync(string message)</code></pre>
+    <pre><code class="lang-csharp hljs">public SensingAgentPage(SensingAgent sensingAgent)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -141,73 +119,8 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">message</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_ISensusServiceHelper_KeepDeviceAwakeAsync_" data-uid="Sensus.ISensusServiceHelper.KeepDeviceAwakeAsync*"></a>
-  <h4 id="Sensus_ISensusServiceHelper_KeepDeviceAwakeAsync" data-uid="Sensus.ISensusServiceHelper.KeepDeviceAwakeAsync">KeepDeviceAwakeAsync()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Task KeepDeviceAwakeAsync()</code></pre>
-  </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="Sensus_ISensusServiceHelper_LetDeviceSleepAsync_" data-uid="Sensus.ISensusServiceHelper.LetDeviceSleepAsync*"></a>
-  <h4 id="Sensus_ISensusServiceHelper_LetDeviceSleepAsync" data-uid="Sensus.ISensusServiceHelper.LetDeviceSleepAsync">LetDeviceSleepAsync()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Task LetDeviceSleepAsync()</code></pre>
-  </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><a class="xref" href="Sensus.SensingAgent.html">SensingAgent</a></td>
+        <td><span class="parametername">sensingAgent</span></td>
         <td></td>
       </tr>
     </tbody>
