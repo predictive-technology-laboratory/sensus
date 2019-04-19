@@ -52,5 +52,10 @@ namespace Sensus
         /// Survey agents (see <see cref="Sensus.Probes.User.Scripts.ScriptProbe.Agent"/>). Following this prefix should be an internet-accessible URL from which to download an agent library via HTTPS.
         /// </summary>
         public const string SURVEY_AGENT = "survey-agent:";
+
+        /// <summary>
+        /// Sensing agents (see <see cref="Sensus.Protocol.Agent"/>). Following this prefix should be an internet-accessible URL from which to download an agent library via HTTPS.
+        /// </summary>
+        public const string SENSING_AGENT = "sensing-agent:";
     }
 }

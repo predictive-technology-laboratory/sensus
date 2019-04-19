@@ -491,6 +491,13 @@ namespace Sensus.Notifications
                         await protocol.UpdateScriptAgentPolicyAsync(pendingUpdate.Content);
                     }
                     #endregion
+
+                    #region sensing agent policy
+                    else if (pendingUpdate.Type == PushNotificationUpdateType.SensingAgentPolicy)
+                    {
+                        await protocol.UpdateSensingAgentPolicyAsync(pendingUpdate.Content);
+                    }
+                    #endregion
                 }
                 catch (Exception ex)
                 {

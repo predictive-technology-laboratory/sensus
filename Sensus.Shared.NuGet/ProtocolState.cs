@@ -20,29 +20,29 @@ namespace Sensus
     public enum ProtocolState
     {
         /// <summary>
-        /// The <see cref="Protocol"/> is stopped and is a candidate for <see cref="Starting"/>.
+        /// The <see cref="IProtocol"/> is stopped and is a candidate for <see cref="Starting"/>.
         /// </summary>
         Stopped,
 
         /// <summary>
-        /// The <see cref="Protocol"/> is starting up and will soon become <see cref="Running"/>.
+        /// The <see cref="IProtocol"/> is starting up and will soon become <see cref="Running"/>.
         /// </summary>
         Starting,
 
         /// <summary>
-        /// The <see cref="Protocol"/> has started and is a candidate for <see cref="Stopping"/>.
+        /// The <see cref="IProtocol"/> has started and is a candidate for <see cref="Stopping"/>.
         /// </summary>
         Running,
 
         /// <summary>
-        /// The <see cref="Protocol"/> is in the middle of stopping and will soon become <see cref="Stopped"/>.
+        /// The <see cref="IProtocol"/> is in the middle of stopping and will soon become <see cref="Stopped"/>.
         /// </summary>
         Stopping,
 
         /// <summary>
         /// The protocol has been paused, which means that it is not storing data and is not registered as <see cref="Running"/>, but is
         /// active in other ways (e.g., surveys will fire, push notifications will be received, data will be transmitted to the
-        /// <see cref="DataStores.Remote.RemoteDataStore"/>).
+        /// remote data store.
         /// </summary>
         Paused
     }

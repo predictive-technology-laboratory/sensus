@@ -84,6 +84,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleScriptProbeAgent", "
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ExampleScriptProbeAgent.Shared", "ExampleScriptProbeAgent.Shared\ExampleScriptProbeAgent.Shared.shproj", "{40433736-3696-43E1-8AA2-1B954035AD9E}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "ExampleSensingAgent.Shared", "ExampleSensingAgent.Shared\ExampleSensingAgent.Shared.shproj", "{59AAA3F8-2B88-4771-A2E1-D413A1F9E861}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleSensingAgent", "ExampleSensingAgent\ExampleSensingAgent.csproj", "{384BFD0E-4E7A-418D-B94B-8DA2C2271849}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Sensus.Shared.Tests\Sensus.Shared.Tests.projitems*{542cbe5f-b59a-422d-b0b9-6123121cb203}*SharedItemsImports = 13
@@ -209,15 +213,29 @@ Global
 		{057DE2B3-AC3B-4A46-8EC9-7470697FD64F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{057DE2B3-AC3B-4A46-8EC9-7470697FD64F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{057DE2B3-AC3B-4A46-8EC9-7470697FD64F}.Debug|iPhone.ActiveCfg = Debug|Any CPU
-		{057DE2B3-AC3B-4A46-8EC9-7470697FD64F}.Debug|iPhone.Build.0 = Debug|Any CPU
 		{057DE2B3-AC3B-4A46-8EC9-7470697FD64F}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{057DE2B3-AC3B-4A46-8EC9-7470697FD64F}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
 		{057DE2B3-AC3B-4A46-8EC9-7470697FD64F}.Release|Android.ActiveCfg = Release|Any CPU
 		{057DE2B3-AC3B-4A46-8EC9-7470697FD64F}.Release|Android.Build.0 = Release|Any CPU
 		{057DE2B3-AC3B-4A46-8EC9-7470697FD64F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{057DE2B3-AC3B-4A46-8EC9-7470697FD64F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{057DE2B3-AC3B-4A46-8EC9-7470697FD64F}.Release|iPhone.ActiveCfg = Release|Any CPU
 		{057DE2B3-AC3B-4A46-8EC9-7470697FD64F}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{384BFD0E-4E7A-418D-B94B-8DA2C2271849}.Ad-Hoc|Android.ActiveCfg = Debug|Any CPU
+		{384BFD0E-4E7A-418D-B94B-8DA2C2271849}.Ad-Hoc|Any CPU.ActiveCfg = Debug|Any CPU
+		{384BFD0E-4E7A-418D-B94B-8DA2C2271849}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
+		{384BFD0E-4E7A-418D-B94B-8DA2C2271849}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{384BFD0E-4E7A-418D-B94B-8DA2C2271849}.Debug|Android.ActiveCfg = Debug|Any CPU
+		{384BFD0E-4E7A-418D-B94B-8DA2C2271849}.Debug|Android.Build.0 = Debug|Any CPU
+		{384BFD0E-4E7A-418D-B94B-8DA2C2271849}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{384BFD0E-4E7A-418D-B94B-8DA2C2271849}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{384BFD0E-4E7A-418D-B94B-8DA2C2271849}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{384BFD0E-4E7A-418D-B94B-8DA2C2271849}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{384BFD0E-4E7A-418D-B94B-8DA2C2271849}.Release|Android.ActiveCfg = Release|Any CPU
+		{384BFD0E-4E7A-418D-B94B-8DA2C2271849}.Release|Android.Build.0 = Release|Any CPU
+		{384BFD0E-4E7A-418D-B94B-8DA2C2271849}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{384BFD0E-4E7A-418D-B94B-8DA2C2271849}.Release|Any CPU.Build.0 = Release|Any CPU
+		{384BFD0E-4E7A-418D-B94B-8DA2C2271849}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{384BFD0E-4E7A-418D-B94B-8DA2C2271849}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

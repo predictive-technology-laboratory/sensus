@@ -74,7 +74,7 @@ namespace Sensus.Probes.User.Scripts
         public static List<IScriptProbeAgent> GetAgents()
         {
             // get agents from the current assembly. they must be linked at compile time.
-            return Assembly.GetAssembly(typeof(ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent))
+            return Assembly.GetExecutingAssembly()
                            .GetTypes()
                            .Where(t => !t.IsAbstract && t.GetInterfaces().Contains(typeof(IScriptProbeAgent)))
                            .Select(Activator.CreateInstance)

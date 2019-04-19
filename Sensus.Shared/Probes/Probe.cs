@@ -28,6 +28,7 @@ using System.ComponentModel;
 using Sensus.Extensions;
 using Sensus.Exceptions;
 using Sensus.Probes.User.Scripts;
+using static Sensus.SensingAgent;
 
 namespace Sensus.Probes
 {
@@ -514,7 +515,26 @@ namespace Sensus.Probes
             Protocol.TryGetProbe(typeof(ScriptProbe), out Probe scriptProbe);
             if (scriptProbe?.Enabled ?? false)
             {
-                await ((scriptProbe as ScriptProbe).Agent?.ObserveAsync(datum) ?? Task.CompletedTask);
+                // agents might be third-party and badly behaving...catch their exceptions.
+                try
+                {
+                    await ((scriptProbe as ScriptProbe).Agent?.ObserveAsync(datum) ?? Task.CompletedTask);
+                }
+                catch(Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while script probe agent was observing datum:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+            }
+
+            // let the protocol's sensing agent observe the data, and schedule any returned control
+            // completion check. agents might be third-party and badly behaving...catch their exceptions.
+            try
+            {
+                await Protocol.ScheduleAgentControlCompletionCheckAsync(await (Protocol.Agent?.ObserveAsync(datum) ?? Task.FromResult<ControlCompletionCheck>(null)));
+            }
+            catch (Exception ex)
+            {
+                SensusServiceHelper.Get().Logger.Log("Exception while sensing agent was observing datum:  " + ex.Message, LoggingLevel.Normal, GetType());
             }
         }
 

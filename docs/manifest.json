@@ -77,6 +77,30 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/ExampleSensingAgent.ExampleAccelerationSensingAgent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html",
+          "hash": "/+DYJEKDjQlpaGf+TOSJZQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ExampleSensingAgent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ExampleSensingAgent.html",
+          "hash": "Fv142SuT6FGdboz3KKPTUQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Sensus.AnalyticsTrackedEvent.yml",
       "output": {
         ".html": {
@@ -189,7 +213,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.AndroidSensusServiceHelper.html",
-          "hash": "/hXwjksyXP3ubKRzV/6NCg=="
+          "hash": "Aj6fTPm4kpz038Z/y+xvKA=="
         }
       },
       "is_incremental": true,
@@ -225,7 +249,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.Callbacks.AndroidCallbackScheduler.html",
-          "hash": "5o7aa6a3t2yUiHd7kgQDQA=="
+          "hash": "0HUXeugfJJa6zz70YLJAOA=="
         }
       },
       "is_incremental": true,
@@ -429,7 +453,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.Probes.Communication.AndroidSmsProbe.html",
-          "hash": "1c0BQ4xfc/gnROH/U+Ys7A=="
+          "hash": "kxb9Xk0/vPR8nilNikOWqQ=="
         }
       },
       "is_incremental": true,
@@ -465,7 +489,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.Probes.Communication.AndroidTelephonyProbe.html",
-          "hash": "llJQ0poR9j9nV4ixn72d5w=="
+          "hash": "r00ba6QP96NIhI63uYbeUA=="
         }
       },
       "is_incremental": true,
@@ -489,7 +513,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.Probes.Context.AndroidAmbientTemperatureProbe.html",
-          "hash": "fHOriZJk8zml0ULrmcDmSQ=="
+          "hash": "dLCN+12H2LgD3YcqY9tSSA=="
         }
       },
       "is_incremental": true,
@@ -573,7 +597,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.Probes.Context.AndroidHumidityProbe.html",
-          "hash": "61q7gtCsCaqfhsyUQUQFpg=="
+          "hash": "/3rrTg5Aieg8sXOdWB7htQ=="
         }
       },
       "is_incremental": true,
@@ -585,7 +609,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.Probes.Context.AndroidLightProbe.html",
-          "hash": "16JoKai67JZGhiLX/sR3IQ=="
+          "hash": "uyYdpJuUCDGqYaajWNc3MQ=="
         }
       },
       "is_incremental": true,
@@ -645,7 +669,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.Probes.Location.AndroidAltitudeProbe.html",
-          "hash": "uFZa3j90lOrqdbWdGr1XMw=="
+          "hash": "qY2SMuwzhZzsVbU1JxF3qw=="
         }
       },
       "is_incremental": true,
@@ -657,7 +681,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.Probes.Location.AndroidCompassProbe.html",
-          "hash": "a8qZwsBgmXrV7qajON5byw=="
+          "hash": "UaHYG8ZuD7URjIjgdRw2Zw=="
         }
       },
       "is_incremental": true,
@@ -669,7 +693,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.Probes.Location.AndroidEstimoteBeaconProbe.html",
-          "hash": "bk4IAdjjKN4T1qIudsiLrA=="
+          "hash": "HzHfuaNGB9EzqVu3oqRkjA=="
         }
       },
       "is_incremental": true,
@@ -705,7 +729,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.Probes.Location.AndroidProximityProbe.html",
-          "hash": "O7n7NRdfqg5In4qTZX6Wyg=="
+          "hash": "gM1kkX5BQdMgjMWr4ICugA=="
         }
       },
       "is_incremental": true,
@@ -729,7 +753,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.Probes.Movement.AndroidAccelerometerProbe.html",
-          "hash": "2ZfdGprx6drSmiO9miWm6w=="
+          "hash": "xPi++35FXHIJVEuHP0FOXA=="
         }
       },
       "is_incremental": true,
@@ -741,7 +765,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.Probes.Movement.AndroidActivityProbe.html",
-          "hash": "mYdx/0CarAOEmX47Mj9Icg=="
+          "hash": "zC0MBq8GtYE0UtuG2w1VAg=="
         }
       },
       "is_incremental": true,
@@ -765,7 +789,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.Probes.Movement.AndroidAwarenessProbe.html",
-          "hash": "kdMZxePc/pUdJ1ipNm4ubw=="
+          "hash": "RK/xhrVD9YIuH2/53I+msg=="
         }
       },
       "is_incremental": true,
@@ -789,7 +813,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.Probes.Movement.AndroidGyroscopeProbe.html",
-          "hash": "bshh0CTLDNb/MgUen9k0yw=="
+          "hash": "eST/Bt45HrTzQdKk3isx5g=="
         }
       },
       "is_incremental": true,
@@ -801,7 +825,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.Probes.Movement.AndroidLocationFenceProbe.html",
-          "hash": "rT1gFkIfp5g7Sp38xDxxiQ=="
+          "hash": "zLU8w2ZVwlsiGHY2wDU9uw=="
         }
       },
       "is_incremental": true,
@@ -837,7 +861,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.Probes.Network.AndroidCellTowerProbe.html",
-          "hash": "hZcKyRlw4zF7ptDlTgZEkQ=="
+          "hash": "IcfxrxsQbqn0J0wAETOVUA=="
         }
       },
       "is_incremental": true,
@@ -849,7 +873,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Android.Probes.Network.AndroidListeningWlanProbe.html",
-          "hash": "srbfSloKS67W/75/lshcaw=="
+          "hash": "pi6j8b3Y0czArmx9VEfogw=="
         }
       },
       "is_incremental": true,
@@ -1413,7 +1437,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Callbacks.CallbackScheduler.html",
-          "hash": "IgEIbY93IBrn18BGWcCP8A=="
+          "hash": "XV1k21s9lsxkuW7oo8f3Dw=="
         }
       },
       "is_incremental": true,
@@ -1653,7 +1677,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html",
-          "hash": "ktJvqDobNmzGz+7U8Qn5fQ=="
+          "hash": "fODlLt67tyToNcZ1KgVpYQ=="
         }
       },
       "is_incremental": true,
@@ -1665,7 +1689,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html",
-          "hash": "+mysdUqu2XksdITItOdCRQ=="
+          "hash": "9HvpDxr4DeTP2fkRG5k3mQ=="
         }
       },
       "is_incremental": true,
@@ -1677,7 +1701,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.DataStores.Remote.RemoteDataStore.html",
-          "hash": "DqHIcLuj1vTaqQGpmx3l6g=="
+          "hash": "HXsOb+MEIzbNTtP2mOQfPQ=="
         }
       },
       "is_incremental": true,
@@ -2013,7 +2037,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.IProtocol.html",
-          "hash": "groC/JoYb/Ipbxcxikx6aw=="
+          "hash": "rPKlT1O5u4vCTRgUkVcG6Q=="
         }
       },
       "is_incremental": true,
@@ -2025,7 +2049,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.ISensusServiceHelper.html",
-          "hash": "4KgyTj8c2GfS5BKWYV4YuQ=="
+          "hash": "pebIANyAeSOcvE+yE6BEeg=="
         }
       },
       "is_incremental": true,
@@ -2157,7 +2181,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Notifications.PushNotificationUpdateType.html",
-          "hash": "qNDrb4WrOuH8QiniD+VwIA=="
+          "hash": "fl13jjLrYYcH7FEhSqdHpw=="
         }
       },
       "is_incremental": true,
@@ -2289,7 +2313,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.Communication.ListeningTelephonyProbe.html",
-          "hash": "lCm0dtLVT0Wd1zcbc8Mj0Q=="
+          "hash": "PnvqW3HWsdCiBVDAn6Jm6w=="
         }
       },
       "is_incremental": true,
@@ -2325,7 +2349,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.Communication.SmsProbe.html",
-          "hash": "VdZB+W7U14zfbb1FSG5IJA=="
+          "hash": "0ZbUQ89r+TmqV3Xse7ly9g=="
         }
       },
       "is_incremental": true,
@@ -2433,7 +2457,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.Context.HumidityProbe.html",
-          "hash": "jONXGyX/t+zBxwjoN4db5A=="
+          "hash": "9iXjaMkf8mOFo9QY8ArKdw=="
         }
       },
       "is_incremental": true,
@@ -2517,7 +2541,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.Context.LightProbe.html",
-          "hash": "iDHoCjtPnmna5vPsu+nLxg=="
+          "hash": "wbxtMaoUyDAW/MwcVVV2AA=="
         }
       },
       "is_incremental": true,
@@ -2529,7 +2553,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.Context.ListeningAmbientTemperatureProbe.html",
-          "hash": "WeM3tpVT0ZupNTogZRljeA=="
+          "hash": "LGSsX4vm8gHiqiouh7BulQ=="
         }
       },
       "is_incremental": true,
@@ -2685,7 +2709,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.ListeningProbe.html",
-          "hash": "9n/CBmCszPpeJJUkUZzWsw=="
+          "hash": "RgQZpj0YH1e2RoHIKmChCQ=="
         }
       },
       "is_incremental": true,
@@ -2709,7 +2733,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.Location.AltitudeProbe.html",
-          "hash": "LiYxNOk9Ryk8Q623ivXIPA=="
+          "hash": "6JrkcuLikSCDxS6Y1C7QQg=="
         }
       },
       "is_incremental": true,
@@ -2733,7 +2757,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.Location.CompassProbe.html",
-          "hash": "YGyfGpPAndSKiFH80kMdTA=="
+          "hash": "bK96Sjy00D7QY4qA5XpMKQ=="
         }
       },
       "is_incremental": true,
@@ -2769,7 +2793,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.Location.EstimoteBeaconProbe.html",
-          "hash": "HGiWS0IdOP2i0Wb24VLhLQ=="
+          "hash": "FgO1Pl4EYn4oV9VaSkX4Cw=="
         }
       },
       "is_incremental": true,
@@ -2925,7 +2949,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.Location.ListeningLocationProbe.html",
-          "hash": "qjzG4/GXl+3joxr/AI1v8g=="
+          "hash": "B0J92W5GyxooPSg7MBWB+w=="
         }
       },
       "is_incremental": true,
@@ -2937,7 +2961,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.Location.ListeningPointsOfInterestProximityProbe.html",
-          "hash": "wQ+yWR8sBvGWavWoi1hA1Q=="
+          "hash": "X70ZaiEQw670LcH4xXR49g=="
         }
       },
       "is_incremental": true,
@@ -3033,7 +3057,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.Location.ProximityProbe.html",
-          "hash": "/ffAY+B0mIU9SrpcrzZogA=="
+          "hash": "NF3XTBKyXOODCx6zWx01Qw=="
         }
       },
       "is_incremental": true,
@@ -3081,7 +3105,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.Movement.AccelerometerProbe.html",
-          "hash": "xsFAQEvtfwDetVwy8Pvdbg=="
+          "hash": "c6jOYO3Bsljh0o9d8LCrTw=="
         }
       },
       "is_incremental": true,
@@ -3165,7 +3189,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.Movement.GyroscopeProbe.html",
-          "hash": "p54R6NUoKqONuf7owQwSsg=="
+          "hash": "7SUbXfNZ9jUMe5A7HORkcw=="
         }
       },
       "is_incremental": true,
@@ -3225,7 +3249,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.Movement.ListeningSpeedProbe.html",
-          "hash": "ZNjLUZxpS9tZ3QnmL60H4A=="
+          "hash": "+Cw9S2sFnPQo8M5yMFIsFg=="
         }
       },
       "is_incremental": true,
@@ -3285,7 +3309,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.Network.CellTowerProbe.html",
-          "hash": "MXCcU7e8wEwDA/0vbJFx8g=="
+          "hash": "96YHTutrXVWk2qZW6qLVQQ=="
         }
       },
       "is_incremental": true,
@@ -3321,7 +3345,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.Network.ListeningWlanProbe.html",
-          "hash": "HeHKSrMV4+QLTZD3nYcohA=="
+          "hash": "gH1KHtRPSRZztCBKJ452Dg=="
         }
       },
       "is_incremental": true,
@@ -3633,7 +3657,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.User.MicrosoftBand.MicrosoftBandAccelerometerProbe.html",
-          "hash": "ElPLZ/ybUkrXiwGhqdc1BQ=="
+          "hash": "iEkhumPbXUNHDA/BwFg93A=="
         }
       },
       "is_incremental": true,
@@ -3657,7 +3681,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.User.MicrosoftBand.MicrosoftBandAirPressureProbe.html",
-          "hash": "sfMql8KtG6NOc6CsDFdEYQ=="
+          "hash": "trmmhZaRlOhqfuT7QeF6eg=="
         }
       },
       "is_incremental": true,
@@ -3681,7 +3705,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.User.MicrosoftBand.MicrosoftBandAirTemperatureProbe.html",
-          "hash": "n6LJddBtYzxMSjxkYBX+kg=="
+          "hash": "J8BvLo4MaICeV/UsqSnGgg=="
         }
       },
       "is_incremental": true,
@@ -3705,7 +3729,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.User.MicrosoftBand.MicrosoftBandCaloriesProbe.html",
-          "hash": "0oG1p6f4MYA5h1ggeaexDw=="
+          "hash": "rX9PB4Yl2rlRK/BW9AOzJw=="
         }
       },
       "is_incremental": true,
@@ -3741,7 +3765,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.User.MicrosoftBand.MicrosoftBandContactProbe.html",
-          "hash": "iXlGJc4htBhiNlYrWMI0rg=="
+          "hash": "7oFV+F1llaS1j6ys6JqtYg=="
         }
       },
       "is_incremental": true,
@@ -3765,7 +3789,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.User.MicrosoftBand.MicrosoftBandDistanceProbe.html",
-          "hash": "LmGHGxKsI2y/5YYpQqYGiw=="
+          "hash": "kmtOKHfj3plhuID4j7CuPQ=="
         }
       },
       "is_incremental": true,
@@ -3789,7 +3813,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.User.MicrosoftBand.MicrosoftBandGsrProbe.html",
-          "hash": "C8VJl/y4f7wACXoUGwrljQ=="
+          "hash": "BLh8HAtfBsenq5TziML1HQ=="
         }
       },
       "is_incremental": true,
@@ -3813,7 +3837,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.User.MicrosoftBand.MicrosoftBandGyroscopeProbe.html",
-          "hash": "mkoACqS7IJzU4p/NGpSfbw=="
+          "hash": "4/khnKx8HgjaC31CeAjz1A=="
         }
       },
       "is_incremental": true,
@@ -3837,7 +3861,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.User.MicrosoftBand.MicrosoftBandHeartRateProbe.html",
-          "hash": "mZGjBbm+3owsrX/nX9mrQg=="
+          "hash": "RceypdzT1C6m0qa8qXPSPA=="
         }
       },
       "is_incremental": true,
@@ -3861,7 +3885,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.User.MicrosoftBand.MicrosoftBandLightProbe.html",
-          "hash": "dmF5lNYP5ekOGbvGWJbfNQ=="
+          "hash": "4DyBhDO8YtqPuSf0jXjy1w=="
         }
       },
       "is_incremental": true,
@@ -3885,7 +3909,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.User.MicrosoftBand.MicrosoftBandPedometerProbe.html",
-          "hash": "5t36Lm/TyammtMgQV01kYw=="
+          "hash": "7+1ap8qa0tdDYgxaPDmj3g=="
         }
       },
       "is_incremental": true,
@@ -3897,7 +3921,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbe-2.html",
-          "hash": "qJnOVSd/Xwxz/bgFtLlHHQ=="
+          "hash": "3j4x5utqA7vW3bMDysQ/yg=="
         }
       },
       "is_incremental": true,
@@ -3909,7 +3933,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.html",
-          "hash": "vdY7q47A643+Ak6ICfIIUA=="
+          "hash": "4c8Sb6Ae7u+A9SkwUWo+ig=="
         }
       },
       "is_incremental": true,
@@ -3933,7 +3957,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.User.MicrosoftBand.MicrosoftBandRRIntervalProbe.html",
-          "hash": "eIo5jBETSO8iv0B9sMt0sw=="
+          "hash": "Xmu1lBels9B2eiy2B/YI9g=="
         }
       },
       "is_incremental": true,
@@ -3957,7 +3981,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.User.MicrosoftBand.MicrosoftBandSkinTemperatureProbe.html",
-          "hash": "cALPz3ppQcEa+vWBxE5Tww=="
+          "hash": "4mwtYZUNsa9pzgBM7MVOxg=="
         }
       },
       "is_incremental": true,
@@ -3981,7 +4005,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.User.MicrosoftBand.MicrosoftBandStepProbe.html",
-          "hash": "pjfnfiZcUoGkIeCtqePTwA=="
+          "hash": "JXFxErkJLghr8mMgQA7RNQ=="
         }
       },
       "is_incremental": true,
@@ -4005,7 +4029,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.User.MicrosoftBand.MicrosoftBandUltravioletLightProbe.html",
-          "hash": "rORM6ClQf/sLHFBt3/ZT1Q=="
+          "hash": "LqGhZV0lIeA0patxgcimbw=="
         }
       },
       "is_incremental": true,
@@ -4041,7 +4065,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Probes.User.Scripts.IScriptProbeAgent.html",
-          "hash": "Vy8X9mnSrYPg8dXzVWzm3A=="
+          "hash": "q9BJueGzqGEN+BqdEs+EHQ=="
         }
       },
       "is_incremental": true,
@@ -4300,12 +4324,15 @@
       "version": ""
     },
     {
+      "log_codes": [
+        "UidNotFound"
+      ],
       "type": "ManagedReference",
       "source_relative_path": "api/Sensus.Protocol.yml",
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Protocol.html",
-          "hash": "xapGnjvgNUdIS78Q75+FDQ=="
+          "hash": "/oyNrzmYp0Dl+32Rgp1xZA=="
         }
       },
       "is_incremental": true,
@@ -4341,7 +4368,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.ProtocolState.html",
-          "hash": "j2J0w2cDxcV8scML+3pvFw=="
+          "hash": "VUGmrrvBqYmESesxvGjq6A=="
         }
       },
       "is_incremental": true,
@@ -4365,7 +4392,55 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.QrCodePrefix.html",
-          "hash": "0caJ675pPOPeohIw0KLVZg=="
+          "hash": "eVgg+JV9C+eVrjPZMw2Gpw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.html",
+          "hash": "0ylrFR9EZ85k6Gzjmitb8Q=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.SensingAgent.ControlCompletionCheck.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.SensingAgent.ControlCompletionCheck.html",
+          "hash": "1I612FFwshjL5eURNSWHyQ=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.SensingAgent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.SensingAgent.html",
+          "hash": "paZM+gZ+M1bLSj87gG8s9g=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.SensingAgentState.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.SensingAgentState.html",
+          "hash": "fci2l1vX7JZXRKrM4fs7mg=="
         }
       },
       "is_incremental": true,
@@ -4377,7 +4452,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.SensusServiceHelper.html",
-          "hash": "7M27TxTim+YuITLVt0LtEA=="
+          "hash": "d7ifHoy93mOj9xAzESzydg=="
         }
       },
       "is_incremental": true,
@@ -4925,6 +5000,18 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/Sensus.UI.SensingAgentPage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/Sensus.UI.SensingAgentPage.html",
+          "hash": "z0BM+Pp4ZzGGwAjR3HRlWw=="
+        }
+      },
+      "is_incremental": true,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/Sensus.UI.SensusDetailPageItem.yml",
       "output": {
         ".html": {
@@ -5241,7 +5328,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.UI.html",
-          "hash": "+hCbuvyMzS+OTgFP1bzVxw=="
+          "hash": "RmxWwuHFPgbsKFIRcEO1MQ=="
         }
       },
       "is_incremental": true,
@@ -5289,7 +5376,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.iOS.Callbacks.UNUserNotificationCallbackScheduler.html",
-          "hash": "iY+tL/5Rjh82VxJkadh83A=="
+          "hash": "T0AWw0JWQ1YVAN5cQrJR+A=="
         }
       },
       "is_incremental": true,
@@ -5301,7 +5388,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.iOS.Callbacks.iOSCallbackScheduler.html",
-          "hash": "3nfWSzTo1uE9zQNDmS/kzg=="
+          "hash": "W+TrtE2PGnOhdFv32r2IaA=="
         }
       },
       "is_incremental": true,
@@ -5589,7 +5676,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.iOS.Probes.Location.iOSAltitudeProbe.html",
-          "hash": "EhSiSaGUUlL0s385s2aAAg=="
+          "hash": "yGTfP3lqCPd7HtQsNvZNIg=="
         }
       },
       "is_incremental": true,
@@ -5601,7 +5688,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.iOS.Probes.Location.iOSCompassProbe.html",
-          "hash": "07DmQbMaxIREVaaf5qrckw=="
+          "hash": "IsCEUaXEwK7H8ZisPegg8g=="
         }
       },
       "is_incremental": true,
@@ -5613,7 +5700,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.iOS.Probes.Location.iOSEstimoteBeaconProbe.html",
-          "hash": "J/jUGdkZWTbU//bJSijMFg=="
+          "hash": "8PBJOY9hX6BTiTl90ygVMw=="
         }
       },
       "is_incremental": true,
@@ -5625,7 +5712,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.iOS.Probes.Location.iOSProximityProbe.html",
-          "hash": "KDNKelN0x575PVrs9+KkAg=="
+          "hash": "HxduYV2P53r5GpOm0nRL0Q=="
         }
       },
       "is_incremental": true,
@@ -5649,7 +5736,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.iOS.Probes.Movement.iOSAccelerometerProbe.html",
-          "hash": "TP4eT1+OjH2lVjdgZ4SYmg=="
+          "hash": "Cc6OF0siWJKdsIolBE425A=="
         }
       },
       "is_incremental": true,
@@ -5673,7 +5760,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.iOS.Probes.Movement.iOSGyroscopeProbe.html",
-          "hash": "2KxSai5Stsvcdn5O61DLiA=="
+          "hash": "oCsQJpng95dnL3IyqtEbYA=="
         }
       },
       "is_incremental": true,
@@ -5925,7 +6012,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.iOS.iOSSensusServiceHelper.html",
-          "hash": "hTHCLnDkFvd3i9/O6ObqmQ=="
+          "hash": "spt2LSUruR1An54Of+dPuA=="
         }
       },
       "is_incremental": true,
@@ -5949,7 +6036,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.html",
-          "hash": "gBNUx5KEmb2iUajaeABkUA=="
+          "hash": "csT13Tee0BNTElFkA8luIA=="
         }
       },
       "is_incremental": true,
@@ -5973,7 +6060,7 @@
       "output": {
         ".html": {
           "relative_path": "api/toc.html",
-          "hash": "zA3vFepggGbtHFi17mB5hQ=="
+          "hash": "m0QR9TiWIIFQAXt0eQDkzw=="
         }
       },
       "is_incremental": false,
@@ -6376,6 +6463,11 @@
         "incrementalPhase": "build"
       },
       "processors": {
+        "ResourceDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor ResourceDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build"
+        },
         "TocDocumentProcessor": {
           "can_incremental": false,
           "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
@@ -6387,11 +6479,6 @@
         },
         "ConceptualDocumentProcessor": {
           "can_incremental": true,
-          "incrementalPhase": "build"
-        },
-        "ResourceDocumentProcessor": {
-          "can_incremental": false,
-          "details": "Processor ResourceDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
           "incrementalPhase": "build"
         }
       }

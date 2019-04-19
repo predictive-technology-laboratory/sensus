@@ -3,6 +3,10 @@
   <PropertyGroup>
     <ProjectGuid>{40433736-3696-43E1-8AA2-1B954035AD9E}</ProjectGuid>
     <ReleaseVersion>2.0.0</ReleaseVersion>
+    <Description>Contains code demonstrating script probe agents. This code is compiled directly into the 
+app for iOS (as iOS does not permit runtime code injection). This code is compiled into
+the ExampleScriptProbeAgent project for Android, which does support runtime code
+injection.</Description>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.Common.Default.props" />
