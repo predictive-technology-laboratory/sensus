@@ -54,6 +54,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Articles", "Articles", "{B8
 		DocFX\articles\device-os-app.md = DocFX\articles\device-os-app.md
 		DocFX\articles\burden-tuning.md = DocFX\articles\burden-tuning.md
 		DocFX\articles\remote-updates.md = DocFX\articles\remote-updates.md
+		DocFX\articles\adaptive-sensing.md = DocFX\articles\adaptive-sensing.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DocFX", "DocFX", "{D395D4C7-AF3D-4DD5-A52E-73697A5D2DD5}"
