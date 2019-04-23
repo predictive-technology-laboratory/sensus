@@ -18,7 +18,6 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Sensus;
 using Sensus.Probes.Movement;
-using System.Linq;
 using Sensus.Probes.Location;
 using Sensus.Probes;
 using System.Threading;
@@ -70,21 +69,24 @@ namespace ExampleSensingAgent
             }
         }
 
-        protected override bool ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>> typeData, Type observedDatumType)
+        protected override bool ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>> typeData, IDatum opportunisticDatum)
         {
             bool criterionMet = false;
 
-            if (observedDatumType == null)
+            // if the current call was not triggered by an opportunistic observation, then check all control criteria.
+            if (opportunisticDatum == null)
             {
-                return NearSurface() || AccelerationAverageLinearMagnitudeExceeds(_averageLinearMagnitudeThreshold);
+                return IsNearSurface() || AverageLinearAccelerationMagnitudeExceedsThreshold(_averageLinearMagnitudeThreshold);
             }
-            else if (observedDatumType.ImplementsInterface<IProximityDatum>())
+            // if the current call was triggered by an opportunistic proximity observation, then check that criterion.
+            else if (opportunisticDatum.GetType().ImplementsInterface<IProximityDatum>())
             {
-                return NearSurface();
+                return IsNearSurface();
             }
-            else if (observedDatumType.ImplementsInterface<IAccelerometerDatum>())
+            // if the current call was triggered by an opportunistic acceleration observation, then check that criterion.
+            else if (opportunisticDatum.GetType().ImplementsInterface<IAccelerometerDatum>())
             {
-                return AccelerationAverageLinearMagnitudeExceeds(_averageLinearMagnitudeThreshold);
+                return AverageLinearAccelerationMagnitudeExceedsThreshold(_averageLinearMagnitudeThreshold);
             }
 
             return criterionMet;
@@ -100,30 +102,47 @@ namespace ExampleSensingAgent
             await OnControlAsync(cancellationToken);
         }
 
+        /// <summary>
+        /// Keeps the device awake and increases acceleration sampling rate.
+        /// </summary>
+        /// <returns>The control async.</returns>
+        /// <param name="cancellationToken">Cancellation token.</param>
         private async Task OnControlAsync(CancellationToken cancellationToken)
         {
+            // keep device awake
             await SensusServiceHelper.KeepDeviceAwakeAsync();
 
             // increase sampling rate
             if (Protocol.TryGetProbe<IAccelerometerDatum, IListeningProbe>(out IListeningProbe accelerometerProbe))
             {
+                // store original sampling rate
                 _idleAccelerometerMaxDataStoresPerSecond = accelerometerProbe.MaxDataStoresPerSecond;
+
+                // increase sampling rate
                 accelerometerProbe.MaxDataStoresPerSecond = _controlAccelerometerMaxDataStoresPerSecond;
 
+                // restart probe to take on new settings
                 await accelerometerProbe.RestartAsync();
             }
         }
 
+        /// <summary>
+        /// Reverts sensing control.
+        /// </summary>
+        /// <returns>The ending control async.</returns>
+        /// <param name="cancellationToken">Cancellation token.</param>
         protected override async Task OnEndingControlAsync(CancellationToken cancellationToken)
         {
-            // revert sampling rate
             if (Protocol.TryGetProbe<IAccelerometerDatum, IListeningProbe>(out IListeningProbe accelerometerProbe))
             {
+                // revert sampling rate
                 accelerometerProbe.MaxDataStoresPerSecond = _idleAccelerometerMaxDataStoresPerSecond;
 
+                // restart probe to take on original settings
                 await accelerometerProbe.RestartAsync();
             }
 
+            // let device sleep
             await SensusServiceHelper.LetDeviceSleepAsync();
         }
     }

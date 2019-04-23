@@ -19,15 +19,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
-using Sensus.Probes.Location;
-using Sensus.Probes.Movement;
 
 namespace Sensus
 {
     /// <summary>
     /// An agent that observes data collected by the app and controls sensing parameters.
     /// </summary>
-    public abstract class SensingAgent : INotifyPropertyChanged
+    public abstract partial class SensingAgent : INotifyPropertyChanged
     {
         /// <summary>
         /// Specifies a check to run periodically to (1) assess whether sensing control has been 
@@ -243,7 +241,7 @@ namespace Sensus
             // meet the control criterion to trigger control attempts for previously observed data that do meet
             // the control criterion.
             ControlCompletionCheck controlCompletionCheck = null;
-            if (ObservedDataMeetControlCriterion(datum.GetType()))
+            if (ObservedDataMeetControlCriterion(datum))
             {
                 try
                 {
@@ -269,12 +267,12 @@ namespace Sensus
         /// Checks whether the observed data meet a control criterion.
         /// </summary>
         /// <returns><c>true</c>, if data meet control criterion, <c>false</c> otherwise.</returns>
-        /// <param name="observedDatumType">The <see cref="IDatum"/> type whose observation triggered the current call, or <c>null</c> if the current call was triggered by a periodic call rather than observation.</param>
-        private bool ObservedDataMeetControlCriterion(Type observedDatumType = null)
+        /// <param name="opportunisticDatum">The <see cref="IDatum"/> whose observation triggered the current call, or <c>null</c> if the current call was triggered by a periodic call.</param>
+        private bool ObservedDataMeetControlCriterion(IDatum opportunisticDatum = null)
         {
             lock (_typeData)
             {
-                return ObservedDataMeetControlCriterion(_typeData, observedDatumType);
+                return ObservedDataMeetControlCriterion(_typeData, opportunisticDatum);
             }
         }
 
@@ -283,45 +281,11 @@ namespace Sensus
         /// </summary>
         /// <returns><c>true</c>, if data meet control criterion, <c>false</c> otherwise.</returns>
         /// <param name="typeData">All data by type. This collection will be locked prior to calling the concrete implementation.</param>
-        /// <param name="observedDatumType">The <see cref="IDatum"/> type whose observation triggered the current call, or <c>null</c> if the current call was triggered by a periodic call rather than observation.</param>
-        protected abstract bool ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>> typeData, Type observedDatumType);
+        /// <param name="opportunisticDatum">The <see cref="IDatum"/> whose opportunistic observation triggered the current call, or <c>null</c> if the current call was triggered by active observation.</param>
+        protected abstract bool ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>> typeData, IDatum opportunisticDatum);
 
         /// <summary>
-        /// Checks whether device is near a surface.
-        /// </summary>
-        /// <returns><c>true</c>, if surface was neared, <c>false</c> otherwise.</returns>
-        protected bool NearSurface()
-        {
-            lock (_typeData)
-            {
-                List<IDatum> proximityData = GetObservedData<IProximityDatum>();
-                IProximityDatum mostRecentProximityDatum = proximityData.Last() as IProximityDatum;
-                return mostRecentProximityDatum.Distance < mostRecentProximityDatum.MaxDistance;
-            }
-        }
-
-        /// <summary>
-        /// Checks whether acceleration magnitude exceeds a threshold.
-        /// </summary>
-        /// <returns><c>true</c>, if average linear magnitude exceeds threshold, <c>false</c> otherwise.</returns>
-        /// <param name="threshold">Threshold.</param>
-        protected bool AccelerationAverageLinearMagnitudeExceeds(double threshold)
-        {
-            lock (_typeData)
-            {
-                List<IDatum> accelerometerData = GetObservedData<IAccelerometerDatum>();
-                double averageLinearMagnitude = accelerometerData.Cast<IAccelerometerDatum>().Average(accelerometerDatum => Math.Sqrt(Math.Pow(accelerometerDatum.X, 2) +
-                                                                                                                                  Math.Pow(accelerometerDatum.Y, 2) +
-                                                                                                                                  Math.Pow(accelerometerDatum.Z, 2)));
-
-                // acceleration values include gravity. thus, a stationary device will register 1 on one of the axes.
-                // use absolute deviation from 1 as the criterion value with which to compare the threshold.
-                return Math.Abs(averageLinearMagnitude - 1) >= threshold;
-            }
-        }
-
-        /// <summary>
-        /// Gets the data list for a particular type.
+        /// Gets observed <see cref="IDatum"/> objects for a particular type.
         /// </summary>
         /// <returns>The observed data.</returns>
         /// <typeparam name="DatumInterface">The type of data to retrieve.</typeparam>

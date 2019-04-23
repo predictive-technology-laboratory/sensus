@@ -27,8 +27,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\IEncryptor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\SymmetricEncryption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\SensusException.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\DateTimeExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\EnumerableExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImpreciseDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\SmsDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TelephonyDatum.cs" />
@@ -237,7 +235,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\SensusMasterDetailPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Compressor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\IClearableDataStore.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\NumericExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TrackedEvent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\ScheduledCallbackState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolStartConfirmationMode.cs" />
@@ -245,7 +242,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)QrCodePrefix.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)PowerConnectionChangeListener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\LongitudeOffsetGpsAnonymizer.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\TimeSpanExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\Notifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\NotificationUserResponseAction.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotificationRequest.cs" />
@@ -258,8 +254,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Authentication\Account.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Authentication\AmazonS3Credentials.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Authentication\AuthenticationService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\UriExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\IEnvelopeEncryptor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProgressPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolCompatibilityMode.cs" />
@@ -268,15 +262,20 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteIndoorLocationDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScriptTriggerTime.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteIndoorLocationAccuracy.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\JsonDotNetExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\TypeExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Extensions\WebRequestExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\PendingSurveyNotificationMode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolUpdateDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotificationUpdate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotificationUpdateType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotification.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SensingAgentPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\DateTimeExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\EnumerableExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\JsonDotNetExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\NumericExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\StringExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\TimeSpanExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\UriExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\WebRequestExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />
@@ -284,5 +283,6 @@
     <Folder Include="$(MSBuildThisFileDirectory)Callbacks\" />
     <Folder Include="$(MSBuildThisFileDirectory)Notifications\" />
     <Folder Include="$(MSBuildThisFileDirectory)Authentication\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Extensions\" />
   </ItemGroup>
 </Project>

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>Sensus</PackageId>
-    <PackageVersion>1.43.0</PackageVersion>
+    <PackageVersion>1.45.0</PackageVersion>
     <Authors>Matthew Gerber</Authors>
     <Description>Package for developing plug-ins and other code modules that integrate with Sensus.</Description>
     <ReleaseVersion>2.0.0</ReleaseVersion>
@@ -29,5 +29,8 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Extensions\" />
   </ItemGroup>
 </Project>
