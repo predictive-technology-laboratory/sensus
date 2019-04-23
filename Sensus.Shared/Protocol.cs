@@ -1739,7 +1739,7 @@ namespace Sensus
                     PropertyInfo datumTypeProperty = type.GetProperty(nameof(Probe.DatumType));
                     Type datumType = datumTypeProperty.GetValue(p) as Type;
 
-                    if (datumType.IsAssignableFrom(typeof(DatumInterface)))
+                    if (datumType.ImplementsInterface<DatumInterface>())
                     {
                         probe = p;
                         break;
@@ -1758,9 +1758,9 @@ namespace Sensus
                 {
                     _typeProbe = new Dictionary<Type, Probe>();
 
-                    foreach (Probe p in _probes)
+                    foreach (Probe probe in _probes)
                     {
-                        _typeProbe.Add(p.GetType(), p);
+                        _typeProbe.Add(probe.GetType(), probe);
                     }
                 }
             }

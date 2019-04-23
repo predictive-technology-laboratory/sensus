@@ -494,11 +494,6 @@ namespace Sensus
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(State)));
         }
 
-        protected bool Implements<DatumInterface>(Type type) where DatumInterface : IDatum
-        {
-            return type.IsAssignableFrom(typeof(DatumInterface));
-        }
-
         public override string ToString()
         {
             return Id + ":  " + Description;

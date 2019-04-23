@@ -22,6 +22,7 @@ using System.Linq;
 using Sensus.Probes.Location;
 using Sensus.Probes;
 using System.Threading;
+using Sensus.Extensions;
 
 namespace ExampleSensingAgent
 {
@@ -73,12 +74,12 @@ namespace ExampleSensingAgent
 
             if (criterionData.Count > 0)
             {
-                if (Implements<IProximityDatum>(criterionType))
+                if (criterionType.ImplementsInterface<IProximityDatum>())
                 {
                     IProximityDatum mostRecentProximityDatum = criterionData.Last() as IProximityDatum;
                     criterionMet = mostRecentProximityDatum.Distance < mostRecentProximityDatum.MaxDistance;
                 }
-                else if (Implements<IAccelerometerDatum>(criterionType))
+                else if (criterionType.ImplementsInterface<IAccelerometerDatum>())
                 {
                     double averageLinearMagnitude = criterionData.Cast<IAccelerometerDatum>().Average(accelerometerDatum => Math.Sqrt(Math.Pow(accelerometerDatum.X, 2) +
                                                                                                                                       Math.Pow(accelerometerDatum.Y, 2) +

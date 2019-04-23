@@ -37,5 +37,10 @@ namespace Sensus.Extensions
 
             return ancestorTypes;
         }
+
+        public static bool ImplementsInterface<DatumInterface>(this Type type) where DatumInterface : IDatum
+        {
+            return type.IsAssignableFrom(typeof(DatumInterface));
+        }
     }
 }
