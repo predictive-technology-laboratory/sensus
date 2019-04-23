@@ -108,7 +108,6 @@ See the following implementations for example agents:
 sensing agent that samples continuously if the device is moving or near a surface (e.g., face).
 
 ## iOS
-
 In contrast with Android, iOS does not allow apps to load code (e.g., from the above .dll assembly) at
 run time. Thus, adaptive sensing agents are more limited on iOS compared with Android. Here are the options:
 
@@ -125,8 +124,60 @@ You can select this agent when configuring the <xref:Sensus.Protocol>.
 * You can implement your own agent implementations following the instructions above for Android and email 
 our team (uva.ptl@gmail.com) to include them in a future release.
 
-## Testing and Debugging
+## Adaptive Sensing Policy Language (ASPL)
+In addition to the software-defined adaptive sensing agents described above, Sensus supports adaptive sensing
+policies specified in a general-purpose adaptive sensing policy language (ASPL). ASPL specifies both the 
+control criteria as well as the control actions depicted in the above state diagram. The ASPL listing below 
+shows the elements of an ASPL policy.
 
+<pre style="overflow-x:scroll;">
+{
+  "action-interval" : "",                    # Hours, minutes, and seconds (00:00:00) for "action interval" (see above).
+  "observation-duration" : "",               # Hours, minutes, and seconds (00:00:00) for "active observation" (see above).
+  "control-completion-check-interval" : "",  # Hours, minutes, and seconds (00:00:00) for "control completion check interval" (see above).
+  "control-criteria" :                       # 1 or more control criteria expressions.
+  [
+    {
+      "datum-property" : "",   # The fully-qualified name for a [datum property](https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Datum.html) to observe.
+      "aggregation", ""        # Aggregation operator for observed property values. Valid values are AVG, MIN, MAX, or SLOPE (for quantitative properties) and MODE, NEWEST, or ANY (for qualitative properties).
+      "relation" : "",         # Relation operator (<= < == > >=) used to compare the aggregate property value with the target value. Quantitative properties admit all operators, whereas qualitative properties only admit the == operator.
+      "target" : ""            # A numeric value (for quantitative properties) or regular expression (for qualitative properties) that is compared with the aggregate property value via the relation operator.
+    },
+    ...
+  ],
+  "control-criteria-combination" : "",  # Combination operator for the control criteria. Valid values are "conjunction" and "disjunction".
+  "begin-control-actions" :             # Actions to take if the control criteria combination evaluates to true.
+  [
+    {
+      "probe-property" : "",  # The fully-qualified name for a [probe property](https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Probes.Probe.html) to update.
+      "value" : ""            # The new value for the probe property.
+    },
+    ...
+  ],
+  "end-control-actions" :  # Actions to take when control ends.
+  [
+    {
+      "probe-property" : "",  # The fully-qualified name for a [probe property](https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Probes.Probe.html) to update.
+      "value" : ""            # The new value for the probe property.
+    }
+  ]
+}
+</pre>
+
+There are pros and cons of software- and ASPL-defined sensing agents:
+
+* Software-defined
+  * Pros:  Sophistication of control criteria and actions are not limited to the logical structure of ASPL.
+  * Cons:  Low-level programming is required for Android. Third-party development of iOS agents is complicated
+  by iOS's prohibition of run-time code injection (see above). Changing the agent definition involves modifying
+  code and, for iOS, redeploying the application.
+  
+* ASPL-defined
+  * Pros:  Agent definitions use the simpler ASPL syntax. Agent definitions can be loaded at run-time into both
+  Android and iOS without the need for code changes or app redeployment.
+  * Cons:  ASPL has limited logical expressiveness.
+
+## Testing and Debugging
 Regardless of whether your sensing agent targets Android or iOS, there are a few ways to test and debug it:
 
 * Monitor the agent state:  Within your <xref:Sensus.Protocol> settings, tap "View Agent State" to see a real-time

@@ -20,7 +20,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
-namespace Sensus
+namespace Sensus.AdaptiveSensing
 {
     /// <summary>
     /// An agent that observes data collected by the app and controls sensing parameters.

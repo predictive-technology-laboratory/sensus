@@ -1677,7 +1677,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html",
-          "hash": "fODlLt67tyToNcZ1KgVpYQ=="
+          "hash": "xxLub/yQLSOHqugvRqXFYQ=="
         }
       },
       "is_incremental": true,
@@ -1689,7 +1689,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.DataStores.Remote.ConsoleRemoteDataStore.html",
-          "hash": "9HvpDxr4DeTP2fkRG5k3mQ=="
+          "hash": "qyAjTs7OXOpP6svb6FiIIg=="
         }
       },
       "is_incremental": true,
@@ -1701,7 +1701,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.DataStores.Remote.RemoteDataStore.html",
-          "hash": "HXsOb+MEIzbNTtP2mOQfPQ=="
+          "hash": "pTq/7B1wpaTDo4Ghq7TSFg=="
         }
       },
       "is_incremental": true,
@@ -1917,7 +1917,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Extensions.StringExtensions.html",
-          "hash": "PnQGRyVq9vIpYaZImLllzA=="
+          "hash": "4R5gUEbvcQp1SsnxhBmicw=="
         }
       },
       "is_incremental": true,
@@ -1941,7 +1941,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Extensions.TypeExtensions.html",
-          "hash": "C+gp7Hm+m32oTPRG+BoqtA=="
+          "hash": "l8pD9HEz2+DUagNA9F/wKQ=="
         }
       },
       "is_incremental": true,
@@ -2037,7 +2037,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.IProtocol.html",
-          "hash": "+pAwGIgkiLhqRZ12+hchLg=="
+          "hash": "Xl4VQZZxUWh0lFLEuEuQgg=="
         }
       },
       "is_incremental": true,
@@ -4365,7 +4365,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.Protocol.html",
-          "hash": "lwCAtkVsr8LUbRelng09DQ=="
+          "hash": "BxDSUbTcZJ+UqVyjgBl3qA=="
         }
       },
       "is_incremental": true,
@@ -4461,7 +4461,7 @@
       "output": {
         ".html": {
           "relative_path": "api/Sensus.SensingAgent.html",
-          "hash": "vdZPIpEQrcvILnZlfXuGZg=="
+          "hash": "FFUGCTvA9Jz45pI5qaeJTg=="
         }
       },
       "is_incremental": true,
@@ -6105,7 +6105,7 @@
       "output": {
         ".html": {
           "relative_path": "articles/adaptive-sensing.html",
-          "hash": "ura06zLDa+DJGTa8lTGBnQ=="
+          "hash": "d4KwQhHM7bQwGilJNYiIjQ=="
         }
       },
       "is_incremental": true,
@@ -6524,13 +6524,13 @@
           "details": "Processor TocDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
           "incrementalPhase": "build"
         },
-        "ConceptualDocumentProcessor": {
-          "can_incremental": true,
-          "incrementalPhase": "build"
-        },
         "ResourceDocumentProcessor": {
           "can_incremental": false,
           "details": "Processor ResourceDocumentProcessor cannot support incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build"
+        },
+        "ConceptualDocumentProcessor": {
+          "can_incremental": true,
           "incrementalPhase": "build"
         },
         "ManagedReferenceDocumentProcessor": {

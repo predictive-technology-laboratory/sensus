@@ -18,7 +18,7 @@ using System.Linq;
 using Sensus.Probes.Location;
 using Sensus.Probes.Movement;
 
-namespace Sensus
+namespace Sensus.AdaptiveSensing
 {
     public partial class SensingAgent
     {
