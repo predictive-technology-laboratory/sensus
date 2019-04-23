@@ -481,51 +481,6 @@ is <code>null</code>, then this value is ignored.</p>
   </h3>
   
   
-  <a id="Sensus_SensingAgent_AccelerationAverageLinearMagnitudeExceeds_" data-uid="Sensus.SensingAgent.AccelerationAverageLinearMagnitudeExceeds*"></a>
-  <h4 id="Sensus_SensingAgent_AccelerationAverageLinearMagnitudeExceeds_System_Double_" data-uid="Sensus.SensingAgent.AccelerationAverageLinearMagnitudeExceeds(System.Double)">AccelerationAverageLinearMagnitudeExceeds(Double)</h4>
-  <div class="markdown level1 summary"><p>Checks whether acceleration magnitude exceeds a threshold.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected bool AccelerationAverageLinearMagnitudeExceeds(double threshold)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Double</span></td>
-        <td><span class="parametername">threshold</span></td>
-        <td><p>Threshold.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td><p><code>true</code>, if average linear magnitude exceeds threshold, <code>false</code> otherwise.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
   <a id="Sensus_SensingAgent_ActAsync_" data-uid="Sensus.SensingAgent.ActAsync*"></a>
   <h4 id="Sensus_SensingAgent_ActAsync_System_Threading_CancellationToken_" data-uid="Sensus.SensingAgent.ActAsync(System.Threading.CancellationToken)">ActAsync(CancellationToken)</h4>
   <div class="markdown level1 summary"><p>Requests that the <a class="xref" href="Sensus.SensingAgent.html">SensingAgent</a> consider beginning sensing control.</p>
@@ -571,9 +526,54 @@ is <code>null</code>, then this value is ignored.</p>
   </table>
   
   
+  <a id="Sensus_SensingAgent_AverageLinearAccelerationMagnitudeExceedsThreshold_" data-uid="Sensus.SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold*"></a>
+  <h4 id="Sensus_SensingAgent_AverageLinearAccelerationMagnitudeExceedsThreshold_System_Double_" data-uid="Sensus.SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold(System.Double)">AverageLinearAccelerationMagnitudeExceedsThreshold(Double)</h4>
+  <div class="markdown level1 summary"><p>Checks whether the acceleration magnitude exceeds a threshold.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected bool AverageLinearAccelerationMagnitudeExceedsThreshold(double threshold)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td><span class="parametername">threshold</span></td>
+        <td><p>Threshold.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code>, if average linear magnitude exceeds threshold, <code>false</code> otherwise.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_SensingAgent_GetObservedData_" data-uid="Sensus.SensingAgent.GetObservedData*"></a>
   <h4 id="Sensus_SensingAgent_GetObservedData__1" data-uid="Sensus.SensingAgent.GetObservedData``1">GetObservedData&lt;DatumInterface&gt;()</h4>
-  <div class="markdown level1 summary"><p>Gets the data list for a particular type.</p>
+  <div class="markdown level1 summary"><p>Gets observed <a class="xref" href="Sensus.IDatum.html">IDatum</a> objects for a particular type.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -666,14 +666,14 @@ is <code>null</code>, then this value is ignored.</p>
   </table>
   
   
-  <a id="Sensus_SensingAgent_NearSurface_" data-uid="Sensus.SensingAgent.NearSurface*"></a>
-  <h4 id="Sensus_SensingAgent_NearSurface" data-uid="Sensus.SensingAgent.NearSurface">NearSurface()</h4>
-  <div class="markdown level1 summary"><p>Checks whether device is near a surface.</p>
+  <a id="Sensus_SensingAgent_IsNearSurface_" data-uid="Sensus.SensingAgent.IsNearSurface*"></a>
+  <h4 id="Sensus_SensingAgent_IsNearSurface" data-uid="Sensus.SensingAgent.IsNearSurface">IsNearSurface()</h4>
+  <div class="markdown level1 summary"><p>Checks whether device is near a surface, according to the most recent <a class="xref" href="Sensus.Probes.Location.IProximityDatum.html">IProximityDatum</a>.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected bool NearSurface()</code></pre>
+    <pre><code class="lang-csharp hljs">protected bool IsNearSurface()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -745,13 +745,13 @@ is <code>null</code>, then this value is ignored.</p>
   
   
   <a id="Sensus_SensingAgent_ObservedDataMeetControlCriterion_" data-uid="Sensus.SensingAgent.ObservedDataMeetControlCriterion*"></a>
-  <h4 id="Sensus_SensingAgent_ObservedDataMeetControlCriterion_System_Collections_Generic_Dictionary_System_Type_System_Collections_Generic_List_Sensus_IDatum___System_Type_" data-uid="Sensus.SensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}},System.Type)">ObservedDataMeetControlCriterion(Dictionary&lt;Type, List&lt;IDatum&gt;&gt;, Type)</h4>
+  <h4 id="Sensus_SensingAgent_ObservedDataMeetControlCriterion_System_Collections_Generic_Dictionary_System_Type_System_Collections_Generic_List_Sensus_IDatum___Sensus_IDatum_" data-uid="Sensus.SensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}},Sensus.IDatum)">ObservedDataMeetControlCriterion(Dictionary&lt;Type, List&lt;IDatum&gt;&gt;, IDatum)</h4>
   <div class="markdown level1 summary"><p>Checks whether the observed data meet a control criterion.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected abstract bool ObservedDataMeetControlCriterion(Dictionary&lt;Type, List&lt;IDatum&gt;&gt; typeData, Type observedDatumType)</code></pre>
+    <pre><code class="lang-csharp hljs">protected abstract bool ObservedDataMeetControlCriterion(Dictionary&lt;Type, List&lt;IDatum&gt;&gt; typeData, IDatum opportunisticDatum)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -770,9 +770,9 @@ is <code>null</code>, then this value is ignored.</p>
 </td>
       </tr>
       <tr>
-        <td><span class="xref">System.Type</span></td>
-        <td><span class="parametername">observedDatumType</span></td>
-        <td><p>The <a class="xref" href="Sensus.IDatum.html">IDatum</a> type whose observation triggered the current call, or <code>null</code> if the current call was triggered by a periodic call rather than observation.</p>
+        <td><a class="xref" href="Sensus.IDatum.html">IDatum</a></td>
+        <td><span class="parametername">opportunisticDatum</span></td>
+        <td><p>The <a class="xref" href="Sensus.IDatum.html">IDatum</a> whose opportunistic observation triggered the current call, or <code>null</code> if the current call was triggered by active observation.</p>
 </td>
       </tr>
     </tbody>

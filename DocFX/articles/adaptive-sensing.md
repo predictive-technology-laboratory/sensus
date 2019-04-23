@@ -76,7 +76,9 @@ shows the correct selection:
 1. Add a new class that inherits from <xref:Sensus.SensingAgent>. Be sure to provide a parameterless constructor
 for your class, as this constructor will be called at run time to create your agent. Your class will be required
 to override a few methods related to control. These methods are where your sensing agent should execute its control 
-policy.
+policy. The <xref:Sensus.SensingAgent> class provides a set of predefined control criterion functions 
+[here](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared.NuGet/SensingAgentControlCriteria.cs).
+You can call these diretly from your code or write your own in order to suit your adaptation requirements.
 
 1. Build the library project, and upload the resulting .dll to a web-accessible URL. A convenient
 solution is to upload the .dll to a Dropbox directory and copy the sharing URL for the .dll file.

@@ -391,15 +391,15 @@ references:
   commentId: Overload:ExampleSensingAgent.ExampleAccelerationSensingAgent.#ctor
   fullName: ExampleSensingAgent.ExampleAccelerationSensingAgent.ExampleAccelerationSensingAgent
   nameWithType: ExampleAccelerationSensingAgent.ExampleAccelerationSensingAgent
-- uid: ExampleSensingAgent.ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}},System.Type)
-  name: ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>>, Type)
-  href: api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html#ExampleSensingAgent_ExampleAccelerationSensingAgent_ObservedDataMeetControlCriterion_System_Collections_Generic_Dictionary_System_Type_System_Collections_Generic_List_Sensus_IDatum___System_Type_
-  commentId: M:ExampleSensingAgent.ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}},System.Type)
-  name.vb: ObservedDataMeetControlCriterion(Dictionary(Of Type, List(Of IDatum)), Type)
-  fullName: ExampleSensingAgent.ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary<System.Type, System.Collections.Generic.List<Sensus.IDatum>>, System.Type)
-  fullName.vb: ExampleSensingAgent.ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary(Of System.Type, System.Collections.Generic.List(Of Sensus.IDatum)), System.Type)
-  nameWithType: ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>>, Type)
-  nameWithType.vb: ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(Dictionary(Of Type, List(Of IDatum)), Type)
+- uid: ExampleSensingAgent.ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}},Sensus.IDatum)
+  name: ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>>, IDatum)
+  href: api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html#ExampleSensingAgent_ExampleAccelerationSensingAgent_ObservedDataMeetControlCriterion_System_Collections_Generic_Dictionary_System_Type_System_Collections_Generic_List_Sensus_IDatum___Sensus_IDatum_
+  commentId: M:ExampleSensingAgent.ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}},Sensus.IDatum)
+  name.vb: ObservedDataMeetControlCriterion(Dictionary(Of Type, List(Of IDatum)), IDatum)
+  fullName: ExampleSensingAgent.ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary<System.Type, System.Collections.Generic.List<Sensus.IDatum>>, Sensus.IDatum)
+  fullName.vb: ExampleSensingAgent.ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary(Of System.Type, System.Collections.Generic.List(Of Sensus.IDatum)), Sensus.IDatum)
+  nameWithType: ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>>, IDatum)
+  nameWithType.vb: ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(Dictionary(Of Type, List(Of IDatum)), IDatum)
 - uid: ExampleSensingAgent.ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion*
   name: ObservedDataMeetControlCriterion
   href: api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html#ExampleSensingAgent_ExampleAccelerationSensingAgent_ObservedDataMeetControlCriterion_
@@ -46887,18 +46887,6 @@ references:
   commentId: Overload:Sensus.SensingAgent.#ctor
   fullName: Sensus.SensingAgent.SensingAgent
   nameWithType: SensingAgent.SensingAgent
-- uid: Sensus.SensingAgent.AccelerationAverageLinearMagnitudeExceeds(System.Double)
-  name: AccelerationAverageLinearMagnitudeExceeds(Double)
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_AccelerationAverageLinearMagnitudeExceeds_System_Double_
-  commentId: M:Sensus.SensingAgent.AccelerationAverageLinearMagnitudeExceeds(System.Double)
-  fullName: Sensus.SensingAgent.AccelerationAverageLinearMagnitudeExceeds(System.Double)
-  nameWithType: SensingAgent.AccelerationAverageLinearMagnitudeExceeds(Double)
-- uid: Sensus.SensingAgent.AccelerationAverageLinearMagnitudeExceeds*
-  name: AccelerationAverageLinearMagnitudeExceeds
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_AccelerationAverageLinearMagnitudeExceeds_
-  commentId: Overload:Sensus.SensingAgent.AccelerationAverageLinearMagnitudeExceeds
-  fullName: Sensus.SensingAgent.AccelerationAverageLinearMagnitudeExceeds
-  nameWithType: SensingAgent.AccelerationAverageLinearMagnitudeExceeds
 - uid: Sensus.SensingAgent.ActAsync(System.Threading.CancellationToken)
   name: ActAsync(CancellationToken)
   href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_ActAsync_System_Threading_CancellationToken_
@@ -46947,6 +46935,18 @@ references:
   commentId: Overload:Sensus.SensingAgent.ActionIntervalToleranceBefore
   fullName: Sensus.SensingAgent.ActionIntervalToleranceBefore
   nameWithType: SensingAgent.ActionIntervalToleranceBefore
+- uid: Sensus.SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold(System.Double)
+  name: AverageLinearAccelerationMagnitudeExceedsThreshold(Double)
+  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_AverageLinearAccelerationMagnitudeExceedsThreshold_System_Double_
+  commentId: M:Sensus.SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold(System.Double)
+  fullName: Sensus.SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold(System.Double)
+  nameWithType: SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold(Double)
+- uid: Sensus.SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold*
+  name: AverageLinearAccelerationMagnitudeExceedsThreshold
+  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_AverageLinearAccelerationMagnitudeExceedsThreshold_
+  commentId: Overload:Sensus.SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold
+  fullName: Sensus.SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold
+  nameWithType: SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold
 - uid: Sensus.SensingAgent.ControlCompletionCheck
   name: SensingAgent.ControlCompletionCheck
   href: api/Sensus.SensingAgent.ControlCompletionCheck.html
@@ -47130,18 +47130,18 @@ references:
   commentId: Overload:Sensus.SensingAgent.InitializeAsync
   fullName: Sensus.SensingAgent.InitializeAsync
   nameWithType: SensingAgent.InitializeAsync
-- uid: Sensus.SensingAgent.NearSurface
-  name: NearSurface()
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_NearSurface
-  commentId: M:Sensus.SensingAgent.NearSurface
-  fullName: Sensus.SensingAgent.NearSurface()
-  nameWithType: SensingAgent.NearSurface()
-- uid: Sensus.SensingAgent.NearSurface*
-  name: NearSurface
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_NearSurface_
-  commentId: Overload:Sensus.SensingAgent.NearSurface
-  fullName: Sensus.SensingAgent.NearSurface
-  nameWithType: SensingAgent.NearSurface
+- uid: Sensus.SensingAgent.IsNearSurface
+  name: IsNearSurface()
+  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_IsNearSurface
+  commentId: M:Sensus.SensingAgent.IsNearSurface
+  fullName: Sensus.SensingAgent.IsNearSurface()
+  nameWithType: SensingAgent.IsNearSurface()
+- uid: Sensus.SensingAgent.IsNearSurface*
+  name: IsNearSurface
+  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_IsNearSurface_
+  commentId: Overload:Sensus.SensingAgent.IsNearSurface
+  fullName: Sensus.SensingAgent.IsNearSurface
+  nameWithType: SensingAgent.IsNearSurface
 - uid: Sensus.SensingAgent.ObservationDuration
   name: ObservationDuration
   href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_ObservationDuration
@@ -47166,15 +47166,15 @@ references:
   commentId: Overload:Sensus.SensingAgent.ObserveAsync
   fullName: Sensus.SensingAgent.ObserveAsync
   nameWithType: SensingAgent.ObserveAsync
-- uid: Sensus.SensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}},System.Type)
-  name: ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>>, Type)
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_ObservedDataMeetControlCriterion_System_Collections_Generic_Dictionary_System_Type_System_Collections_Generic_List_Sensus_IDatum___System_Type_
-  commentId: M:Sensus.SensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}},System.Type)
-  name.vb: ObservedDataMeetControlCriterion(Dictionary(Of Type, List(Of IDatum)), Type)
-  fullName: Sensus.SensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary<System.Type, System.Collections.Generic.List<Sensus.IDatum>>, System.Type)
-  fullName.vb: Sensus.SensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary(Of System.Type, System.Collections.Generic.List(Of Sensus.IDatum)), System.Type)
-  nameWithType: SensingAgent.ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>>, Type)
-  nameWithType.vb: SensingAgent.ObservedDataMeetControlCriterion(Dictionary(Of Type, List(Of IDatum)), Type)
+- uid: Sensus.SensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}},Sensus.IDatum)
+  name: ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>>, IDatum)
+  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_ObservedDataMeetControlCriterion_System_Collections_Generic_Dictionary_System_Type_System_Collections_Generic_List_Sensus_IDatum___Sensus_IDatum_
+  commentId: M:Sensus.SensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}},Sensus.IDatum)
+  name.vb: ObservedDataMeetControlCriterion(Dictionary(Of Type, List(Of IDatum)), IDatum)
+  fullName: Sensus.SensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary<System.Type, System.Collections.Generic.List<Sensus.IDatum>>, Sensus.IDatum)
+  fullName.vb: Sensus.SensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary(Of System.Type, System.Collections.Generic.List(Of Sensus.IDatum)), Sensus.IDatum)
+  nameWithType: SensingAgent.ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>>, IDatum)
+  nameWithType.vb: SensingAgent.ObservedDataMeetControlCriterion(Dictionary(Of Type, List(Of IDatum)), IDatum)
 - uid: Sensus.SensingAgent.ObservedDataMeetControlCriterion*
   name: ObservedDataMeetControlCriterion
   href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_ObservedDataMeetControlCriterion_
