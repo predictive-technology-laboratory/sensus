@@ -26,6 +26,10 @@ using Sensus.Extensions;
 
 namespace ExampleSensingAgent
 {
+    /// <summary>
+    /// Example acceleration sensing agent. Demonstrates concepts related to control criterion checking as well as 
+    /// sensing control, in particular temporary device keep-awake and increased sampling rates.
+    /// </summary>
     public class ExampleAccelerationSensingAgent : SensingAgent
     {
         private double _averageLinearMagnitudeThreshold;
@@ -66,29 +70,21 @@ namespace ExampleSensingAgent
             }
         }
 
-        protected override bool ObservedDataMeetControlCriterion(Type criterionType, Dictionary<Type, List<IDatum>> typeData)
+        protected override bool ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>> typeData, Type observedDatumType)
         {
             bool criterionMet = false;
 
-            List<IDatum> criterionData = typeData[criterionType];
-
-            if (criterionData.Count > 0)
+            if (observedDatumType == null)
             {
-                if (criterionType.ImplementsInterface<IProximityDatum>())
-                {
-                    IProximityDatum mostRecentProximityDatum = criterionData.Last() as IProximityDatum;
-                    criterionMet = mostRecentProximityDatum.Distance < mostRecentProximityDatum.MaxDistance;
-                }
-                else if (criterionType.ImplementsInterface<IAccelerometerDatum>())
-                {
-                    double averageLinearMagnitude = criterionData.Cast<IAccelerometerDatum>().Average(accelerometerDatum => Math.Sqrt(Math.Pow(accelerometerDatum.X, 2) +
-                                                                                                                                      Math.Pow(accelerometerDatum.Y, 2) +
-                                                                                                                                      Math.Pow(accelerometerDatum.Z, 2)));
-
-                    // acceleration values include gravity. thus, a stationary device will register 1 on one of the axes.
-                    // use absolute deviation from 1 as the criterion value with which to compare the threshold.
-                    criterionMet = Math.Abs(averageLinearMagnitude - 1) >= _averageLinearMagnitudeThreshold;
-                }
+                return NearSurface() || AccelerationAverageLinearMagnitudeExceeds(_averageLinearMagnitudeThreshold);
+            }
+            else if (observedDatumType.ImplementsInterface<IProximityDatum>())
+            {
+                return NearSurface();
+            }
+            else if (observedDatumType.ImplementsInterface<IAccelerometerDatum>())
+            {
+                return AccelerationAverageLinearMagnitudeExceeds(_averageLinearMagnitudeThreshold);
             }
 
             return criterionMet;
@@ -108,6 +104,7 @@ namespace ExampleSensingAgent
         {
             await SensusServiceHelper.KeepDeviceAwakeAsync();
 
+            // increase sampling rate
             if (Protocol.TryGetProbe<IAccelerometerDatum, IListeningProbe>(out IListeningProbe accelerometerProbe))
             {
                 _idleAccelerometerMaxDataStoresPerSecond = accelerometerProbe.MaxDataStoresPerSecond;
@@ -119,6 +116,7 @@ namespace ExampleSensingAgent
 
         protected override async Task OnEndingControlAsync(CancellationToken cancellationToken)
         {
+            // revert sampling rate
             if (Protocol.TryGetProbe<IAccelerometerDatum, IListeningProbe>(out IListeningProbe accelerometerProbe))
             {
                 accelerometerProbe.MaxDataStoresPerSecond = _idleAccelerometerMaxDataStoresPerSecond;
