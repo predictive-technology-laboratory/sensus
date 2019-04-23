@@ -111,6 +111,8 @@
   <div classs="implements">
     <h5>Implements</h5>
     <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
+    <div><a class="xref" href="Sensus.Probes.IListeningProbe.html">IListeningProbe</a></div>
+    <div><a class="xref" href="Sensus.Probes.IProbe.html">IProbe</a></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -269,7 +271,7 @@
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Probes_User_MicrosoftBand_MicrosoftBandProbe_2_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract class MicrosoftBandProbe&lt;SensorType, ReadingType&gt; : MicrosoftBandProbeBase, INotifyPropertyChanged where SensorType : BandSensorBase&lt;ReadingType&gt; where ReadingType : IBandSensorReading</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract class MicrosoftBandProbe&lt;SensorType, ReadingType&gt; : MicrosoftBandProbeBase, INotifyPropertyChanged, IListeningProbe, IProbe where SensorType : BandSensorBase&lt;ReadingType&gt; where ReadingType : IBandSensorReading</code></pre>
   </div>
   <h5 class="typeParameters">Type Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -548,6 +550,12 @@
   <h3 id="implements">Implements</h3>
   <div>
       <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
+  </div>
+  <div>
+      <a class="xref" href="Sensus.Probes.IListeningProbe.html">IListeningProbe</a>
+  </div>
+  <div>
+      <a class="xref" href="Sensus.Probes.IProbe.html">IProbe</a>
   </div>
 </article>
           </div>

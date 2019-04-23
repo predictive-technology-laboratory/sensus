@@ -98,6 +98,8 @@ will wake up the phone&apos;s processor and be delivered regardless of the phone
   <div classs="implements">
     <h5>Implements</h5>
     <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
+    <div><a class="xref" href="Sensus.Probes.IListeningProbe.html">IListeningProbe</a></div>
+    <div><a class="xref" href="Sensus.Probes.IProbe.html">IProbe</a></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -235,7 +237,7 @@ will wake up the phone&apos;s processor and be delivered regardless of the phone
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Android_Probes_Location_AndroidProximityProbe_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class AndroidProximityProbe : ProximityProbe, INotifyPropertyChanged</code></pre>
+    <pre><code class="lang-csharp hljs">public class AndroidProximityProbe : ProximityProbe, INotifyPropertyChanged, IListeningProbe, IProbe</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -335,6 +337,12 @@ will wake up the phone&apos;s processor and be delivered regardless of the phone
   <h3 id="implements">Implements</h3>
   <div>
       <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
+  </div>
+  <div>
+      <a class="xref" href="Sensus.Probes.IListeningProbe.html">IListeningProbe</a>
+  </div>
+  <div>
+      <a class="xref" href="Sensus.Probes.IProbe.html">IProbe</a>
   </div>
 </article>
           </div>

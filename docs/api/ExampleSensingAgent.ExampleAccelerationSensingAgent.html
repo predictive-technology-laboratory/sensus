@@ -83,7 +83,9 @@
   
   <h1 id="ExampleSensingAgent_ExampleAccelerationSensingAgent" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent" class="text-break">Class ExampleAccelerationSensingAgent
   </h1>
-  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 summary"><p>Example acceleration sensing agent. Demonstrates concepts related to control criterion checking as well as 
+sensing control, in particular temporary device keep-awake and increased sampling rates.</p>
+</div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
@@ -101,7 +103,16 @@
       <a class="xref" href="Sensus.SensingAgent.html#Sensus_SensingAgent_InitializeAsync_Sensus_ISensusServiceHelper_Sensus_IProtocol_">SensingAgent.InitializeAsync(ISensusServiceHelper, IProtocol)</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.SensingAgent.html#Sensus_SensingAgent_ObserveAsync_Sensus_IDatum_">SensingAgent.ObserveAsync(IDatum)</a>
+      <a class="xref" href="Sensus.SensingAgent.html#Sensus_SensingAgent_ObserveAsync_Sensus_IDatum_System_Threading_CancellationToken_">SensingAgent.ObserveAsync(IDatum, CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensingAgent.html#Sensus_SensingAgent_NearSurface">SensingAgent.NearSurface()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensingAgent.html#Sensus_SensingAgent_AccelerationAverageLinearMagnitudeExceeds_System_Double_">SensingAgent.AccelerationAverageLinearMagnitudeExceeds(Double)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensingAgent.html#Sensus_SensingAgent_GetObservedData__1">SensingAgent.GetObservedData&lt;DatumInterface&gt;()</a>
     </div>
     <div>
       <a class="xref" href="Sensus.SensingAgent.html#Sensus_SensingAgent_ActAsync_System_Threading_CancellationToken_">SensingAgent.ActAsync(CancellationToken)</a>
@@ -117,6 +128,12 @@
     </div>
     <div>
       <a class="xref" href="Sensus.SensingAgent.html#Sensus_SensingAgent_State">SensingAgent.State</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensingAgent.html#Sensus_SensingAgent_Id">SensingAgent.Id</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.SensingAgent.html#Sensus_SensingAgent_Description">SensingAgent.Description</a>
     </div>
     <div>
       <a class="xref" href="Sensus.SensingAgent.html#Sensus_SensingAgent_ActionInterval">SensingAgent.ActionInterval</a>
@@ -149,79 +166,26 @@
   
   <a id="ExampleSensingAgent_ExampleAccelerationSensingAgent__ctor_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.#ctor*"></a>
   <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent__ctor" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.#ctor">ExampleAccelerationSensingAgent()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="ExampleSensingAgent.ExampleAccelerationSensingAgent.html">ExampleAccelerationSensingAgent</a> class. As noted in
+the <a class="xref" href="../articles/adaptive-sensing.html">adaptive sensing</a> article, this class provides the parameterless constructor required for
+run time initialization of the agent.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public ExampleAccelerationSensingAgent()</code></pre>
   </div>
-  <h3 id="properties">Properties
-  </h3>
-  
-  
-  <a id="ExampleSensingAgent_ExampleAccelerationSensingAgent_Description_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.Description*"></a>
-  <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent_Description" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.Description">Description</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override string Description { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.SensingAgent.html#Sensus_SensingAgent_Description">SensingAgent.Description</a></div>
-  
-  
-  <a id="ExampleSensingAgent_ExampleAccelerationSensingAgent_Id_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.Id*"></a>
-  <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent_Id" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.Id">Id</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override string Id { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.SensingAgent.html#Sensus_SensingAgent_Id">SensingAgent.Id</a></div>
   <h3 id="methods">Methods
   </h3>
   
   
   <a id="ExampleSensingAgent_ExampleAccelerationSensingAgent_ObservedDataMeetControlCriterion_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion*"></a>
-  <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent_ObservedDataMeetControlCriterion_System_Collections_Generic_List_Sensus_IDatum__" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.List{Sensus.IDatum})">ObservedDataMeetControlCriterion(List&lt;IDatum&gt;)</h4>
+  <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent_ObservedDataMeetControlCriterion_System_Collections_Generic_Dictionary_System_Type_System_Collections_Generic_List_Sensus_IDatum___System_Type_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}},System.Type)">ObservedDataMeetControlCriterion(Dictionary&lt;Type, List&lt;IDatum&gt;&gt;, Type)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override bool ObservedDataMeetControlCriterion(List&lt;IDatum&gt; data)</code></pre>
+    <pre><code class="lang-csharp hljs">protected override bool ObservedDataMeetControlCriterion(Dictionary&lt;Type, List&lt;IDatum&gt;&gt; typeData, Type observedDatumType)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -234,8 +198,13 @@
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.IDatum.html">IDatum</a>&gt;</td>
-        <td><span class="parametername">data</span></td>
+        <td><span class="xref">System.Collections.Generic.Dictionary</span>&lt;<span class="xref">System.Type</span>, <span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.IDatum.html">IDatum</a>&gt;&gt;</td>
+        <td><span class="parametername">typeData</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Type</span></td>
+        <td><span class="parametername">observedDatumType</span></td>
         <td></td>
       </tr>
     </tbody>
@@ -251,6 +220,132 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="ExampleSensingAgent_ExampleAccelerationSensingAgent_OnActiveControlAsync_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.OnActiveControlAsync*"></a>
+  <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent_OnActiveControlAsync_System_Threading_CancellationToken_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.OnActiveControlAsync(System.Threading.CancellationToken)">OnActiveControlAsync(CancellationToken)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Task OnActiveControlAsync(CancellationToken cancellationToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="ExampleSensingAgent_ExampleAccelerationSensingAgent_OnEndingControlAsync_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.OnEndingControlAsync*"></a>
+  <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent_OnEndingControlAsync_System_Threading_CancellationToken_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.OnEndingControlAsync(System.Threading.CancellationToken)">OnEndingControlAsync(CancellationToken)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Task OnEndingControlAsync(CancellationToken cancellationToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="ExampleSensingAgent_ExampleAccelerationSensingAgent_OnOpportunisticControlAsync_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.OnOpportunisticControlAsync*"></a>
+  <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent_OnOpportunisticControlAsync_System_Threading_CancellationToken_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.OnOpportunisticControlAsync(System.Threading.CancellationToken)">OnOpportunisticControlAsync(CancellationToken)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Task OnOpportunisticControlAsync(CancellationToken cancellationToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
         <td></td>
       </tr>
     </tbody>
