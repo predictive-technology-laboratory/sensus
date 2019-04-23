@@ -1718,6 +1718,42 @@ namespace Sensus
         {
             lock (this)
             {
+                InitTypeProbeMap();
+
+                return _typeProbe.TryGetValue(type, out probe);
+            }
+        }
+
+        public bool TryGetProbe<DatumInterface, ProbeType>(out ProbeType probe) where DatumInterface : IDatum
+                                                                                where ProbeType : class, IProbe
+        {
+            lock (this)
+            {
+                InitTypeProbeMap();
+
+                probe = null;
+
+                foreach (Type type in _typeProbe.Keys)
+                {
+                    ProbeType p = _typeProbe[type] as ProbeType;
+                    PropertyInfo datumTypeProperty = type.GetProperty(nameof(Probe.DatumType));
+                    Type datumType = datumTypeProperty.GetValue(p) as Type;
+
+                    if (datumType.IsAssignableFrom(typeof(DatumInterface)))
+                    {
+                        probe = p;
+                        break;
+                    }
+                }
+
+                return probe != null;
+            }
+        }
+
+        private void InitTypeProbeMap()
+        {
+            lock (this)
+            {
                 if (_typeProbe == null)
                 {
                     _typeProbe = new Dictionary<Type, Probe>();
@@ -1727,8 +1763,6 @@ namespace Sensus
                         _typeProbe.Add(p.GetType(), p);
                     }
                 }
-
-                return _typeProbe.TryGetValue(type, out probe);
             }
         }
 

@@ -39,7 +39,7 @@ namespace Sensus.Probes
     /// and quality varying by device manufacturer (e.g., Apple, Motorola, Samsung, etc.). Availability and reliability of Probes will depend 
     /// on the device being used.
     /// </summary>
-    public abstract class Probe : INotifyPropertyChanged
+    public abstract class Probe : INotifyPropertyChanged, IProbe
     {
         #region static members
 
@@ -520,7 +520,7 @@ namespace Sensus.Probes
                 {
                     await ((scriptProbe as ScriptProbe).Agent?.ObserveAsync(datum) ?? Task.CompletedTask);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     SensusServiceHelper.Get().Logger.Log("Exception while script probe agent was observing datum:  " + ex.Message, LoggingLevel.Normal, GetType());
                 }
@@ -530,7 +530,7 @@ namespace Sensus.Probes
             // completion check. agents might be third-party and badly behaving...catch their exceptions.
             try
             {
-                await Protocol.ScheduleAgentControlCompletionCheckAsync(await (Protocol.Agent?.ObserveAsync(datum) ?? Task.FromResult<ControlCompletionCheck>(null)));
+                await Protocol.ScheduleAgentControlCompletionCheckAsync(await (Protocol.Agent?.ObserveAsync(datum, cancellationToken.GetValueOrDefault()) ?? Task.FromResult<ControlCompletionCheck>(null)));
             }
             catch (Exception ex)
             {

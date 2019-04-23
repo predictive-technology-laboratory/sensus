@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Sensus.Probes;
 
 namespace Sensus
 {
@@ -10,5 +11,8 @@ namespace Sensus
         Task UpdateScriptAgentPolicyAsync(CancellationToken cancellationToken);
 
         Task UpdateSensingAgentPolicyAsync(CancellationToken cancellationToken);
+
+        bool TryGetProbe<DatumInterface, ProbeType>(out ProbeType probe) where DatumInterface : IDatum
+                                                                         where ProbeType : class, IProbe;
     }
 }

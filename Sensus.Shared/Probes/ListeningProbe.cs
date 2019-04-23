@@ -37,7 +37,7 @@ namespace Sensus.Probes
     /// * iOS:  The <see cref="KeepDeviceAwake"/> setting has no effect on iOS, and all readings will be discontinued when the app is put into the
     /// background. See <see cref="PollingProbe"/> for more information about background considerations.
     /// </summary>
-    public abstract class ListeningProbe : Probe
+    public abstract class ListeningProbe : Probe, IListeningProbe
     {
         private double? _maxDataStoresPerSecond;
         private bool _keepDeviceAwake;

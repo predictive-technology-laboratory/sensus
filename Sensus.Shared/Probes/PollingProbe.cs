@@ -60,7 +60,7 @@ namespace Sensus.Probes
     /// relies on the user to open the notification from the tray and bring Sensus to the foreground so that the polling operation can execute. Of course, 
     /// the user might not see the notification or might choose not to open it. The polling operation will not be executed in such cases.
     /// </summary>
-    public abstract class PollingProbe : Probe
+    public abstract class PollingProbe : Probe, IPollingProbe
     {
 
 #if __IOS__
@@ -294,7 +294,7 @@ namespace Sensus.Probes
                     if (_pollCallback.Timeout.HasValue)
                     {
                         pollCallbackCanceller.CancelAfter(_pollCallback.Timeout.Value);
-                    }   
+                    }
 
                     await _pollCallback.ActionAsync(pollCallbackCanceller.Token);
                 }

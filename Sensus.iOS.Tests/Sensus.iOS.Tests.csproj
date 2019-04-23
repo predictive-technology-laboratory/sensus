@@ -329,9 +329,6 @@
     <Reference Include="Syncfusion.SfChart.XForms.iOS">
       <HintPath>..\dependencies\Syncfusion\14.2.0.26\Xamarin\lib\ios-unified\Syncfusion.SfChart.XForms.iOS.dll</HintPath>
     </Reference>
-    <Reference Include="Sensus.Shared.NuGet">
-      <HintPath>..\packages\Sensus.1.41.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
@@ -410,6 +407,12 @@
     <ImageAsset Include="..\Sensus.iOS\Resources\Images.xcassets\AppIcons.appiconset\Icon-Small-50x50%402x.png">
       <Link>Resources\Images.xcassets\AppIcons.appiconset\Icon-Small-50x50%402x.png</Link>
     </ImageAsset>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sensus.Shared.NuGet\Sensus.Shared.NuGet.csproj">
+      <Project>{117104F2-EE3A-4BF1-B617-DE009D6453F7}</Project>
+      <Name>Sensus.Shared.NuGet</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
   <Import Project="..\packages\xunit.core.2.4.0\build\xunit.core.targets" Condition="Exists('..\packages\xunit.core.2.4.0\build\xunit.core.targets')" />

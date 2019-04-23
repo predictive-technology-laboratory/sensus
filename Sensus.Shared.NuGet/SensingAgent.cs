@@ -51,86 +51,121 @@ namespace Sensus
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private Dictionary<Type, List<IDatum>> _typeData;
-        private ISensusServiceHelper _sensusServiceHelper;
-        private IProtocol _protocol;
-        private SensingAgentState _state;
+        private readonly Dictionary<Type, List<IDatum>> _typeData = new Dictionary<Type, List<IDatum>>();
 
         private readonly object _stateLocker = new object();
 
         /// <summary>
-        /// Gets the sensus service helper.
+        /// Whether or not the <see cref="SensingAgent"/> is in the process of transitioning to another <see cref="SensingAgentState"/>.
         /// </summary>
-        /// <value>The sensus service helper.</value>
-        protected ISensusServiceHelper SensusServiceHelper => _sensusServiceHelper;
+        private bool _stateIsTransitioning = false;
 
         /// <summary>
-        /// Gets the protocol.
+        /// Gets the <see cref="ISensusServiceHelper"/>.
+        /// </summary>
+        /// <value>The sensus service helper.</value>
+        protected ISensusServiceHelper SensusServiceHelper { get; private set; }
+
+        /// <summary>
+        /// Gets the <see cref="IProtocol"/>.
         /// </summary>
         /// <value>The protocol.</value>
-        protected IProtocol Protocol => _protocol;
+        protected IProtocol Protocol { get; private set; }
 
         /// <summary>
         /// Current <see cref="SensingAgentState"/> of the <see cref="SensingAgent"/>.
         /// </summary>
         /// <value>The state.</value>
-        public SensingAgentState State => _state;
+        public SensingAgentState State { get; private set; }
 
         /// <summary>
         /// Unique identifier for the <see cref="SensingAgent"/>.
         /// </summary>
         /// <value>The identifier.</value>
-        public abstract string Id { get; }
+        public string Id { get; private set; }
 
         /// <summary>
         /// Readable description for the <see cref="SensingAgent"/>.
         /// </summary>
         /// <value>The description.</value>
-        public abstract string Description { get; }
+        public string Description { get; private set; }
 
         /// <summary>
-        /// Interval of time between successive calls to <see cref="ActAsync(CancellationToken)"/>. If <c>null</c>
-        /// is returned, then a repeating call to <see cref="ActAsync(CancellationToken)"/> will not be made
-        /// and only calls to <see cref="ObserveAsync(IDatum)"/> will provide opportunities for the <see cref="SensingAgent"/>
-        /// to control sensing parameters.
+        /// Interval of time between successive calls to <see cref="ActAsync(CancellationToken)"/>. If <c>null</c>,
+        /// then a repeating call to <see cref="ActAsync(CancellationToken)"/> will not be made and only calls to 
+        /// <see cref="ObserveAsync(IDatum,CancellationToken)"/> will provide opportunities for the 
+        /// <see cref="SensingAgent"/> to control sensing parameters.
         /// </summary>
         /// <value>The action interval.</value>
-        public TimeSpan? ActionInterval { get; set; }
+        public TimeSpan? ActionInterval { get; protected set; }
 
         /// <summary>
         /// Tolerance for <see cref="ActionInterval"/> before the scheduled time, if doing so 
         /// will increase the number of batched actions and thereby decrease battery consumption.
         /// </summary>
         /// <value>The delay tolerance before.</value>
-        public TimeSpan? ActionIntervalToleranceBefore { get; set; }
+        public TimeSpan? ActionIntervalToleranceBefore { get; protected set; }
 
         /// <summary>
         /// Tolerance for <see cref="ActionInterval"/> after the scheduled time, if doing so 
         /// will increase the number of batched actions and thereby decrease battery consumption.
         /// </summary>
         /// <value>The delay tolerance before.</value>
-        public TimeSpan? ActionIntervalToleranceAfter { get; set; }
+        public TimeSpan? ActionIntervalToleranceAfter { get; protected set; }
 
         /// <summary>
         /// How long to observe data before checking control criteria. If <see cref="ActionInterval"/>
-        /// is not <c>null</c>, then this value cannot be <c>null</c> either.
+        /// is not <c>null</c>, then this value may not be <c>null</c> either. If <see cref="ActionInterval"/>
+        /// is <c>null</c>, then this value is ignored.
         /// </summary>
         /// <value>The observation interval.</value>
-        public TimeSpan? ObservationDuration { get; set; }
+        protected TimeSpan? ObservationDuration { get; set; }
 
         /// <summary>
         /// How much time between checks for control completion.
         /// </summary>
         /// <value>The control completion check interval.</value>
-        public TimeSpan ControlCompletionCheckInterval { get; set; }
+        protected TimeSpan ControlCompletionCheckInterval { get; set; }
 
-        protected SensingAgent()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:Sensus.SensingAgent"/> class, with a repeating action call.
+        /// </summary>
+        /// <param name="id">Identifier.</param>
+        /// <param name="description">Description.</param>
+        /// <param name="controlCompletionCheckInterval">Control completion check interval.</param>
+        /// <param name="actionInterval">Action interval.</param>
+        /// <param name="observationDuration">Observation duration.</param>
+        protected SensingAgent(string id, string description, TimeSpan controlCompletionCheckInterval, TimeSpan actionInterval, TimeSpan observationDuration)
         {
-            _typeData = new Dictionary<Type, List<IDatum>>();
+            Construct(id, description, controlCompletionCheckInterval, actionInterval, observationDuration);
+        }
 
-            ActionInterval = TimeSpan.FromSeconds(10);
-            ObservationDuration = TimeSpan.FromSeconds(5);
-            ControlCompletionCheckInterval = TimeSpan.FromSeconds(20);
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:Sensus.SensingAgent"/> class, without a repeating action call.
+        /// </summary>
+        /// <param name="id">Identifier.</param>
+        /// <param name="description">Description.</param>
+        /// <param name="controlCompletionCheckInterval">Control completion check interval.</param>
+        protected SensingAgent(string id, string description, TimeSpan controlCompletionCheckInterval)
+        {
+            Construct(id, description, controlCompletionCheckInterval, null, null);
+        }
+
+        /// <summary>
+        /// Private constructor.
+        /// </summary>
+        /// <param name="id">Identifier.</param>
+        /// <param name="description">Description.</param>
+        /// <param name="controlCompletionCheckInterval">Control completion check interval.</param>
+        /// <param name="actionInterval">Action interval.</param>
+        /// <param name="observationDuration">Observation duration.</param>
+        private void Construct(string id, string description, TimeSpan controlCompletionCheckInterval, TimeSpan? actionInterval, TimeSpan? observationDuration)
+        {
+            Id = id;
+            Description = description;
+            ControlCompletionCheckInterval = controlCompletionCheckInterval;
+            ActionInterval = actionInterval;
+            ObservationDuration = observationDuration;
         }
 
         /// <summary>
@@ -141,18 +176,18 @@ namespace Sensus
         /// <param name="protocol">A reference to the <see cref="IProtocol"/> associated with this <see cref="SensingAgent"/>.</param>
         public virtual async Task InitializeAsync(ISensusServiceHelper sensusServiceHelper, IProtocol protocol)
         {
-            _sensusServiceHelper = sensusServiceHelper;
-            _protocol = protocol;
-            _state = SensingAgentState.Idle;
+            SensusServiceHelper = sensusServiceHelper;
+            Protocol = protocol;
+            State = SensingAgentState.Idle;
 
             // download the initial policy
             try
             {
-                await _protocol.UpdateSensingAgentPolicyAsync(CancellationToken.None);
+                await Protocol.UpdateSensingAgentPolicyAsync(CancellationToken.None);
             }
             catch (Exception ex)
             {
-                _sensusServiceHelper?.Logger.Log("Exception while downloading the policy:  " + ex.Message, LoggingLevel.Normal, GetType());
+                SensusServiceHelper?.Logger.Log("Exception while downloading the policy:  " + ex.Message, LoggingLevel.Normal, GetType());
             }
         }
 
@@ -177,33 +212,12 @@ namespace Sensus
         }
 
         /// <summary>
-        /// Instructs the current <see cref="SensingAgent"/> to observe data for <see cref="ObservationDuration"/>. Any 
-        /// <see cref="IDatum"/> stored by the <see cref="IProtocol"/> associated with this <see cref="SensingAgent"/> 
-        /// will be relayed to the <see cref="SensingAgent"/> via the <see cref="ObserveAsync(IDatum)"/> method.
-        /// </summary>
-        /// <returns>The async.</returns>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        private async Task ObserveAsync(CancellationToken cancellationToken)
-        {
-            _sensusServiceHelper.Logger.Log("Sensing agent " + Id + " is observing data for " + ObservationDuration.Value + ".", LoggingLevel.Normal, GetType());
-
-            // catch cancellation exception, but let other exceptions percolate back up (they'll be reported to app center).
-            try
-            {
-                await Task.Delay(ObservationDuration.Value, cancellationToken);
-            }
-            catch (OperationCanceledException ex)
-            {
-                _sensusServiceHelper.Logger.Log("Observation cancelled:  " + ex.Message, LoggingLevel.Normal, GetType());
-            }
-        }
-
-        /// <summary>
         /// Asks the agent to observe an <see cref="IDatum"/> object that was generated by Sensus.
         /// </summary>
         /// <returns>A <see cref="ControlCompletionCheck"/> to be configured upon return, or <c>null</c> for no such check.</returns>
         /// <param name="datum">Datum.</param>
-        public async Task<ControlCompletionCheck> ObserveAsync(IDatum datum)
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public async Task<ControlCompletionCheck> ObserveAsync(IDatum datum, CancellationToken cancellationToken)
         {
             // accumulate observed data by type for later analysis
             lock (_typeData)
@@ -231,11 +245,11 @@ namespace Sensus
             {
                 try
                 {
-                    controlCompletionCheck = await BeginControlAsync(SensingAgentState.OpportunisticControl);
+                    controlCompletionCheck = await BeginControlAsync(SensingAgentState.OpportunisticControl, cancellationToken);
                 }
                 catch (Exception ex)
                 {
-                    await EndControl(CancellationToken.None);
+                    await EndControlAsync(cancellationToken);
                     throw ex;
                 }
             }
@@ -244,61 +258,48 @@ namespace Sensus
         }
 
         /// <summary>
-        /// Updates the observed data.
+        /// Updates the observed data (e.g., by trimming observed data to a particular size and/or time range).
         /// </summary>
-        /// <param name="typeData">Observed data, by type.</param>
+        /// <param name="typeData">Observed data, by type. This collection will be locked prior to calling the concrete implementation.</param>
         protected abstract void UpdateObservedData(Dictionary<Type, List<IDatum>> typeData);
 
         /// <summary>
-        /// Checks whether any type of observed data meets the control criterion.
+        /// Checks whether the observed data meet the control criterion.
         /// </summary>
-        /// <returns><c>true</c>, if data meet control criterion, <c>false</c> otherwise.</returns>
-        /// <param name="types">Types.</param>
-        private bool ObservedDataMeetControlCriterion(params Type[] types)
+        /// <returns><c>true</c> if criterion is met, <c>false</c> otherwise.</returns>
+        /// <param name="criterionTypes">Specific types of data to check criterion for. If <c>null</c>, then all observed data types should be checked.</param>
+        private bool ObservedDataMeetControlCriterion(params Type[] criterionTypes)
         {
             lock (_typeData)
             {
-                // if a null or empty type array was passed, then use all available types.
-                if (types == null || types.Length == 0)
+                // check all types if none are provided
+                if (criterionTypes == null || criterionTypes.Length == 0)
                 {
-                    types = _typeData.Keys.ToArray();
+                    criterionTypes = _typeData.Keys.ToArray();
                 }
 
-                // check each type
-                foreach (Type type in types)
-                {
-                    List<IDatum> observedData = GetObservedData(type);
+                bool criterionMet = false;
 
-                    if (ObservedDataMeetControlCriterion(observedData))
+                foreach (Type criterionType in criterionTypes)
+                {
+                    if (ObservedDataMeetControlCriterion(criterionType, _typeData))
                     {
-                        return true;
+                        criterionMet = true;
+                        break;
                     }
                 }
-            }
 
-            return false;
+                return criterionMet;
+            }
         }
 
         /// <summary>
-        /// Checks whether a list of observed <see cref="IDatum"/> meet the control criterion.
+        /// Checks whether the observed data meet a control criterion.
         /// </summary>
-        /// <returns><c>true</c>, if data meet control criterion was observeded, <c>false</c> otherwise.</returns>
-        /// <param name="data">Data.</param>
-        protected abstract bool ObservedDataMeetControlCriterion(List<IDatum> data);
-
-        /// <summary>
-        /// Gets the observed data, by type.
-        /// </summary>
-        /// <returns>The observed data.</returns>
-        /// <param name="type">Type.</param>
-        private List<IDatum> GetObservedData(Type type)
-        {
-            lock (_typeData)
-            {
-                _typeData.TryGetValue(type, out List<IDatum> data);
-                return data;
-            }
-        }
+        /// <returns><c>true</c>, if data meet control criterion, <c>false</c> otherwise.</returns>
+        /// <param name="criterionType">Specific type of data to check criterion for. If <c>null</c>, then the criterion should be checked across all data types.</param>
+        /// <param name="typeData">All data by type. This collection will be locked prior to calling the concrete implementation.</param>
+        protected abstract bool ObservedDataMeetControlCriterion(Type criterionType, Dictionary<Type, List<IDatum>> typeData);
 
         /// <summary>
         /// Requests that the <see cref="SensingAgent"/> consider beginning sensing control.
@@ -311,20 +312,31 @@ namespace Sensus
             {
                 ControlCompletionCheck controlCompletionCheck = null;
 
-                if (TransitionToNewState(SensingAgentState.ActiveObservation))
+                if (await TransitionToNewStateAsync(SensingAgentState.ActiveObservation, cancellationToken))
                 {
-                    // observe data for a window of time. the current method is run as a scheduled callback, so we're guaranteed
-                    // to have some amount of background time. watch out for background time expiration on iOS by monitoring the
+                    // observe data for the specified duration. the current method is run as a scheduled callback, so we're guaranteed
+                    // to have some amount of background time. but watch out for background time expiration on iOS by monitoring the
                     // passed cancellation token.
-                    await ObserveAsync(cancellationToken);
+                    try
+                    {
+                        SensusServiceHelper.Logger.Log("Sensing agent " + Id + " is observing data for " + ObservationDuration.Value + ".", LoggingLevel.Normal, GetType());
+
+                        await Task.Delay(ObservationDuration.Value, cancellationToken);
+                    }
+                    // catch cancellation exception (e.g., due to background time expiration), but let other exceptions percolate back 
+                    // up (they'll be caught and reported to app center).
+                    catch (OperationCanceledException ex)
+                    {
+                        SensusServiceHelper.Logger.Log("Observation cancelled:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
 
                     if (ObservedDataMeetControlCriterion())
                     {
-                        controlCompletionCheck = await BeginControlAsync(SensingAgentState.ActiveControl);
+                        controlCompletionCheck = await BeginControlAsync(SensingAgentState.ActiveControl, cancellationToken);
                     }
                     else
                     {
-                        TransitionToNewState(SensingAgentState.Idle);
+                        await TransitionToNewStateAsync(SensingAgentState.Idle, cancellationToken);
                     }
                 }
 
@@ -333,27 +345,25 @@ namespace Sensus
             catch (Exception ex)
             {
                 // if anything goes wrong, ensure that we terminate sensing control and leave ourselves in the idle state.
-                await EndControl(cancellationToken);
+                await EndControlAsync(cancellationToken);
                 throw ex;
             }
         }
 
-        private async Task<ControlCompletionCheck> BeginControlAsync(SensingAgentState controlState)
+        private async Task<ControlCompletionCheck> BeginControlAsync(SensingAgentState controlState, CancellationToken cancellationToken)
         {
             ControlCompletionCheck controlCompletionCheck = null;
 
-            if (TransitionToNewState(controlState))
+            if (await TransitionToNewStateAsync(controlState, cancellationToken))
             {
-                await _sensusServiceHelper.KeepDeviceAwakeAsync();
-
                 controlCompletionCheck = new ControlCompletionCheck(async controlCompletionCheckCancellationToken =>
                 {
                     // the current check is called when a protocol is shutting down, in which case we should end
                     // control and return to idle. in addition, the current check is called periodically while the
                     // protocol remains running. if the conrol criterion is not met, then also end control.
-                    if (_protocol.State != ProtocolState.Running || !ObservedDataMeetControlCriterion())
+                    if (Protocol.State != ProtocolState.Running || !ObservedDataMeetControlCriterion())
                     {
-                        await EndControl(controlCompletionCheckCancellationToken);
+                        await EndControlAsync(controlCompletionCheckCancellationToken);
                     }
 
                     return State;
@@ -364,79 +374,129 @@ namespace Sensus
             return controlCompletionCheck;
         }
 
-        private async Task EndControl(CancellationToken cancellationToken)
+        private async Task EndControlAsync(CancellationToken cancellationToken)
         {
             try
             {
-                if (TransitionToNewState(SensingAgentState.EndingControl))
-                {
-                    await _sensusServiceHelper.LetDeviceSleepAsync();
-                }
+                await TransitionToNewStateAsync(SensingAgentState.EndingControl, cancellationToken);
             }
             finally
             {
-                TransitionToNewState(SensingAgentState.Idle);
+                await TransitionToNewStateAsync(SensingAgentState.Idle, cancellationToken);
             }
         }
 
         /// <summary>
         /// The state machine for all <see cref="SensingAgent"/> classes.
         /// </summary>
-        /// <returns><c>true</c>, if to new state was transitioned, <c>false</c> otherwise.</returns>
+        /// <returns><c>true</c>, if the <see cref="SensingAgent"/> transitioned into the new state, <c>false</c> otherwise. If the
+        /// new state equals the current state, then <c>false</c> will be returned indicating no state change.</returns>
         /// <param name="newState">New state.</param>
-        private bool TransitionToNewState(SensingAgentState newState)
+        /// <param name="cancellationToken">Cancellation token.</param>
+        private async Task<bool> TransitionToNewStateAsync(SensingAgentState newState, CancellationToken cancellationToken)
         {
+            bool stateChanged = false;
+
             lock (_stateLocker)
             {
-                bool transitionToNewState = false;
-
-                if (_state != newState)
+                if (_stateIsTransitioning)
                 {
-                    if (_state == SensingAgentState.Idle)
-                    {
-                        transitionToNewState = newState == SensingAgentState.OpportunisticControl ||
-                                               newState == SensingAgentState.ActiveObservation ||
-                                               newState == SensingAgentState.EndingControl;
-                    }
-                    else if (_state == SensingAgentState.OpportunisticControl)
-                    {
-                        transitionToNewState = newState == SensingAgentState.EndingControl;
-                    }
-                    else if (_state == SensingAgentState.ActiveObservation)
-                    {
-                        transitionToNewState = newState == SensingAgentState.ActiveControl ||
-                                               newState == SensingAgentState.Idle ||
-                                               newState == SensingAgentState.EndingControl;
-                    }
-                    else if (_state == SensingAgentState.ActiveControl)
-                    {
-                        transitionToNewState = newState == SensingAgentState.EndingControl;
-                    }
-                    else if (_state == SensingAgentState.EndingControl)
-                    {
-                        transitionToNewState = newState == SensingAgentState.Idle;
-                    }
+                    SensusServiceHelper.Logger.Log("State is already transitioning. Aborting transition request.", LoggingLevel.Normal, GetType());
                 }
-
-                if (transitionToNewState)
+                else if (State == newState)
                 {
-                    _sensusServiceHelper.Logger.Log("Sensing agent is transitioning from " + _state + " to " + newState + ".", LoggingLevel.Normal, GetType());
-                    _state = newState;
-
-                    FireStateChangedEvent();
+                    SensusServiceHelper.Logger.Log("Continuing current state " + State + ".", LoggingLevel.Normal, GetType());
                 }
                 else
                 {
-                    _sensusServiceHelper.Logger.Log("Sensing agent is prohibited from transitioning from " + _state + " to " + newState + ".", LoggingLevel.Normal, GetType());
-                }
+                    bool transitionPermitted = false;
 
-                return transitionToNewState;
+                    if (State == SensingAgentState.Idle)
+                    {
+                        transitionPermitted = newState == SensingAgentState.OpportunisticControl ||
+                                              newState == SensingAgentState.ActiveObservation ||
+                                              newState == SensingAgentState.EndingControl;
+                    }
+                    else if (State == SensingAgentState.OpportunisticControl)
+                    {
+                        transitionPermitted = newState == SensingAgentState.EndingControl;
+                    }
+                    else if (State == SensingAgentState.ActiveObservation)
+                    {
+                        transitionPermitted = newState == SensingAgentState.ActiveControl ||
+                                              newState == SensingAgentState.Idle ||
+                                              newState == SensingAgentState.EndingControl;
+                    }
+                    else if (State == SensingAgentState.ActiveControl)
+                    {
+                        transitionPermitted = newState == SensingAgentState.EndingControl;
+                    }
+                    else if (State == SensingAgentState.EndingControl)
+                    {
+                        transitionPermitted = newState == SensingAgentState.Idle;
+                    }
+
+                    if (transitionPermitted)
+                    {
+                        SensusServiceHelper.Logger.Log("Permitting transition from " + State + " to " + newState + ".", LoggingLevel.Normal, GetType());
+                        State = newState;
+                        stateChanged = true;
+                        _stateIsTransitioning = true;
+                    }
+                    else
+                    {
+                        SensusServiceHelper.Logger.Log("Prohibiting transition from " + State + " to " + newState + ".", LoggingLevel.Normal, GetType());
+                    }
+                }
             }
+
+            if (stateChanged)
+            {
+                // call the concrete control methods. catch exceptions as we don't know who is implementing them.
+                try
+                {
+                    if (State == SensingAgentState.OpportunisticControl)
+                    {
+                        await OnOpportunisticControlAsync(cancellationToken);
+                    }
+                    else if (State == SensingAgentState.ActiveControl)
+                    {
+                        await OnActiveControlAsync(cancellationToken);
+                    }
+                    else if (State == SensingAgentState.EndingControl)
+                    {
+                        await OnEndingControlAsync(cancellationToken);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Logger.Log("Exception while calling concrete control method from state " + State + ":  " + ex.Message, LoggingLevel.Normal, GetType());
+                    throw ex;
+                }
+                finally
+                {
+                    FireStateChangedEvent();
+                    _stateIsTransitioning = false;
+                }
+            }
+
+            return stateChanged;
         }
+
+        protected abstract Task OnOpportunisticControlAsync(CancellationToken cancellationToken);
+
+        protected abstract Task OnActiveControlAsync(CancellationToken cancellationToken);
+
+        protected abstract Task OnEndingControlAsync(CancellationToken cancellationToken);
 
         private void FireStateChangedEvent()
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(State)));
+        }
+
+        protected bool Implements<DatumInterface>(Type type) where DatumInterface : IDatum
+        {
+            return type.IsAssignableFrom(typeof(DatumInterface));
         }
 
         public override string ToString()
