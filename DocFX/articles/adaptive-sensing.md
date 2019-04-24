@@ -127,50 +127,9 @@ our team (uva.ptl@gmail.com) to include them in a future release.
 ## Adaptive Sensing Policy Language (ASPL)
 In addition to the software-defined adaptive sensing agents described above, Sensus supports adaptive sensing
 policies specified in a general-purpose adaptive sensing policy language (ASPL). ASPL specifies both the 
-control criteria as well as the control actions depicted in the above state diagram. The ASPL listing below 
-shows the elements of an ASPL policy.
-
-<pre style="overflow-x:scroll;">
-{
-  "id" : "",                                 # Identifier for ASPL-defined agent.
-  "description" : "",                        # Description for ASPL-defined agent.
-  "action-interval" : "",                    # Hours, minutes, and seconds (00:00:00) for "action interval" (see above).
-  "observation-duration" : "",               # Hours, minutes, and seconds (00:00:00) for "active observation" (see above).
-  "control-completion-check-interval" : "",  # Hours, minutes, and seconds (00:00:00) for "control completion check interval" (see above).
-  "control-criteria" :                       # 1 or more control criteria expressions.
-  [
-    {
-      "datum-type" : "",       # The fully-qualified name of a [datum](https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Datum.html) type to observe.
-      "datum-property" : "",   # The name a property within the datum type from which to gather values.
-      "aggregation" : "",      # [Aggregation operator](xref:Sensus.AdaptiveSensing.AsplControlCriterionAggregation) for observed property values.
-      "relation" : "",         # [Relation operator](xref:Sensus.AdaptiveSensing.AsplControlCriterionRelation) used to compare the aggregate property value with the target value.
-      "target" : ""            # A numeric value (for quantitative properties) or regular expression (for qualitative properties) that is compared with the aggregate property value via the relation operator.
-    },
-    ...
-  ],
-  "control-criteria-combination" : "",  # [Combination operator](xref:Sensus.AdaptiveSensing.AsplControlCriterionCombination) used to combine the results of multiple control criteria.
-  "begin-control-settings" :            # Settings to appy if the control criteria combination evaluates to true.
-  [
-    {
-      "property-type" : "",  # The fully-qualified name of a [probe](https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Probes.Probe.html) type containing the property to update.
-      "property-name" : "",  # The name of a property within the preceding type.
-      "target-type" : "",    # The fully-qualified name of a [probe](https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Probes.Probe.html) type to apply setting to.
-      "value" : ""           # The new value for the property within each probe of the target type.
-    },
-    ...
-  ],
-  "end-control-settings" :   # Settings to take when control ends.
-  [
-    {
-      "property-type" : "",  # The fully-qualified name of a [probe](https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Probes.Probe.html) type containing the property to update.
-      "property-name" : "",  # The name of a property within the preceding type.
-      "target-type" : "",    # The fully-qualified name of a [probe](https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Probes.Probe.html) type to apply setting to.
-      "value" : ""           # The new value for the property within each probe of the target type.
-    },
-    ...
-  ]
-}
-</pre>
+control criteria as well as the control actions depicted in the above state diagram. The 
+[example ASPL](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared/AdaptiveSensing/example-aspl-policy.json)
+policy shows the format.
 
 There are pros and cons of software- and ASPL-defined sensing agents:
 
