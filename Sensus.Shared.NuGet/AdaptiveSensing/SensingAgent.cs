@@ -238,12 +238,9 @@ namespace Sensus.AdaptiveSensing
                 UpdateObservedData(_typeData);
             }
 
-            // initiate opportunistic control if criterion is met for the datum type that was just observed. we 
-            // don't want to check the criterion for each data type, as it causes newly observed data that do not
-            // meet the control criterion to trigger control attempts for previously observed data that do meet
-            // the control criterion.
+            // check control criterion and begin control if needed
             ControlCompletionCheck controlCompletionCheck = null;
-            if (ObservedDataMeetControlCriterion(datum))
+            if (ObservedDataMeetControlCriterion())
             {
                 try
                 {
@@ -269,12 +266,11 @@ namespace Sensus.AdaptiveSensing
         /// Checks whether the observed data meet a control criterion.
         /// </summary>
         /// <returns><c>true</c>, if data meet control criterion, <c>false</c> otherwise.</returns>
-        /// <param name="opportunisticDatum">The <see cref="IDatum"/> whose observation triggered the current call, or <c>null</c> if the current call was triggered by a periodic call.</param>
-        private bool ObservedDataMeetControlCriterion(IDatum opportunisticDatum = null)
+        private bool ObservedDataMeetControlCriterion()
         {
             lock (_typeData)
             {
-                return ObservedDataMeetControlCriterion(_typeData, opportunisticDatum);
+                return ObservedDataMeetControlCriterion(_typeData);
             }
         }
 
@@ -283,8 +279,7 @@ namespace Sensus.AdaptiveSensing
         /// </summary>
         /// <returns><c>true</c>, if data meet control criterion, <c>false</c> otherwise.</returns>
         /// <param name="typeData">All data by type. This collection will be locked prior to calling the concrete implementation.</param>
-        /// <param name="opportunisticDatum">The <see cref="IDatum"/> whose opportunistic observation triggered the current call, or <c>null</c> if the current call was triggered by active observation.</param>
-        protected abstract bool ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>> typeData, IDatum opportunisticDatum);
+        protected abstract bool ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>> typeData);
 
         /// <summary>
         /// Gets observed <see cref="IDatum"/> objects for a particular type.

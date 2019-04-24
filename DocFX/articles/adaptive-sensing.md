@@ -142,27 +142,32 @@ shows the elements of an ASPL policy.
     {
       "datum-type" : "",       # The fully-qualified name of a [datum](https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Datum.html) type to observe.
       "datum-property" : "",   # The name a property within the datum type from which to gather values.
-      "aggregation" : ""       # [Aggregation operator](xref:Sensus.AdaptiveSensing.AsplControlCriterionAggregation) for observed property values.
+      "aggregation" : "",      # [Aggregation operator](xref:Sensus.AdaptiveSensing.AsplControlCriterionAggregation) for observed property values.
       "relation" : "",         # [Relation operator](xref:Sensus.AdaptiveSensing.AsplControlCriterionRelation) used to compare the aggregate property value with the target value.
       "target" : ""            # A numeric value (for quantitative properties) or regular expression (for qualitative properties) that is compared with the aggregate property value via the relation operator.
     },
     ...
   ],
   "control-criteria-combination" : "",  # [Combination operator](xref:Sensus.AdaptiveSensing.AsplControlCriterionCombination) used to combine the results of multiple control criteria.
-  "begin-control-actions" :             # Actions to take if the control criteria combination evaluates to true.
+  "begin-control-settings" :            # Settings to appy if the control criteria combination evaluates to true.
   [
     {
-      "probe-property" : "",  # The fully-qualified name for a [probe property](https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Probes.Probe.html) to update.
-      "value" : ""            # The new value for the probe property.
+      "property-type" : "",  # The fully-qualified name of a [probe](https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Probes.Probe.html) type containing the property to update.
+      "property-name" : "",  # The name of a property within the preceding type.
+      "target-type" : "",    # The fully-qualified name of a [probe](https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Probes.Probe.html) type to apply setting to.
+      "value" : ""           # The new value for the property within each probe of the target type.
     },
     ...
   ],
-  "end-control-actions" :  # Actions to take when control ends.
+  "end-control-settings" :   # Settings to take when control ends.
   [
     {
-      "probe-property" : "",  # The fully-qualified name for a [probe property](https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Probes.Probe.html) to update.
-      "value" : ""            # The new value for the probe property.
-    }
+      "property-type" : "",  # The fully-qualified name of a [probe](https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Probes.Probe.html) type containing the property to update.
+      "property-name" : "",  # The name of a property within the preceding type.
+      "target-type" : "",    # The fully-qualified name of a [probe](https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Probes.Probe.html) type to apply setting to.
+      "value" : ""           # The new value for the property within each probe of the target type.
+    },
+    ...
   ]
 }
 </pre>

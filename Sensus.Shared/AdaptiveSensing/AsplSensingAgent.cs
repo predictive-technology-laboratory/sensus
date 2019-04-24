@@ -17,17 +17,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Sensus.AdaptiveSensing
 {
     public class AsplSensingAgent : SensingAgent
     {
-        private List<AsplControlCriterion> _controlCriteria;
-        private AsplControlCriteriaCombination _controlCriteriaCombination;
-        private List<AsplControlAction> _beginControlActions;
-        private List<AsplControlAction> _endControlActions;
+        private List<AsplStatement> _statements;
+        private AsplStatement _satisfiedStatement;
 
         public AsplSensingAgent()
             : base("ASPL", "ASPL-Defined Agent", TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(5))
@@ -38,10 +35,7 @@ namespace Sensus.AdaptiveSensing
         {
             await base.SetPolicyAsync(policy);
 
-            _controlCriteria = (policy["control-criteria"] as JArray).Select(controlCriterion => controlCriterion.ToObject<AsplControlCriterion>()).ToList();
-            _controlCriteriaCombination = policy["control-criteria-combination"].ToObject<AsplControlCriteriaCombination>();
-            _beginControlActions = (policy["begin-control-actions"] as JArray).Select(controlAction => controlAction.ToObject<AsplControlAction>()).ToList();
-            _endControlActions = (policy["end-control-actions"] as JArray).Select(controlAction => controlAction.ToObject<AsplControlAction>()).ToList();
+            _statements = (policy["statements"] as JArray).Select(statement => statement.ToObject<AsplStatement>()).ToList();
         }
 
         protected override void UpdateObservedData(Dictionary<Type, List<IDatum>> typeData)
@@ -58,45 +52,38 @@ namespace Sensus.AdaptiveSensing
             }
         }
 
-        protected override bool ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>> typeData, IDatum opportunisticDatum)
+        protected override bool ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>> typeData)
         {
-            bool criterionMet = false;
-
-            if (opportunisticDatum == null)
+            foreach (AsplStatement statement in _statements)
             {
-                List<bool> controlCriteriaSatisfied = new List<bool>();
-
-                foreach (AsplControlCriterion controlCriterion in _controlCriteria)
+                if (statement.Criterion.SatisfiedBy(typeData))
                 {
-                    foreach (Type type in typeData.Keys)
-                    {
-                        controlCriteriaSatisfied.Add(controlCriterion.SatisfiedBy(type, typeData[type]));
-                    }
+                    _satisfiedStatement = statement;
+                    break;
                 }
-
-                criterionMet = _controlCriteriaCombination == AsplControlCriteriaCombination.Conjunction ? controlCriteriaSatisfied.All(satisfied => satisfied) : controlCriteriaSatisfied.Any();
-            }
-            else
-            {
-
             }
 
-            return criterionMet;
+            return _satisfiedStatement != null;
         }
 
-        protected override Task OnActiveControlAsync(CancellationToken cancellationToken)
+        protected override async Task OnOpportunisticControlAsync(CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            await OnControlAsync(cancellationToken);
         }
 
-        protected override Task OnEndingControlAsync(CancellationToken cancellationToken)
+        protected override async Task OnActiveControlAsync(CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            await OnControlAsync(cancellationToken);
         }
 
-        protected override Task OnOpportunisticControlAsync(CancellationToken cancellationToken)
+        private async Task OnControlAsync(CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            await (Protocol as Protocol).ApplySettingsAsync(_satisfiedStatement.BeginControlSettings, cancellationToken);
+        }
+
+        protected override async Task OnEndingControlAsync(CancellationToken cancellationToken)
+        {
+            await (Protocol as Protocol).ApplySettingsAsync(_satisfiedStatement.EndControlSettings, cancellationToken);
         }
     }
 }

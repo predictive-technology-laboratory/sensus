@@ -12,18 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+
 namespace Sensus.AdaptiveSensing
 {
-    public enum AsplControlCriterionAggregation
+    public class AsplStatement
     {
-        Minimum,
+        [JsonProperty("description")]
+        public string Description { get; set; }
 
-        Maximum,
+        [JsonProperty("criterion")]
+        public AsplCriterion Criterion { get; set; }
 
-        Average,
+        [JsonProperty("begin-control-settings")]
+        public List<ProtocolSetting> BeginControlSettings { get; set; }
 
-        Mode,
-
-        Newest
+        [JsonProperty("end-control-settings")]
+        public List<ProtocolSetting> EndControlSettings { get; set; }
     }
 }

@@ -70,27 +70,9 @@ namespace ExampleSensingAgent
             }
         }
 
-        protected override bool ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>> typeData, IDatum opportunisticDatum)
+        protected override bool ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>> typeData)
         {
-            bool criterionMet = false;
-
-            // if the current call was not triggered by an opportunistic observation, then check all control criteria.
-            if (opportunisticDatum == null)
-            {
-                return IsNearSurface() || AverageLinearAccelerationMagnitudeExceedsThreshold(_averageLinearMagnitudeThreshold);
-            }
-            // if the current call was triggered by an opportunistic proximity observation, then check that criterion.
-            else if (opportunisticDatum.GetType().ImplementsInterface<IProximityDatum>())
-            {
-                return IsNearSurface();
-            }
-            // if the current call was triggered by an opportunistic acceleration observation, then check that criterion.
-            else if (opportunisticDatum.GetType().ImplementsInterface<IAccelerometerDatum>())
-            {
-                return AverageLinearAccelerationMagnitudeExceedsThreshold(_averageLinearMagnitudeThreshold);
-            }
-
-            return criterionMet;
+            return IsNearSurface() || AverageLinearAccelerationMagnitudeExceedsThreshold(_averageLinearMagnitudeThreshold);
         }
 
         protected override async Task OnOpportunisticControlAsync(CancellationToken cancellationToken)

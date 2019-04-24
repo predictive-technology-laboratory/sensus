@@ -90,6 +90,12 @@ if [ $? -ne 0 ]; then
     exit $?
 fi
 
+# wait a while for the instance's public IP address to come up
+echo "Waiting for the public IP address to come up..."
+sleep 30
+echo "Hit any key to continue..."
+read
+
 # upload IAM credentials to EC2 instance
 echo "Uploading IAM credentials to EC2 instance..."
 cp credentials tmp

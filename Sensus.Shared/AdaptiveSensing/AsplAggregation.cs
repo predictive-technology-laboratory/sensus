@@ -14,10 +14,34 @@
 
 namespace Sensus.AdaptiveSensing
 {
-    public enum AsplControlCriteriaCombination
+    /// <summary>
+    /// Different ways of aggregating observed <see cref="IDatum"/> property values into a single value for criterion checking.
+    /// </summary>
+    public enum AsplAggregation
     {
-        Conjunction,
+        /// <summary>
+        /// The minimum.
+        /// </summary>
+        Minimum,
 
-        Disjunction
+        /// <summary>
+        /// The maximum.
+        /// </summary>
+        Maximum,
+
+        /// <summary>
+        /// The average.
+        /// </summary>
+        Average,
+
+        /// <summary>
+        /// The mode.
+        /// </summary>
+        Mode,
+
+        /// <summary>
+        /// The newest.
+        /// </summary>
+        Newest
     }
 }

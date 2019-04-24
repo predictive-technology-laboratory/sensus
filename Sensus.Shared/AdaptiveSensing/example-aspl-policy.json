@@ -1,0 +1,109 @@
+{
+  "id": "ASPL Acceleration",
+  "description": "Responds to movement and proximity to increase acceleration sampling",
+  "action-interval": "00:00:10",
+  "observation-duration": "00:00:05",
+  "control-completion-check-interval": "00:00:20",
+  "statements": [
+    {
+      "description" : "Keeps device awake and increases sampling rate if average acceleration exceeds 1.2 in each direction.",
+      "criterion": {
+        "logic": "Conjunction",
+        "elements": [
+          {
+            "property-type": "Sensus.Probes.Movement.AccelerometerDatum",
+            "property-name": "X",
+            "aggregation": "Average",
+            "relation": "GreaterThan",
+            "target": 1.2
+          },
+          {
+            "property-type": "Sensus.Probes.Movement.AccelerometerDatum",
+            "property-name": "Y",
+            "aggregation": "Average",
+            "relation": "GreaterThan",
+            "target": 1.2
+          },
+          {
+            "property-type": "Sensus.Probes.Movement.AccelerometerDatum",
+            "property-name": "Z",
+            "aggregation": "Average",
+            "relation": "GreaterThan",
+            "target": 1.2
+          }
+        ]
+      },
+      "begin-control-settings": [
+        {
+          "property-type": "Sensus.Probes.ListeningProbe",
+          "property-name": "KeepDeviceAwake",
+          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+          "value": true
+        },
+        {
+          "property-type": "Sensus.Probes.ListeningProbe",
+          "property-name": "MaxDataStoresPerSecond",
+          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+          "value": 50
+        }
+      ],
+      "end-control-settings": [
+        {
+          "property-type": "Sensus.Probes.ListeningProbe",
+          "property-name": "KeepDeviceAwake",
+          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+          "value": false
+        },
+        {
+          "property-type": "Sensus.Probes.ListeningProbe",
+          "property-name": "MaxDataStoresPerSecond",
+          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+          "value": 5
+        }
+      ]
+    },
+    {
+      "description": "Keeps device awake and increases sampling rate if device is near a surface.",
+      "criterion": {
+        "logic": "Conjunction",
+        "elements": [
+          {
+            "property-type": "Sensus.Probes.Location.ProximityDatum",
+            "property-name": "Distance",
+            "aggregation": "Newest",
+            "relation": "EqualTo",
+            "target": 0
+          }
+        ]
+      },
+      "begin-control-settings": [
+        {
+          "property-type": "Sensus.Probes.ListeningProbe",
+          "property-name": "KeepDeviceAwake",
+          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+          "value": true
+        },
+        {
+          "property-type": "Sensus.Probes.ListeningProbe",
+          "property-name": "MaxDataStoresPerSecond",
+          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+          "value": 50
+        }
+      ],
+      "end-control-settings": [
+        {
+          "property-type": "Sensus.Probes.ListeningProbe",
+          "property-name": "KeepDeviceAwake",
+          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+          "value": false
+        },
+        {
+          "property-type": "Sensus.Probes.ListeningProbe",
+          "property-name": "MaxDataStoresPerSecond",
+          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+          "value": 5
+        }
+      ]
+    }
+  ]
+}

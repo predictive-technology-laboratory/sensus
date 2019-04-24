@@ -1768,6 +1768,155 @@ namespace Sensus
         }
 
         /// <summary>
+        /// Applies a list of <see cref="ProtocolSetting"/> to the current <see cref="Protocol"/> and its <see cref="Probe"/>s.
+        /// </summary>
+        /// <returns>True if either the current <see cref="Protocol"/> or any of its <see cref="Probe"/>s were restarted as a result of applying the passed <see cref="ProtocolSetting"/>s.</returns>
+        /// <param name="settings">Settings.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public async Task<bool> ApplySettingsAsync(List<ProtocolSetting> settings, CancellationToken cancellationToken)
+        {
+            bool restartProtocol = false;
+            List<Probe> probesToRestart = new List<Probe>();
+
+            foreach (ProtocolSetting setting in settings)
+            {
+                // catch any exceptions so that we process all settings
+                try
+                {
+                    // get property type
+                    Type propertyType;
+                    try
+                    {
+                        propertyType = Assembly.GetExecutingAssembly().GetType(setting.PropertyTypeName, true);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("Exception while getting property type (" + setting.PropertyTypeName + "):  " + ex.Message, ex);
+                    }
+
+                    // get property
+                    PropertyInfo property = propertyType.GetProperty(setting.PropertyName);
+
+                    // get target type
+                    Type targetType;
+                    try
+                    {
+                        targetType = Assembly.GetExecutingAssembly().GetType(setting.TargetTypeName, true);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("Exception while getting target type (" + setting.TargetTypeName + "):  " + ex.Message, ex);
+                    }
+
+                    // if the value is JSON, then assume it is a reference type.
+                    object newValueObject = null;
+                    if (setting.Value.IsValidJsonObject())
+                    {
+                        newValueObject = JsonConvert.DeserializeObject(setting.Value);
+                    }
+                    // otherwise, assume it is a value type.
+                    else
+                    {
+                        // watch out for nullable value types when converting the string to its value type
+                        Type baseType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+                        newValueObject = Convert.ChangeType(setting.Value, baseType);
+                    }
+
+                    // update the protocol and request restart
+                    if (targetType == typeof(Protocol))
+                    {
+                        property.SetValue(this, newValueObject);
+
+                        // restart the protocol if it is starting, running, or paused (other than stopping or stopped)
+                        if (_state == ProtocolState.Starting ||
+                            _state == ProtocolState.Running ||
+                            _state == ProtocolState.Paused)
+                        {
+                            restartProtocol = true;
+                        }
+                    }
+                    else if (targetType.GetAncestorTypes(false).Last() == typeof(Probe))
+                    {
+                        // update each probe derived from the target type
+                        foreach (Probe probe in _probes)
+                        {
+                            if (probe.GetType().GetAncestorTypes(false).Any(ancestorType => ancestorType == targetType))
+                            {
+                                // don't set the new value if it matches the current value
+                                object currentValueObject = property.GetValue(probe);
+                                if (newValueObject.Equals(currentValueObject))
+                                {
+                                    SensusServiceHelper.Get().Logger.Log("Current and new values match. Not setting property on probe.", LoggingLevel.Normal, GetType());
+                                }
+                                else
+                                {
+                                    property.SetValue(probe, newValueObject);
+
+                                    if (probe.Running || probe.Enabled)
+                                    {
+                                        if (!probesToRestart.Contains(probe))
+                                        {
+                                            probesToRestart.Add(probe);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Unrecognized target type:  " + targetType.FullName);
+                    }
+
+                    // record the setting as a datum in the data store, so that we can analyze effects of updates retrospectively.
+                    _localDataStore.WriteDatum(new ProtocolSettingUpdateDatum(DateTimeOffset.UtcNow, setting.PropertyTypeName, setting.PropertyName, setting.TargetTypeName, setting.Value), cancellationToken);
+
+                    SensusServiceHelper.Get().Logger.Log("Updated protocol:  " + setting.PropertyTypeName + "." + setting.PropertyName + " for each " + setting.TargetTypeName + " = " + setting.Value, LoggingLevel.Normal, GetType());
+                }
+                catch (Exception settingException)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while applying setting:  " + settingException.Message, LoggingLevel.Normal, GetType());
+                }
+            }
+
+            bool restarted = false;
+
+            // restart the protocol if needed. this will have the side-effect of restarting all probes and saving the app state.
+            if (restartProtocol)
+            {
+                await StopAsync();
+                await StartAsync(CancellationToken.None);  // restarting the protocol takes significant time and will almost certainly overrun the ios background time limits. don't pass the cancellation token.
+                restarted = true;
+            }
+            else
+            {
+                // restart individual probes to take on updated settings
+                SensusServiceHelper.Get().Logger.Log("Restarting " + probesToRestart.Count + " updated probe(s) following setting application.", LoggingLevel.Normal, GetType());
+                bool probeRestarted = false;
+                foreach (Probe probeToRestart in probesToRestart)
+                {
+                    try
+                    {
+                        await probeToRestart.RestartAsync();
+                        probeRestarted = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Exception while restarting probe following setting application:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                }
+
+                if (probeRestarted)
+                {
+                    await SensusServiceHelper.Get().SaveAsync();
+                    restarted = true;
+                }
+            }
+
+            return restarted;
+        }
+
+        /// <summary>
         /// Resets the current <see cref="Protocol"/> such that properties and members do not contain state information specific to 
         /// a particular instantiation of the <see cref="Protocol"/>.
         /// </summary>

@@ -18,94 +18,98 @@ using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Sensus.Exceptions;
 
 namespace Sensus.AdaptiveSensing
 {
-    public class AsplControlCriterion
+    public class AsplElement
     {
-        [JsonProperty("datum-type")]
-        public Type DatumType { get; set; }
+        [JsonProperty("property-type")]
+        public string PropertyTypeName { get; set; }
 
-        [JsonProperty("datum-property")]
-        public string DatumPropertyName { get; set; }
+        [JsonProperty("property-name")]
+        public string PropertyName { get; set; }
 
         [JsonProperty("aggregation")]
         [JsonConverter(typeof(StringEnumConverter))]
-        public AsplControlCriterionAggregation Aggregation { get; set; }
+        public AsplAggregation Aggregation { get; set; }
 
         [JsonProperty("relation")]
         [JsonConverter(typeof(StringEnumConverter))]
-        public AsplControlCriterionRelation Relation { get; set; }
+        public AsplRelation Relation { get; set; }
 
         [JsonProperty("target")]
         public object Target { get; set; }
 
-        public bool SatisfiedBy(Type type, List<IDatum> data)
+        public bool SatisfiedBy(List<IDatum> data)
         {
             bool satisfied = false;
 
-            if (DatumType == type && data.Count > 0)
+            if (data.Count > 0)
             {
-                PropertyInfo property = DatumType.GetProperty(DatumPropertyName);
-
-                List<object> values = new List<object>();
+                // get property values to aggregate
+                PropertyInfo property = data[0].GetType().GetProperty(PropertyName);
+                List<object> propertyValues = new List<object>();
                 foreach (IDatum datum in data)
                 {
-                    values.Add(property.GetValue(datum));
+                    propertyValues.Add(property.GetValue(datum));
                 }
 
+                // aggregate values
                 object aggregateValue;
-
-                if (Aggregation == AsplControlCriterionAggregation.Average)
+                if (Aggregation == AsplAggregation.Average)
                 {
-                    aggregateValue = values.Select(value => Convert.ToDouble(value)).Average();
+                    aggregateValue = propertyValues.Select(value => Convert.ToDouble(value)).Average();
                 }
-                else if (Aggregation == AsplControlCriterionAggregation.Maximum)
+                else if (Aggregation == AsplAggregation.Maximum)
                 {
-                    aggregateValue = values.Select(value => Convert.ToDouble(value)).Max();
+                    aggregateValue = propertyValues.Select(value => Convert.ToDouble(value)).Max();
                 }
-                else if (Aggregation == AsplControlCriterionAggregation.Minimum)
+                else if (Aggregation == AsplAggregation.Minimum)
                 {
-                    aggregateValue = values.Select(value => Convert.ToDouble(value)).Min();
+                    aggregateValue = propertyValues.Select(value => Convert.ToDouble(value)).Min();
                 }
-                else if (Aggregation == AsplControlCriterionAggregation.Mode)
+                else if (Aggregation == AsplAggregation.Mode)
                 {
-                    aggregateValue = values.GroupBy(v => v)
-                                           .OrderByDescending(g => g.Count())
-                                           .First()
-                                           .Key;
+                    aggregateValue = propertyValues.GroupBy(v => v)
+                                                   .OrderByDescending(g => g.Count())
+                                                   .First()
+                                                   .Key;
                 }
-                else if (Aggregation == AsplControlCriterionAggregation.Newest)
+                else if (Aggregation == AsplAggregation.Newest)
                 {
-                    aggregateValue = values.Last();
+                    aggregateValue = propertyValues.Last();
                 }
                 else
                 {
+                    SensusException.Report("Unrecognized aggregation:  " + Aggregation);
                     throw new NotImplementedException();
                 }
 
-                if (Relation == AsplControlCriterionRelation.EqualTo)
+                // check aggregated value against target per relation
+                if (Relation == AsplRelation.EqualTo)
                 {
                     satisfied = aggregateValue == Target;
                 }
-                else if (Relation == AsplControlCriterionRelation.GreaterThan)
+                else if (Relation == AsplRelation.GreaterThan)
                 {
                     satisfied = Convert.ToDouble(aggregateValue) > Convert.ToDouble(Target);
                 }
-                else if (Relation == AsplControlCriterionRelation.GreaterThanOrEqualTo)
+                else if (Relation == AsplRelation.GreaterThanOrEqualTo)
                 {
                     satisfied = Convert.ToDouble(aggregateValue) >= Convert.ToDouble(Target);
                 }
-                else if (Relation == AsplControlCriterionRelation.LessThan)
+                else if (Relation == AsplRelation.LessThan)
                 {
                     satisfied = Convert.ToDouble(aggregateValue) < Convert.ToDouble(Target);
                 }
-                else if (Relation == AsplControlCriterionRelation.LessThanOrEqualTo)
+                else if (Relation == AsplRelation.LessThanOrEqualTo)
                 {
                     satisfied = Convert.ToDouble(aggregateValue) <= Convert.ToDouble(Target);
                 }
                 else
                 {
+                    SensusException.Report("Unrecognized relation:  " + Aggregation);
                     throw new NotImplementedException();
                 }
             }

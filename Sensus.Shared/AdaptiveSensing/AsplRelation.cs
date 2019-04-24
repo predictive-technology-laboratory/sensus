@@ -14,16 +14,34 @@
 
 namespace Sensus.AdaptiveSensing
 {
-    public enum AsplControlCriterionRelation
+    /// <summary>
+    /// Different ways of comparing the aggregated criterion value (see <see cref="AsplAggregation"/>) with a target value to determine whether a <see cref="AsplElement"/> was satisfied.
+    /// </summary>
+    public enum AsplRelation
     {
+        /// <summary>
+        /// Less than the target.
+        /// </summary>
         LessThan,
 
+        /// <summary>
+        /// Less than or equal to the target.
+        /// </summary>
         LessThanOrEqualTo,
 
+        /// <summary>
+        /// Equal to the target.
+        /// </summary>
         EqualTo,
 
+        /// <summary>
+        /// Greater than or equal to the target.
+        /// </summary>
         GreaterThanOrEqualTo,
 
+        /// <summary>
+        /// Greater than the target.
+        /// </summary>
         GreaterThan
     }
 }

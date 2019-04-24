@@ -14,12 +14,18 @@
 
 using Newtonsoft.Json;
 
-namespace Sensus.AdaptiveSensing
+namespace Sensus
 {
-    public class AsplControlAction
+    public class ProtocolSetting
     {
-        [JsonProperty("probe-property")]
-        public string ProbeProperty { get; set; }
+        [JsonProperty("property-type")]
+        public string PropertyTypeName { get; set; }
+
+        [JsonProperty("property-name")]
+        public string PropertyName { get; set; }
+
+        [JsonProperty("target-type")]
+        public string TargetTypeName { get; set; }
 
         [JsonProperty("value")]
         public string Value { get; set; }

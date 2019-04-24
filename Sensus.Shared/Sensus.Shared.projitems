@@ -263,7 +263,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScriptTriggerTime.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteIndoorLocationAccuracy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\PendingSurveyNotificationMode.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ProtocolUpdateDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotificationUpdate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotificationUpdateType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotification.cs" />
@@ -276,12 +275,15 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TimeSpanExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\UriExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\WebRequestExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)AdaptiveSensing\AsplControlAction.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)AdaptiveSensing\AsplControlCriterion.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AdaptiveSensing\AsplElement.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AdaptiveSensing\AsplSensingAgent.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)AdaptiveSensing\AsplControlCriterionAggregation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)AdaptiveSensing\AsplControlCriterionRelation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)AdaptiveSensing\AsplControlCriteriaCombination.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AdaptiveSensing\AsplAggregation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AdaptiveSensing\AsplRelation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AdaptiveSensing\AsplLogic.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ProtocolSettingUpdateDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ProtocolSetting.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AdaptiveSensing\AsplCriterion.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AdaptiveSensing\AsplStatement.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />
@@ -290,5 +292,8 @@
     <Folder Include="$(MSBuildThisFileDirectory)Notifications\" />
     <Folder Include="$(MSBuildThisFileDirectory)Authentication\" />
     <Folder Include="$(MSBuildThisFileDirectory)Extensions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)AdaptiveSensing\example-aspl-policy.json" />
   </ItemGroup>
 </Project>

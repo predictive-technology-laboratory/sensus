@@ -17,45 +17,45 @@ using System;
 namespace Sensus
 {
     /// <summary>
-    /// Records updates applied to the <see cref="Protocol"/> via [push notification](xref:remote_updates).
+    /// Records updates applied to a <see cref="Protocol"/> (e.g., via [push notification](xref:remote_updates) or [adaptive sensing](xref:adaptive_sensing)).
     /// </summary>
-    public class ProtocolUpdateDatum : Datum
+    public class ProtocolSettingUpdateDatum : Datum
     {
         /// <summary>
-        /// The type defining the property named <see cref="PropertyName"/>.
+        /// The type of <see cref="Probes.Probe"/> that was updated.
         /// </summary>
         /// <value>The type of the property.</value>
-        public string PropertyType { get; set; }
+        public string ProbeType { get; set; }
 
         /// <summary>
-        /// The name of the property, defined by <see cref="PropertyType"/>, whose value was set to <see cref="Value"/>.
+        /// The name of the property, whose value was set to <see cref="Value"/>.
         /// </summary>
         /// <value>The name of the property.</value>
         public string PropertyName { get; set; }
 
         /// <summary>
-        /// The type with a property named <see cref="PropertyName"/>, whose instances were set to <see cref="Value"/>.
-        /// </summary>
-        /// <value>The type of the target.</value>
-        public string TargetType { get; set; }
-
-        /// <summary>
-        /// The value that was set on instances of <see cref="TargetType"/>.
+        /// The value that was set.
         /// </summary>
         /// <value>The value.</value>
         public string Value { get; set; }
+
+        /// <summary>
+        /// Gets or sets the new value string.
+        /// </summary>
+        /// <value>The new value string.</value>
+        public string NewValueString { get; set; }
 
         public override string DisplayDetail => Value;
 
         public override object StringPlaceholderValue => Value;
 
-        public ProtocolUpdateDatum(DateTimeOffset timestamp, string propertyType, string propertyName, string targetType, string value)
+        public ProtocolSettingUpdateDatum(DateTimeOffset timestamp, string probeType, string propertyName, string value, string newValueString)
             : base(timestamp)
         {
-            PropertyType = propertyType;
+            ProbeType = probeType;
             PropertyName = propertyName;
-            TargetType = targetType;
             Value = value;
+            NewValueString = newValueString;
         }
     }
 }
