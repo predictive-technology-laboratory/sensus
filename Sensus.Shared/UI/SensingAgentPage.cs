@@ -14,6 +14,7 @@
 
 using System;
 using System.Globalization;
+using Sensus.AdaptiveSensing;
 using Xamarin.Forms;
 
 namespace Sensus.UI

@@ -276,6 +276,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TimeSpanExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\UriExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\WebRequestExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AdaptiveSensing\AsplControlAction.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AdaptiveSensing\AsplControlCriterion.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AdaptiveSensing\AsplSensingAgent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AdaptiveSensing\AsplControlCriterionAggregation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AdaptiveSensing\AsplControlCriterionRelation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AdaptiveSensing\AsplControlCriteriaCombination.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />

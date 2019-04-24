@@ -51,7 +51,8 @@ using Sensus.Exceptions;
 using Sensus.Extensions;
 using Plugin.Geolocator.Abstractions;
 using Newtonsoft.Json.Linq;
-using static Sensus.SensingAgent;
+using static Sensus.AdaptiveSensing.SensingAgent;
+using Sensus.AdaptiveSensing;
 
 #if __IOS__
 using HealthKit;

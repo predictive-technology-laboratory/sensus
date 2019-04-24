@@ -11,13 +11,17 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-using System;
+
+using Newtonsoft.Json;
+
 namespace Sensus.AdaptiveSensing
 {
     public class AsplControlAction
     {
-        public AsplControlAction()
-        {
-        }
+        [JsonProperty("probe-property")]
+        public string ProbeProperty { get; set; }
+
+        [JsonProperty("value")]
+        public string Value { get; set; }
     }
 }

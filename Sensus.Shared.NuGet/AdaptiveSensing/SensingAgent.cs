@@ -204,9 +204,11 @@ namespace Sensus.AdaptiveSensing
         /// <param name="policy">Policy.</param>
         public virtual Task SetPolicyAsync(JObject policy)
         {
-            ActionInterval = TimeSpan.Parse(policy.GetValue("action-interval").ToString());
-            ObservationDuration = TimeSpan.Parse(policy.GetValue("observation-duration").ToString());
-            ControlCompletionCheckInterval = TimeSpan.Parse(policy.GetValue("control-completion-check-interval").ToString());
+            Id = policy["id"].ToString();
+            Description = policy["description"].ToString();
+            ActionInterval = TimeSpan.Parse(policy["action-interval"].ToString());
+            ObservationDuration = TimeSpan.Parse(policy["observation-duration"].ToString());
+            ControlCompletionCheckInterval = TimeSpan.Parse(policy["control-completion-check-interval"].ToString());
 
             return Task.CompletedTask;
         }

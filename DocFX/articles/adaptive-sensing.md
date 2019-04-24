@@ -132,20 +132,23 @@ shows the elements of an ASPL policy.
 
 <pre style="overflow-x:scroll;">
 {
+  "id" : "",                                 # Identifier for ASPL-defined agent.
+  "description" : "",                        # Description for ASPL-defined agent.
   "action-interval" : "",                    # Hours, minutes, and seconds (00:00:00) for "action interval" (see above).
   "observation-duration" : "",               # Hours, minutes, and seconds (00:00:00) for "active observation" (see above).
   "control-completion-check-interval" : "",  # Hours, minutes, and seconds (00:00:00) for "control completion check interval" (see above).
   "control-criteria" :                       # 1 or more control criteria expressions.
   [
     {
-      "datum-property" : "",   # The fully-qualified name for a [datum property](https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Datum.html) to observe.
-      "aggregation", ""        # Aggregation operator for observed property values. Valid values are AVG, MIN, MAX, or SLOPE (for quantitative properties) and MODE, NEWEST, or ANY (for qualitative properties).
-      "relation" : "",         # Relation operator (<= < == > >=) used to compare the aggregate property value with the target value. Quantitative properties admit all operators, whereas qualitative properties only admit the == operator.
+      "datum-type" : "",       # The fully-qualified name of a [datum](https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Datum.html) type to observe.
+      "datum-property" : "",   # The name a property within the datum type from which to gather values.
+      "aggregation" : ""       # [Aggregation operator](xref:Sensus.AdaptiveSensing.AsplControlCriterionAggregation) for observed property values.
+      "relation" : "",         # [Relation operator](xref:Sensus.AdaptiveSensing.AsplControlCriterionRelation) used to compare the aggregate property value with the target value.
       "target" : ""            # A numeric value (for quantitative properties) or regular expression (for qualitative properties) that is compared with the aggregate property value via the relation operator.
     },
     ...
   ],
-  "control-criteria-combination" : "",  # Combination operator for the control criteria. Valid values are "conjunction" and "disjunction".
+  "control-criteria-combination" : "",  # [Combination operator](xref:Sensus.AdaptiveSensing.AsplControlCriterionCombination) used to combine the results of multiple control criteria.
   "begin-control-actions" :             # Actions to take if the control criteria combination evaluates to true.
   [
     {

@@ -31,6 +31,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net;
+using Sensus.AdaptiveSensing;
 
 namespace Sensus.UI
 {

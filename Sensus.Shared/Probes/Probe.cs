@@ -28,7 +28,7 @@ using System.ComponentModel;
 using Sensus.Extensions;
 using Sensus.Exceptions;
 using Sensus.Probes.User.Scripts;
-using static Sensus.SensingAgent;
+using static Sensus.AdaptiveSensing.SensingAgent;
 
 namespace Sensus.Probes
 {

@@ -22,6 +22,7 @@ using Sensus.Probes.Location;
 using Sensus.Probes;
 using System.Threading;
 using Sensus.Extensions;
+using Sensus.AdaptiveSensing;
 
 namespace ExampleSensingAgent
 {
@@ -51,8 +52,8 @@ namespace ExampleSensingAgent
         {
             await base.SetPolicyAsync(policy);
 
-            _averageLinearMagnitudeThreshold = double.Parse(policy.GetValue("alm-threshold").ToString());
-            _idleAccelerometerMaxDataStoresPerSecond = double.Parse(policy.GetValue("control-acc-rate").ToString());
+            _averageLinearMagnitudeThreshold = double.Parse(policy["alm-threshold"].ToString());
+            _idleAccelerometerMaxDataStoresPerSecond = double.Parse(policy["control-acc-rate"].ToString());
         }
 
         protected override void UpdateObservedData(Dictionary<Type, List<IDatum>> typeData)
