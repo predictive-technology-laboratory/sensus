@@ -89,7 +89,7 @@ namespace Sensus.AdaptiveSensing
                 // check aggregated value against target per relation
                 if (Relation == AsplRelation.EqualTo)
                 {
-                    satisfied = aggregateValue == Target;
+                    satisfied = aggregateValue.Equals(Target);
                 }
                 else if (Relation == AsplRelation.GreaterThan)
                 {

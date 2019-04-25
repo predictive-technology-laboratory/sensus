@@ -35,6 +35,8 @@ namespace Sensus.AdaptiveSensing
             {
                 bool elementSatisfied = false;
 
+                // each element is specific to a particular type of data, as each element will access a particular 
+                // property of the data type. only check the element using data for its specified type.
                 foreach (Type type in typeData.Keys.Where(type => type.FullName == element.PropertyTypeName))
                 {
                     if (element.SatisfiedBy(typeData[type]))

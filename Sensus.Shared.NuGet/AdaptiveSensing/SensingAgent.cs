@@ -238,13 +238,26 @@ namespace Sensus.AdaptiveSensing
                 UpdateObservedData(_typeData);
             }
 
-            // check control criterion and begin control if needed
-            ControlCompletionCheck controlCompletionCheck = null;
-            if (ObservedDataMeetControlCriterion())
+            // check control criterion and begin opportunistic control if warranted. note that we
+            // do not in principal need to check the state before doing this. if we disregard the
+            // state and the observed data meet the control criterion, then the state machine will
+            // engage to restrict transition to opportunistic control as appropriate. however, 
+            // letting allowing this sequence of events to unfold, only to arrive at a prohibited
+            // transition to opportunistic control is particularly costly given the context of the
+            // current method. the current method will be called upon arrival of each stored datum,
+            // the rate of which will be substantial (e.g., for accelerometry). control criterion
+            // checking can be costly if large amounts of data are processed. thus, it makes sense
+            // to do a bit of preemptive state checking and only proceed with criterion evaluation
+            // when the outcome might possibly be useful. there is certainly a race condition here,
+            // in that the current state might be idle causing us to proceed, but by the time we
+            // attempt to transition to opportunistic control another call might have already 
+            // transitioned the state. this is fine.
+            ControlCompletionCheck opportunisticControlCompletionCheck = null;
+            if (State == SensingAgentState.Idle && ObservedDataMeetControlCriterion())
             {
                 try
                 {
-                    controlCompletionCheck = await BeginControlAsync(SensingAgentState.OpportunisticControl, cancellationToken);
+                    opportunisticControlCompletionCheck = await BeginControlAsync(SensingAgentState.OpportunisticControl, cancellationToken);
                 }
                 catch (Exception ex)
                 {
@@ -253,7 +266,7 @@ namespace Sensus.AdaptiveSensing
                 }
             }
 
-            return controlCompletionCheck;
+            return opportunisticControlCompletionCheck;
         }
 
         /// <summary>

@@ -6,7 +6,7 @@
   "control-completion-check-interval": "00:00:20",
   "statements": [
     {
-      "description" : "Keeps device awake and increases sampling rate if average acceleration exceeds 1.2 in each direction.",
+      "description": "Keeps device awake and increases sampling rate if average acceleration exceeds 1.2 in each direction.",
       "criterion": {
         "logic": "Conjunction",
         "elements": [

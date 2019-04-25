@@ -134,14 +134,14 @@ policy shows the format.
 There are pros and cons of software- and ASPL-defined sensing agents:
 
 * Software-defined
-  * Pros:  Sophistication of control criteria and actions are not limited to the logical structure of ASPL.
+  * Pros:  Sophistication of control criteria. Actions are not limited to the logical structure of ASPL.
   * Cons:  Low-level programming is required for Android. Third-party development of iOS agents is complicated
   by iOS's prohibition of run-time code injection (see above). Changing the agent definition involves modifying
   code and, for iOS, redeploying the application.
   
 * ASPL-defined
-  * Pros:  Agent definitions use the simpler ASPL syntax. Agent definitions can be loaded at run-time into both
-  Android and iOS without the need for code changes or app redeployment.
+  * Pros:  Agent definitions use the relatively simple ASPL syntax. Agent definitions can be loaded at run-time 
+  into both Android and iOS without the need for code changes or app redeployment.
   * Cons:  ASPL has limited logical expressiveness.
 
 ## Testing and Debugging
