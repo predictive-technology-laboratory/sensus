@@ -83,38 +83,7 @@
   
   <h1 id="Sensus_iOS_Probes_Context_iOSBluetoothDeviceProximityProbe" data-uid="Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe" class="text-break">Class iOSBluetoothDeviceProximityProbe
   </h1>
-  <div class="markdown level0 summary"><p>Scans for the presence of other devices nearby that are running the current <a class="xref" href="Sensus.Protocol.html">Protocol</a>. When
-encountered, this Probe will read the device ID of other devices. This Probe also advertises the presence 
-of the current device and serves requests for the current device&apos;s ID. This Probe reports data in the form 
-of <a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityDatum.html">BluetoothDeviceProximityDatum</a> objects. There are no caveats to the conditions under which 
-an iOS device running this Probe will detect another device. Detection is possible if the other device is
-Android or iOS and if Sensus is foregrounded or backgrounded on the other device.</p>
-<p>NOTE:  The value of <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_Id">Id</a> running on the other device must equal the value of 
-<a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_Id">Id</a> running on the current device. When a Protocol is created from within the
-Sensus app, it is assigned a unique identifier. This value is maintained or changed depending on what you
-do:</p>
-<ul>
-<li><p>When the newly created Protocol is copied on the current device, a new unique identifier is assigned to
-it. This breaks the connection between the Protocols.</p>
-</li>
-<li><p>When the newly created Protocol is shared via the app with another device, its identifier remains 
-unchanged. This maintains the connection between the Protocols.</p>
-</li>
-</ul>
-<p>Thus, in order for this <a class="xref" href="Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.html">iOSBluetoothDeviceProximityProbe</a> to operate properly, you must configure
-your Protocols in one of the two following ways:</p>
-<ul>
-<li><p>Create your Protocol on one platform (either Android or iOS) and then share it with a device from the other
-platform for customization. The <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_Id">Id</a> values of these Protocols will remain equal
-and this <a class="xref" href="Sensus.iOS.Probes.Context.iOSBluetoothDeviceProximityProbe.html">iOSBluetoothDeviceProximityProbe</a> will detect encounters across platforms.</p>
-</li>
-<li><p>Create your Protocols separately on each platform and then set the <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_Id">Id</a> field on
-one platform (using the &quot;Set Study Identifier&quot; button) to match the <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_Id">Id</a> value
-of the other platform (obtained via &quot;Copy Study Identifier&quot;).</p>
-</li>
-</ul>
-<p>See the Android subclass of <a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html">BluetoothDeviceProximityProbe</a> for additional information.</p>
-</div>
+  <div class="markdown level0 summary"></div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>

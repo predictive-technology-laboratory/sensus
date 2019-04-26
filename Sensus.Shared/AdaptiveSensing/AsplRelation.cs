@@ -30,7 +30,7 @@ namespace Sensus.AdaptiveSensing
         LessThanOrEqualTo,
 
         /// <summary>
-        /// Equal to the target.
+        /// Equal to the target. This is the only valid option for qualitative aggregates.
         /// </summary>
         EqualTo,
 

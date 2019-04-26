@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 using Sensus.Probes;
 
 namespace Sensus
@@ -7,6 +8,8 @@ namespace Sensus
     public interface IProtocol
     {
         ProtocolState State { get; }
+
+        JObject AgentPolicy { get; set; }
 
         Task UpdateScriptAgentPolicyAsync(CancellationToken cancellationToken);
 

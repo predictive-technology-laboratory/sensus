@@ -18,6 +18,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Sensus.AdaptiveSensing
@@ -64,13 +65,13 @@ namespace Sensus.AdaptiveSensing
         /// Gets the <see cref="ISensusServiceHelper"/>.
         /// </summary>
         /// <value>The sensus service helper.</value>
-        protected ISensusServiceHelper SensusServiceHelper { get; private set; }
+        public ISensusServiceHelper SensusServiceHelper { get; set; }
 
         /// <summary>
         /// Gets the <see cref="IProtocol"/>.
         /// </summary>
         /// <value>The protocol.</value>
-        protected IProtocol Protocol { get; private set; }
+        public IProtocol Protocol { get; set; }
 
         /// <summary>
         /// Current <see cref="SensingAgentState"/> of the <see cref="SensingAgent"/>.
@@ -82,13 +83,13 @@ namespace Sensus.AdaptiveSensing
         /// Unique identifier for the <see cref="SensingAgent"/>.
         /// </summary>
         /// <value>The identifier.</value>
-        public string Id { get; private set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// Readable description for the <see cref="SensingAgent"/>.
         /// </summary>
         /// <value>The description.</value>
-        public string Description { get; private set; }
+        public string Description { get; set; }
 
         /// <summary>
         /// Interval of time between successive calls to <see cref="ActAsync(CancellationToken)"/>. If <c>null</c>,
@@ -97,21 +98,21 @@ namespace Sensus.AdaptiveSensing
         /// <see cref="SensingAgent"/> to control sensing parameters.
         /// </summary>
         /// <value>The action interval.</value>
-        public TimeSpan? ActionInterval { get; protected set; }
+        public TimeSpan? ActionInterval { get; set; }
 
         /// <summary>
         /// Tolerance for <see cref="ActionInterval"/> before the scheduled time, if doing so 
         /// will increase the number of batched actions and thereby decrease battery consumption.
         /// </summary>
         /// <value>The delay tolerance before.</value>
-        public TimeSpan? ActionIntervalToleranceBefore { get; protected set; }
+        public TimeSpan? ActionIntervalToleranceBefore { get; set; }
 
         /// <summary>
         /// Tolerance for <see cref="ActionInterval"/> after the scheduled time, if doing so 
         /// will increase the number of batched actions and thereby decrease battery consumption.
         /// </summary>
         /// <value>The delay tolerance before.</value>
-        public TimeSpan? ActionIntervalToleranceAfter { get; protected set; }
+        public TimeSpan? ActionIntervalToleranceAfter { get; set; }
 
         /// <summary>
         /// How long to observe data before checking control criteria. If <see cref="ActionInterval"/>
@@ -119,13 +120,31 @@ namespace Sensus.AdaptiveSensing
         /// is <c>null</c>, then this value is ignored.
         /// </summary>
         /// <value>The observation interval.</value>
-        protected TimeSpan? ObservationDuration { get; set; }
+        public TimeSpan? ObservationDuration { get; set; }
 
         /// <summary>
         /// How much time between checks for control completion.
         /// </summary>
         /// <value>The control completion check interval.</value>
-        protected TimeSpan ControlCompletionCheckInterval { get; set; }
+        public TimeSpan ControlCompletionCheckInterval { get; set; }
+
+        /// <summary>
+        /// Maximum number of observed <see cref="IDatum"/> readings to retain for state estimation. Can be
+        /// <c>null</c> to place no limit on the number of retained readings; however, either
+        /// <see cref="MaxObservedDataCount"/> or <see cref="MaxObservedDataAge"/> should be enabled, or
+        /// readings will be retained indefinitely, likely exhausting memory over time.
+        /// </summary>
+        /// <value>The max observed data count.</value>
+        public int? MaxObservedDataCount { get; set; }
+
+        /// <summary>
+        /// Maximum age of observed <see cref="IDatum"/> readings to retain for state estimation. Can be
+        /// <c>null</c> to place no limit on the age of retained readings; however, either
+        /// <see cref="MaxObservedDataCount"/> or <see cref="MaxObservedDataAge"/> should be enabled, or
+        /// readings will be retained indefinitely, likely exhausting memory over time.
+        /// </summary>
+        /// <value>The max observed data age.</value>
+        public TimeSpan? MaxObservedDataAge { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:Sensus.SensingAgent"/> class, with a repeating action call.
@@ -166,18 +185,15 @@ namespace Sensus.AdaptiveSensing
             ControlCompletionCheckInterval = controlCompletionCheckInterval;
             ActionInterval = actionInterval;
             ObservationDuration = observationDuration;
+            MaxObservedDataCount = 100;
         }
 
         /// <summary>
         /// Initializes the <see cref="SensingAgent"/>. This is called when the <see cref="IProtocol"/> associated with this
         /// <see cref="SensingAgent"/> is started.
         /// </summary>
-        /// <param name="sensusServiceHelper">A reference to the service helper, which provides access to the app's core functionality.</param>
-        /// <param name="protocol">A reference to the <see cref="IProtocol"/> associated with this <see cref="SensingAgent"/>.</param>
-        public virtual async Task InitializeAsync(ISensusServiceHelper sensusServiceHelper, IProtocol protocol)
+        public virtual async Task InitializeAsync()
         {
-            SensusServiceHelper = sensusServiceHelper;
-            Protocol = protocol;
             State = SensingAgentState.Idle;
 
             // download the initial policy
@@ -198,11 +214,13 @@ namespace Sensus.AdaptiveSensing
         ///   * When a push notification arrives with a new policy.
         ///   * When the <see cref="SensingAgent"/> itself instructs the app to update the policy, through a call to
         ///     <see cref="IProtocol.UpdateSensingAgentPolicyAsync(System.Threading.CancellationToken)"/>.
+        ///   * When the user manually sets the policy from with the <see cref="Protocol"/> settings.
         /// 
-        /// In any case, the new policy will be passed to this method as a <see cref="JObject"/>.
+        /// In any case, the new policy will be passed to this method as a <see cref="JObject"/>. Note that when overriding
+        /// this method, the base class should be called at the end of the overriding method.
         /// </summary>
         /// <param name="policy">Policy.</param>
-        public virtual Task SetPolicyAsync(JObject policy)
+        public virtual async Task SetPolicyAsync(JObject policy)
         {
             Id = policy["id"].ToString();
             Description = policy["description"].ToString();
@@ -210,7 +228,13 @@ namespace Sensus.AdaptiveSensing
             ObservationDuration = TimeSpan.Parse(policy["observation-duration"].ToString());
             ControlCompletionCheckInterval = TimeSpan.Parse(policy["control-completion-check-interval"].ToString());
 
-            return Task.CompletedTask;
+            JObject observedDataSettings = policy["observed-data"] as JObject;
+            MaxObservedDataCount = observedDataSettings["max-count"].ToObject<int?>();
+            MaxObservedDataAge = observedDataSettings["max-age"].ToObject<TimeSpan?>();
+
+            // save policy within app state (agent itself is not serialized)
+            Protocol.AgentPolicy = policy;
+            await SensusServiceHelper.SaveAsync();
         }
 
         /// <summary>
@@ -234,7 +258,6 @@ namespace Sensus.AdaptiveSensing
 
                 data.Add(datum);
 
-                // let the concrete implementation decide how to update the observed (e.g., trim to size, trim by time window, etc.)
                 UpdateObservedData(_typeData);
             }
 
@@ -270,10 +293,33 @@ namespace Sensus.AdaptiveSensing
         }
 
         /// <summary>
-        /// Updates the observed data (e.g., by trimming observed data to a particular size and/or time range).
+        /// Updates the observed data (e.g., by trimming observed data to a particular size and/or time range). When overriding
+        /// this method, be sure to call the base class implementation if you wish to apply the size and age restrictions 
+        /// provided here.
         /// </summary>
-        /// <param name="typeData">Observed data, by type. This collection will be locked prior to calling the concrete implementation.</param>
-        protected abstract void UpdateObservedData(Dictionary<Type, List<IDatum>> typeData);
+        /// <param name="typeData">Observed data, by type. This collection will be locked prior to calling the method.</param>
+        protected virtual void UpdateObservedData(Dictionary<Type, List<IDatum>> typeData)
+        {
+            foreach (Type type in typeData.Keys)
+            {
+                List<IDatum> data = typeData[type];
+
+                // trim collection by size
+                int maxCount = MaxObservedDataCount.GetValueOrDefault(int.MaxValue);
+                while (data.Count > maxCount)
+                {
+                    data.RemoveAt(0);
+                }
+
+                // trim collection by age. oldest data are first, so we can stop as soon as
+                // we find a datum that doesn't exceed the age threshold.
+                TimeSpan maxAge = MaxObservedDataAge.GetValueOrDefault(TimeSpan.MaxValue);
+                while (data.Count > 0 && DateTimeOffset.UtcNow - data[0].Timestamp > maxAge)
+                {
+                    data.RemoveAt(0);
+                }
+            }
+        }
 
         /// <summary>
         /// Checks whether the observed data meet a control criterion.
@@ -500,10 +546,28 @@ namespace Sensus.AdaptiveSensing
             return stateChanged;
         }
 
+        /// <summary>
+        /// Called when opportunistic control is starting.
+        /// </summary>
+        /// <returns>Task.</returns>
+        /// <param name="cancellationToken">Cancellation token.</param>
         protected abstract Task OnOpportunisticControlAsync(CancellationToken cancellationToken);
 
+        /// <summary>
+        /// Called when active control is starting.
+        /// </summary>
+        /// <returns>Task.</returns>
+        /// <param name="cancellationToken">Cancellation token.</param>
         protected abstract Task OnActiveControlAsync(CancellationToken cancellationToken);
 
+        /// <summary>
+        /// Called when control is ending, e.g., due to control completion, an exception when
+        /// starting control, or other conditions that result in the end of control. The
+        /// concrete implementation of this method should not assume that the agent is in any
+        /// particular state when this method is called, as it can be called for several reasons.
+        /// </summary>
+        /// <returns>The ending control async.</returns>
+        /// <param name="cancellationToken">Cancellation token.</param>
         protected abstract Task OnEndingControlAsync(CancellationToken cancellationToken);
 
         private void FireStateChangedEvent()

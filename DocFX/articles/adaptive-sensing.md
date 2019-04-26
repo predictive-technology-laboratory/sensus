@@ -129,8 +129,12 @@ In addition to the software-defined adaptive sensing agents described above, Sen
 policies specified in a general-purpose adaptive sensing policy language (ASPL). ASPL specifies both the 
 control criteria as well as the control actions depicted in the above state diagram. The 
 [example ASPL policy file](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared/AdaptiveSensing/example-aspl-policy.json)
-shows the format.
+demonstrates the ASPL format. The elements of the format are described in the documentation for 
+<xref:Sensus.AdaptiveSensing.AsplSensingAgent>. If more than 1 <xref:Sensus.AdaptiveSensing.AsplStatement> is 
+provided to the <xref:Sensus.AdaptiveSensing.AsplSensingAgent>, then the first one whose criterion is satisfied 
+by the observed data will be used for sensing control.
 
+## Softare- Versus ASPL-Defined Sensing Agents
 There are pros and cons of software- and ASPL-defined sensing agents:
 
 * Software-defined
@@ -144,23 +148,21 @@ There are pros and cons of software- and ASPL-defined sensing agents:
   into both Android and iOS without the need for code changes or app redeployment.
   * Cons:  ASPL has limited logical expressiveness.
   
-When using an ASPL-defined sensing agent, one must provide the ASPL policy to the app. This can be done in two 
-ways:
+## Distributing Sensing Agent Policies
+Regardless of whether a software- or ASPL-defined sensing agent is used, a policy must be provided to the
+agent. This can be done in two ways:
 
-* Set within protocol:  In the protocol settings, tap "Set Agent Policy", then select your ASPL policy file,
-which must be in the format shown in the 
-[example ASPL policy file](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared/AdaptiveSensing/example-aspl-policy.json).
-This works well to set the initial policy used by the sensing agent; however, this is not a very effective 
-means of providing updated policies to users during an ongoing study. Updating the ASPL policy would require
-the study administrator to edit the protocol and distribute the new protocol to all users (e.g., via email), who
-would then need to manually update their protocols.
+* Set within protocol:  In the protocol settings, tap "Set Agent Policy", then select your JSON policy file. This 
+works well to set the initial policy used by the sensing agent; however, this is not a very effective means of 
+providing updated sensing policies to users during an ongoing study. Updating the policy would require the study
+administrator to edit the protocol and distribute the new protocol to all users (e.g., via email), who would then 
+need to manually update their protocols.
 
-* Send via push notification:  Upload the ASPL policy to the storage location indicated by the
-`GetSensingAgentPolicyAsync` method of <xref:Sensus.DataStores.Remote.RemoteDataStore> and then request a 
+* Send via push notification:  Request a 
 [push notification update](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS/ec2-push-notifications/example-requests.json)
-directing the app to pull down and load the ASPL policy from the remote data store. This is 
-an effective option for updating the sensing agent's policy during ongoing studies, as users
-will not need to do anything in order to receive the updated policies.
+with the `type` set to <xref:Sensus.Notifications.PushNotificationUpdateType.SensingAgentPolicy> and `content` set to the 
+policy you wish to provide. This is an effective option for updating the sensing agent's policy during ongoing 
+studies, as users will not need to do anything in order to receive the updated policies.
 
 ## Testing and Debugging
 Regardless of whether your sensing agent targets Android or iOS, there are a few ways to test and debug it:

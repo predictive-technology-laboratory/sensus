@@ -328,7 +328,10 @@ namespace Sensus.Notifications
                     #region protocol
                     else if (pendingUpdate.Type == PushNotificationUpdateType.Protocol)
                     {
-                        List<ProtocolSetting> settings = pendingUpdate.Content.Value<JArray>("settings").Select(setting => setting.ToObject<ProtocolSetting>()).ToList();
+                        List<ProtocolSetting> settings = pendingUpdate.Content.Value<JArray>("settings")
+                                                                              .Select(setting => setting.ToObject<ProtocolSetting>())
+                                                                              .ToList();
+
                         if (await protocol.ApplySettingsAsync(settings, cancellationToken))
                         {
                             JObject userNotificationObject = pendingUpdate.Content.Value<JObject>("user-notification");

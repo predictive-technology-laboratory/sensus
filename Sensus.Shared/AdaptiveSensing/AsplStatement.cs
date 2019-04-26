@@ -12,23 +12,48 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Sensus.AdaptiveSensing
 {
+    /// <summary>
+    /// Combination of an <see cref="AsplCriterion"/> and <see cref="ProtocolSetting"/>s to apply when starting and ending sensing control.
+    /// </summary>
     public class AsplStatement
     {
+        /// <summary>
+        /// Short identifier.
+        /// </summary>
+        /// <value>The identifier.</value>
+        [JsonProperty("id")]
+        public string Id { get; set; }
+
+        /// <summary>
+        /// Longer description.
+        /// </summary>
+        /// <value>The description.</value>
         [JsonProperty("description")]
         public string Description { get; set; }
 
+        /// <summary>
+        /// Criterion to check.
+        /// </summary>
+        /// <value>The criterion.</value>
         [JsonProperty("criterion")]
         public AsplCriterion Criterion { get; set; }
 
+        /// <summary>
+        /// <see cref="ProtocolSetting"/>s to apply when control starts.
+        /// </summary>
+        /// <value>The begin control settings.</value>
         [JsonProperty("begin-control-settings")]
         public List<ProtocolSetting> BeginControlSettings { get; set; }
 
+        /// <summary>
+        /// <see cref="ProtocolSetting"/>s to apply when control ends.
+        /// </summary>
+        /// <value>The end control settings.</value>
         [JsonProperty("end-control-settings")]
         public List<ProtocolSetting> EndControlSettings { get; set; }
     }

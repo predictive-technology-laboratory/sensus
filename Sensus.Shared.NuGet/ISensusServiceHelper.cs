@@ -11,5 +11,7 @@ namespace Sensus
         Task KeepDeviceAwakeAsync();
 
         Task LetDeviceSleepAsync();
+
+        Task SaveAsync();
     }
 }

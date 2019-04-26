@@ -20,6 +20,11 @@ using Sensus.Probes.Movement;
 
 namespace Sensus.AdaptiveSensing
 {
+    /// <summary>
+    /// Separates the control criteria into a dedicated file for ease of understanding. We'll 
+    /// collect our criterion implementations here, making them available to any concrete
+    /// implementations of this class.
+    /// </summary>
     public partial class SensingAgent
     {
         /// <summary>

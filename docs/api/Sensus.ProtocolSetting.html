@@ -114,7 +114,10 @@
   
   <a id="Sensus_ProtocolSetting_PropertyName_" data-uid="Sensus.ProtocolSetting.PropertyName*"></a>
   <h4 id="Sensus_ProtocolSetting_PropertyName" data-uid="Sensus.ProtocolSetting.PropertyName">PropertyName</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The name of the property within the type (named by <a class="xref" href="Sensus.ProtocolSetting.html#Sensus_ProtocolSetting_PropertyTypeName">PropertyTypeName</a>) to be changed. For
+example, this would be <code>MaxDataStoresPerSecond</code> if one wishes to change the 
+<a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_MaxDataStoresPerSecond">MaxDataStoresPerSecond</a> property.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -131,7 +134,8 @@
     <tbody>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td></td>
+        <td><p>The name of the property.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -139,7 +143,10 @@
   
   <a id="Sensus_ProtocolSetting_PropertyTypeName_" data-uid="Sensus.ProtocolSetting.PropertyTypeName*"></a>
   <h4 id="Sensus_ProtocolSetting_PropertyTypeName" data-uid="Sensus.ProtocolSetting.PropertyTypeName">PropertyTypeName</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The fully-qualified name of the type whose property (named by <a class="xref" href="Sensus.ProtocolSetting.html#Sensus_ProtocolSetting_PropertyName">PropertyName</a>) to be changed. For
+example, this would be <code>Sensus.Probes.ListeningProbe</code> if one wishes to change the
+<a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_MaxDataStoresPerSecond">MaxDataStoresPerSecond</a> property.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -156,7 +163,8 @@
     <tbody>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td></td>
+        <td><p>The name of the property type.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -164,7 +172,16 @@
   
   <a id="Sensus_ProtocolSetting_TargetTypeName_" data-uid="Sensus.ProtocolSetting.TargetTypeName*"></a>
   <h4 id="Sensus_ProtocolSetting_TargetTypeName" data-uid="Sensus.ProtocolSetting.TargetTypeName">TargetTypeName</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The fully-qualified name of the type whose instances should have their property values (specifically
+the property indicated by <a class="xref" href="Sensus.ProtocolSetting.html#Sensus_ProtocolSetting_PropertyTypeName">PropertyTypeName</a> and <a class="xref" href="Sensus.ProtocolSetting.html#Sensus_ProtocolSetting_PropertyName">PropertyName</a>) changed. For
+example, if one wishes to update <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_MaxDataStoresPerSecond">MaxDataStoresPerSecond</a> for 
+all <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>s that inherit from <a class="xref" href="Sensus.Probes.ListeningProbe.html">ListeningProbe</a>, then this should
+be <code>Sensus.Probes.ListeningProbe</code>. If one wishes to only update 
+<a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_MaxDataStoresPerSecond">MaxDataStoresPerSecond</a> for only the <a class="xref" href="Sensus.Probes.Movement.AccelerometerProbe.html">AccelerometerProbe</a>, 
+then this should be <code>Sensus.Probes.Movement.AccelerometerProbe</code>. Allowing the setting to modify all
+inheriting classes provides a convenient mechanism for updating several <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>, 
+obviating the need to specify a <a class="xref" href="Sensus.ProtocolSetting.html">ProtocolSetting</a> for each <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -181,7 +198,8 @@
     <tbody>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td></td>
+        <td><p>The name of the target type.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -189,7 +207,9 @@
   
   <a id="Sensus_ProtocolSetting_Value_" data-uid="Sensus.ProtocolSetting.Value*"></a>
   <h4 id="Sensus_ProtocolSetting_Value" data-uid="Sensus.ProtocolSetting.Value">Value</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Value to set on the property indicated by <a class="xref" href="Sensus.ProtocolSetting.html#Sensus_ProtocolSetting_PropertyTypeName">PropertyTypeName</a> and <a class="xref" href="Sensus.ProtocolSetting.html#Sensus_ProtocolSetting_PropertyName">PropertyName</a> within
+instances of <a class="xref" href="Sensus.ProtocolSetting.html#Sensus_ProtocolSetting_TargetTypeName">TargetTypeName</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -206,7 +226,8 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Object</span></td>
-        <td></td>
+        <td><p>The value.</p>
+</td>
       </tr>
     </tbody>
   </table>

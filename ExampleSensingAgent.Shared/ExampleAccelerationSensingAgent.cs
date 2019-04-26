@@ -32,9 +32,23 @@ namespace ExampleSensingAgent
     /// </summary>
     public class ExampleAccelerationSensingAgent : SensingAgent
     {
-        private double _averageLinearMagnitudeThreshold;
-        private double? _controlAccelerometerMaxDataStoresPerSecond;
-        private double? _idleAccelerometerMaxDataStoresPerSecond;
+        /// <summary>
+        /// Gets or sets the average linear magnitude threshold.
+        /// </summary>
+        /// <value>The average linear magnitude threshold.</value>
+        public double AverageLinearMagnitudeThreshold { get; set; }
+
+        /// <summary>
+        /// Gets or sets the control accelerometer max data stores per second.
+        /// </summary>
+        /// <value>The control accelerometer max data stores per second.</value>
+        public double? ControlAccelerometerMaxDataStoresPerSecond { get; set; }
+
+        /// <summary>
+        /// Gets or sets the idle accelerometer max data stores per second.
+        /// </summary>
+        /// <value>The idle accelerometer max data stores per second.</value>
+        public double? IdleAccelerometerMaxDataStoresPerSecond { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:ExampleSensingAgent.ExampleAccelerationSensingAgent"/> class. As noted in
@@ -44,35 +58,23 @@ namespace ExampleSensingAgent
         public ExampleAccelerationSensingAgent()
             : base("Acceleration", "ALM / Proximity", TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(5))
         {
-            _averageLinearMagnitudeThreshold = 0.1;
-            _controlAccelerometerMaxDataStoresPerSecond = 60;
+            AverageLinearMagnitudeThreshold = 0.1;
+            ControlAccelerometerMaxDataStoresPerSecond = 60;
+            IdleAccelerometerMaxDataStoresPerSecond = 5;
         }
 
         public override async Task SetPolicyAsync(JObject policy)
         {
+            AverageLinearMagnitudeThreshold = double.Parse(policy["alm-threshold"].ToString());
+            ControlAccelerometerMaxDataStoresPerSecond = double.Parse(policy["control-acc-rate"].ToString());
+            IdleAccelerometerMaxDataStoresPerSecond = double.Parse(policy["idle-acc-rate"].ToString());
+
             await base.SetPolicyAsync(policy);
-
-            _averageLinearMagnitudeThreshold = double.Parse(policy["alm-threshold"].ToString());
-            _idleAccelerometerMaxDataStoresPerSecond = double.Parse(policy["control-acc-rate"].ToString());
-        }
-
-        protected override void UpdateObservedData(Dictionary<Type, List<IDatum>> typeData)
-        {
-            foreach (Type type in typeData.Keys)
-            {
-                List<IDatum> data = typeData[type];
-
-                // trim collections by size
-                while (data.Count > 100)
-                {
-                    data.RemoveAt(0);
-                }
-            }
         }
 
         protected override bool ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>> typeData)
         {
-            return IsNearSurface() || AverageLinearAccelerationMagnitudeExceedsThreshold(_averageLinearMagnitudeThreshold);
+            return IsNearSurface() || AverageLinearAccelerationMagnitudeExceedsThreshold(AverageLinearMagnitudeThreshold);
         }
 
         protected override async Task OnOpportunisticControlAsync(CancellationToken cancellationToken)
@@ -98,11 +100,8 @@ namespace ExampleSensingAgent
             // increase sampling rate
             if (Protocol.TryGetProbe<IAccelerometerDatum, IListeningProbe>(out IListeningProbe accelerometerProbe))
             {
-                // store original sampling rate
-                _idleAccelerometerMaxDataStoresPerSecond = accelerometerProbe.MaxDataStoresPerSecond;
-
                 // increase sampling rate
-                accelerometerProbe.MaxDataStoresPerSecond = _controlAccelerometerMaxDataStoresPerSecond;
+                accelerometerProbe.MaxDataStoresPerSecond = ControlAccelerometerMaxDataStoresPerSecond;
 
                 // restart probe to take on new settings
                 await accelerometerProbe.RestartAsync();
@@ -118,8 +117,8 @@ namespace ExampleSensingAgent
         {
             if (Protocol.TryGetProbe<IAccelerometerDatum, IListeningProbe>(out IListeningProbe accelerometerProbe))
             {
-                // revert sampling rate
-                accelerometerProbe.MaxDataStoresPerSecond = _idleAccelerometerMaxDataStoresPerSecond;
+                // decrease sampling rate
+                accelerometerProbe.MaxDataStoresPerSecond = IdleAccelerometerMaxDataStoresPerSecond;
 
                 // restart probe to take on original settings
                 await accelerometerProbe.RestartAsync();

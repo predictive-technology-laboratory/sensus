@@ -160,14 +160,7 @@
   
   
   <h4 id="Sensus_iOS_Callbacks_iOSCallbackScheduler_CALLBACK_NOTIFICATION_HORIZON_THRESHOLD" data-uid="Sensus.iOS.Callbacks.iOSCallbackScheduler.CALLBACK_NOTIFICATION_HORIZON_THRESHOLD">CALLBACK_NOTIFICATION_HORIZON_THRESHOLD</h4>
-  <div class="markdown level1 summary"><p>The callback notification horizon threshold. When using notifications to schedule the timing of
-callbacks, we must decide when the delay of a callback execution necessitates a notification 
-rather than executing immediately. This is in part a practical question, in that executing a 
-callback immediately rather than using a notification can improve performance -- imagine the
-app coming to the foreground and executing the callback right away versus deferring it to a 
-future notification. This is also an iOS API consideration, as the iOS system will not schedule 
-a notification if its fire date is in the past by the time it gets around to doing the scheduling.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -221,8 +214,7 @@ a notification if its fire date is in the past by the time it gets around to doi
   
   <a id="Sensus_iOS_Callbacks_iOSCallbackScheduler_CancelSilentNotifications_" data-uid="Sensus.iOS.Callbacks.iOSCallbackScheduler.CancelSilentNotifications*"></a>
   <h4 id="Sensus_iOS_Callbacks_iOSCallbackScheduler_CancelSilentNotifications" data-uid="Sensus.iOS.Callbacks.iOSCallbackScheduler.CancelSilentNotifications">CancelSilentNotifications()</h4>
-  <div class="markdown level1 summary"><p>Cancels the silent notifications (e.g., those for health test) when the app is going into the background.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -491,10 +483,7 @@ a notification if its fire date is in the past by the time it gets around to doi
   
   <a id="Sensus_iOS_Callbacks_iOSCallbackScheduler_UpdateCallbacksOnActivationAsync_" data-uid="Sensus.iOS.Callbacks.iOSCallbackScheduler.UpdateCallbacksOnActivationAsync*"></a>
   <h4 id="Sensus_iOS_Callbacks_iOSCallbackScheduler_UpdateCallbacksOnActivationAsync" data-uid="Sensus.iOS.Callbacks.iOSCallbackScheduler.UpdateCallbacksOnActivationAsync">UpdateCallbacksOnActivationAsync()</h4>
-  <div class="markdown level1 summary"><p>Updates the callbacks when the app is activated. This services any callbacks that should have already been 
-serviced or will be serviced in the near future. This also reissues all silent notifications, which would 
-have been canceled when the app went into the background.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -511,8 +500,7 @@ have been canceled when the app went into the background.</p>
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>Async task.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>

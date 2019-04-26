@@ -83,9 +83,7 @@
   
   <h1 id="ExampleSensingAgent_ExampleAccelerationSensingAgent" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent" class="text-break">Class ExampleAccelerationSensingAgent
   </h1>
-  <div class="markdown level0 summary"><p>Example acceleration sensing agent. Demonstrates concepts related to control criterion checking as well as 
-sensing control, in particular temporary device keep-awake and increased sampling rates.</p>
-</div>
+  <div class="markdown level0 summary"></div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
@@ -100,10 +98,13 @@ sensing control, in particular temporary device keep-awake and increased samplin
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
     <div>
-      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_InitializeAsync_Sensus_ISensusServiceHelper_Sensus_IProtocol_">SensingAgent.InitializeAsync(ISensusServiceHelper, IProtocol)</a>
+      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_InitializeAsync">SensingAgent.InitializeAsync()</a>
     </div>
     <div>
       <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ObserveAsync_Sensus_IDatum_System_Threading_CancellationToken_">SensingAgent.ObserveAsync(IDatum, CancellationToken)</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_UpdateObservedData_System_Collections_Generic_Dictionary_System_Type_System_Collections_Generic_List_Sensus_IDatum___">SensingAgent.UpdateObservedData(Dictionary&lt;Type, List&lt;IDatum&gt;&gt;)</a>
     </div>
     <div>
       <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_GetObservedData__1">SensingAgent.GetObservedData&lt;DatumInterface&gt;()</a>
@@ -151,6 +152,12 @@ sensing control, in particular temporary device keep-awake and increased samplin
       <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheckInterval">SensingAgent.ControlCompletionCheckInterval</a>
     </div>
     <div>
+      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_MaxObservedDataCount">SensingAgent.MaxObservedDataCount</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_MaxObservedDataAge">SensingAgent.MaxObservedDataAge</a>
+    </div>
+    <div>
       <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_PropertyChanged">SensingAgent.PropertyChanged</a>
     </div>
   </div>
@@ -166,15 +173,89 @@ sensing control, in particular temporary device keep-awake and increased samplin
   
   <a id="ExampleSensingAgent_ExampleAccelerationSensingAgent__ctor_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.#ctor*"></a>
   <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent__ctor" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.#ctor">ExampleAccelerationSensingAgent()</h4>
-  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="ExampleSensingAgent.ExampleAccelerationSensingAgent.html">ExampleAccelerationSensingAgent</a> class. As noted in
-the <a class="xref" href="../articles/adaptive-sensing.html">adaptive sensing</a> article, this class provides the parameterless constructor required for
-run time initialization of the agent.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public ExampleAccelerationSensingAgent()</code></pre>
   </div>
+  <h3 id="properties">Properties
+  </h3>
+  
+  
+  <a id="ExampleSensingAgent_ExampleAccelerationSensingAgent_AverageLinearMagnitudeThreshold_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.AverageLinearMagnitudeThreshold*"></a>
+  <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent_AverageLinearMagnitudeThreshold" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.AverageLinearMagnitudeThreshold">AverageLinearMagnitudeThreshold</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double AverageLinearMagnitudeThreshold { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="ExampleSensingAgent_ExampleAccelerationSensingAgent_ControlAccelerometerMaxDataStoresPerSecond_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.ControlAccelerometerMaxDataStoresPerSecond*"></a>
+  <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent_ControlAccelerometerMaxDataStoresPerSecond" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.ControlAccelerometerMaxDataStoresPerSecond">ControlAccelerometerMaxDataStoresPerSecond</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Nullable&lt;double&gt; ControlAccelerometerMaxDataStoresPerSecond { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Double</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="ExampleSensingAgent_ExampleAccelerationSensingAgent_IdleAccelerometerMaxDataStoresPerSecond_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.IdleAccelerometerMaxDataStoresPerSecond*"></a>
+  <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent_IdleAccelerometerMaxDataStoresPerSecond" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.IdleAccelerometerMaxDataStoresPerSecond">IdleAccelerometerMaxDataStoresPerSecond</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Nullable&lt;double&gt; IdleAccelerometerMaxDataStoresPerSecond { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Double</span>&gt;</td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="methods">Methods
   </h3>
   
@@ -265,8 +346,7 @@ run time initialization of the agent.</p>
   
   <a id="ExampleSensingAgent_ExampleAccelerationSensingAgent_OnEndingControlAsync_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.OnEndingControlAsync*"></a>
   <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent_OnEndingControlAsync_System_Threading_CancellationToken_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.OnEndingControlAsync(System.Threading.CancellationToken)">OnEndingControlAsync(CancellationToken)</h4>
-  <div class="markdown level1 summary"><p>Reverts sensing control.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -285,8 +365,7 @@ run time initialization of the agent.</p>
       <tr>
         <td><span class="xref">System.Threading.CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
-        <td><p>Cancellation token.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -301,8 +380,7 @@ run time initialization of the agent.</p>
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>The ending control async.</p>
-</td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -386,33 +464,6 @@ run time initialization of the agent.</p>
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="ExampleSensingAgent_ExampleAccelerationSensingAgent_UpdateObservedData_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.UpdateObservedData*"></a>
-  <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent_UpdateObservedData_System_Collections_Generic_Dictionary_System_Type_System_Collections_Generic_List_Sensus_IDatum___" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.UpdateObservedData(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}})">UpdateObservedData(Dictionary&lt;Type, List&lt;IDatum&gt;&gt;)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void UpdateObservedData(Dictionary&lt;Type, List&lt;IDatum&gt;&gt; typeData)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Collections.Generic.Dictionary</span>&lt;<span class="xref">System.Type</span>, <span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.IDatum.html">IDatum</a>&gt;&gt;</td>
-        <td><span class="parametername">typeData</span></td>
         <td></td>
       </tr>
     </tbody>

@@ -84,7 +84,32 @@ credentials that are used by Sensus.</p>
 <h2 id="required-rest-endpoints">Required REST Endpoints</h2>
 <h2 id="updating-protocols-mid-study">Updating Protocols Mid-Study</h2>
 <p>Since the authentication server is able to serve up new versions of protocols
-on-the-fly, care should be taken when editing protocols for distribution. </p>
+mid-study, care should be taken when editing protocols for distribution. The
+steps below constitute the recommended approach for editing a protocol mid-study
+when using an authentication server.</p>
+<ol>
+<li>Delete all existing protocols from Sensus.</li>
+<li>Scan a study QR code to pull down the most current version of the protocol
+from the authentication server.</li>
+<li>Edit the protocol as desired.</li>
+<li>Run the edited protocol on only your phone for at least 1 day to test 
+the new settings. It is important to test changes before distributing the new
+protocol version to participants.</li>
+<li>Having tested the new settings, set the protocol&#39;s identifier from within 
+the protocol settings. Use a random identifier to mark the new version. Setting 
+a new protocol identifier is crucial, as it signals participants&#39; devices to 
+update their version once the update process described herein is complete. If 
+multiple protocols are used within a single study (e.g., one for Android and 
+one for iOS), ensure that the identifiers match across protocols.</li>
+<li>From within Sensus on your phone, share the protocol with the person 
+responsible for uploading protocols into the authentication server. The best way
+to share the protocol is to edit it and tap the &quot;Share&quot; button from within the
+protocol settings.</li>
+<li>After confirming upload into the authentication server, delete the protocol 
+from your phone, rescan the study QR code to pull down the new version from the
+authentication server, inspect the protocol to confirm that it reflects your 
+edits, and run the new version of the protocol to test it.</li>
+</ol>
 </article>
           </div>
           

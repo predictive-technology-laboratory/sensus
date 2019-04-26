@@ -10,9 +10,10 @@
   },
   "statements": [
     {
-      "description": "Keeps device awake and increases sampling rate if average acceleration exceeds 1.2 in each direction.",
+      "id": "Acceleration",
+      "description": "Keeps device awake and increases accelerometer sampling rate based on observed acceleration magnitudes. Demonstrates a few of the quantitative aggregation and relation options.",
       "criterion": {
-        "logic": "Conjunction",
+        "logic": "Disjunction",
         "elements": [
           {
             "property-type": "Sensus.Probes.Movement.AccelerometerDatum",
@@ -24,16 +25,16 @@
           {
             "property-type": "Sensus.Probes.Movement.AccelerometerDatum",
             "property-name": "Y",
-            "aggregation": "Average",
-            "relation": "GreaterThan",
-            "target": 1.2
+            "aggregation": "Maximum",
+            "relation": "GreaterThanOrEqualTo",
+            "target": 2
           },
           {
             "property-type": "Sensus.Probes.Movement.AccelerometerDatum",
             "property-name": "Z",
-            "aggregation": "Average",
-            "relation": "GreaterThan",
-            "target": 1.2
+            "aggregation": "Maximum",
+            "relation": "GreaterThanOrEqualTo",
+            "target": 2
           }
         ]
       },
@@ -67,9 +68,10 @@
       ]
     },
     {
-      "description": "Keeps device awake and increases sampling rate if device is near a surface.",
+      "id": "Proximity and Walking",
+      "description": "Keeps device awake and increases accelerometer sampling rate if device is near a surface or the user begins walking. Demonstrates a few of the qualitative aggregation and relation options.",
       "criterion": {
-        "logic": "Conjunction",
+        "logic": "Disjunction",
         "elements": [
           {
             "property-type": "Sensus.Probes.Location.ProximityDatum",
@@ -77,6 +79,13 @@
             "aggregation": "Newest",
             "relation": "EqualTo",
             "target": 0
+          },
+          {
+            "property-type": "Sensus.Probes.Movement.ActivityDatum",
+            "property-name": "ActivityStarting",
+            "aggregation": "Newest",
+            "relation": "EqualTo",
+            "target": "OnFoot"
           }
         ]
       },

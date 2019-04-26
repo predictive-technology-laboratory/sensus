@@ -83,7 +83,9 @@
   
   <h1 id="Sensus_AdaptiveSensing_AsplElement" data-uid="Sensus.AdaptiveSensing.AsplElement" class="text-break">Class AsplElement
   </h1>
-  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 summary"><p>A single check of observed data, aggregated according to <a class="xref" href="Sensus.AdaptiveSensing.AsplAggregation.html">AsplAggregation</a>, in <a class="xref" href="Sensus.AdaptiveSensing.AsplRelation.html">AsplRelation</a> 
+to a <a class="xref" href="Sensus.AdaptiveSensing.AsplElement.html#Sensus_AdaptiveSensing_AsplElement_Target">Target</a>.</p>
+</div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
@@ -114,7 +116,14 @@
   
   <a id="Sensus_AdaptiveSensing_AsplElement_Aggregation_" data-uid="Sensus.AdaptiveSensing.AsplElement.Aggregation*"></a>
   <h4 id="Sensus_AdaptiveSensing_AsplElement_Aggregation" data-uid="Sensus.AdaptiveSensing.AsplElement.Aggregation">Aggregation</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>The observed data will likely contain many values from the property specified by 
+<a class="xref" href="Sensus.AdaptiveSensing.AsplElement.html#Sensus_AdaptiveSensing_AsplElement_PropertyTypeName">PropertyTypeName</a> and <a class="xref" href="Sensus.AdaptiveSensing.AsplElement.html#Sensus_AdaptiveSensing_AsplElement_PropertyName">PropertyName</a>. These values need
+to be aggregated in some way to check against the <a class="xref" href="Sensus.AdaptiveSensing.AsplElement.html#Sensus_AdaptiveSensing_AsplElement_Target">Target</a> value. This
+specifies the <a class="xref" href="Sensus.AdaptiveSensing.AsplAggregation.html">AsplAggregation</a> to apply to the observed value. For
+example, if one wishes to check the average value of 
+<a class="xref" href="Sensus.Probes.Movement.AccelerometerDatum.html#Sensus_Probes_Movement_AccelerometerDatum_X">X</a> against the <a class="xref" href="Sensus.AdaptiveSensing.AsplElement.html#Sensus_AdaptiveSensing_AsplElement_Target">Target</a>, 
+then this would be <code>Average</code>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -131,7 +140,8 @@
     <tbody>
       <tr>
         <td><a class="xref" href="Sensus.AdaptiveSensing.AsplAggregation.html">AsplAggregation</a></td>
-        <td></td>
+        <td><p>The aggregation.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -139,7 +149,11 @@
   
   <a id="Sensus_AdaptiveSensing_AsplElement_PropertyName_" data-uid="Sensus.AdaptiveSensing.AsplElement.PropertyName*"></a>
   <h4 id="Sensus_AdaptiveSensing_AsplElement_PropertyName" data-uid="Sensus.AdaptiveSensing.AsplElement.PropertyName">PropertyName</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Name of property within type (specified by <a class="xref" href="Sensus.AdaptiveSensing.AsplElement.html#Sensus_AdaptiveSensing_AsplElement_PropertyTypeName">PropertyTypeName</a>) whose value should
+be checked. For example, if one wishes to check 
+<a class="xref" href="Sensus.Probes.Movement.AccelerometerDatum.html#Sensus_Probes_Movement_AccelerometerDatum_X">X</a>, then this should be
+<code>X</code>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -156,7 +170,8 @@
     <tbody>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td></td>
+        <td><p>The name of the property.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -164,7 +179,10 @@
   
   <a id="Sensus_AdaptiveSensing_AsplElement_PropertyTypeName_" data-uid="Sensus.AdaptiveSensing.AsplElement.PropertyTypeName*"></a>
   <h4 id="Sensus_AdaptiveSensing_AsplElement_PropertyTypeName" data-uid="Sensus.AdaptiveSensing.AsplElement.PropertyTypeName">PropertyTypeName</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Fully-qualified type name containing property to check. For example, if one wishes to check 
+<a class="xref" href="Sensus.Probes.Movement.AccelerometerDatum.html#Sensus_Probes_Movement_AccelerometerDatum_X">X</a>, then this should be
+<code>Sensus.Probes.Movement.AccelerometerDatum</code>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -181,7 +199,8 @@
     <tbody>
       <tr>
         <td><span class="xref">System.String</span></td>
-        <td></td>
+        <td><p>The name of the property type.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -189,7 +208,12 @@
   
   <a id="Sensus_AdaptiveSensing_AsplElement_Relation_" data-uid="Sensus.AdaptiveSensing.AsplElement.Relation*"></a>
   <h4 id="Sensus_AdaptiveSensing_AsplElement_Relation" data-uid="Sensus.AdaptiveSensing.AsplElement.Relation">Relation</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Logical <a class="xref" href="Sensus.AdaptiveSensing.AsplRelation.html">AsplRelation</a> used to check the aggregate observation (as
+specified by <a class="xref" href="Sensus.AdaptiveSensing.AsplAggregation.html">AsplAggregation</a>) against the <a class="xref" href="Sensus.AdaptiveSensing.AsplElement.html#Sensus_AdaptiveSensing_AsplElement_Target">Target</a>.
+For example, if one wishes to check whether the average value of 
+<a class="xref" href="Sensus.Probes.Movement.AccelerometerDatum.html#Sensus_Probes_Movement_AccelerometerDatum_X">X</a> is greater than or equal to
+the <a class="xref" href="Sensus.AdaptiveSensing.AsplElement.html#Sensus_AdaptiveSensing_AsplElement_Target">Target</a>, then this should be <code>GreaterThanOrEqualTo</code>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -206,7 +230,8 @@
     <tbody>
       <tr>
         <td><a class="xref" href="Sensus.AdaptiveSensing.AsplRelation.html">AsplRelation</a></td>
-        <td></td>
+        <td><p>The relation.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -214,7 +239,10 @@
   
   <a id="Sensus_AdaptiveSensing_AsplElement_Target_" data-uid="Sensus.AdaptiveSensing.AsplElement.Target*"></a>
   <h4 id="Sensus_AdaptiveSensing_AsplElement_Target" data-uid="Sensus.AdaptiveSensing.AsplElement.Target">Target</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Target value used to check against the aggregate observation. This can be
+a real value (for numeric aggregates), a logical true/false value (for 
+logical aggregates), or a double-quoted string value (for nominal aggregates).</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -231,7 +259,8 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Object</span></td>
-        <td></td>
+        <td><p>The target.</p>
+</td>
       </tr>
     </tbody>
   </table>

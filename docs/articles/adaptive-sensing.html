@@ -201,7 +201,11 @@ our team (uva.ptl@gmail.com) to include them in a future release.</p>
 policies specified in a general-purpose adaptive sensing policy language (ASPL). ASPL specifies both the 
 control criteria as well as the control actions depicted in the above state diagram. The 
 <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared/AdaptiveSensing/example-aspl-policy.json">example ASPL policy file</a>
-shows the format.</p>
+demonstrates the ASPL format. The elements of the format are described in the documentation for 
+<a class="xref" href="../api/Sensus.AdaptiveSensing.AsplSensingAgent.html">AsplSensingAgent</a>. If more than 1 <a class="xref" href="../api/Sensus.AdaptiveSensing.AsplStatement.html">AsplStatement</a> is 
+provided to the <a class="xref" href="../api/Sensus.AdaptiveSensing.AsplSensingAgent.html">AsplSensingAgent</a>, then the first one whose criterion is satisfied 
+by the observed data will be used for sensing control.</p>
+<h2 id="softare--versus-aspl-defined-sensing-agents">Softare- Versus ASPL-Defined Sensing Agents</h2>
 <p>There are pros and cons of software- and ASPL-defined sensing agents:</p>
 <ul>
 <li><p>Software-defined</p>
@@ -220,23 +224,21 @@ into both Android and iOS without the need for code changes or app redeployment.
 </ul>
 </li>
 </ul>
-<p>When using an ASPL-defined sensing agent, one must provide the ASPL policy to the app. This can be done in two 
-ways:</p>
+<h2 id="distributing-sensing-agent-policies">Distributing Sensing Agent Policies</h2>
+<p>Regardless of whether a software- or ASPL-defined sensing agent is used, a policy must be provided to the
+agent. This can be done in two ways:</p>
 <ul>
-<li><p>Set within protocol:  In the protocol settings, tap &quot;Set Agent Policy&quot;, then select your ASPL policy file,
-which must be in the format shown in the 
-<a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared/AdaptiveSensing/example-aspl-policy.json">example ASPL policy file</a>.
-This works well to set the initial policy used by the sensing agent; however, this is not a very effective 
-means of providing updated policies to users during an ongoing study. Updating the ASPL policy would require
-the study administrator to edit the protocol and distribute the new protocol to all users (e.g., via email), who
-would then need to manually update their protocols.</p>
+<li><p>Set within protocol:  In the protocol settings, tap &quot;Set Agent Policy&quot;, then select your JSON policy file. This 
+works well to set the initial policy used by the sensing agent; however, this is not a very effective means of 
+providing updated sensing policies to users during an ongoing study. Updating the policy would require the study
+administrator to edit the protocol and distribute the new protocol to all users (e.g., via email), who would then 
+need to manually update their protocols.</p>
 </li>
-<li><p>Send via push notification:  Upload the ASPL policy to the storage location indicated by the
-<code>GetSensingAgentPolicyAsync</code> method of <a class="xref" href="../api/Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a> and then request a 
+<li><p>Send via push notification:  Request a 
 <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS/ec2-push-notifications/example-requests.json">push notification update</a>
-directing the app to pull down and load the ASPL policy from the remote data store. This is 
-an effective option for updating the sensing agent&#39;s policy during ongoing studies, as users
-will not need to do anything in order to receive the updated policies.</p>
+with the <code>type</code> set to <a class="xref" href="../api/Sensus.Notifications.PushNotificationUpdateType.html#Sensus_Notifications_PushNotificationUpdateType_SensingAgentPolicy">SensingAgentPolicy</a> and <code>content</code> set to the 
+policy you wish to provide. This is an effective option for updating the sensing agent&#39;s policy during ongoing 
+studies, as users will not need to do anything in order to receive the updated policies.</p>
 </li>
 </ul>
 <h2 id="testing-and-debugging">Testing and Debugging</h2>

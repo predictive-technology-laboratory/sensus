@@ -488,53 +488,6 @@ namespace Sensus
                 throw new Exception(message);
             }
         }
-
-#if __ANDROID__
-
-        // android allows us to dynamically load code assemblies, but iOS does not. so, the current approach
-        // is to only support dynamic loading on android and force compile-time assembly inclusion on ios.
-
-        public static SensingAgent GetAgent(byte[] assemblyBytes, string agentId)
-        {
-            return GetAgents(assemblyBytes).SingleOrDefault(agent => agent.Id == agentId);
-        }
-
-        public static List<SensingAgent> GetAgents(byte[] assemblyBytes)
-        {
-            return Assembly.Load(assemblyBytes)
-                           .GetTypes()
-                           .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(SensingAgent)))
-                           .Select(Activator.CreateInstance)
-                           .Cast<SensingAgent>()
-                           .ToList();
-        }
-
-        /// <summary>
-        /// Bytes of the assembly in which the <see cref="Agent"/> is contained.
-        /// </summary>
-        /// <value>The agent assembly bytes.</value>
-        public byte[] AgentAssemblyBytes { get; set; }
-
-#elif __IOS__
-
-        public static SensingAgent GetAgent(string agentId)
-        {
-            return GetAgents().SingleOrDefault(agent => agent.Id == agentId);
-        }
-
-        public static List<SensingAgent> GetAgents()
-        {
-            // get agents from the current assembly. they must be linked at compile time.
-            return Assembly.GetExecutingAssembly()
-                           .GetTypes()
-                           .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(SensingAgent)))
-                           .Select(Activator.CreateInstance)
-                           .Cast<SensingAgent>()
-                           .ToList();
-        }
-
-#endif
-
         #endregion
 
         public event EventHandler<ProtocolState> StateChanged;
@@ -1626,7 +1579,7 @@ namespace Sensus
                         // also require an assembly on android, which is where we get the agents from.
                         if (AgentAssemblyBytes != null)
                         {
-                            _agent = GetAgent(AgentAssemblyBytes, AgentId);
+                            _agent = GetAgent(AgentId, AgentAssemblyBytes);
                         }
 #elif __IOS__
                         // there is no assembly in ios per apple restrictions on dynamically loaded code. agents are baked into the app instead.
@@ -1636,7 +1589,9 @@ namespace Sensus
                         // set the agent's policy if we previously received one (e.g., via push notification)
                         if (AgentPolicy != null)
                         {
-                            _agent.SetPolicyAsync(AgentPolicy).Wait();
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                            _agent.SetPolicyAsync(AgentPolicy); // can't await the operation, as we're in a property.
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                         }
                     }
                     catch (Exception ex)
@@ -2239,7 +2194,7 @@ namespace Sensus
                 }
 
                 // start sensing agent if there is one
-                await (Agent?.InitializeAsync(SensusServiceHelper.Get(), this) ?? Task.CompletedTask);
+                await (Agent?.InitializeAsync() ?? Task.CompletedTask);
 
                 // if the sensing agent has requested actions at regular intervals, then schedule a repeating callback.
                 if (Agent?.ActionInterval != null)
@@ -3031,6 +2986,50 @@ namespace Sensus
             }
         }
 
+        public SensingAgent GetAgent(string agentId, byte[] assemblyBytes = null)
+        {
+            return GetAgents(assemblyBytes).SingleOrDefault(agent => agent.Id == agentId);
+        }
+
+        public List<SensingAgent> GetAgents(byte[] assemblyBytes = null)
+        {
+            List<SensingAgent> agents = new List<SensingAgent>();
+
+            // add agents from the current assembly. they must be linked at compile time.
+            agents.AddRange(Assembly.GetExecutingAssembly()
+                                    .GetTypes()
+                                    .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(SensingAgent)))
+                                    .Select(Activator.CreateInstance)
+                                    .Cast<SensingAgent>()
+                                    .ToList());
+
+            // add agents from the passed assembly, if any bytes were passed.
+            if (assemblyBytes != null)
+            {
+                agents.AddRange(Assembly.Load(assemblyBytes)
+                                        .GetTypes()
+                                        .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(SensingAgent)))
+                                        .Select(Activator.CreateInstance)
+                                        .Cast<SensingAgent>()
+                                        .ToList());
+            }
+
+            // set protocol and service helper on all agents
+            foreach (SensingAgent agent in agents)
+            {
+                agent.Protocol = this;
+                agent.SensusServiceHelper = SensusServiceHelper.Get();
+            }
+
+            return agents;
+        }
+
+        /// <summary>
+        /// Bytes of the assembly in which the <see cref="Agent"/> is contained.
+        /// </summary>
+        /// <value>The agent assembly bytes.</value>
+        public byte[] AgentAssemblyBytes { get; set; }
+
         public async Task UpdateSensingAgentPolicyAsync(CancellationToken cancellationToken)
         {
             JObject policy = await RemoteDataStore.GetSensingAgentPolicyAsync(cancellationToken);
@@ -3043,10 +3042,6 @@ namespace Sensus
             if (Agent != null)
             {
                 await Agent.SetPolicyAsync(policy);
-
-                // save policy within app state (agent itself is not serialized)
-                AgentPolicy = policy;
-                await SensusServiceHelper.Get().SaveAsync();
             }
         }
     }

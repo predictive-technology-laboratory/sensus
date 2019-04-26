@@ -21,66 +21,54 @@ using Newtonsoft.Json.Linq;
 
 namespace Sensus.AdaptiveSensing
 {
+    /// <summary>
+    /// A general-purpose ASPL agent. See the [adaptive sensing](xref:adaptive_sensing) article for more information.
+    /// </summary>
     public class AsplSensingAgent : SensingAgent
     {
-        private int? _maxObservedDataCount;
-        private TimeSpan? _maxObservedDataAge;
-        private List<AsplStatement> _statements;
-        private AsplStatement _satisfiedStatement;
+        /// <summary>
+        /// The <see cref="AsplStatement"/>s to be checked against objective <see cref="IDatum"/> readings to
+        /// determine whether sensing control is warranted.
+        /// </summary>
+        /// <value>The statements.</value>
+        public List<AsplStatement> Statements { get; set; }
+
+        private AsplStatement _currentlySatisfiedStatement;
+        private AsplStatement _ongoingControlStatement;
+
+        private readonly object _statementLocker = new object();
 
         public AsplSensingAgent()
             : base("ASPL", "ASPL-Defined Agent", TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(5))
         {
-            _maxObservedDataCount = 100;
-            _maxObservedDataAge = TimeSpan.FromHours(1);
-            _statements = new List<AsplStatement>();
+            Statements = new List<AsplStatement>();
         }
 
         public override async Task SetPolicyAsync(JObject policy)
         {
+            Statements = (policy["statements"] as JArray).Select(statement => statement.ToObject<AsplStatement>()).ToList();
+
             await base.SetPolicyAsync(policy);
-
-            JObject observedDataSettings = policy["observed-data"] as JObject;
-            _maxObservedDataCount = observedDataSettings["max-count"].ToObject<int?>();
-            _maxObservedDataAge = observedDataSettings["max-age"].ToObject<TimeSpan?>();
-
-            _statements = (policy["statements"] as JArray).Select(statement => statement.ToObject<AsplStatement>()).ToList();
-        }
-
-        protected override void UpdateObservedData(Dictionary<Type, List<IDatum>> typeData)
-        {
-            foreach (Type type in typeData.Keys)
-            {
-                List<IDatum> data = typeData[type];
-
-                // trim collection by size
-                int maxCount = _maxObservedDataCount.GetValueOrDefault(int.MaxValue);
-                while (data.Count > maxCount)
-                {
-                    data.RemoveAt(0);
-                }
-
-                // trim collection by age...oldest data are first
-                TimeSpan maxAge = _maxObservedDataAge.GetValueOrDefault(TimeSpan.MaxValue);
-                while (data.Count > 0 && DateTimeOffset.UtcNow - data[0].Timestamp > maxAge)
-                {
-                    data.RemoveAt(0);
-                }
-            }
         }
 
         protected override bool ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>> typeData)
         {
-            foreach (AsplStatement statement in _statements)
+            lock (_statementLocker)
             {
-                if (statement.Criterion.SatisfiedBy(typeData))
-                {
-                    _satisfiedStatement = statement;
-                    break;
-                }
-            }
+                bool satisfied = false;
 
-            return _satisfiedStatement != null;
+                foreach (AsplStatement statement in Statements)
+                {
+                    if (statement.Criterion.SatisfiedBy(typeData))
+                    {
+                        _currentlySatisfiedStatement = statement;
+                        satisfied = true;
+                        break;
+                    }
+                }
+
+                return satisfied;
+            }
         }
 
         protected override async Task OnOpportunisticControlAsync(CancellationToken cancellationToken)
@@ -95,12 +83,43 @@ namespace Sensus.AdaptiveSensing
 
         private async Task OnControlAsync(CancellationToken cancellationToken)
         {
-            await (Protocol as Protocol).ApplySettingsAsync(_satisfiedStatement.BeginControlSettings, cancellationToken);
+            lock (_statementLocker)
+            {
+                if (_ongoingControlStatement == null && _currentlySatisfiedStatement != null)
+                {
+                    // hang on to the currently satisified statement. we need ensure that the 
+                    // same statement used to begin control is also used to end it.
+                    _ongoingControlStatement = _currentlySatisfiedStatement;
+                }
+                else
+                {
+                    return;
+                }
+            }
+
+            SensusServiceHelper.Logger.Log("Applying start-control settings for statement:  " + _ongoingControlStatement.Id, LoggingLevel.Normal, GetType());
+            await (Protocol as Protocol).ApplySettingsAsync(_ongoingControlStatement.BeginControlSettings, cancellationToken);
         }
 
         protected override async Task OnEndingControlAsync(CancellationToken cancellationToken)
         {
-            await (Protocol as Protocol).ApplySettingsAsync(_satisfiedStatement.EndControlSettings, cancellationToken);
+            AsplStatement ongoingControlStatement;
+
+            lock (_statementLocker)
+            {
+                if (_ongoingControlStatement == null)
+                {
+                    return;
+                }
+                else
+                {
+                    ongoingControlStatement = _ongoingControlStatement;
+                    _ongoingControlStatement = null;
+                }
+            }
+
+            SensusServiceHelper.Logger.Log("Applying end-control settings for statement:  " + ongoingControlStatement.Id, LoggingLevel.Normal, GetType());
+            await (Protocol as Protocol).ApplySettingsAsync(ongoingControlStatement.EndControlSettings, cancellationToken);
         }
     }
 }
