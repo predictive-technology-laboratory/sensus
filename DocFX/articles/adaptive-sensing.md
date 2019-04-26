@@ -73,10 +73,10 @@ shows the correct selection:
 
 1. Add a NuGet reference to [the Sensus package](https://www.nuget.org/packages/Sensus).
 
-1. Add a new class that inherits from <xref:Sensus.SensingAgent>. Be sure to provide a parameterless constructor
+1. Add a new class that inherits from <xref:Sensus.AdaptiveSensing.SensingAgent>. Be sure to provide a parameterless constructor
 for your class, as this constructor will be called at run time to create your agent. Your class will be required
 to override a few methods related to control. These methods are where your sensing agent should execute its control 
-policy. The <xref:Sensus.SensingAgent> class provides a set of predefined control criterion functions 
+policy. The <xref:Sensus.AdaptiveSensing.SensingAgent> class provides a set of predefined control criterion functions 
 [here](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared.NuGet/SensingAgentControlCriteria.cs).
 You can call these diretly from your code or write your own in order to suit your adaptation requirements.
 
@@ -85,13 +85,13 @@ solution is to upload the .dll to a Dropbox directory and copy the sharing URL f
 
 1. Generate a QR code that points to your .dll (e.g., using [QR Code Generator](https://www.qr-code-generator.com/)).
 The content of the QR code must be exactly as shown below:
-```
+```plain
 sensing-agent:URL
 ```
 where URL is the web-accessible URL that points to your .dll file. If you are using Dropbox, then the QR code
 content will be similar to the one shown below (note the `dl=1` ending of the URL, and note that the following 
 URL is only an example -- it is not actually valid):
-```
+```plain
 sensing-agent:https://www.dropbox.com/s/dlaksdjfasfasdf/SensingAgent.dll?dl=1
 ```
 
@@ -128,8 +128,8 @@ our team (uva.ptl@gmail.com) to include them in a future release.
 In addition to the software-defined adaptive sensing agents described above, Sensus supports adaptive sensing
 policies specified in a general-purpose adaptive sensing policy language (ASPL). ASPL specifies both the 
 control criteria as well as the control actions depicted in the above state diagram. The 
-[example ASPL](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared/AdaptiveSensing/example-aspl-policy.json)
-policy shows the format.
+[example ASPL policy file](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared/AdaptiveSensing/example-aspl-policy.json)
+shows the format.
 
 There are pros and cons of software- and ASPL-defined sensing agents:
 
@@ -143,6 +143,24 @@ There are pros and cons of software- and ASPL-defined sensing agents:
   * Pros:  Agent definitions use the relatively simple ASPL syntax. Agent definitions can be loaded at run-time 
   into both Android and iOS without the need for code changes or app redeployment.
   * Cons:  ASPL has limited logical expressiveness.
+  
+When using an ASPL-defined sensing agent, one must provide the ASPL policy to the app. This can be done in two 
+ways:
+
+* Set within protocol:  In the protocol settings, tap "Set Agent Policy", then select your ASPL policy file,
+which must be in the format shown in the 
+[example ASPL policy file](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared/AdaptiveSensing/example-aspl-policy.json).
+This works well to set the initial policy used by the sensing agent; however, this is not a very effective 
+means of providing updated policies to users during an ongoing study. Updating the ASPL policy would require
+the study administrator to edit the protocol and distribute the new protocol to all users (e.g., via email), who
+would then need to manually update their protocols.
+
+* Send via push notification:  Upload the ASPL policy to the storage location indicated by the
+`GetSensingAgentPolicyAsync` method of <xref:Sensus.DataStores.Remote.RemoteDataStore> and then request a 
+[push notification update](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS/ec2-push-notifications/example-requests.json)
+directing the app to pull down and load the ASPL policy from the remote data store. This is 
+an effective option for updating the sensing agent's policy during ongoing studies, as users
+will not need to do anything in order to receive the updated policies.
 
 ## Testing and Debugging
 Regardless of whether your sensing agent targets Android or iOS, there are a few ways to test and debug it:

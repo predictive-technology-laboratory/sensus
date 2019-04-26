@@ -23,17 +23,26 @@ namespace Sensus.AdaptiveSensing
 {
     public class AsplSensingAgent : SensingAgent
     {
+        private int? _maxObservedDataCount;
+        private TimeSpan? _maxObservedDataAge;
         private List<AsplStatement> _statements;
         private AsplStatement _satisfiedStatement;
 
         public AsplSensingAgent()
             : base("ASPL", "ASPL-Defined Agent", TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(5))
         {
+            _maxObservedDataCount = 100;
+            _maxObservedDataAge = TimeSpan.FromHours(1);
+            _statements = new List<AsplStatement>();
         }
 
         public override async Task SetPolicyAsync(JObject policy)
         {
             await base.SetPolicyAsync(policy);
+
+            JObject observedDataSettings = policy["observed-data"] as JObject;
+            _maxObservedDataCount = observedDataSettings["max-count"].ToObject<int?>();
+            _maxObservedDataAge = observedDataSettings["max-age"].ToObject<TimeSpan?>();
 
             _statements = (policy["statements"] as JArray).Select(statement => statement.ToObject<AsplStatement>()).ToList();
         }
@@ -44,8 +53,16 @@ namespace Sensus.AdaptiveSensing
             {
                 List<IDatum> data = typeData[type];
 
-                // trim collections by size
-                while (data.Count > 100)
+                // trim collection by size
+                int maxCount = _maxObservedDataCount.GetValueOrDefault(int.MaxValue);
+                while (data.Count > maxCount)
+                {
+                    data.RemoveAt(0);
+                }
+
+                // trim collection by age...oldest data are first
+                TimeSpan maxAge = _maxObservedDataAge.GetValueOrDefault(TimeSpan.MaxValue);
+                while (data.Count > 0 && DateTimeOffset.UtcNow - data[0].Timestamp > maxAge)
                 {
                     data.RemoveAt(0);
                 }

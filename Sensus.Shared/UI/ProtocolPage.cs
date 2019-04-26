@@ -32,6 +32,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using Sensus.AdaptiveSensing;
+using Newtonsoft.Json.Linq;
 
 namespace Sensus.UI
 {
@@ -355,13 +356,58 @@ namespace Sensus.UI
 
             viewAgentStateButton.Clicked += async (sender, e) =>
             {
-                if (_protocol.Agent != null)
+                if (_protocol.Agent == null)
+                {
+                    await SensusServiceHelper.Get().FlashNotificationAsync("No agent set.");
+                }
+                else
                 {
                     await Navigation.PushAsync(new SensingAgentPage(_protocol.Agent));
                 }
             };
 
             views.Add(viewAgentStateButton);
+
+            Button setAgentPolicyButton = new Button
+            {
+                Text = "Set Agent Policy",
+                FontSize = 20,
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
+
+            setAgentPolicyButton.Clicked += async (sender, e) =>
+            {
+                if (_protocol.Agent == null)
+                {
+                    await SensusServiceHelper.Get().FlashNotificationAsync("No agent set.");
+                }
+                else
+                {
+                    string policyJSON = await SensusServiceHelper.Get().PromptForAndReadTextFileAsync();
+
+                    if (string.IsNullOrWhiteSpace(policyJSON))
+                    {
+                        await SensusServiceHelper.Get().FlashNotificationAsync("Empty policy selected. No changes made.");
+                    }
+                    else
+                    {
+                        try
+                        {
+                            JObject policyObject = JObject.Parse(policyJSON);
+                            await _protocol.Agent.SetPolicyAsync(policyObject);
+                            await SensusServiceHelper.Get().FlashNotificationAsync("Policy set.");
+                        }
+                        catch (Exception ex)
+                        {
+                            string message = "Error setting policy:  " + ex.Message;
+                            SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                            await SensusServiceHelper.Get().FlashNotificationAsync(message);
+                        }
+                    }
+                }
+            };
+
+            views.Add(setAgentPolicyButton);
             #endregion
 
             #region lock

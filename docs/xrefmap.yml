@@ -391,15 +391,15 @@ references:
   commentId: Overload:ExampleSensingAgent.ExampleAccelerationSensingAgent.#ctor
   fullName: ExampleSensingAgent.ExampleAccelerationSensingAgent.ExampleAccelerationSensingAgent
   nameWithType: ExampleAccelerationSensingAgent.ExampleAccelerationSensingAgent
-- uid: ExampleSensingAgent.ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}},Sensus.IDatum)
-  name: ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>>, IDatum)
-  href: api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html#ExampleSensingAgent_ExampleAccelerationSensingAgent_ObservedDataMeetControlCriterion_System_Collections_Generic_Dictionary_System_Type_System_Collections_Generic_List_Sensus_IDatum___Sensus_IDatum_
-  commentId: M:ExampleSensingAgent.ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}},Sensus.IDatum)
-  name.vb: ObservedDataMeetControlCriterion(Dictionary(Of Type, List(Of IDatum)), IDatum)
-  fullName: ExampleSensingAgent.ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary<System.Type, System.Collections.Generic.List<Sensus.IDatum>>, Sensus.IDatum)
-  fullName.vb: ExampleSensingAgent.ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary(Of System.Type, System.Collections.Generic.List(Of Sensus.IDatum)), Sensus.IDatum)
-  nameWithType: ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>>, IDatum)
-  nameWithType.vb: ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(Dictionary(Of Type, List(Of IDatum)), IDatum)
+- uid: ExampleSensingAgent.ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}})
+  name: ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>>)
+  href: api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html#ExampleSensingAgent_ExampleAccelerationSensingAgent_ObservedDataMeetControlCriterion_System_Collections_Generic_Dictionary_System_Type_System_Collections_Generic_List_Sensus_IDatum___
+  commentId: M:ExampleSensingAgent.ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}})
+  name.vb: ObservedDataMeetControlCriterion(Dictionary(Of Type, List(Of IDatum)))
+  fullName: ExampleSensingAgent.ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary<System.Type, System.Collections.Generic.List<Sensus.IDatum>>)
+  fullName.vb: ExampleSensingAgent.ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary(Of System.Type, System.Collections.Generic.List(Of Sensus.IDatum)))
+  nameWithType: ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>>)
+  nameWithType.vb: ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion(Dictionary(Of Type, List(Of IDatum)))
 - uid: ExampleSensingAgent.ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion*
   name: ObservedDataMeetControlCriterion
   href: api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html#ExampleSensingAgent_ExampleAccelerationSensingAgent_ObservedDataMeetControlCriterion_
@@ -502,6 +502,903 @@ references:
   commentId: N:Sensus
   fullName: Sensus
   nameWithType: Sensus
+- uid: Sensus.AdaptiveSensing
+  name: Sensus.AdaptiveSensing
+  href: api/Sensus.AdaptiveSensing.html
+  commentId: N:Sensus.AdaptiveSensing
+  fullName: Sensus.AdaptiveSensing
+  nameWithType: Sensus.AdaptiveSensing
+- uid: Sensus.AdaptiveSensing.AsplAggregation
+  name: AsplAggregation
+  href: api/Sensus.AdaptiveSensing.AsplAggregation.html
+  commentId: T:Sensus.AdaptiveSensing.AsplAggregation
+  fullName: Sensus.AdaptiveSensing.AsplAggregation
+  nameWithType: AsplAggregation
+- uid: Sensus.AdaptiveSensing.AsplAggregation.Average
+  name: Average
+  href: api/Sensus.AdaptiveSensing.AsplAggregation.html#Sensus_AdaptiveSensing_AsplAggregation_Average
+  commentId: F:Sensus.AdaptiveSensing.AsplAggregation.Average
+  fullName: Sensus.AdaptiveSensing.AsplAggregation.Average
+  nameWithType: AsplAggregation.Average
+- uid: Sensus.AdaptiveSensing.AsplAggregation.Maximum
+  name: Maximum
+  href: api/Sensus.AdaptiveSensing.AsplAggregation.html#Sensus_AdaptiveSensing_AsplAggregation_Maximum
+  commentId: F:Sensus.AdaptiveSensing.AsplAggregation.Maximum
+  fullName: Sensus.AdaptiveSensing.AsplAggregation.Maximum
+  nameWithType: AsplAggregation.Maximum
+- uid: Sensus.AdaptiveSensing.AsplAggregation.Minimum
+  name: Minimum
+  href: api/Sensus.AdaptiveSensing.AsplAggregation.html#Sensus_AdaptiveSensing_AsplAggregation_Minimum
+  commentId: F:Sensus.AdaptiveSensing.AsplAggregation.Minimum
+  fullName: Sensus.AdaptiveSensing.AsplAggregation.Minimum
+  nameWithType: AsplAggregation.Minimum
+- uid: Sensus.AdaptiveSensing.AsplAggregation.Mode
+  name: Mode
+  href: api/Sensus.AdaptiveSensing.AsplAggregation.html#Sensus_AdaptiveSensing_AsplAggregation_Mode
+  commentId: F:Sensus.AdaptiveSensing.AsplAggregation.Mode
+  fullName: Sensus.AdaptiveSensing.AsplAggregation.Mode
+  nameWithType: AsplAggregation.Mode
+- uid: Sensus.AdaptiveSensing.AsplAggregation.Newest
+  name: Newest
+  href: api/Sensus.AdaptiveSensing.AsplAggregation.html#Sensus_AdaptiveSensing_AsplAggregation_Newest
+  commentId: F:Sensus.AdaptiveSensing.AsplAggregation.Newest
+  fullName: Sensus.AdaptiveSensing.AsplAggregation.Newest
+  nameWithType: AsplAggregation.Newest
+- uid: Sensus.AdaptiveSensing.AsplAggregation.value__
+  name: value__
+  href: api/Sensus.AdaptiveSensing.AsplAggregation.html#Sensus_AdaptiveSensing_AsplAggregation_value__
+  commentId: F:Sensus.AdaptiveSensing.AsplAggregation.value__
+  fullName: Sensus.AdaptiveSensing.AsplAggregation.value__
+  nameWithType: AsplAggregation.value__
+- uid: Sensus.AdaptiveSensing.AsplCriterion
+  name: AsplCriterion
+  href: api/Sensus.AdaptiveSensing.AsplCriterion.html
+  commentId: T:Sensus.AdaptiveSensing.AsplCriterion
+  fullName: Sensus.AdaptiveSensing.AsplCriterion
+  nameWithType: AsplCriterion
+- uid: Sensus.AdaptiveSensing.AsplCriterion.#ctor
+  name: AsplCriterion()
+  href: api/Sensus.AdaptiveSensing.AsplCriterion.html#Sensus_AdaptiveSensing_AsplCriterion__ctor
+  commentId: M:Sensus.AdaptiveSensing.AsplCriterion.#ctor
+  fullName: Sensus.AdaptiveSensing.AsplCriterion.AsplCriterion()
+  nameWithType: AsplCriterion.AsplCriterion()
+- uid: Sensus.AdaptiveSensing.AsplCriterion.#ctor*
+  name: AsplCriterion
+  href: api/Sensus.AdaptiveSensing.AsplCriterion.html#Sensus_AdaptiveSensing_AsplCriterion__ctor_
+  commentId: Overload:Sensus.AdaptiveSensing.AsplCriterion.#ctor
+  fullName: Sensus.AdaptiveSensing.AsplCriterion.AsplCriterion
+  nameWithType: AsplCriterion.AsplCriterion
+- uid: Sensus.AdaptiveSensing.AsplCriterion.Elements
+  name: Elements
+  href: api/Sensus.AdaptiveSensing.AsplCriterion.html#Sensus_AdaptiveSensing_AsplCriterion_Elements
+  commentId: F:Sensus.AdaptiveSensing.AsplCriterion.Elements
+  fullName: Sensus.AdaptiveSensing.AsplCriterion.Elements
+  nameWithType: AsplCriterion.Elements
+- uid: Sensus.AdaptiveSensing.AsplCriterion.Logic
+  name: Logic
+  href: api/Sensus.AdaptiveSensing.AsplCriterion.html#Sensus_AdaptiveSensing_AsplCriterion_Logic
+  commentId: P:Sensus.AdaptiveSensing.AsplCriterion.Logic
+  fullName: Sensus.AdaptiveSensing.AsplCriterion.Logic
+  nameWithType: AsplCriterion.Logic
+- uid: Sensus.AdaptiveSensing.AsplCriterion.Logic*
+  name: Logic
+  href: api/Sensus.AdaptiveSensing.AsplCriterion.html#Sensus_AdaptiveSensing_AsplCriterion_Logic_
+  commentId: Overload:Sensus.AdaptiveSensing.AsplCriterion.Logic
+  fullName: Sensus.AdaptiveSensing.AsplCriterion.Logic
+  nameWithType: AsplCriterion.Logic
+- uid: Sensus.AdaptiveSensing.AsplCriterion.SatisfiedBy(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}})
+  name: SatisfiedBy(Dictionary<Type, List<IDatum>>)
+  href: api/Sensus.AdaptiveSensing.AsplCriterion.html#Sensus_AdaptiveSensing_AsplCriterion_SatisfiedBy_System_Collections_Generic_Dictionary_System_Type_System_Collections_Generic_List_Sensus_IDatum___
+  commentId: M:Sensus.AdaptiveSensing.AsplCriterion.SatisfiedBy(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}})
+  name.vb: SatisfiedBy(Dictionary(Of Type, List(Of IDatum)))
+  fullName: Sensus.AdaptiveSensing.AsplCriterion.SatisfiedBy(System.Collections.Generic.Dictionary<System.Type, System.Collections.Generic.List<Sensus.IDatum>>)
+  fullName.vb: Sensus.AdaptiveSensing.AsplCriterion.SatisfiedBy(System.Collections.Generic.Dictionary(Of System.Type, System.Collections.Generic.List(Of Sensus.IDatum)))
+  nameWithType: AsplCriterion.SatisfiedBy(Dictionary<Type, List<IDatum>>)
+  nameWithType.vb: AsplCriterion.SatisfiedBy(Dictionary(Of Type, List(Of IDatum)))
+- uid: Sensus.AdaptiveSensing.AsplCriterion.SatisfiedBy*
+  name: SatisfiedBy
+  href: api/Sensus.AdaptiveSensing.AsplCriterion.html#Sensus_AdaptiveSensing_AsplCriterion_SatisfiedBy_
+  commentId: Overload:Sensus.AdaptiveSensing.AsplCriterion.SatisfiedBy
+  fullName: Sensus.AdaptiveSensing.AsplCriterion.SatisfiedBy
+  nameWithType: AsplCriterion.SatisfiedBy
+- uid: Sensus.AdaptiveSensing.AsplElement
+  name: AsplElement
+  href: api/Sensus.AdaptiveSensing.AsplElement.html
+  commentId: T:Sensus.AdaptiveSensing.AsplElement
+  fullName: Sensus.AdaptiveSensing.AsplElement
+  nameWithType: AsplElement
+- uid: Sensus.AdaptiveSensing.AsplElement.#ctor
+  name: AsplElement()
+  href: api/Sensus.AdaptiveSensing.AsplElement.html#Sensus_AdaptiveSensing_AsplElement__ctor
+  commentId: M:Sensus.AdaptiveSensing.AsplElement.#ctor
+  fullName: Sensus.AdaptiveSensing.AsplElement.AsplElement()
+  nameWithType: AsplElement.AsplElement()
+- uid: Sensus.AdaptiveSensing.AsplElement.#ctor*
+  name: AsplElement
+  href: api/Sensus.AdaptiveSensing.AsplElement.html#Sensus_AdaptiveSensing_AsplElement__ctor_
+  commentId: Overload:Sensus.AdaptiveSensing.AsplElement.#ctor
+  fullName: Sensus.AdaptiveSensing.AsplElement.AsplElement
+  nameWithType: AsplElement.AsplElement
+- uid: Sensus.AdaptiveSensing.AsplElement.Aggregation
+  name: Aggregation
+  href: api/Sensus.AdaptiveSensing.AsplElement.html#Sensus_AdaptiveSensing_AsplElement_Aggregation
+  commentId: P:Sensus.AdaptiveSensing.AsplElement.Aggregation
+  fullName: Sensus.AdaptiveSensing.AsplElement.Aggregation
+  nameWithType: AsplElement.Aggregation
+- uid: Sensus.AdaptiveSensing.AsplElement.Aggregation*
+  name: Aggregation
+  href: api/Sensus.AdaptiveSensing.AsplElement.html#Sensus_AdaptiveSensing_AsplElement_Aggregation_
+  commentId: Overload:Sensus.AdaptiveSensing.AsplElement.Aggregation
+  fullName: Sensus.AdaptiveSensing.AsplElement.Aggregation
+  nameWithType: AsplElement.Aggregation
+- uid: Sensus.AdaptiveSensing.AsplElement.PropertyName
+  name: PropertyName
+  href: api/Sensus.AdaptiveSensing.AsplElement.html#Sensus_AdaptiveSensing_AsplElement_PropertyName
+  commentId: P:Sensus.AdaptiveSensing.AsplElement.PropertyName
+  fullName: Sensus.AdaptiveSensing.AsplElement.PropertyName
+  nameWithType: AsplElement.PropertyName
+- uid: Sensus.AdaptiveSensing.AsplElement.PropertyName*
+  name: PropertyName
+  href: api/Sensus.AdaptiveSensing.AsplElement.html#Sensus_AdaptiveSensing_AsplElement_PropertyName_
+  commentId: Overload:Sensus.AdaptiveSensing.AsplElement.PropertyName
+  fullName: Sensus.AdaptiveSensing.AsplElement.PropertyName
+  nameWithType: AsplElement.PropertyName
+- uid: Sensus.AdaptiveSensing.AsplElement.PropertyTypeName
+  name: PropertyTypeName
+  href: api/Sensus.AdaptiveSensing.AsplElement.html#Sensus_AdaptiveSensing_AsplElement_PropertyTypeName
+  commentId: P:Sensus.AdaptiveSensing.AsplElement.PropertyTypeName
+  fullName: Sensus.AdaptiveSensing.AsplElement.PropertyTypeName
+  nameWithType: AsplElement.PropertyTypeName
+- uid: Sensus.AdaptiveSensing.AsplElement.PropertyTypeName*
+  name: PropertyTypeName
+  href: api/Sensus.AdaptiveSensing.AsplElement.html#Sensus_AdaptiveSensing_AsplElement_PropertyTypeName_
+  commentId: Overload:Sensus.AdaptiveSensing.AsplElement.PropertyTypeName
+  fullName: Sensus.AdaptiveSensing.AsplElement.PropertyTypeName
+  nameWithType: AsplElement.PropertyTypeName
+- uid: Sensus.AdaptiveSensing.AsplElement.Relation
+  name: Relation
+  href: api/Sensus.AdaptiveSensing.AsplElement.html#Sensus_AdaptiveSensing_AsplElement_Relation
+  commentId: P:Sensus.AdaptiveSensing.AsplElement.Relation
+  fullName: Sensus.AdaptiveSensing.AsplElement.Relation
+  nameWithType: AsplElement.Relation
+- uid: Sensus.AdaptiveSensing.AsplElement.Relation*
+  name: Relation
+  href: api/Sensus.AdaptiveSensing.AsplElement.html#Sensus_AdaptiveSensing_AsplElement_Relation_
+  commentId: Overload:Sensus.AdaptiveSensing.AsplElement.Relation
+  fullName: Sensus.AdaptiveSensing.AsplElement.Relation
+  nameWithType: AsplElement.Relation
+- uid: Sensus.AdaptiveSensing.AsplElement.SatisfiedBy(System.Collections.Generic.List{Sensus.IDatum})
+  name: SatisfiedBy(List<IDatum>)
+  href: api/Sensus.AdaptiveSensing.AsplElement.html#Sensus_AdaptiveSensing_AsplElement_SatisfiedBy_System_Collections_Generic_List_Sensus_IDatum__
+  commentId: M:Sensus.AdaptiveSensing.AsplElement.SatisfiedBy(System.Collections.Generic.List{Sensus.IDatum})
+  name.vb: SatisfiedBy(List(Of IDatum))
+  fullName: Sensus.AdaptiveSensing.AsplElement.SatisfiedBy(System.Collections.Generic.List<Sensus.IDatum>)
+  fullName.vb: Sensus.AdaptiveSensing.AsplElement.SatisfiedBy(System.Collections.Generic.List(Of Sensus.IDatum))
+  nameWithType: AsplElement.SatisfiedBy(List<IDatum>)
+  nameWithType.vb: AsplElement.SatisfiedBy(List(Of IDatum))
+- uid: Sensus.AdaptiveSensing.AsplElement.SatisfiedBy*
+  name: SatisfiedBy
+  href: api/Sensus.AdaptiveSensing.AsplElement.html#Sensus_AdaptiveSensing_AsplElement_SatisfiedBy_
+  commentId: Overload:Sensus.AdaptiveSensing.AsplElement.SatisfiedBy
+  fullName: Sensus.AdaptiveSensing.AsplElement.SatisfiedBy
+  nameWithType: AsplElement.SatisfiedBy
+- uid: Sensus.AdaptiveSensing.AsplElement.Target
+  name: Target
+  href: api/Sensus.AdaptiveSensing.AsplElement.html#Sensus_AdaptiveSensing_AsplElement_Target
+  commentId: P:Sensus.AdaptiveSensing.AsplElement.Target
+  fullName: Sensus.AdaptiveSensing.AsplElement.Target
+  nameWithType: AsplElement.Target
+- uid: Sensus.AdaptiveSensing.AsplElement.Target*
+  name: Target
+  href: api/Sensus.AdaptiveSensing.AsplElement.html#Sensus_AdaptiveSensing_AsplElement_Target_
+  commentId: Overload:Sensus.AdaptiveSensing.AsplElement.Target
+  fullName: Sensus.AdaptiveSensing.AsplElement.Target
+  nameWithType: AsplElement.Target
+- uid: Sensus.AdaptiveSensing.AsplLogic
+  name: AsplLogic
+  href: api/Sensus.AdaptiveSensing.AsplLogic.html
+  commentId: T:Sensus.AdaptiveSensing.AsplLogic
+  fullName: Sensus.AdaptiveSensing.AsplLogic
+  nameWithType: AsplLogic
+- uid: Sensus.AdaptiveSensing.AsplLogic.Conjunction
+  name: Conjunction
+  href: api/Sensus.AdaptiveSensing.AsplLogic.html#Sensus_AdaptiveSensing_AsplLogic_Conjunction
+  commentId: F:Sensus.AdaptiveSensing.AsplLogic.Conjunction
+  fullName: Sensus.AdaptiveSensing.AsplLogic.Conjunction
+  nameWithType: AsplLogic.Conjunction
+- uid: Sensus.AdaptiveSensing.AsplLogic.Disjunction
+  name: Disjunction
+  href: api/Sensus.AdaptiveSensing.AsplLogic.html#Sensus_AdaptiveSensing_AsplLogic_Disjunction
+  commentId: F:Sensus.AdaptiveSensing.AsplLogic.Disjunction
+  fullName: Sensus.AdaptiveSensing.AsplLogic.Disjunction
+  nameWithType: AsplLogic.Disjunction
+- uid: Sensus.AdaptiveSensing.AsplLogic.value__
+  name: value__
+  href: api/Sensus.AdaptiveSensing.AsplLogic.html#Sensus_AdaptiveSensing_AsplLogic_value__
+  commentId: F:Sensus.AdaptiveSensing.AsplLogic.value__
+  fullName: Sensus.AdaptiveSensing.AsplLogic.value__
+  nameWithType: AsplLogic.value__
+- uid: Sensus.AdaptiveSensing.AsplRelation
+  name: AsplRelation
+  href: api/Sensus.AdaptiveSensing.AsplRelation.html
+  commentId: T:Sensus.AdaptiveSensing.AsplRelation
+  fullName: Sensus.AdaptiveSensing.AsplRelation
+  nameWithType: AsplRelation
+- uid: Sensus.AdaptiveSensing.AsplRelation.EqualTo
+  name: EqualTo
+  href: api/Sensus.AdaptiveSensing.AsplRelation.html#Sensus_AdaptiveSensing_AsplRelation_EqualTo
+  commentId: F:Sensus.AdaptiveSensing.AsplRelation.EqualTo
+  fullName: Sensus.AdaptiveSensing.AsplRelation.EqualTo
+  nameWithType: AsplRelation.EqualTo
+- uid: Sensus.AdaptiveSensing.AsplRelation.GreaterThan
+  name: GreaterThan
+  href: api/Sensus.AdaptiveSensing.AsplRelation.html#Sensus_AdaptiveSensing_AsplRelation_GreaterThan
+  commentId: F:Sensus.AdaptiveSensing.AsplRelation.GreaterThan
+  fullName: Sensus.AdaptiveSensing.AsplRelation.GreaterThan
+  nameWithType: AsplRelation.GreaterThan
+- uid: Sensus.AdaptiveSensing.AsplRelation.GreaterThanOrEqualTo
+  name: GreaterThanOrEqualTo
+  href: api/Sensus.AdaptiveSensing.AsplRelation.html#Sensus_AdaptiveSensing_AsplRelation_GreaterThanOrEqualTo
+  commentId: F:Sensus.AdaptiveSensing.AsplRelation.GreaterThanOrEqualTo
+  fullName: Sensus.AdaptiveSensing.AsplRelation.GreaterThanOrEqualTo
+  nameWithType: AsplRelation.GreaterThanOrEqualTo
+- uid: Sensus.AdaptiveSensing.AsplRelation.LessThan
+  name: LessThan
+  href: api/Sensus.AdaptiveSensing.AsplRelation.html#Sensus_AdaptiveSensing_AsplRelation_LessThan
+  commentId: F:Sensus.AdaptiveSensing.AsplRelation.LessThan
+  fullName: Sensus.AdaptiveSensing.AsplRelation.LessThan
+  nameWithType: AsplRelation.LessThan
+- uid: Sensus.AdaptiveSensing.AsplRelation.LessThanOrEqualTo
+  name: LessThanOrEqualTo
+  href: api/Sensus.AdaptiveSensing.AsplRelation.html#Sensus_AdaptiveSensing_AsplRelation_LessThanOrEqualTo
+  commentId: F:Sensus.AdaptiveSensing.AsplRelation.LessThanOrEqualTo
+  fullName: Sensus.AdaptiveSensing.AsplRelation.LessThanOrEqualTo
+  nameWithType: AsplRelation.LessThanOrEqualTo
+- uid: Sensus.AdaptiveSensing.AsplRelation.value__
+  name: value__
+  href: api/Sensus.AdaptiveSensing.AsplRelation.html#Sensus_AdaptiveSensing_AsplRelation_value__
+  commentId: F:Sensus.AdaptiveSensing.AsplRelation.value__
+  fullName: Sensus.AdaptiveSensing.AsplRelation.value__
+  nameWithType: AsplRelation.value__
+- uid: Sensus.AdaptiveSensing.AsplSensingAgent
+  name: AsplSensingAgent
+  href: api/Sensus.AdaptiveSensing.AsplSensingAgent.html
+  commentId: T:Sensus.AdaptiveSensing.AsplSensingAgent
+  fullName: Sensus.AdaptiveSensing.AsplSensingAgent
+  nameWithType: AsplSensingAgent
+- uid: Sensus.AdaptiveSensing.AsplSensingAgent.#ctor
+  name: AsplSensingAgent()
+  href: api/Sensus.AdaptiveSensing.AsplSensingAgent.html#Sensus_AdaptiveSensing_AsplSensingAgent__ctor
+  commentId: M:Sensus.AdaptiveSensing.AsplSensingAgent.#ctor
+  fullName: Sensus.AdaptiveSensing.AsplSensingAgent.AsplSensingAgent()
+  nameWithType: AsplSensingAgent.AsplSensingAgent()
+- uid: Sensus.AdaptiveSensing.AsplSensingAgent.#ctor*
+  name: AsplSensingAgent
+  href: api/Sensus.AdaptiveSensing.AsplSensingAgent.html#Sensus_AdaptiveSensing_AsplSensingAgent__ctor_
+  commentId: Overload:Sensus.AdaptiveSensing.AsplSensingAgent.#ctor
+  fullName: Sensus.AdaptiveSensing.AsplSensingAgent.AsplSensingAgent
+  nameWithType: AsplSensingAgent.AsplSensingAgent
+- uid: Sensus.AdaptiveSensing.AsplSensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}})
+  name: ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>>)
+  href: api/Sensus.AdaptiveSensing.AsplSensingAgent.html#Sensus_AdaptiveSensing_AsplSensingAgent_ObservedDataMeetControlCriterion_System_Collections_Generic_Dictionary_System_Type_System_Collections_Generic_List_Sensus_IDatum___
+  commentId: M:Sensus.AdaptiveSensing.AsplSensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}})
+  name.vb: ObservedDataMeetControlCriterion(Dictionary(Of Type, List(Of IDatum)))
+  fullName: Sensus.AdaptiveSensing.AsplSensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary<System.Type, System.Collections.Generic.List<Sensus.IDatum>>)
+  fullName.vb: Sensus.AdaptiveSensing.AsplSensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary(Of System.Type, System.Collections.Generic.List(Of Sensus.IDatum)))
+  nameWithType: AsplSensingAgent.ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>>)
+  nameWithType.vb: AsplSensingAgent.ObservedDataMeetControlCriterion(Dictionary(Of Type, List(Of IDatum)))
+- uid: Sensus.AdaptiveSensing.AsplSensingAgent.ObservedDataMeetControlCriterion*
+  name: ObservedDataMeetControlCriterion
+  href: api/Sensus.AdaptiveSensing.AsplSensingAgent.html#Sensus_AdaptiveSensing_AsplSensingAgent_ObservedDataMeetControlCriterion_
+  commentId: Overload:Sensus.AdaptiveSensing.AsplSensingAgent.ObservedDataMeetControlCriterion
+  fullName: Sensus.AdaptiveSensing.AsplSensingAgent.ObservedDataMeetControlCriterion
+  nameWithType: AsplSensingAgent.ObservedDataMeetControlCriterion
+- uid: Sensus.AdaptiveSensing.AsplSensingAgent.OnActiveControlAsync(System.Threading.CancellationToken)
+  name: OnActiveControlAsync(CancellationToken)
+  href: api/Sensus.AdaptiveSensing.AsplSensingAgent.html#Sensus_AdaptiveSensing_AsplSensingAgent_OnActiveControlAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.AdaptiveSensing.AsplSensingAgent.OnActiveControlAsync(System.Threading.CancellationToken)
+  fullName: Sensus.AdaptiveSensing.AsplSensingAgent.OnActiveControlAsync(System.Threading.CancellationToken)
+  nameWithType: AsplSensingAgent.OnActiveControlAsync(CancellationToken)
+- uid: Sensus.AdaptiveSensing.AsplSensingAgent.OnActiveControlAsync*
+  name: OnActiveControlAsync
+  href: api/Sensus.AdaptiveSensing.AsplSensingAgent.html#Sensus_AdaptiveSensing_AsplSensingAgent_OnActiveControlAsync_
+  commentId: Overload:Sensus.AdaptiveSensing.AsplSensingAgent.OnActiveControlAsync
+  fullName: Sensus.AdaptiveSensing.AsplSensingAgent.OnActiveControlAsync
+  nameWithType: AsplSensingAgent.OnActiveControlAsync
+- uid: Sensus.AdaptiveSensing.AsplSensingAgent.OnEndingControlAsync(System.Threading.CancellationToken)
+  name: OnEndingControlAsync(CancellationToken)
+  href: api/Sensus.AdaptiveSensing.AsplSensingAgent.html#Sensus_AdaptiveSensing_AsplSensingAgent_OnEndingControlAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.AdaptiveSensing.AsplSensingAgent.OnEndingControlAsync(System.Threading.CancellationToken)
+  fullName: Sensus.AdaptiveSensing.AsplSensingAgent.OnEndingControlAsync(System.Threading.CancellationToken)
+  nameWithType: AsplSensingAgent.OnEndingControlAsync(CancellationToken)
+- uid: Sensus.AdaptiveSensing.AsplSensingAgent.OnEndingControlAsync*
+  name: OnEndingControlAsync
+  href: api/Sensus.AdaptiveSensing.AsplSensingAgent.html#Sensus_AdaptiveSensing_AsplSensingAgent_OnEndingControlAsync_
+  commentId: Overload:Sensus.AdaptiveSensing.AsplSensingAgent.OnEndingControlAsync
+  fullName: Sensus.AdaptiveSensing.AsplSensingAgent.OnEndingControlAsync
+  nameWithType: AsplSensingAgent.OnEndingControlAsync
+- uid: Sensus.AdaptiveSensing.AsplSensingAgent.OnOpportunisticControlAsync(System.Threading.CancellationToken)
+  name: OnOpportunisticControlAsync(CancellationToken)
+  href: api/Sensus.AdaptiveSensing.AsplSensingAgent.html#Sensus_AdaptiveSensing_AsplSensingAgent_OnOpportunisticControlAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.AdaptiveSensing.AsplSensingAgent.OnOpportunisticControlAsync(System.Threading.CancellationToken)
+  fullName: Sensus.AdaptiveSensing.AsplSensingAgent.OnOpportunisticControlAsync(System.Threading.CancellationToken)
+  nameWithType: AsplSensingAgent.OnOpportunisticControlAsync(CancellationToken)
+- uid: Sensus.AdaptiveSensing.AsplSensingAgent.OnOpportunisticControlAsync*
+  name: OnOpportunisticControlAsync
+  href: api/Sensus.AdaptiveSensing.AsplSensingAgent.html#Sensus_AdaptiveSensing_AsplSensingAgent_OnOpportunisticControlAsync_
+  commentId: Overload:Sensus.AdaptiveSensing.AsplSensingAgent.OnOpportunisticControlAsync
+  fullName: Sensus.AdaptiveSensing.AsplSensingAgent.OnOpportunisticControlAsync
+  nameWithType: AsplSensingAgent.OnOpportunisticControlAsync
+- uid: Sensus.AdaptiveSensing.AsplSensingAgent.SetPolicyAsync(Newtonsoft.Json.Linq.JObject)
+  name: SetPolicyAsync(JObject)
+  href: api/Sensus.AdaptiveSensing.AsplSensingAgent.html#Sensus_AdaptiveSensing_AsplSensingAgent_SetPolicyAsync_Newtonsoft_Json_Linq_JObject_
+  commentId: M:Sensus.AdaptiveSensing.AsplSensingAgent.SetPolicyAsync(Newtonsoft.Json.Linq.JObject)
+  fullName: Sensus.AdaptiveSensing.AsplSensingAgent.SetPolicyAsync(Newtonsoft.Json.Linq.JObject)
+  nameWithType: AsplSensingAgent.SetPolicyAsync(JObject)
+- uid: Sensus.AdaptiveSensing.AsplSensingAgent.SetPolicyAsync*
+  name: SetPolicyAsync
+  href: api/Sensus.AdaptiveSensing.AsplSensingAgent.html#Sensus_AdaptiveSensing_AsplSensingAgent_SetPolicyAsync_
+  commentId: Overload:Sensus.AdaptiveSensing.AsplSensingAgent.SetPolicyAsync
+  fullName: Sensus.AdaptiveSensing.AsplSensingAgent.SetPolicyAsync
+  nameWithType: AsplSensingAgent.SetPolicyAsync
+- uid: Sensus.AdaptiveSensing.AsplSensingAgent.UpdateObservedData(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}})
+  name: UpdateObservedData(Dictionary<Type, List<IDatum>>)
+  href: api/Sensus.AdaptiveSensing.AsplSensingAgent.html#Sensus_AdaptiveSensing_AsplSensingAgent_UpdateObservedData_System_Collections_Generic_Dictionary_System_Type_System_Collections_Generic_List_Sensus_IDatum___
+  commentId: M:Sensus.AdaptiveSensing.AsplSensingAgent.UpdateObservedData(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}})
+  name.vb: UpdateObservedData(Dictionary(Of Type, List(Of IDatum)))
+  fullName: Sensus.AdaptiveSensing.AsplSensingAgent.UpdateObservedData(System.Collections.Generic.Dictionary<System.Type, System.Collections.Generic.List<Sensus.IDatum>>)
+  fullName.vb: Sensus.AdaptiveSensing.AsplSensingAgent.UpdateObservedData(System.Collections.Generic.Dictionary(Of System.Type, System.Collections.Generic.List(Of Sensus.IDatum)))
+  nameWithType: AsplSensingAgent.UpdateObservedData(Dictionary<Type, List<IDatum>>)
+  nameWithType.vb: AsplSensingAgent.UpdateObservedData(Dictionary(Of Type, List(Of IDatum)))
+- uid: Sensus.AdaptiveSensing.AsplSensingAgent.UpdateObservedData*
+  name: UpdateObservedData
+  href: api/Sensus.AdaptiveSensing.AsplSensingAgent.html#Sensus_AdaptiveSensing_AsplSensingAgent_UpdateObservedData_
+  commentId: Overload:Sensus.AdaptiveSensing.AsplSensingAgent.UpdateObservedData
+  fullName: Sensus.AdaptiveSensing.AsplSensingAgent.UpdateObservedData
+  nameWithType: AsplSensingAgent.UpdateObservedData
+- uid: Sensus.AdaptiveSensing.AsplStatement
+  name: AsplStatement
+  href: api/Sensus.AdaptiveSensing.AsplStatement.html
+  commentId: T:Sensus.AdaptiveSensing.AsplStatement
+  fullName: Sensus.AdaptiveSensing.AsplStatement
+  nameWithType: AsplStatement
+- uid: Sensus.AdaptiveSensing.AsplStatement.#ctor
+  name: AsplStatement()
+  href: api/Sensus.AdaptiveSensing.AsplStatement.html#Sensus_AdaptiveSensing_AsplStatement__ctor
+  commentId: M:Sensus.AdaptiveSensing.AsplStatement.#ctor
+  fullName: Sensus.AdaptiveSensing.AsplStatement.AsplStatement()
+  nameWithType: AsplStatement.AsplStatement()
+- uid: Sensus.AdaptiveSensing.AsplStatement.#ctor*
+  name: AsplStatement
+  href: api/Sensus.AdaptiveSensing.AsplStatement.html#Sensus_AdaptiveSensing_AsplStatement__ctor_
+  commentId: Overload:Sensus.AdaptiveSensing.AsplStatement.#ctor
+  fullName: Sensus.AdaptiveSensing.AsplStatement.AsplStatement
+  nameWithType: AsplStatement.AsplStatement
+- uid: Sensus.AdaptiveSensing.AsplStatement.BeginControlSettings
+  name: BeginControlSettings
+  href: api/Sensus.AdaptiveSensing.AsplStatement.html#Sensus_AdaptiveSensing_AsplStatement_BeginControlSettings
+  commentId: P:Sensus.AdaptiveSensing.AsplStatement.BeginControlSettings
+  fullName: Sensus.AdaptiveSensing.AsplStatement.BeginControlSettings
+  nameWithType: AsplStatement.BeginControlSettings
+- uid: Sensus.AdaptiveSensing.AsplStatement.BeginControlSettings*
+  name: BeginControlSettings
+  href: api/Sensus.AdaptiveSensing.AsplStatement.html#Sensus_AdaptiveSensing_AsplStatement_BeginControlSettings_
+  commentId: Overload:Sensus.AdaptiveSensing.AsplStatement.BeginControlSettings
+  fullName: Sensus.AdaptiveSensing.AsplStatement.BeginControlSettings
+  nameWithType: AsplStatement.BeginControlSettings
+- uid: Sensus.AdaptiveSensing.AsplStatement.Criterion
+  name: Criterion
+  href: api/Sensus.AdaptiveSensing.AsplStatement.html#Sensus_AdaptiveSensing_AsplStatement_Criterion
+  commentId: P:Sensus.AdaptiveSensing.AsplStatement.Criterion
+  fullName: Sensus.AdaptiveSensing.AsplStatement.Criterion
+  nameWithType: AsplStatement.Criterion
+- uid: Sensus.AdaptiveSensing.AsplStatement.Criterion*
+  name: Criterion
+  href: api/Sensus.AdaptiveSensing.AsplStatement.html#Sensus_AdaptiveSensing_AsplStatement_Criterion_
+  commentId: Overload:Sensus.AdaptiveSensing.AsplStatement.Criterion
+  fullName: Sensus.AdaptiveSensing.AsplStatement.Criterion
+  nameWithType: AsplStatement.Criterion
+- uid: Sensus.AdaptiveSensing.AsplStatement.Description
+  name: Description
+  href: api/Sensus.AdaptiveSensing.AsplStatement.html#Sensus_AdaptiveSensing_AsplStatement_Description
+  commentId: P:Sensus.AdaptiveSensing.AsplStatement.Description
+  fullName: Sensus.AdaptiveSensing.AsplStatement.Description
+  nameWithType: AsplStatement.Description
+- uid: Sensus.AdaptiveSensing.AsplStatement.Description*
+  name: Description
+  href: api/Sensus.AdaptiveSensing.AsplStatement.html#Sensus_AdaptiveSensing_AsplStatement_Description_
+  commentId: Overload:Sensus.AdaptiveSensing.AsplStatement.Description
+  fullName: Sensus.AdaptiveSensing.AsplStatement.Description
+  nameWithType: AsplStatement.Description
+- uid: Sensus.AdaptiveSensing.AsplStatement.EndControlSettings
+  name: EndControlSettings
+  href: api/Sensus.AdaptiveSensing.AsplStatement.html#Sensus_AdaptiveSensing_AsplStatement_EndControlSettings
+  commentId: P:Sensus.AdaptiveSensing.AsplStatement.EndControlSettings
+  fullName: Sensus.AdaptiveSensing.AsplStatement.EndControlSettings
+  nameWithType: AsplStatement.EndControlSettings
+- uid: Sensus.AdaptiveSensing.AsplStatement.EndControlSettings*
+  name: EndControlSettings
+  href: api/Sensus.AdaptiveSensing.AsplStatement.html#Sensus_AdaptiveSensing_AsplStatement_EndControlSettings_
+  commentId: Overload:Sensus.AdaptiveSensing.AsplStatement.EndControlSettings
+  fullName: Sensus.AdaptiveSensing.AsplStatement.EndControlSettings
+  nameWithType: AsplStatement.EndControlSettings
+- uid: Sensus.AdaptiveSensing.SensingAgent
+  name: SensingAgent
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html
+  commentId: T:Sensus.AdaptiveSensing.SensingAgent
+  fullName: Sensus.AdaptiveSensing.SensingAgent
+  nameWithType: SensingAgent
+- uid: Sensus.AdaptiveSensing.SensingAgent.#ctor(System.String,System.String,System.TimeSpan)
+  name: SensingAgent(String, String, TimeSpan)
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent__ctor_System_String_System_String_System_TimeSpan_
+  commentId: M:Sensus.AdaptiveSensing.SensingAgent.#ctor(System.String,System.String,System.TimeSpan)
+  fullName: Sensus.AdaptiveSensing.SensingAgent.SensingAgent(System.String, System.String, System.TimeSpan)
+  nameWithType: SensingAgent.SensingAgent(String, String, TimeSpan)
+- uid: Sensus.AdaptiveSensing.SensingAgent.#ctor(System.String,System.String,System.TimeSpan,System.TimeSpan,System.TimeSpan)
+  name: SensingAgent(String, String, TimeSpan, TimeSpan, TimeSpan)
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent__ctor_System_String_System_String_System_TimeSpan_System_TimeSpan_System_TimeSpan_
+  commentId: M:Sensus.AdaptiveSensing.SensingAgent.#ctor(System.String,System.String,System.TimeSpan,System.TimeSpan,System.TimeSpan)
+  fullName: Sensus.AdaptiveSensing.SensingAgent.SensingAgent(System.String, System.String, System.TimeSpan, System.TimeSpan, System.TimeSpan)
+  nameWithType: SensingAgent.SensingAgent(String, String, TimeSpan, TimeSpan, TimeSpan)
+- uid: Sensus.AdaptiveSensing.SensingAgent.#ctor*
+  name: SensingAgent
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent__ctor_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.#ctor
+  fullName: Sensus.AdaptiveSensing.SensingAgent.SensingAgent
+  nameWithType: SensingAgent.SensingAgent
+- uid: Sensus.AdaptiveSensing.SensingAgent.ActAsync(System.Threading.CancellationToken)
+  name: ActAsync(CancellationToken)
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ActAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.AdaptiveSensing.SensingAgent.ActAsync(System.Threading.CancellationToken)
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ActAsync(System.Threading.CancellationToken)
+  nameWithType: SensingAgent.ActAsync(CancellationToken)
+- uid: Sensus.AdaptiveSensing.SensingAgent.ActAsync*
+  name: ActAsync
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ActAsync_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.ActAsync
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ActAsync
+  nameWithType: SensingAgent.ActAsync
+- uid: Sensus.AdaptiveSensing.SensingAgent.ActionInterval
+  name: ActionInterval
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ActionInterval
+  commentId: P:Sensus.AdaptiveSensing.SensingAgent.ActionInterval
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ActionInterval
+  nameWithType: SensingAgent.ActionInterval
+- uid: Sensus.AdaptiveSensing.SensingAgent.ActionInterval*
+  name: ActionInterval
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ActionInterval_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.ActionInterval
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ActionInterval
+  nameWithType: SensingAgent.ActionInterval
+- uid: Sensus.AdaptiveSensing.SensingAgent.ActionIntervalToleranceAfter
+  name: ActionIntervalToleranceAfter
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ActionIntervalToleranceAfter
+  commentId: P:Sensus.AdaptiveSensing.SensingAgent.ActionIntervalToleranceAfter
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ActionIntervalToleranceAfter
+  nameWithType: SensingAgent.ActionIntervalToleranceAfter
+- uid: Sensus.AdaptiveSensing.SensingAgent.ActionIntervalToleranceAfter*
+  name: ActionIntervalToleranceAfter
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ActionIntervalToleranceAfter_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.ActionIntervalToleranceAfter
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ActionIntervalToleranceAfter
+  nameWithType: SensingAgent.ActionIntervalToleranceAfter
+- uid: Sensus.AdaptiveSensing.SensingAgent.ActionIntervalToleranceBefore
+  name: ActionIntervalToleranceBefore
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ActionIntervalToleranceBefore
+  commentId: P:Sensus.AdaptiveSensing.SensingAgent.ActionIntervalToleranceBefore
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ActionIntervalToleranceBefore
+  nameWithType: SensingAgent.ActionIntervalToleranceBefore
+- uid: Sensus.AdaptiveSensing.SensingAgent.ActionIntervalToleranceBefore*
+  name: ActionIntervalToleranceBefore
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ActionIntervalToleranceBefore_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.ActionIntervalToleranceBefore
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ActionIntervalToleranceBefore
+  nameWithType: SensingAgent.ActionIntervalToleranceBefore
+- uid: Sensus.AdaptiveSensing.SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold(System.Double)
+  name: AverageLinearAccelerationMagnitudeExceedsThreshold(Double)
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_AverageLinearAccelerationMagnitudeExceedsThreshold_System_Double_
+  commentId: M:Sensus.AdaptiveSensing.SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold(System.Double)
+  fullName: Sensus.AdaptiveSensing.SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold(System.Double)
+  nameWithType: SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold(Double)
+- uid: Sensus.AdaptiveSensing.SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold*
+  name: AverageLinearAccelerationMagnitudeExceedsThreshold
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_AverageLinearAccelerationMagnitudeExceedsThreshold_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold
+  fullName: Sensus.AdaptiveSensing.SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold
+  nameWithType: SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold
+- uid: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck
+  name: SensingAgent.ControlCompletionCheck
+  href: api/Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.html
+  commentId: T:Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck
+  nameWithType: SensingAgent.ControlCompletionCheck
+- uid: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.#ctor(Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate,System.TimeSpan,System.String,System.String)
+  name: ControlCompletionCheck(SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate, TimeSpan, String, String)
+  href: api/Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.html#Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheck__ctor_Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheck_ControlCompletionCheckAsyncDelegate_System_TimeSpan_System_String_System_String_
+  commentId: M:Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.#ctor(Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate,System.TimeSpan,System.String,System.String)
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheck(Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate, System.TimeSpan, System.String, System.String)
+  nameWithType: SensingAgent.ControlCompletionCheck.ControlCompletionCheck(SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate, TimeSpan, String, String)
+- uid: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.#ctor*
+  name: ControlCompletionCheck
+  href: api/Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.html#Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheck__ctor_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.#ctor
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheck
+  nameWithType: SensingAgent.ControlCompletionCheck.ControlCompletionCheck
+- uid: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.CheckControlCompletionAsync
+  name: CheckControlCompletionAsync
+  href: api/Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.html#Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheck_CheckControlCompletionAsync
+  commentId: P:Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.CheckControlCompletionAsync
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.CheckControlCompletionAsync
+  nameWithType: SensingAgent.ControlCompletionCheck.CheckControlCompletionAsync
+- uid: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.CheckControlCompletionAsync*
+  name: CheckControlCompletionAsync
+  href: api/Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.html#Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheck_CheckControlCompletionAsync_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.CheckControlCompletionAsync
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.CheckControlCompletionAsync
+  nameWithType: SensingAgent.ControlCompletionCheck.CheckControlCompletionAsync
+- uid: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.CheckControlCompletionInterval
+  name: CheckControlCompletionInterval
+  href: api/Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.html#Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheck_CheckControlCompletionInterval
+  commentId: P:Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.CheckControlCompletionInterval
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.CheckControlCompletionInterval
+  nameWithType: SensingAgent.ControlCompletionCheck.CheckControlCompletionInterval
+- uid: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.CheckControlCompletionInterval*
+  name: CheckControlCompletionInterval
+  href: api/Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.html#Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheck_CheckControlCompletionInterval_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.CheckControlCompletionInterval
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.CheckControlCompletionInterval
+  nameWithType: SensingAgent.ControlCompletionCheck.CheckControlCompletionInterval
+- uid: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate
+  name: SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate
+  href: api/Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.html
+  commentId: T:Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate
+  nameWithType: SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate
+- uid: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.#ctor(System.Object,System.IntPtr)
+  name: ControlCompletionCheckAsyncDelegate(Object, IntPtr)
+  href: api/Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.html#Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheck_ControlCompletionCheckAsyncDelegate__ctor_System_Object_System_IntPtr_
+  commentId: M:Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.#ctor(System.Object,System.IntPtr)
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.ControlCompletionCheckAsyncDelegate(System.Object, System.IntPtr)
+  nameWithType: SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.ControlCompletionCheckAsyncDelegate(Object, IntPtr)
+- uid: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.#ctor*
+  name: ControlCompletionCheckAsyncDelegate
+  href: api/Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.html#Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheck_ControlCompletionCheckAsyncDelegate__ctor_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.#ctor
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.ControlCompletionCheckAsyncDelegate
+  nameWithType: SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.ControlCompletionCheckAsyncDelegate
+- uid: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.BeginInvoke(System.Threading.CancellationToken,System.AsyncCallback,System.Object)
+  name: BeginInvoke(CancellationToken, AsyncCallback, Object)
+  href: api/Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.html#Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheck_ControlCompletionCheckAsyncDelegate_BeginInvoke_System_Threading_CancellationToken_System_AsyncCallback_System_Object_
+  commentId: M:Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.BeginInvoke(System.Threading.CancellationToken,System.AsyncCallback,System.Object)
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.BeginInvoke(System.Threading.CancellationToken, System.AsyncCallback, System.Object)
+  nameWithType: SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.BeginInvoke(CancellationToken, AsyncCallback, Object)
+- uid: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.BeginInvoke*
+  name: BeginInvoke
+  href: api/Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.html#Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheck_ControlCompletionCheckAsyncDelegate_BeginInvoke_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.BeginInvoke
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.BeginInvoke
+  nameWithType: SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.BeginInvoke
+- uid: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.EndInvoke(System.IAsyncResult)
+  name: EndInvoke(IAsyncResult)
+  href: api/Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.html#Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheck_ControlCompletionCheckAsyncDelegate_EndInvoke_System_IAsyncResult_
+  commentId: M:Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.EndInvoke(System.IAsyncResult)
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.EndInvoke(System.IAsyncResult)
+  nameWithType: SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.EndInvoke(IAsyncResult)
+- uid: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.EndInvoke*
+  name: EndInvoke
+  href: api/Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.html#Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheck_ControlCompletionCheckAsyncDelegate_EndInvoke_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.EndInvoke
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.EndInvoke
+  nameWithType: SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.EndInvoke
+- uid: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.Invoke(System.Threading.CancellationToken)
+  name: Invoke(CancellationToken)
+  href: api/Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.html#Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheck_ControlCompletionCheckAsyncDelegate_Invoke_System_Threading_CancellationToken_
+  commentId: M:Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.Invoke(System.Threading.CancellationToken)
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.Invoke(System.Threading.CancellationToken)
+  nameWithType: SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.Invoke(CancellationToken)
+- uid: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.Invoke*
+  name: Invoke
+  href: api/Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.html#Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheck_ControlCompletionCheckAsyncDelegate_Invoke_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.Invoke
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.Invoke
+  nameWithType: SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.Invoke
+- uid: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.NotificationUserResponseMessage
+  name: NotificationUserResponseMessage
+  href: api/Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.html#Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheck_NotificationUserResponseMessage
+  commentId: P:Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.NotificationUserResponseMessage
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.NotificationUserResponseMessage
+  nameWithType: SensingAgent.ControlCompletionCheck.NotificationUserResponseMessage
+- uid: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.NotificationUserResponseMessage*
+  name: NotificationUserResponseMessage
+  href: api/Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.html#Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheck_NotificationUserResponseMessage_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.NotificationUserResponseMessage
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.NotificationUserResponseMessage
+  nameWithType: SensingAgent.ControlCompletionCheck.NotificationUserResponseMessage
+- uid: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.UserNotificationMessage
+  name: UserNotificationMessage
+  href: api/Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.html#Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheck_UserNotificationMessage
+  commentId: P:Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.UserNotificationMessage
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.UserNotificationMessage
+  nameWithType: SensingAgent.ControlCompletionCheck.UserNotificationMessage
+- uid: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.UserNotificationMessage*
+  name: UserNotificationMessage
+  href: api/Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.html#Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheck_UserNotificationMessage_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.UserNotificationMessage
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.UserNotificationMessage
+  nameWithType: SensingAgent.ControlCompletionCheck.UserNotificationMessage
+- uid: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheckInterval
+  name: ControlCompletionCheckInterval
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheckInterval
+  commentId: P:Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheckInterval
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheckInterval
+  nameWithType: SensingAgent.ControlCompletionCheckInterval
+- uid: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheckInterval*
+  name: ControlCompletionCheckInterval
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheckInterval_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheckInterval
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheckInterval
+  nameWithType: SensingAgent.ControlCompletionCheckInterval
+- uid: Sensus.AdaptiveSensing.SensingAgent.Description
+  name: Description
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_Description
+  commentId: P:Sensus.AdaptiveSensing.SensingAgent.Description
+  fullName: Sensus.AdaptiveSensing.SensingAgent.Description
+  nameWithType: SensingAgent.Description
+- uid: Sensus.AdaptiveSensing.SensingAgent.Description*
+  name: Description
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_Description_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.Description
+  fullName: Sensus.AdaptiveSensing.SensingAgent.Description
+  nameWithType: SensingAgent.Description
+- uid: Sensus.AdaptiveSensing.SensingAgent.GetObservedData*
+  name: GetObservedData
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_GetObservedData_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.GetObservedData
+  fullName: Sensus.AdaptiveSensing.SensingAgent.GetObservedData
+  nameWithType: SensingAgent.GetObservedData
+- uid: Sensus.AdaptiveSensing.SensingAgent.GetObservedData``1
+  name: GetObservedData<DatumInterface>()
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_GetObservedData__1
+  commentId: M:Sensus.AdaptiveSensing.SensingAgent.GetObservedData``1
+  name.vb: GetObservedData(Of DatumInterface)()
+  fullName: Sensus.AdaptiveSensing.SensingAgent.GetObservedData<DatumInterface>()
+  fullName.vb: Sensus.AdaptiveSensing.SensingAgent.GetObservedData(Of DatumInterface)()
+  nameWithType: SensingAgent.GetObservedData<DatumInterface>()
+  nameWithType.vb: SensingAgent.GetObservedData(Of DatumInterface)()
+- uid: Sensus.AdaptiveSensing.SensingAgent.Id
+  name: Id
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_Id
+  commentId: P:Sensus.AdaptiveSensing.SensingAgent.Id
+  fullName: Sensus.AdaptiveSensing.SensingAgent.Id
+  nameWithType: SensingAgent.Id
+- uid: Sensus.AdaptiveSensing.SensingAgent.Id*
+  name: Id
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_Id_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.Id
+  fullName: Sensus.AdaptiveSensing.SensingAgent.Id
+  nameWithType: SensingAgent.Id
+- uid: Sensus.AdaptiveSensing.SensingAgent.InitializeAsync(Sensus.ISensusServiceHelper,Sensus.IProtocol)
+  name: InitializeAsync(ISensusServiceHelper, IProtocol)
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_InitializeAsync_Sensus_ISensusServiceHelper_Sensus_IProtocol_
+  commentId: M:Sensus.AdaptiveSensing.SensingAgent.InitializeAsync(Sensus.ISensusServiceHelper,Sensus.IProtocol)
+  fullName: Sensus.AdaptiveSensing.SensingAgent.InitializeAsync(Sensus.ISensusServiceHelper, Sensus.IProtocol)
+  nameWithType: SensingAgent.InitializeAsync(ISensusServiceHelper, IProtocol)
+- uid: Sensus.AdaptiveSensing.SensingAgent.InitializeAsync*
+  name: InitializeAsync
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_InitializeAsync_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.InitializeAsync
+  fullName: Sensus.AdaptiveSensing.SensingAgent.InitializeAsync
+  nameWithType: SensingAgent.InitializeAsync
+- uid: Sensus.AdaptiveSensing.SensingAgent.IsNearSurface
+  name: IsNearSurface()
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_IsNearSurface
+  commentId: M:Sensus.AdaptiveSensing.SensingAgent.IsNearSurface
+  fullName: Sensus.AdaptiveSensing.SensingAgent.IsNearSurface()
+  nameWithType: SensingAgent.IsNearSurface()
+- uid: Sensus.AdaptiveSensing.SensingAgent.IsNearSurface*
+  name: IsNearSurface
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_IsNearSurface_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.IsNearSurface
+  fullName: Sensus.AdaptiveSensing.SensingAgent.IsNearSurface
+  nameWithType: SensingAgent.IsNearSurface
+- uid: Sensus.AdaptiveSensing.SensingAgent.ObservationDuration
+  name: ObservationDuration
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ObservationDuration
+  commentId: P:Sensus.AdaptiveSensing.SensingAgent.ObservationDuration
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ObservationDuration
+  nameWithType: SensingAgent.ObservationDuration
+- uid: Sensus.AdaptiveSensing.SensingAgent.ObservationDuration*
+  name: ObservationDuration
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ObservationDuration_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.ObservationDuration
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ObservationDuration
+  nameWithType: SensingAgent.ObservationDuration
+- uid: Sensus.AdaptiveSensing.SensingAgent.ObserveAsync(Sensus.IDatum,System.Threading.CancellationToken)
+  name: ObserveAsync(IDatum, CancellationToken)
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ObserveAsync_Sensus_IDatum_System_Threading_CancellationToken_
+  commentId: M:Sensus.AdaptiveSensing.SensingAgent.ObserveAsync(Sensus.IDatum,System.Threading.CancellationToken)
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ObserveAsync(Sensus.IDatum, System.Threading.CancellationToken)
+  nameWithType: SensingAgent.ObserveAsync(IDatum, CancellationToken)
+- uid: Sensus.AdaptiveSensing.SensingAgent.ObserveAsync*
+  name: ObserveAsync
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ObserveAsync_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.ObserveAsync
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ObserveAsync
+  nameWithType: SensingAgent.ObserveAsync
+- uid: Sensus.AdaptiveSensing.SensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}})
+  name: ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>>)
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ObservedDataMeetControlCriterion_System_Collections_Generic_Dictionary_System_Type_System_Collections_Generic_List_Sensus_IDatum___
+  commentId: M:Sensus.AdaptiveSensing.SensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}})
+  name.vb: ObservedDataMeetControlCriterion(Dictionary(Of Type, List(Of IDatum)))
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary<System.Type, System.Collections.Generic.List<Sensus.IDatum>>)
+  fullName.vb: Sensus.AdaptiveSensing.SensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary(Of System.Type, System.Collections.Generic.List(Of Sensus.IDatum)))
+  nameWithType: SensingAgent.ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>>)
+  nameWithType.vb: SensingAgent.ObservedDataMeetControlCriterion(Dictionary(Of Type, List(Of IDatum)))
+- uid: Sensus.AdaptiveSensing.SensingAgent.ObservedDataMeetControlCriterion*
+  name: ObservedDataMeetControlCriterion
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ObservedDataMeetControlCriterion_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.ObservedDataMeetControlCriterion
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ObservedDataMeetControlCriterion
+  nameWithType: SensingAgent.ObservedDataMeetControlCriterion
+- uid: Sensus.AdaptiveSensing.SensingAgent.OnActiveControlAsync(System.Threading.CancellationToken)
+  name: OnActiveControlAsync(CancellationToken)
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_OnActiveControlAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.AdaptiveSensing.SensingAgent.OnActiveControlAsync(System.Threading.CancellationToken)
+  fullName: Sensus.AdaptiveSensing.SensingAgent.OnActiveControlAsync(System.Threading.CancellationToken)
+  nameWithType: SensingAgent.OnActiveControlAsync(CancellationToken)
+- uid: Sensus.AdaptiveSensing.SensingAgent.OnActiveControlAsync*
+  name: OnActiveControlAsync
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_OnActiveControlAsync_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.OnActiveControlAsync
+  fullName: Sensus.AdaptiveSensing.SensingAgent.OnActiveControlAsync
+  nameWithType: SensingAgent.OnActiveControlAsync
+- uid: Sensus.AdaptiveSensing.SensingAgent.OnEndingControlAsync(System.Threading.CancellationToken)
+  name: OnEndingControlAsync(CancellationToken)
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_OnEndingControlAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.AdaptiveSensing.SensingAgent.OnEndingControlAsync(System.Threading.CancellationToken)
+  fullName: Sensus.AdaptiveSensing.SensingAgent.OnEndingControlAsync(System.Threading.CancellationToken)
+  nameWithType: SensingAgent.OnEndingControlAsync(CancellationToken)
+- uid: Sensus.AdaptiveSensing.SensingAgent.OnEndingControlAsync*
+  name: OnEndingControlAsync
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_OnEndingControlAsync_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.OnEndingControlAsync
+  fullName: Sensus.AdaptiveSensing.SensingAgent.OnEndingControlAsync
+  nameWithType: SensingAgent.OnEndingControlAsync
+- uid: Sensus.AdaptiveSensing.SensingAgent.OnOpportunisticControlAsync(System.Threading.CancellationToken)
+  name: OnOpportunisticControlAsync(CancellationToken)
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_OnOpportunisticControlAsync_System_Threading_CancellationToken_
+  commentId: M:Sensus.AdaptiveSensing.SensingAgent.OnOpportunisticControlAsync(System.Threading.CancellationToken)
+  fullName: Sensus.AdaptiveSensing.SensingAgent.OnOpportunisticControlAsync(System.Threading.CancellationToken)
+  nameWithType: SensingAgent.OnOpportunisticControlAsync(CancellationToken)
+- uid: Sensus.AdaptiveSensing.SensingAgent.OnOpportunisticControlAsync*
+  name: OnOpportunisticControlAsync
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_OnOpportunisticControlAsync_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.OnOpportunisticControlAsync
+  fullName: Sensus.AdaptiveSensing.SensingAgent.OnOpportunisticControlAsync
+  nameWithType: SensingAgent.OnOpportunisticControlAsync
+- uid: Sensus.AdaptiveSensing.SensingAgent.PropertyChanged
+  name: PropertyChanged
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_PropertyChanged
+  commentId: E:Sensus.AdaptiveSensing.SensingAgent.PropertyChanged
+  fullName: Sensus.AdaptiveSensing.SensingAgent.PropertyChanged
+  nameWithType: SensingAgent.PropertyChanged
+- uid: Sensus.AdaptiveSensing.SensingAgent.Protocol
+  name: Protocol
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_Protocol
+  commentId: P:Sensus.AdaptiveSensing.SensingAgent.Protocol
+  fullName: Sensus.AdaptiveSensing.SensingAgent.Protocol
+  nameWithType: SensingAgent.Protocol
+- uid: Sensus.AdaptiveSensing.SensingAgent.Protocol*
+  name: Protocol
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_Protocol_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.Protocol
+  fullName: Sensus.AdaptiveSensing.SensingAgent.Protocol
+  nameWithType: SensingAgent.Protocol
+- uid: Sensus.AdaptiveSensing.SensingAgent.SensusServiceHelper
+  name: SensusServiceHelper
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_SensusServiceHelper
+  commentId: P:Sensus.AdaptiveSensing.SensingAgent.SensusServiceHelper
+  fullName: Sensus.AdaptiveSensing.SensingAgent.SensusServiceHelper
+  nameWithType: SensingAgent.SensusServiceHelper
+- uid: Sensus.AdaptiveSensing.SensingAgent.SensusServiceHelper*
+  name: SensusServiceHelper
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_SensusServiceHelper_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.SensusServiceHelper
+  fullName: Sensus.AdaptiveSensing.SensingAgent.SensusServiceHelper
+  nameWithType: SensingAgent.SensusServiceHelper
+- uid: Sensus.AdaptiveSensing.SensingAgent.SetPolicyAsync(Newtonsoft.Json.Linq.JObject)
+  name: SetPolicyAsync(JObject)
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_SetPolicyAsync_Newtonsoft_Json_Linq_JObject_
+  commentId: M:Sensus.AdaptiveSensing.SensingAgent.SetPolicyAsync(Newtonsoft.Json.Linq.JObject)
+  fullName: Sensus.AdaptiveSensing.SensingAgent.SetPolicyAsync(Newtonsoft.Json.Linq.JObject)
+  nameWithType: SensingAgent.SetPolicyAsync(JObject)
+- uid: Sensus.AdaptiveSensing.SensingAgent.SetPolicyAsync*
+  name: SetPolicyAsync
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_SetPolicyAsync_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.SetPolicyAsync
+  fullName: Sensus.AdaptiveSensing.SensingAgent.SetPolicyAsync
+  nameWithType: SensingAgent.SetPolicyAsync
+- uid: Sensus.AdaptiveSensing.SensingAgent.State
+  name: State
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_State
+  commentId: P:Sensus.AdaptiveSensing.SensingAgent.State
+  fullName: Sensus.AdaptiveSensing.SensingAgent.State
+  nameWithType: SensingAgent.State
+- uid: Sensus.AdaptiveSensing.SensingAgent.State*
+  name: State
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_State_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.State
+  fullName: Sensus.AdaptiveSensing.SensingAgent.State
+  nameWithType: SensingAgent.State
+- uid: Sensus.AdaptiveSensing.SensingAgent.ToString
+  name: ToString()
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ToString
+  commentId: M:Sensus.AdaptiveSensing.SensingAgent.ToString
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ToString()
+  nameWithType: SensingAgent.ToString()
+- uid: Sensus.AdaptiveSensing.SensingAgent.ToString*
+  name: ToString
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ToString_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.ToString
+  fullName: Sensus.AdaptiveSensing.SensingAgent.ToString
+  nameWithType: SensingAgent.ToString
+- uid: Sensus.AdaptiveSensing.SensingAgent.UpdateObservedData(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}})
+  name: UpdateObservedData(Dictionary<Type, List<IDatum>>)
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_UpdateObservedData_System_Collections_Generic_Dictionary_System_Type_System_Collections_Generic_List_Sensus_IDatum___
+  commentId: M:Sensus.AdaptiveSensing.SensingAgent.UpdateObservedData(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}})
+  name.vb: UpdateObservedData(Dictionary(Of Type, List(Of IDatum)))
+  fullName: Sensus.AdaptiveSensing.SensingAgent.UpdateObservedData(System.Collections.Generic.Dictionary<System.Type, System.Collections.Generic.List<Sensus.IDatum>>)
+  fullName.vb: Sensus.AdaptiveSensing.SensingAgent.UpdateObservedData(System.Collections.Generic.Dictionary(Of System.Type, System.Collections.Generic.List(Of Sensus.IDatum)))
+  nameWithType: SensingAgent.UpdateObservedData(Dictionary<Type, List<IDatum>>)
+  nameWithType.vb: SensingAgent.UpdateObservedData(Dictionary(Of Type, List(Of IDatum)))
+- uid: Sensus.AdaptiveSensing.SensingAgent.UpdateObservedData*
+  name: UpdateObservedData
+  href: api/Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_UpdateObservedData_
+  commentId: Overload:Sensus.AdaptiveSensing.SensingAgent.UpdateObservedData
+  fullName: Sensus.AdaptiveSensing.SensingAgent.UpdateObservedData
+  nameWithType: SensingAgent.UpdateObservedData
+- uid: Sensus.AdaptiveSensing.SensingAgentState
+  name: SensingAgentState
+  href: api/Sensus.AdaptiveSensing.SensingAgentState.html
+  commentId: T:Sensus.AdaptiveSensing.SensingAgentState
+  fullName: Sensus.AdaptiveSensing.SensingAgentState
+  nameWithType: SensingAgentState
+- uid: Sensus.AdaptiveSensing.SensingAgentState.ActiveControl
+  name: ActiveControl
+  href: api/Sensus.AdaptiveSensing.SensingAgentState.html#Sensus_AdaptiveSensing_SensingAgentState_ActiveControl
+  commentId: F:Sensus.AdaptiveSensing.SensingAgentState.ActiveControl
+  fullName: Sensus.AdaptiveSensing.SensingAgentState.ActiveControl
+  nameWithType: SensingAgentState.ActiveControl
+- uid: Sensus.AdaptiveSensing.SensingAgentState.ActiveObservation
+  name: ActiveObservation
+  href: api/Sensus.AdaptiveSensing.SensingAgentState.html#Sensus_AdaptiveSensing_SensingAgentState_ActiveObservation
+  commentId: F:Sensus.AdaptiveSensing.SensingAgentState.ActiveObservation
+  fullName: Sensus.AdaptiveSensing.SensingAgentState.ActiveObservation
+  nameWithType: SensingAgentState.ActiveObservation
+- uid: Sensus.AdaptiveSensing.SensingAgentState.EndingControl
+  name: EndingControl
+  href: api/Sensus.AdaptiveSensing.SensingAgentState.html#Sensus_AdaptiveSensing_SensingAgentState_EndingControl
+  commentId: F:Sensus.AdaptiveSensing.SensingAgentState.EndingControl
+  fullName: Sensus.AdaptiveSensing.SensingAgentState.EndingControl
+  nameWithType: SensingAgentState.EndingControl
+- uid: Sensus.AdaptiveSensing.SensingAgentState.Idle
+  name: Idle
+  href: api/Sensus.AdaptiveSensing.SensingAgentState.html#Sensus_AdaptiveSensing_SensingAgentState_Idle
+  commentId: F:Sensus.AdaptiveSensing.SensingAgentState.Idle
+  fullName: Sensus.AdaptiveSensing.SensingAgentState.Idle
+  nameWithType: SensingAgentState.Idle
+- uid: Sensus.AdaptiveSensing.SensingAgentState.OpportunisticControl
+  name: OpportunisticControl
+  href: api/Sensus.AdaptiveSensing.SensingAgentState.html#Sensus_AdaptiveSensing_SensingAgentState_OpportunisticControl
+  commentId: F:Sensus.AdaptiveSensing.SensingAgentState.OpportunisticControl
+  fullName: Sensus.AdaptiveSensing.SensingAgentState.OpportunisticControl
+  nameWithType: SensingAgentState.OpportunisticControl
+- uid: Sensus.AdaptiveSensing.SensingAgentState.value__
+  name: value__
+  href: api/Sensus.AdaptiveSensing.SensingAgentState.html#Sensus_AdaptiveSensing_SensingAgentState_value__
+  commentId: F:Sensus.AdaptiveSensing.SensingAgentState.value__
+  fullName: Sensus.AdaptiveSensing.SensingAgentState.value__
+  nameWithType: SensingAgentState.value__
 - uid: Sensus.AnalyticsTrackedEvent
   name: AnalyticsTrackedEvent
   href: api/Sensus.AnalyticsTrackedEvent.html
@@ -1207,21 +2104,6 @@ references:
   commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.OperatingSystem
   fullName: Sensus.Android.AndroidSensusServiceHelper.OperatingSystem
   nameWithType: AndroidSensusServiceHelper.OperatingSystem
-- uid: Sensus.Android.AndroidSensusServiceHelper.PromptForAndReadTextFileAsync(System.String,System.Action{System.String})
-  name: PromptForAndReadTextFileAsync(String, Action<String>)
-  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_PromptForAndReadTextFileAsync_System_String_System_Action_System_String__
-  commentId: M:Sensus.Android.AndroidSensusServiceHelper.PromptForAndReadTextFileAsync(System.String,System.Action{System.String})
-  name.vb: PromptForAndReadTextFileAsync(String, Action(Of String))
-  fullName: Sensus.Android.AndroidSensusServiceHelper.PromptForAndReadTextFileAsync(System.String, System.Action<System.String>)
-  fullName.vb: Sensus.Android.AndroidSensusServiceHelper.PromptForAndReadTextFileAsync(System.String, System.Action(Of System.String))
-  nameWithType: AndroidSensusServiceHelper.PromptForAndReadTextFileAsync(String, Action<String>)
-  nameWithType.vb: AndroidSensusServiceHelper.PromptForAndReadTextFileAsync(String, Action(Of String))
-- uid: Sensus.Android.AndroidSensusServiceHelper.PromptForAndReadTextFileAsync*
-  name: PromptForAndReadTextFileAsync
-  href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_PromptForAndReadTextFileAsync_
-  commentId: Overload:Sensus.Android.AndroidSensusServiceHelper.PromptForAndReadTextFileAsync
-  fullName: Sensus.Android.AndroidSensusServiceHelper.PromptForAndReadTextFileAsync
-  nameWithType: AndroidSensusServiceHelper.PromptForAndReadTextFileAsync
 - uid: Sensus.Android.AndroidSensusServiceHelper.ProtectedFlashNotificationAsync(System.String)
   name: ProtectedFlashNotificationAsync(String)
   href: api/Sensus.Android.AndroidSensusServiceHelper.html#Sensus_Android_AndroidSensusServiceHelper_ProtectedFlashNotificationAsync_System_String_
@@ -25953,21 +26835,6 @@ references:
   commentId: Overload:Sensus.iOS.iOSSensusServiceHelper.OperatingSystem
   fullName: Sensus.iOS.iOSSensusServiceHelper.OperatingSystem
   nameWithType: iOSSensusServiceHelper.OperatingSystem
-- uid: Sensus.iOS.iOSSensusServiceHelper.PromptForAndReadTextFileAsync(System.String,System.Action{System.String})
-  name: PromptForAndReadTextFileAsync(String, Action<String>)
-  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_PromptForAndReadTextFileAsync_System_String_System_Action_System_String__
-  commentId: M:Sensus.iOS.iOSSensusServiceHelper.PromptForAndReadTextFileAsync(System.String,System.Action{System.String})
-  name.vb: PromptForAndReadTextFileAsync(String, Action(Of String))
-  fullName: Sensus.iOS.iOSSensusServiceHelper.PromptForAndReadTextFileAsync(System.String, System.Action<System.String>)
-  fullName.vb: Sensus.iOS.iOSSensusServiceHelper.PromptForAndReadTextFileAsync(System.String, System.Action(Of System.String))
-  nameWithType: iOSSensusServiceHelper.PromptForAndReadTextFileAsync(String, Action<String>)
-  nameWithType.vb: iOSSensusServiceHelper.PromptForAndReadTextFileAsync(String, Action(Of String))
-- uid: Sensus.iOS.iOSSensusServiceHelper.PromptForAndReadTextFileAsync*
-  name: PromptForAndReadTextFileAsync
-  href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_PromptForAndReadTextFileAsync_
-  commentId: Overload:Sensus.iOS.iOSSensusServiceHelper.PromptForAndReadTextFileAsync
-  fullName: Sensus.iOS.iOSSensusServiceHelper.PromptForAndReadTextFileAsync
-  nameWithType: iOSSensusServiceHelper.PromptForAndReadTextFileAsync
 - uid: Sensus.iOS.iOSSensusServiceHelper.ProtectedFlashNotificationAsync(System.String)
   name: ProtectedFlashNotificationAsync(String)
   href: api/Sensus.iOS.iOSSensusServiceHelper.html#Sensus_iOS_iOSSensusServiceHelper_ProtectedFlashNotificationAsync_System_String_
@@ -45498,6 +46365,21 @@ references:
   commentId: Overload:Sensus.Protocol.AllowViewStatus
   fullName: Sensus.Protocol.AllowViewStatus
   nameWithType: Protocol.AllowViewStatus
+- uid: Sensus.Protocol.ApplySettingsAsync(System.Collections.Generic.List{Sensus.ProtocolSetting},System.Threading.CancellationToken)
+  name: ApplySettingsAsync(List<ProtocolSetting>, CancellationToken)
+  href: api/Sensus.Protocol.html#Sensus_Protocol_ApplySettingsAsync_System_Collections_Generic_List_Sensus_ProtocolSetting__System_Threading_CancellationToken_
+  commentId: M:Sensus.Protocol.ApplySettingsAsync(System.Collections.Generic.List{Sensus.ProtocolSetting},System.Threading.CancellationToken)
+  name.vb: ApplySettingsAsync(List(Of ProtocolSetting), CancellationToken)
+  fullName: Sensus.Protocol.ApplySettingsAsync(System.Collections.Generic.List<Sensus.ProtocolSetting>, System.Threading.CancellationToken)
+  fullName.vb: Sensus.Protocol.ApplySettingsAsync(System.Collections.Generic.List(Of Sensus.ProtocolSetting), System.Threading.CancellationToken)
+  nameWithType: Protocol.ApplySettingsAsync(List<ProtocolSetting>, CancellationToken)
+  nameWithType.vb: Protocol.ApplySettingsAsync(List(Of ProtocolSetting), CancellationToken)
+- uid: Sensus.Protocol.ApplySettingsAsync*
+  name: ApplySettingsAsync
+  href: api/Sensus.Protocol.html#Sensus_Protocol_ApplySettingsAsync_
+  commentId: Overload:Sensus.Protocol.ApplySettingsAsync
+  fullName: Sensus.Protocol.ApplySettingsAsync
+  nameWithType: Protocol.ApplySettingsAsync
 - uid: Sensus.Protocol.AsymmetricEncryptionPublicKey
   name: AsymmetricEncryptionPublicKey
   href: api/Sensus.Protocol.html#Sensus_Protocol_AsymmetricEncryptionPublicKey
@@ -46239,11 +47121,11 @@ references:
   commentId: Overload:Sensus.Protocol.Save
   fullName: Sensus.Protocol.Save
   nameWithType: Protocol.Save
-- uid: Sensus.Protocol.ScheduleAgentControlCompletionCheckAsync(Sensus.SensingAgent.ControlCompletionCheck)
+- uid: Sensus.Protocol.ScheduleAgentControlCompletionCheckAsync(Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck)
   name: ScheduleAgentControlCompletionCheckAsync(SensingAgent.ControlCompletionCheck)
-  href: api/Sensus.Protocol.html#Sensus_Protocol_ScheduleAgentControlCompletionCheckAsync_Sensus_SensingAgent_ControlCompletionCheck_
-  commentId: M:Sensus.Protocol.ScheduleAgentControlCompletionCheckAsync(Sensus.SensingAgent.ControlCompletionCheck)
-  fullName: Sensus.Protocol.ScheduleAgentControlCompletionCheckAsync(Sensus.SensingAgent.ControlCompletionCheck)
+  href: api/Sensus.Protocol.html#Sensus_Protocol_ScheduleAgentControlCompletionCheckAsync_Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheck_
+  commentId: M:Sensus.Protocol.ScheduleAgentControlCompletionCheckAsync(Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck)
+  fullName: Sensus.Protocol.ScheduleAgentControlCompletionCheckAsync(Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck)
   nameWithType: Protocol.ScheduleAgentControlCompletionCheckAsync(SensingAgent.ControlCompletionCheck)
 - uid: Sensus.Protocol.ScheduleAgentControlCompletionCheckAsync*
   name: ScheduleAgentControlCompletionCheckAsync
@@ -46647,6 +47529,162 @@ references:
   commentId: F:Sensus.ProtocolCompatibilityMode.value__
   fullName: Sensus.ProtocolCompatibilityMode.value__
   nameWithType: ProtocolCompatibilityMode.value__
+- uid: Sensus.ProtocolSetting
+  name: ProtocolSetting
+  href: api/Sensus.ProtocolSetting.html
+  commentId: T:Sensus.ProtocolSetting
+  fullName: Sensus.ProtocolSetting
+  nameWithType: ProtocolSetting
+- uid: Sensus.ProtocolSetting.#ctor
+  name: ProtocolSetting()
+  href: api/Sensus.ProtocolSetting.html#Sensus_ProtocolSetting__ctor
+  commentId: M:Sensus.ProtocolSetting.#ctor
+  fullName: Sensus.ProtocolSetting.ProtocolSetting()
+  nameWithType: ProtocolSetting.ProtocolSetting()
+- uid: Sensus.ProtocolSetting.#ctor*
+  name: ProtocolSetting
+  href: api/Sensus.ProtocolSetting.html#Sensus_ProtocolSetting__ctor_
+  commentId: Overload:Sensus.ProtocolSetting.#ctor
+  fullName: Sensus.ProtocolSetting.ProtocolSetting
+  nameWithType: ProtocolSetting.ProtocolSetting
+- uid: Sensus.ProtocolSetting.PropertyName
+  name: PropertyName
+  href: api/Sensus.ProtocolSetting.html#Sensus_ProtocolSetting_PropertyName
+  commentId: P:Sensus.ProtocolSetting.PropertyName
+  fullName: Sensus.ProtocolSetting.PropertyName
+  nameWithType: ProtocolSetting.PropertyName
+- uid: Sensus.ProtocolSetting.PropertyName*
+  name: PropertyName
+  href: api/Sensus.ProtocolSetting.html#Sensus_ProtocolSetting_PropertyName_
+  commentId: Overload:Sensus.ProtocolSetting.PropertyName
+  fullName: Sensus.ProtocolSetting.PropertyName
+  nameWithType: ProtocolSetting.PropertyName
+- uid: Sensus.ProtocolSetting.PropertyTypeName
+  name: PropertyTypeName
+  href: api/Sensus.ProtocolSetting.html#Sensus_ProtocolSetting_PropertyTypeName
+  commentId: P:Sensus.ProtocolSetting.PropertyTypeName
+  fullName: Sensus.ProtocolSetting.PropertyTypeName
+  nameWithType: ProtocolSetting.PropertyTypeName
+- uid: Sensus.ProtocolSetting.PropertyTypeName*
+  name: PropertyTypeName
+  href: api/Sensus.ProtocolSetting.html#Sensus_ProtocolSetting_PropertyTypeName_
+  commentId: Overload:Sensus.ProtocolSetting.PropertyTypeName
+  fullName: Sensus.ProtocolSetting.PropertyTypeName
+  nameWithType: ProtocolSetting.PropertyTypeName
+- uid: Sensus.ProtocolSetting.TargetTypeName
+  name: TargetTypeName
+  href: api/Sensus.ProtocolSetting.html#Sensus_ProtocolSetting_TargetTypeName
+  commentId: P:Sensus.ProtocolSetting.TargetTypeName
+  fullName: Sensus.ProtocolSetting.TargetTypeName
+  nameWithType: ProtocolSetting.TargetTypeName
+- uid: Sensus.ProtocolSetting.TargetTypeName*
+  name: TargetTypeName
+  href: api/Sensus.ProtocolSetting.html#Sensus_ProtocolSetting_TargetTypeName_
+  commentId: Overload:Sensus.ProtocolSetting.TargetTypeName
+  fullName: Sensus.ProtocolSetting.TargetTypeName
+  nameWithType: ProtocolSetting.TargetTypeName
+- uid: Sensus.ProtocolSetting.Value
+  name: Value
+  href: api/Sensus.ProtocolSetting.html#Sensus_ProtocolSetting_Value
+  commentId: P:Sensus.ProtocolSetting.Value
+  fullName: Sensus.ProtocolSetting.Value
+  nameWithType: ProtocolSetting.Value
+- uid: Sensus.ProtocolSetting.Value*
+  name: Value
+  href: api/Sensus.ProtocolSetting.html#Sensus_ProtocolSetting_Value_
+  commentId: Overload:Sensus.ProtocolSetting.Value
+  fullName: Sensus.ProtocolSetting.Value
+  nameWithType: ProtocolSetting.Value
+- uid: Sensus.ProtocolSettingUpdateDatum
+  name: ProtocolSettingUpdateDatum
+  href: api/Sensus.ProtocolSettingUpdateDatum.html
+  commentId: T:Sensus.ProtocolSettingUpdateDatum
+  fullName: Sensus.ProtocolSettingUpdateDatum
+  nameWithType: ProtocolSettingUpdateDatum
+- uid: Sensus.ProtocolSettingUpdateDatum.#ctor(System.DateTimeOffset,System.String,System.String,System.String,System.String)
+  name: ProtocolSettingUpdateDatum(DateTimeOffset, String, String, String, String)
+  href: api/Sensus.ProtocolSettingUpdateDatum.html#Sensus_ProtocolSettingUpdateDatum__ctor_System_DateTimeOffset_System_String_System_String_System_String_System_String_
+  commentId: M:Sensus.ProtocolSettingUpdateDatum.#ctor(System.DateTimeOffset,System.String,System.String,System.String,System.String)
+  fullName: Sensus.ProtocolSettingUpdateDatum.ProtocolSettingUpdateDatum(System.DateTimeOffset, System.String, System.String, System.String, System.String)
+  nameWithType: ProtocolSettingUpdateDatum.ProtocolSettingUpdateDatum(DateTimeOffset, String, String, String, String)
+- uid: Sensus.ProtocolSettingUpdateDatum.#ctor*
+  name: ProtocolSettingUpdateDatum
+  href: api/Sensus.ProtocolSettingUpdateDatum.html#Sensus_ProtocolSettingUpdateDatum__ctor_
+  commentId: Overload:Sensus.ProtocolSettingUpdateDatum.#ctor
+  fullName: Sensus.ProtocolSettingUpdateDatum.ProtocolSettingUpdateDatum
+  nameWithType: ProtocolSettingUpdateDatum.ProtocolSettingUpdateDatum
+- uid: Sensus.ProtocolSettingUpdateDatum.DisplayDetail
+  name: DisplayDetail
+  href: api/Sensus.ProtocolSettingUpdateDatum.html#Sensus_ProtocolSettingUpdateDatum_DisplayDetail
+  commentId: P:Sensus.ProtocolSettingUpdateDatum.DisplayDetail
+  fullName: Sensus.ProtocolSettingUpdateDatum.DisplayDetail
+  nameWithType: ProtocolSettingUpdateDatum.DisplayDetail
+- uid: Sensus.ProtocolSettingUpdateDatum.DisplayDetail*
+  name: DisplayDetail
+  href: api/Sensus.ProtocolSettingUpdateDatum.html#Sensus_ProtocolSettingUpdateDatum_DisplayDetail_
+  commentId: Overload:Sensus.ProtocolSettingUpdateDatum.DisplayDetail
+  fullName: Sensus.ProtocolSettingUpdateDatum.DisplayDetail
+  nameWithType: ProtocolSettingUpdateDatum.DisplayDetail
+- uid: Sensus.ProtocolSettingUpdateDatum.NewValueString
+  name: NewValueString
+  href: api/Sensus.ProtocolSettingUpdateDatum.html#Sensus_ProtocolSettingUpdateDatum_NewValueString
+  commentId: P:Sensus.ProtocolSettingUpdateDatum.NewValueString
+  fullName: Sensus.ProtocolSettingUpdateDatum.NewValueString
+  nameWithType: ProtocolSettingUpdateDatum.NewValueString
+- uid: Sensus.ProtocolSettingUpdateDatum.NewValueString*
+  name: NewValueString
+  href: api/Sensus.ProtocolSettingUpdateDatum.html#Sensus_ProtocolSettingUpdateDatum_NewValueString_
+  commentId: Overload:Sensus.ProtocolSettingUpdateDatum.NewValueString
+  fullName: Sensus.ProtocolSettingUpdateDatum.NewValueString
+  nameWithType: ProtocolSettingUpdateDatum.NewValueString
+- uid: Sensus.ProtocolSettingUpdateDatum.ProbeType
+  name: ProbeType
+  href: api/Sensus.ProtocolSettingUpdateDatum.html#Sensus_ProtocolSettingUpdateDatum_ProbeType
+  commentId: P:Sensus.ProtocolSettingUpdateDatum.ProbeType
+  fullName: Sensus.ProtocolSettingUpdateDatum.ProbeType
+  nameWithType: ProtocolSettingUpdateDatum.ProbeType
+- uid: Sensus.ProtocolSettingUpdateDatum.ProbeType*
+  name: ProbeType
+  href: api/Sensus.ProtocolSettingUpdateDatum.html#Sensus_ProtocolSettingUpdateDatum_ProbeType_
+  commentId: Overload:Sensus.ProtocolSettingUpdateDatum.ProbeType
+  fullName: Sensus.ProtocolSettingUpdateDatum.ProbeType
+  nameWithType: ProtocolSettingUpdateDatum.ProbeType
+- uid: Sensus.ProtocolSettingUpdateDatum.PropertyName
+  name: PropertyName
+  href: api/Sensus.ProtocolSettingUpdateDatum.html#Sensus_ProtocolSettingUpdateDatum_PropertyName
+  commentId: P:Sensus.ProtocolSettingUpdateDatum.PropertyName
+  fullName: Sensus.ProtocolSettingUpdateDatum.PropertyName
+  nameWithType: ProtocolSettingUpdateDatum.PropertyName
+- uid: Sensus.ProtocolSettingUpdateDatum.PropertyName*
+  name: PropertyName
+  href: api/Sensus.ProtocolSettingUpdateDatum.html#Sensus_ProtocolSettingUpdateDatum_PropertyName_
+  commentId: Overload:Sensus.ProtocolSettingUpdateDatum.PropertyName
+  fullName: Sensus.ProtocolSettingUpdateDatum.PropertyName
+  nameWithType: ProtocolSettingUpdateDatum.PropertyName
+- uid: Sensus.ProtocolSettingUpdateDatum.StringPlaceholderValue
+  name: StringPlaceholderValue
+  href: api/Sensus.ProtocolSettingUpdateDatum.html#Sensus_ProtocolSettingUpdateDatum_StringPlaceholderValue
+  commentId: P:Sensus.ProtocolSettingUpdateDatum.StringPlaceholderValue
+  fullName: Sensus.ProtocolSettingUpdateDatum.StringPlaceholderValue
+  nameWithType: ProtocolSettingUpdateDatum.StringPlaceholderValue
+- uid: Sensus.ProtocolSettingUpdateDatum.StringPlaceholderValue*
+  name: StringPlaceholderValue
+  href: api/Sensus.ProtocolSettingUpdateDatum.html#Sensus_ProtocolSettingUpdateDatum_StringPlaceholderValue_
+  commentId: Overload:Sensus.ProtocolSettingUpdateDatum.StringPlaceholderValue
+  fullName: Sensus.ProtocolSettingUpdateDatum.StringPlaceholderValue
+  nameWithType: ProtocolSettingUpdateDatum.StringPlaceholderValue
+- uid: Sensus.ProtocolSettingUpdateDatum.Value
+  name: Value
+  href: api/Sensus.ProtocolSettingUpdateDatum.html#Sensus_ProtocolSettingUpdateDatum_Value
+  commentId: P:Sensus.ProtocolSettingUpdateDatum.Value
+  fullName: Sensus.ProtocolSettingUpdateDatum.Value
+  nameWithType: ProtocolSettingUpdateDatum.Value
+- uid: Sensus.ProtocolSettingUpdateDatum.Value*
+  name: Value
+  href: api/Sensus.ProtocolSettingUpdateDatum.html#Sensus_ProtocolSettingUpdateDatum_Value_
+  commentId: Overload:Sensus.ProtocolSettingUpdateDatum.Value
+  fullName: Sensus.ProtocolSettingUpdateDatum.Value
+  nameWithType: ProtocolSettingUpdateDatum.Value
 - uid: Sensus.ProtocolStartConfirmationMode
   name: ProtocolStartConfirmationMode
   href: api/Sensus.ProtocolStartConfirmationMode.html
@@ -46731,96 +47769,6 @@ references:
   commentId: F:Sensus.ProtocolState.value__
   fullName: Sensus.ProtocolState.value__
   nameWithType: ProtocolState.value__
-- uid: Sensus.ProtocolUpdateDatum
-  name: ProtocolUpdateDatum
-  href: api/Sensus.ProtocolUpdateDatum.html
-  commentId: T:Sensus.ProtocolUpdateDatum
-  fullName: Sensus.ProtocolUpdateDatum
-  nameWithType: ProtocolUpdateDatum
-- uid: Sensus.ProtocolUpdateDatum.#ctor(System.DateTimeOffset,System.String,System.String,System.String,System.String)
-  name: ProtocolUpdateDatum(DateTimeOffset, String, String, String, String)
-  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum__ctor_System_DateTimeOffset_System_String_System_String_System_String_System_String_
-  commentId: M:Sensus.ProtocolUpdateDatum.#ctor(System.DateTimeOffset,System.String,System.String,System.String,System.String)
-  fullName: Sensus.ProtocolUpdateDatum.ProtocolUpdateDatum(System.DateTimeOffset, System.String, System.String, System.String, System.String)
-  nameWithType: ProtocolUpdateDatum.ProtocolUpdateDatum(DateTimeOffset, String, String, String, String)
-- uid: Sensus.ProtocolUpdateDatum.#ctor*
-  name: ProtocolUpdateDatum
-  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum__ctor_
-  commentId: Overload:Sensus.ProtocolUpdateDatum.#ctor
-  fullName: Sensus.ProtocolUpdateDatum.ProtocolUpdateDatum
-  nameWithType: ProtocolUpdateDatum.ProtocolUpdateDatum
-- uid: Sensus.ProtocolUpdateDatum.DisplayDetail
-  name: DisplayDetail
-  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum_DisplayDetail
-  commentId: P:Sensus.ProtocolUpdateDatum.DisplayDetail
-  fullName: Sensus.ProtocolUpdateDatum.DisplayDetail
-  nameWithType: ProtocolUpdateDatum.DisplayDetail
-- uid: Sensus.ProtocolUpdateDatum.DisplayDetail*
-  name: DisplayDetail
-  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum_DisplayDetail_
-  commentId: Overload:Sensus.ProtocolUpdateDatum.DisplayDetail
-  fullName: Sensus.ProtocolUpdateDatum.DisplayDetail
-  nameWithType: ProtocolUpdateDatum.DisplayDetail
-- uid: Sensus.ProtocolUpdateDatum.PropertyName
-  name: PropertyName
-  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum_PropertyName
-  commentId: P:Sensus.ProtocolUpdateDatum.PropertyName
-  fullName: Sensus.ProtocolUpdateDatum.PropertyName
-  nameWithType: ProtocolUpdateDatum.PropertyName
-- uid: Sensus.ProtocolUpdateDatum.PropertyName*
-  name: PropertyName
-  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum_PropertyName_
-  commentId: Overload:Sensus.ProtocolUpdateDatum.PropertyName
-  fullName: Sensus.ProtocolUpdateDatum.PropertyName
-  nameWithType: ProtocolUpdateDatum.PropertyName
-- uid: Sensus.ProtocolUpdateDatum.PropertyType
-  name: PropertyType
-  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum_PropertyType
-  commentId: P:Sensus.ProtocolUpdateDatum.PropertyType
-  fullName: Sensus.ProtocolUpdateDatum.PropertyType
-  nameWithType: ProtocolUpdateDatum.PropertyType
-- uid: Sensus.ProtocolUpdateDatum.PropertyType*
-  name: PropertyType
-  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum_PropertyType_
-  commentId: Overload:Sensus.ProtocolUpdateDatum.PropertyType
-  fullName: Sensus.ProtocolUpdateDatum.PropertyType
-  nameWithType: ProtocolUpdateDatum.PropertyType
-- uid: Sensus.ProtocolUpdateDatum.StringPlaceholderValue
-  name: StringPlaceholderValue
-  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum_StringPlaceholderValue
-  commentId: P:Sensus.ProtocolUpdateDatum.StringPlaceholderValue
-  fullName: Sensus.ProtocolUpdateDatum.StringPlaceholderValue
-  nameWithType: ProtocolUpdateDatum.StringPlaceholderValue
-- uid: Sensus.ProtocolUpdateDatum.StringPlaceholderValue*
-  name: StringPlaceholderValue
-  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum_StringPlaceholderValue_
-  commentId: Overload:Sensus.ProtocolUpdateDatum.StringPlaceholderValue
-  fullName: Sensus.ProtocolUpdateDatum.StringPlaceholderValue
-  nameWithType: ProtocolUpdateDatum.StringPlaceholderValue
-- uid: Sensus.ProtocolUpdateDatum.TargetType
-  name: TargetType
-  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum_TargetType
-  commentId: P:Sensus.ProtocolUpdateDatum.TargetType
-  fullName: Sensus.ProtocolUpdateDatum.TargetType
-  nameWithType: ProtocolUpdateDatum.TargetType
-- uid: Sensus.ProtocolUpdateDatum.TargetType*
-  name: TargetType
-  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum_TargetType_
-  commentId: Overload:Sensus.ProtocolUpdateDatum.TargetType
-  fullName: Sensus.ProtocolUpdateDatum.TargetType
-  nameWithType: ProtocolUpdateDatum.TargetType
-- uid: Sensus.ProtocolUpdateDatum.Value
-  name: Value
-  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum_Value
-  commentId: P:Sensus.ProtocolUpdateDatum.Value
-  fullName: Sensus.ProtocolUpdateDatum.Value
-  nameWithType: ProtocolUpdateDatum.Value
-- uid: Sensus.ProtocolUpdateDatum.Value*
-  name: Value
-  href: api/Sensus.ProtocolUpdateDatum.html#Sensus_ProtocolUpdateDatum_Value_
-  commentId: Overload:Sensus.ProtocolUpdateDatum.Value
-  fullName: Sensus.ProtocolUpdateDatum.Value
-  nameWithType: ProtocolUpdateDatum.Value
 - uid: Sensus.QrCodePrefix
   name: QrCodePrefix
   href: api/Sensus.QrCodePrefix.html
@@ -46863,483 +47811,6 @@ references:
   commentId: F:Sensus.QrCodePrefix.SURVEY_AGENT
   fullName: Sensus.QrCodePrefix.SURVEY_AGENT
   nameWithType: QrCodePrefix.SURVEY_AGENT
-- uid: Sensus.SensingAgent
-  name: SensingAgent
-  href: api/Sensus.SensingAgent.html
-  commentId: T:Sensus.SensingAgent
-  fullName: Sensus.SensingAgent
-  nameWithType: SensingAgent
-- uid: Sensus.SensingAgent.#ctor(System.String,System.String,System.TimeSpan)
-  name: SensingAgent(String, String, TimeSpan)
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent__ctor_System_String_System_String_System_TimeSpan_
-  commentId: M:Sensus.SensingAgent.#ctor(System.String,System.String,System.TimeSpan)
-  fullName: Sensus.SensingAgent.SensingAgent(System.String, System.String, System.TimeSpan)
-  nameWithType: SensingAgent.SensingAgent(String, String, TimeSpan)
-- uid: Sensus.SensingAgent.#ctor(System.String,System.String,System.TimeSpan,System.TimeSpan,System.TimeSpan)
-  name: SensingAgent(String, String, TimeSpan, TimeSpan, TimeSpan)
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent__ctor_System_String_System_String_System_TimeSpan_System_TimeSpan_System_TimeSpan_
-  commentId: M:Sensus.SensingAgent.#ctor(System.String,System.String,System.TimeSpan,System.TimeSpan,System.TimeSpan)
-  fullName: Sensus.SensingAgent.SensingAgent(System.String, System.String, System.TimeSpan, System.TimeSpan, System.TimeSpan)
-  nameWithType: SensingAgent.SensingAgent(String, String, TimeSpan, TimeSpan, TimeSpan)
-- uid: Sensus.SensingAgent.#ctor*
-  name: SensingAgent
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent__ctor_
-  commentId: Overload:Sensus.SensingAgent.#ctor
-  fullName: Sensus.SensingAgent.SensingAgent
-  nameWithType: SensingAgent.SensingAgent
-- uid: Sensus.SensingAgent.ActAsync(System.Threading.CancellationToken)
-  name: ActAsync(CancellationToken)
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_ActAsync_System_Threading_CancellationToken_
-  commentId: M:Sensus.SensingAgent.ActAsync(System.Threading.CancellationToken)
-  fullName: Sensus.SensingAgent.ActAsync(System.Threading.CancellationToken)
-  nameWithType: SensingAgent.ActAsync(CancellationToken)
-- uid: Sensus.SensingAgent.ActAsync*
-  name: ActAsync
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_ActAsync_
-  commentId: Overload:Sensus.SensingAgent.ActAsync
-  fullName: Sensus.SensingAgent.ActAsync
-  nameWithType: SensingAgent.ActAsync
-- uid: Sensus.SensingAgent.ActionInterval
-  name: ActionInterval
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_ActionInterval
-  commentId: P:Sensus.SensingAgent.ActionInterval
-  fullName: Sensus.SensingAgent.ActionInterval
-  nameWithType: SensingAgent.ActionInterval
-- uid: Sensus.SensingAgent.ActionInterval*
-  name: ActionInterval
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_ActionInterval_
-  commentId: Overload:Sensus.SensingAgent.ActionInterval
-  fullName: Sensus.SensingAgent.ActionInterval
-  nameWithType: SensingAgent.ActionInterval
-- uid: Sensus.SensingAgent.ActionIntervalToleranceAfter
-  name: ActionIntervalToleranceAfter
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_ActionIntervalToleranceAfter
-  commentId: P:Sensus.SensingAgent.ActionIntervalToleranceAfter
-  fullName: Sensus.SensingAgent.ActionIntervalToleranceAfter
-  nameWithType: SensingAgent.ActionIntervalToleranceAfter
-- uid: Sensus.SensingAgent.ActionIntervalToleranceAfter*
-  name: ActionIntervalToleranceAfter
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_ActionIntervalToleranceAfter_
-  commentId: Overload:Sensus.SensingAgent.ActionIntervalToleranceAfter
-  fullName: Sensus.SensingAgent.ActionIntervalToleranceAfter
-  nameWithType: SensingAgent.ActionIntervalToleranceAfter
-- uid: Sensus.SensingAgent.ActionIntervalToleranceBefore
-  name: ActionIntervalToleranceBefore
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_ActionIntervalToleranceBefore
-  commentId: P:Sensus.SensingAgent.ActionIntervalToleranceBefore
-  fullName: Sensus.SensingAgent.ActionIntervalToleranceBefore
-  nameWithType: SensingAgent.ActionIntervalToleranceBefore
-- uid: Sensus.SensingAgent.ActionIntervalToleranceBefore*
-  name: ActionIntervalToleranceBefore
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_ActionIntervalToleranceBefore_
-  commentId: Overload:Sensus.SensingAgent.ActionIntervalToleranceBefore
-  fullName: Sensus.SensingAgent.ActionIntervalToleranceBefore
-  nameWithType: SensingAgent.ActionIntervalToleranceBefore
-- uid: Sensus.SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold(System.Double)
-  name: AverageLinearAccelerationMagnitudeExceedsThreshold(Double)
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_AverageLinearAccelerationMagnitudeExceedsThreshold_System_Double_
-  commentId: M:Sensus.SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold(System.Double)
-  fullName: Sensus.SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold(System.Double)
-  nameWithType: SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold(Double)
-- uid: Sensus.SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold*
-  name: AverageLinearAccelerationMagnitudeExceedsThreshold
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_AverageLinearAccelerationMagnitudeExceedsThreshold_
-  commentId: Overload:Sensus.SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold
-  fullName: Sensus.SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold
-  nameWithType: SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold
-- uid: Sensus.SensingAgent.ControlCompletionCheck
-  name: SensingAgent.ControlCompletionCheck
-  href: api/Sensus.SensingAgent.ControlCompletionCheck.html
-  commentId: T:Sensus.SensingAgent.ControlCompletionCheck
-  fullName: Sensus.SensingAgent.ControlCompletionCheck
-  nameWithType: SensingAgent.ControlCompletionCheck
-- uid: Sensus.SensingAgent.ControlCompletionCheck.#ctor(Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate,System.TimeSpan,System.String,System.String)
-  name: ControlCompletionCheck(SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate, TimeSpan, String, String)
-  href: api/Sensus.SensingAgent.ControlCompletionCheck.html#Sensus_SensingAgent_ControlCompletionCheck__ctor_Sensus_SensingAgent_ControlCompletionCheck_ControlCompletionCheckAsyncDelegate_System_TimeSpan_System_String_System_String_
-  commentId: M:Sensus.SensingAgent.ControlCompletionCheck.#ctor(Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate,System.TimeSpan,System.String,System.String)
-  fullName: Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheck(Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate, System.TimeSpan, System.String, System.String)
-  nameWithType: SensingAgent.ControlCompletionCheck.ControlCompletionCheck(SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate, TimeSpan, String, String)
-- uid: Sensus.SensingAgent.ControlCompletionCheck.#ctor*
-  name: ControlCompletionCheck
-  href: api/Sensus.SensingAgent.ControlCompletionCheck.html#Sensus_SensingAgent_ControlCompletionCheck__ctor_
-  commentId: Overload:Sensus.SensingAgent.ControlCompletionCheck.#ctor
-  fullName: Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheck
-  nameWithType: SensingAgent.ControlCompletionCheck.ControlCompletionCheck
-- uid: Sensus.SensingAgent.ControlCompletionCheck.CheckControlCompletionAsync
-  name: CheckControlCompletionAsync
-  href: api/Sensus.SensingAgent.ControlCompletionCheck.html#Sensus_SensingAgent_ControlCompletionCheck_CheckControlCompletionAsync
-  commentId: P:Sensus.SensingAgent.ControlCompletionCheck.CheckControlCompletionAsync
-  fullName: Sensus.SensingAgent.ControlCompletionCheck.CheckControlCompletionAsync
-  nameWithType: SensingAgent.ControlCompletionCheck.CheckControlCompletionAsync
-- uid: Sensus.SensingAgent.ControlCompletionCheck.CheckControlCompletionAsync*
-  name: CheckControlCompletionAsync
-  href: api/Sensus.SensingAgent.ControlCompletionCheck.html#Sensus_SensingAgent_ControlCompletionCheck_CheckControlCompletionAsync_
-  commentId: Overload:Sensus.SensingAgent.ControlCompletionCheck.CheckControlCompletionAsync
-  fullName: Sensus.SensingAgent.ControlCompletionCheck.CheckControlCompletionAsync
-  nameWithType: SensingAgent.ControlCompletionCheck.CheckControlCompletionAsync
-- uid: Sensus.SensingAgent.ControlCompletionCheck.CheckControlCompletionInterval
-  name: CheckControlCompletionInterval
-  href: api/Sensus.SensingAgent.ControlCompletionCheck.html#Sensus_SensingAgent_ControlCompletionCheck_CheckControlCompletionInterval
-  commentId: P:Sensus.SensingAgent.ControlCompletionCheck.CheckControlCompletionInterval
-  fullName: Sensus.SensingAgent.ControlCompletionCheck.CheckControlCompletionInterval
-  nameWithType: SensingAgent.ControlCompletionCheck.CheckControlCompletionInterval
-- uid: Sensus.SensingAgent.ControlCompletionCheck.CheckControlCompletionInterval*
-  name: CheckControlCompletionInterval
-  href: api/Sensus.SensingAgent.ControlCompletionCheck.html#Sensus_SensingAgent_ControlCompletionCheck_CheckControlCompletionInterval_
-  commentId: Overload:Sensus.SensingAgent.ControlCompletionCheck.CheckControlCompletionInterval
-  fullName: Sensus.SensingAgent.ControlCompletionCheck.CheckControlCompletionInterval
-  nameWithType: SensingAgent.ControlCompletionCheck.CheckControlCompletionInterval
-- uid: Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate
-  name: SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate
-  href: api/Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.html
-  commentId: T:Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate
-  fullName: Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate
-  nameWithType: SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate
-- uid: Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.#ctor(System.Object,System.IntPtr)
-  name: ControlCompletionCheckAsyncDelegate(Object, IntPtr)
-  href: api/Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.html#Sensus_SensingAgent_ControlCompletionCheck_ControlCompletionCheckAsyncDelegate__ctor_System_Object_System_IntPtr_
-  commentId: M:Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.#ctor(System.Object,System.IntPtr)
-  fullName: Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.ControlCompletionCheckAsyncDelegate(System.Object, System.IntPtr)
-  nameWithType: SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.ControlCompletionCheckAsyncDelegate(Object, IntPtr)
-- uid: Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.#ctor*
-  name: ControlCompletionCheckAsyncDelegate
-  href: api/Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.html#Sensus_SensingAgent_ControlCompletionCheck_ControlCompletionCheckAsyncDelegate__ctor_
-  commentId: Overload:Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.#ctor
-  fullName: Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.ControlCompletionCheckAsyncDelegate
-  nameWithType: SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.ControlCompletionCheckAsyncDelegate
-- uid: Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.BeginInvoke(System.Threading.CancellationToken,System.AsyncCallback,System.Object)
-  name: BeginInvoke(CancellationToken, AsyncCallback, Object)
-  href: api/Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.html#Sensus_SensingAgent_ControlCompletionCheck_ControlCompletionCheckAsyncDelegate_BeginInvoke_System_Threading_CancellationToken_System_AsyncCallback_System_Object_
-  commentId: M:Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.BeginInvoke(System.Threading.CancellationToken,System.AsyncCallback,System.Object)
-  fullName: Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.BeginInvoke(System.Threading.CancellationToken, System.AsyncCallback, System.Object)
-  nameWithType: SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.BeginInvoke(CancellationToken, AsyncCallback, Object)
-- uid: Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.BeginInvoke*
-  name: BeginInvoke
-  href: api/Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.html#Sensus_SensingAgent_ControlCompletionCheck_ControlCompletionCheckAsyncDelegate_BeginInvoke_
-  commentId: Overload:Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.BeginInvoke
-  fullName: Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.BeginInvoke
-  nameWithType: SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.BeginInvoke
-- uid: Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.EndInvoke(System.IAsyncResult)
-  name: EndInvoke(IAsyncResult)
-  href: api/Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.html#Sensus_SensingAgent_ControlCompletionCheck_ControlCompletionCheckAsyncDelegate_EndInvoke_System_IAsyncResult_
-  commentId: M:Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.EndInvoke(System.IAsyncResult)
-  fullName: Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.EndInvoke(System.IAsyncResult)
-  nameWithType: SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.EndInvoke(IAsyncResult)
-- uid: Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.EndInvoke*
-  name: EndInvoke
-  href: api/Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.html#Sensus_SensingAgent_ControlCompletionCheck_ControlCompletionCheckAsyncDelegate_EndInvoke_
-  commentId: Overload:Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.EndInvoke
-  fullName: Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.EndInvoke
-  nameWithType: SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.EndInvoke
-- uid: Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.Invoke(System.Threading.CancellationToken)
-  name: Invoke(CancellationToken)
-  href: api/Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.html#Sensus_SensingAgent_ControlCompletionCheck_ControlCompletionCheckAsyncDelegate_Invoke_System_Threading_CancellationToken_
-  commentId: M:Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.Invoke(System.Threading.CancellationToken)
-  fullName: Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.Invoke(System.Threading.CancellationToken)
-  nameWithType: SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.Invoke(CancellationToken)
-- uid: Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.Invoke*
-  name: Invoke
-  href: api/Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.html#Sensus_SensingAgent_ControlCompletionCheck_ControlCompletionCheckAsyncDelegate_Invoke_
-  commentId: Overload:Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.Invoke
-  fullName: Sensus.SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.Invoke
-  nameWithType: SensingAgent.ControlCompletionCheck.ControlCompletionCheckAsyncDelegate.Invoke
-- uid: Sensus.SensingAgent.ControlCompletionCheck.NotificationUserResponseMessage
-  name: NotificationUserResponseMessage
-  href: api/Sensus.SensingAgent.ControlCompletionCheck.html#Sensus_SensingAgent_ControlCompletionCheck_NotificationUserResponseMessage
-  commentId: P:Sensus.SensingAgent.ControlCompletionCheck.NotificationUserResponseMessage
-  fullName: Sensus.SensingAgent.ControlCompletionCheck.NotificationUserResponseMessage
-  nameWithType: SensingAgent.ControlCompletionCheck.NotificationUserResponseMessage
-- uid: Sensus.SensingAgent.ControlCompletionCheck.NotificationUserResponseMessage*
-  name: NotificationUserResponseMessage
-  href: api/Sensus.SensingAgent.ControlCompletionCheck.html#Sensus_SensingAgent_ControlCompletionCheck_NotificationUserResponseMessage_
-  commentId: Overload:Sensus.SensingAgent.ControlCompletionCheck.NotificationUserResponseMessage
-  fullName: Sensus.SensingAgent.ControlCompletionCheck.NotificationUserResponseMessage
-  nameWithType: SensingAgent.ControlCompletionCheck.NotificationUserResponseMessage
-- uid: Sensus.SensingAgent.ControlCompletionCheck.UserNotificationMessage
-  name: UserNotificationMessage
-  href: api/Sensus.SensingAgent.ControlCompletionCheck.html#Sensus_SensingAgent_ControlCompletionCheck_UserNotificationMessage
-  commentId: P:Sensus.SensingAgent.ControlCompletionCheck.UserNotificationMessage
-  fullName: Sensus.SensingAgent.ControlCompletionCheck.UserNotificationMessage
-  nameWithType: SensingAgent.ControlCompletionCheck.UserNotificationMessage
-- uid: Sensus.SensingAgent.ControlCompletionCheck.UserNotificationMessage*
-  name: UserNotificationMessage
-  href: api/Sensus.SensingAgent.ControlCompletionCheck.html#Sensus_SensingAgent_ControlCompletionCheck_UserNotificationMessage_
-  commentId: Overload:Sensus.SensingAgent.ControlCompletionCheck.UserNotificationMessage
-  fullName: Sensus.SensingAgent.ControlCompletionCheck.UserNotificationMessage
-  nameWithType: SensingAgent.ControlCompletionCheck.UserNotificationMessage
-- uid: Sensus.SensingAgent.ControlCompletionCheckInterval
-  name: ControlCompletionCheckInterval
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_ControlCompletionCheckInterval
-  commentId: P:Sensus.SensingAgent.ControlCompletionCheckInterval
-  fullName: Sensus.SensingAgent.ControlCompletionCheckInterval
-  nameWithType: SensingAgent.ControlCompletionCheckInterval
-- uid: Sensus.SensingAgent.ControlCompletionCheckInterval*
-  name: ControlCompletionCheckInterval
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_ControlCompletionCheckInterval_
-  commentId: Overload:Sensus.SensingAgent.ControlCompletionCheckInterval
-  fullName: Sensus.SensingAgent.ControlCompletionCheckInterval
-  nameWithType: SensingAgent.ControlCompletionCheckInterval
-- uid: Sensus.SensingAgent.Description
-  name: Description
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_Description
-  commentId: P:Sensus.SensingAgent.Description
-  fullName: Sensus.SensingAgent.Description
-  nameWithType: SensingAgent.Description
-- uid: Sensus.SensingAgent.Description*
-  name: Description
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_Description_
-  commentId: Overload:Sensus.SensingAgent.Description
-  fullName: Sensus.SensingAgent.Description
-  nameWithType: SensingAgent.Description
-- uid: Sensus.SensingAgent.GetObservedData*
-  name: GetObservedData
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_GetObservedData_
-  commentId: Overload:Sensus.SensingAgent.GetObservedData
-  fullName: Sensus.SensingAgent.GetObservedData
-  nameWithType: SensingAgent.GetObservedData
-- uid: Sensus.SensingAgent.GetObservedData``1
-  name: GetObservedData<DatumInterface>()
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_GetObservedData__1
-  commentId: M:Sensus.SensingAgent.GetObservedData``1
-  name.vb: GetObservedData(Of DatumInterface)()
-  fullName: Sensus.SensingAgent.GetObservedData<DatumInterface>()
-  fullName.vb: Sensus.SensingAgent.GetObservedData(Of DatumInterface)()
-  nameWithType: SensingAgent.GetObservedData<DatumInterface>()
-  nameWithType.vb: SensingAgent.GetObservedData(Of DatumInterface)()
-- uid: Sensus.SensingAgent.Id
-  name: Id
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_Id
-  commentId: P:Sensus.SensingAgent.Id
-  fullName: Sensus.SensingAgent.Id
-  nameWithType: SensingAgent.Id
-- uid: Sensus.SensingAgent.Id*
-  name: Id
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_Id_
-  commentId: Overload:Sensus.SensingAgent.Id
-  fullName: Sensus.SensingAgent.Id
-  nameWithType: SensingAgent.Id
-- uid: Sensus.SensingAgent.InitializeAsync(Sensus.ISensusServiceHelper,Sensus.IProtocol)
-  name: InitializeAsync(ISensusServiceHelper, IProtocol)
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_InitializeAsync_Sensus_ISensusServiceHelper_Sensus_IProtocol_
-  commentId: M:Sensus.SensingAgent.InitializeAsync(Sensus.ISensusServiceHelper,Sensus.IProtocol)
-  fullName: Sensus.SensingAgent.InitializeAsync(Sensus.ISensusServiceHelper, Sensus.IProtocol)
-  nameWithType: SensingAgent.InitializeAsync(ISensusServiceHelper, IProtocol)
-- uid: Sensus.SensingAgent.InitializeAsync*
-  name: InitializeAsync
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_InitializeAsync_
-  commentId: Overload:Sensus.SensingAgent.InitializeAsync
-  fullName: Sensus.SensingAgent.InitializeAsync
-  nameWithType: SensingAgent.InitializeAsync
-- uid: Sensus.SensingAgent.IsNearSurface
-  name: IsNearSurface()
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_IsNearSurface
-  commentId: M:Sensus.SensingAgent.IsNearSurface
-  fullName: Sensus.SensingAgent.IsNearSurface()
-  nameWithType: SensingAgent.IsNearSurface()
-- uid: Sensus.SensingAgent.IsNearSurface*
-  name: IsNearSurface
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_IsNearSurface_
-  commentId: Overload:Sensus.SensingAgent.IsNearSurface
-  fullName: Sensus.SensingAgent.IsNearSurface
-  nameWithType: SensingAgent.IsNearSurface
-- uid: Sensus.SensingAgent.ObservationDuration
-  name: ObservationDuration
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_ObservationDuration
-  commentId: P:Sensus.SensingAgent.ObservationDuration
-  fullName: Sensus.SensingAgent.ObservationDuration
-  nameWithType: SensingAgent.ObservationDuration
-- uid: Sensus.SensingAgent.ObservationDuration*
-  name: ObservationDuration
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_ObservationDuration_
-  commentId: Overload:Sensus.SensingAgent.ObservationDuration
-  fullName: Sensus.SensingAgent.ObservationDuration
-  nameWithType: SensingAgent.ObservationDuration
-- uid: Sensus.SensingAgent.ObserveAsync(Sensus.IDatum,System.Threading.CancellationToken)
-  name: ObserveAsync(IDatum, CancellationToken)
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_ObserveAsync_Sensus_IDatum_System_Threading_CancellationToken_
-  commentId: M:Sensus.SensingAgent.ObserveAsync(Sensus.IDatum,System.Threading.CancellationToken)
-  fullName: Sensus.SensingAgent.ObserveAsync(Sensus.IDatum, System.Threading.CancellationToken)
-  nameWithType: SensingAgent.ObserveAsync(IDatum, CancellationToken)
-- uid: Sensus.SensingAgent.ObserveAsync*
-  name: ObserveAsync
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_ObserveAsync_
-  commentId: Overload:Sensus.SensingAgent.ObserveAsync
-  fullName: Sensus.SensingAgent.ObserveAsync
-  nameWithType: SensingAgent.ObserveAsync
-- uid: Sensus.SensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}},Sensus.IDatum)
-  name: ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>>, IDatum)
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_ObservedDataMeetControlCriterion_System_Collections_Generic_Dictionary_System_Type_System_Collections_Generic_List_Sensus_IDatum___Sensus_IDatum_
-  commentId: M:Sensus.SensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}},Sensus.IDatum)
-  name.vb: ObservedDataMeetControlCriterion(Dictionary(Of Type, List(Of IDatum)), IDatum)
-  fullName: Sensus.SensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary<System.Type, System.Collections.Generic.List<Sensus.IDatum>>, Sensus.IDatum)
-  fullName.vb: Sensus.SensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary(Of System.Type, System.Collections.Generic.List(Of Sensus.IDatum)), Sensus.IDatum)
-  nameWithType: SensingAgent.ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>>, IDatum)
-  nameWithType.vb: SensingAgent.ObservedDataMeetControlCriterion(Dictionary(Of Type, List(Of IDatum)), IDatum)
-- uid: Sensus.SensingAgent.ObservedDataMeetControlCriterion*
-  name: ObservedDataMeetControlCriterion
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_ObservedDataMeetControlCriterion_
-  commentId: Overload:Sensus.SensingAgent.ObservedDataMeetControlCriterion
-  fullName: Sensus.SensingAgent.ObservedDataMeetControlCriterion
-  nameWithType: SensingAgent.ObservedDataMeetControlCriterion
-- uid: Sensus.SensingAgent.OnActiveControlAsync(System.Threading.CancellationToken)
-  name: OnActiveControlAsync(CancellationToken)
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_OnActiveControlAsync_System_Threading_CancellationToken_
-  commentId: M:Sensus.SensingAgent.OnActiveControlAsync(System.Threading.CancellationToken)
-  fullName: Sensus.SensingAgent.OnActiveControlAsync(System.Threading.CancellationToken)
-  nameWithType: SensingAgent.OnActiveControlAsync(CancellationToken)
-- uid: Sensus.SensingAgent.OnActiveControlAsync*
-  name: OnActiveControlAsync
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_OnActiveControlAsync_
-  commentId: Overload:Sensus.SensingAgent.OnActiveControlAsync
-  fullName: Sensus.SensingAgent.OnActiveControlAsync
-  nameWithType: SensingAgent.OnActiveControlAsync
-- uid: Sensus.SensingAgent.OnEndingControlAsync(System.Threading.CancellationToken)
-  name: OnEndingControlAsync(CancellationToken)
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_OnEndingControlAsync_System_Threading_CancellationToken_
-  commentId: M:Sensus.SensingAgent.OnEndingControlAsync(System.Threading.CancellationToken)
-  fullName: Sensus.SensingAgent.OnEndingControlAsync(System.Threading.CancellationToken)
-  nameWithType: SensingAgent.OnEndingControlAsync(CancellationToken)
-- uid: Sensus.SensingAgent.OnEndingControlAsync*
-  name: OnEndingControlAsync
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_OnEndingControlAsync_
-  commentId: Overload:Sensus.SensingAgent.OnEndingControlAsync
-  fullName: Sensus.SensingAgent.OnEndingControlAsync
-  nameWithType: SensingAgent.OnEndingControlAsync
-- uid: Sensus.SensingAgent.OnOpportunisticControlAsync(System.Threading.CancellationToken)
-  name: OnOpportunisticControlAsync(CancellationToken)
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_OnOpportunisticControlAsync_System_Threading_CancellationToken_
-  commentId: M:Sensus.SensingAgent.OnOpportunisticControlAsync(System.Threading.CancellationToken)
-  fullName: Sensus.SensingAgent.OnOpportunisticControlAsync(System.Threading.CancellationToken)
-  nameWithType: SensingAgent.OnOpportunisticControlAsync(CancellationToken)
-- uid: Sensus.SensingAgent.OnOpportunisticControlAsync*
-  name: OnOpportunisticControlAsync
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_OnOpportunisticControlAsync_
-  commentId: Overload:Sensus.SensingAgent.OnOpportunisticControlAsync
-  fullName: Sensus.SensingAgent.OnOpportunisticControlAsync
-  nameWithType: SensingAgent.OnOpportunisticControlAsync
-- uid: Sensus.SensingAgent.PropertyChanged
-  name: PropertyChanged
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_PropertyChanged
-  commentId: E:Sensus.SensingAgent.PropertyChanged
-  fullName: Sensus.SensingAgent.PropertyChanged
-  nameWithType: SensingAgent.PropertyChanged
-- uid: Sensus.SensingAgent.Protocol
-  name: Protocol
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_Protocol
-  commentId: P:Sensus.SensingAgent.Protocol
-  fullName: Sensus.SensingAgent.Protocol
-  nameWithType: SensingAgent.Protocol
-- uid: Sensus.SensingAgent.Protocol*
-  name: Protocol
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_Protocol_
-  commentId: Overload:Sensus.SensingAgent.Protocol
-  fullName: Sensus.SensingAgent.Protocol
-  nameWithType: SensingAgent.Protocol
-- uid: Sensus.SensingAgent.SensusServiceHelper
-  name: SensusServiceHelper
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_SensusServiceHelper
-  commentId: P:Sensus.SensingAgent.SensusServiceHelper
-  fullName: Sensus.SensingAgent.SensusServiceHelper
-  nameWithType: SensingAgent.SensusServiceHelper
-- uid: Sensus.SensingAgent.SensusServiceHelper*
-  name: SensusServiceHelper
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_SensusServiceHelper_
-  commentId: Overload:Sensus.SensingAgent.SensusServiceHelper
-  fullName: Sensus.SensingAgent.SensusServiceHelper
-  nameWithType: SensingAgent.SensusServiceHelper
-- uid: Sensus.SensingAgent.SetPolicyAsync(Newtonsoft.Json.Linq.JObject)
-  name: SetPolicyAsync(JObject)
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_SetPolicyAsync_Newtonsoft_Json_Linq_JObject_
-  commentId: M:Sensus.SensingAgent.SetPolicyAsync(Newtonsoft.Json.Linq.JObject)
-  fullName: Sensus.SensingAgent.SetPolicyAsync(Newtonsoft.Json.Linq.JObject)
-  nameWithType: SensingAgent.SetPolicyAsync(JObject)
-- uid: Sensus.SensingAgent.SetPolicyAsync*
-  name: SetPolicyAsync
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_SetPolicyAsync_
-  commentId: Overload:Sensus.SensingAgent.SetPolicyAsync
-  fullName: Sensus.SensingAgent.SetPolicyAsync
-  nameWithType: SensingAgent.SetPolicyAsync
-- uid: Sensus.SensingAgent.State
-  name: State
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_State
-  commentId: P:Sensus.SensingAgent.State
-  fullName: Sensus.SensingAgent.State
-  nameWithType: SensingAgent.State
-- uid: Sensus.SensingAgent.State*
-  name: State
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_State_
-  commentId: Overload:Sensus.SensingAgent.State
-  fullName: Sensus.SensingAgent.State
-  nameWithType: SensingAgent.State
-- uid: Sensus.SensingAgent.ToString
-  name: ToString()
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_ToString
-  commentId: M:Sensus.SensingAgent.ToString
-  fullName: Sensus.SensingAgent.ToString()
-  nameWithType: SensingAgent.ToString()
-- uid: Sensus.SensingAgent.ToString*
-  name: ToString
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_ToString_
-  commentId: Overload:Sensus.SensingAgent.ToString
-  fullName: Sensus.SensingAgent.ToString
-  nameWithType: SensingAgent.ToString
-- uid: Sensus.SensingAgent.UpdateObservedData(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}})
-  name: UpdateObservedData(Dictionary<Type, List<IDatum>>)
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_UpdateObservedData_System_Collections_Generic_Dictionary_System_Type_System_Collections_Generic_List_Sensus_IDatum___
-  commentId: M:Sensus.SensingAgent.UpdateObservedData(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}})
-  name.vb: UpdateObservedData(Dictionary(Of Type, List(Of IDatum)))
-  fullName: Sensus.SensingAgent.UpdateObservedData(System.Collections.Generic.Dictionary<System.Type, System.Collections.Generic.List<Sensus.IDatum>>)
-  fullName.vb: Sensus.SensingAgent.UpdateObservedData(System.Collections.Generic.Dictionary(Of System.Type, System.Collections.Generic.List(Of Sensus.IDatum)))
-  nameWithType: SensingAgent.UpdateObservedData(Dictionary<Type, List<IDatum>>)
-  nameWithType.vb: SensingAgent.UpdateObservedData(Dictionary(Of Type, List(Of IDatum)))
-- uid: Sensus.SensingAgent.UpdateObservedData*
-  name: UpdateObservedData
-  href: api/Sensus.SensingAgent.html#Sensus_SensingAgent_UpdateObservedData_
-  commentId: Overload:Sensus.SensingAgent.UpdateObservedData
-  fullName: Sensus.SensingAgent.UpdateObservedData
-  nameWithType: SensingAgent.UpdateObservedData
-- uid: Sensus.SensingAgentState
-  name: SensingAgentState
-  href: api/Sensus.SensingAgentState.html
-  commentId: T:Sensus.SensingAgentState
-  fullName: Sensus.SensingAgentState
-  nameWithType: SensingAgentState
-- uid: Sensus.SensingAgentState.ActiveControl
-  name: ActiveControl
-  href: api/Sensus.SensingAgentState.html#Sensus_SensingAgentState_ActiveControl
-  commentId: F:Sensus.SensingAgentState.ActiveControl
-  fullName: Sensus.SensingAgentState.ActiveControl
-  nameWithType: SensingAgentState.ActiveControl
-- uid: Sensus.SensingAgentState.ActiveObservation
-  name: ActiveObservation
-  href: api/Sensus.SensingAgentState.html#Sensus_SensingAgentState_ActiveObservation
-  commentId: F:Sensus.SensingAgentState.ActiveObservation
-  fullName: Sensus.SensingAgentState.ActiveObservation
-  nameWithType: SensingAgentState.ActiveObservation
-- uid: Sensus.SensingAgentState.EndingControl
-  name: EndingControl
-  href: api/Sensus.SensingAgentState.html#Sensus_SensingAgentState_EndingControl
-  commentId: F:Sensus.SensingAgentState.EndingControl
-  fullName: Sensus.SensingAgentState.EndingControl
-  nameWithType: SensingAgentState.EndingControl
-- uid: Sensus.SensingAgentState.Idle
-  name: Idle
-  href: api/Sensus.SensingAgentState.html#Sensus_SensingAgentState_Idle
-  commentId: F:Sensus.SensingAgentState.Idle
-  fullName: Sensus.SensingAgentState.Idle
-  nameWithType: SensingAgentState.Idle
-- uid: Sensus.SensingAgentState.OpportunisticControl
-  name: OpportunisticControl
-  href: api/Sensus.SensingAgentState.html#Sensus_SensingAgentState_OpportunisticControl
-  commentId: F:Sensus.SensingAgentState.OpportunisticControl
-  fullName: Sensus.SensingAgentState.OpportunisticControl
-  nameWithType: SensingAgentState.OpportunisticControl
-- uid: Sensus.SensingAgentState.value__
-  name: value__
-  href: api/Sensus.SensingAgentState.html#Sensus_SensingAgentState_value__
-  commentId: F:Sensus.SensingAgentState.value__
-  fullName: Sensus.SensingAgentState.value__
-  nameWithType: SensingAgentState.value__
 - uid: Sensus.SensusServiceHelper
   name: SensusServiceHelper
   href: api/Sensus.SensusServiceHelper.html
@@ -47850,15 +48321,12 @@ references:
   commentId: Overload:Sensus.SensusServiceHelper.PointsOfInterest
   fullName: Sensus.SensusServiceHelper.PointsOfInterest
   nameWithType: SensusServiceHelper.PointsOfInterest
-- uid: Sensus.SensusServiceHelper.PromptForAndReadTextFileAsync(System.String,System.Action{System.String})
-  name: PromptForAndReadTextFileAsync(String, Action<String>)
-  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PromptForAndReadTextFileAsync_System_String_System_Action_System_String__
-  commentId: M:Sensus.SensusServiceHelper.PromptForAndReadTextFileAsync(System.String,System.Action{System.String})
-  name.vb: PromptForAndReadTextFileAsync(String, Action(Of String))
-  fullName: Sensus.SensusServiceHelper.PromptForAndReadTextFileAsync(System.String, System.Action<System.String>)
-  fullName.vb: Sensus.SensusServiceHelper.PromptForAndReadTextFileAsync(System.String, System.Action(Of System.String))
-  nameWithType: SensusServiceHelper.PromptForAndReadTextFileAsync(String, Action<String>)
-  nameWithType.vb: SensusServiceHelper.PromptForAndReadTextFileAsync(String, Action(Of String))
+- uid: Sensus.SensusServiceHelper.PromptForAndReadTextFileAsync
+  name: PromptForAndReadTextFileAsync()
+  href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PromptForAndReadTextFileAsync
+  commentId: M:Sensus.SensusServiceHelper.PromptForAndReadTextFileAsync
+  fullName: Sensus.SensusServiceHelper.PromptForAndReadTextFileAsync()
+  nameWithType: SensusServiceHelper.PromptForAndReadTextFileAsync()
 - uid: Sensus.SensusServiceHelper.PromptForAndReadTextFileAsync*
   name: PromptForAndReadTextFileAsync
   href: api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_PromptForAndReadTextFileAsync_
@@ -50997,11 +51465,11 @@ references:
   commentId: T:Sensus.UI.SensingAgentPage
   fullName: Sensus.UI.SensingAgentPage
   nameWithType: SensingAgentPage
-- uid: Sensus.UI.SensingAgentPage.#ctor(Sensus.SensingAgent)
+- uid: Sensus.UI.SensingAgentPage.#ctor(Sensus.AdaptiveSensing.SensingAgent)
   name: SensingAgentPage(SensingAgent)
-  href: api/Sensus.UI.SensingAgentPage.html#Sensus_UI_SensingAgentPage__ctor_Sensus_SensingAgent_
-  commentId: M:Sensus.UI.SensingAgentPage.#ctor(Sensus.SensingAgent)
-  fullName: Sensus.UI.SensingAgentPage.SensingAgentPage(Sensus.SensingAgent)
+  href: api/Sensus.UI.SensingAgentPage.html#Sensus_UI_SensingAgentPage__ctor_Sensus_AdaptiveSensing_SensingAgent_
+  commentId: M:Sensus.UI.SensingAgentPage.#ctor(Sensus.AdaptiveSensing.SensingAgent)
+  fullName: Sensus.UI.SensingAgentPage.SensingAgentPage(Sensus.AdaptiveSensing.SensingAgent)
   nameWithType: SensingAgentPage.SensingAgentPage(SensingAgent)
 - uid: Sensus.UI.SensingAgentPage.#ctor*
   name: SensingAgentPage

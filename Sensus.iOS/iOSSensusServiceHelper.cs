@@ -441,14 +441,5 @@ namespace Sensus.iOS
         {
             return Task.FromResult(false);
         }
-
-        #region methods not implemented in ios
-
-        public override async Task PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
-        {
-            await FlashNotificationAsync("This is not supported on iOS.");
-        }
-
-        #endregion
     }
 }

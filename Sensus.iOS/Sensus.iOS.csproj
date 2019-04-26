@@ -338,6 +338,15 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <Reference Include="Estimote.iOS.Indoor">
       <HintPath>..\packages\Estimote.iOS.Indoor.3.0.0\lib\xamarinios10\Estimote.iOS.Indoor.dll</HintPath>
     </Reference>
+    <Reference Include="Plugin.FilePicker.Abstractions">
+      <HintPath>..\packages\Xamarin.Plugin.FilePicker.2.0.135\lib\Xamarin.iOS10\Plugin.FilePicker.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Plugin.FilePicker">
+      <HintPath>..\packages\Xamarin.Plugin.FilePicker.2.0.135\lib\Xamarin.iOS10\Plugin.FilePicker.dll</HintPath>
+    </Reference>
+    <Reference Include="Sensus.Shared.NuGet">
+      <HintPath>..\packages\Sensus.1.46.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
@@ -390,12 +399,6 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <BundleResource Include="Resources\surveys%402x.png" />
     <BundleResource Include="Resources\x.png" />
     <BundleResource Include="Resources\account.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Sensus.Shared.NuGet\Sensus.Shared.NuGet.csproj">
-      <Project>{117104F2-EE3A-4BF1-B617-DE009D6453F7}</Project>
-      <Name>Sensus.Shared.NuGet</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="..\ExampleSensingAgent.Shared\ExampleSensingAgent.Shared.projitems" Label="Shared" Condition="Exists('..\ExampleSensingAgent.Shared\ExampleSensingAgent.Shared.projitems')" />
   <Import Project="..\ExampleScriptProbeAgent.Shared\ExampleScriptProbeAgent.Shared.projitems" Label="Shared" Condition="Exists('..\ExampleScriptProbeAgent.Shared\ExampleScriptProbeAgent.Shared.projitems')" />

@@ -46,6 +46,8 @@ using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
 using Sensus.DataStores.Remote;
+using Plugin.FilePicker;
+using Plugin.FilePicker.Abstractions;
 
 namespace Sensus
 {
@@ -591,8 +593,6 @@ namespace Sensus
 
         protected abstract Task ProtectedFlashNotificationAsync(string message);
 
-        public abstract Task PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback);
-
         public abstract Task ShareFileAsync(string path, string subject, string mimeType);
 
         public abstract Task SendEmailAsync(string toAddress, string subject, string message);
@@ -1122,6 +1122,29 @@ namespace Sensus
             });
 
             return await resultCompletionSource.Task;
+        }
+
+        public async Task<string> PromptForAndReadTextFileAsync()
+        {
+            string text = null;
+
+            try
+            {
+                FileData data = await CrossFilePicker.Current.PickFile();
+
+                if (data != null)
+                {
+                    text = Encoding.UTF8.GetString(data.DataArray);
+                }
+            }
+            catch (Exception ex)
+            {
+                string message = "Error choosing file: " + ex.Message;
+                Logger.Log(message, LoggingLevel.Normal, GetType());
+                await FlashNotificationAsync(message);
+            }
+
+            return text;
         }
 
         public async Task<Input> PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress)

@@ -273,7 +273,7 @@ study&apos;s <a class="xref" href="Sensus.Protocol.html">Protocol</a>. Study par
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.SensingAgent.html">SensingAgent</a></td>
+        <td><a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html">SensingAgent</a></td>
         <td><p>The agent.</p>
 </td>
       </tr>
@@ -2286,6 +2286,57 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   </h3>
   
   
+  <a id="Sensus_Protocol_ApplySettingsAsync_" data-uid="Sensus.Protocol.ApplySettingsAsync*"></a>
+  <h4 id="Sensus_Protocol_ApplySettingsAsync_System_Collections_Generic_List_Sensus_ProtocolSetting__System_Threading_CancellationToken_" data-uid="Sensus.Protocol.ApplySettingsAsync(System.Collections.Generic.List{Sensus.ProtocolSetting},System.Threading.CancellationToken)">ApplySettingsAsync(List&lt;ProtocolSetting&gt;, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Applies a list of <a class="xref" href="Sensus.ProtocolSetting.html">ProtocolSetting</a> to the current <a class="xref" href="Sensus.Protocol.html">Protocol</a> and its <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>s.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;bool&gt; ApplySettingsAsync(List&lt;ProtocolSetting&gt; settings, CancellationToken cancellationToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.ProtocolSetting.html">ProtocolSetting</a>&gt;</td>
+        <td><span class="parametername">settings</span></td>
+        <td><p>Settings.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>Cancellation token.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
+        <td><p>True if either the current <a class="xref" href="Sensus.Protocol.html">Protocol</a> or any of its <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>s were restarted as a result of applying the passed <a class="xref" href="Sensus.ProtocolSetting.html">ProtocolSetting</a>s.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Protocol_CancelScheduledStartAsync_" data-uid="Sensus.Protocol.CancelScheduledStartAsync*"></a>
   <h4 id="Sensus_Protocol_CancelScheduledStartAsync" data-uid="Sensus.Protocol.CancelScheduledStartAsync">CancelScheduledStartAsync()</h4>
   <div class="markdown level1 summary"></div>
@@ -2673,7 +2724,7 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.SensingAgent.html">SensingAgent</a></td>
+        <td><a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html">SensingAgent</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -2715,7 +2766,7 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.SensingAgent.html">SensingAgent</a>&gt;</td>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html">SensingAgent</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -2867,7 +2918,7 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   
   
   <a id="Sensus_Protocol_ScheduleAgentControlCompletionCheckAsync_" data-uid="Sensus.Protocol.ScheduleAgentControlCompletionCheckAsync*"></a>
-  <h4 id="Sensus_Protocol_ScheduleAgentControlCompletionCheckAsync_Sensus_SensingAgent_ControlCompletionCheck_" data-uid="Sensus.Protocol.ScheduleAgentControlCompletionCheckAsync(Sensus.SensingAgent.ControlCompletionCheck)">ScheduleAgentControlCompletionCheckAsync(SensingAgent.ControlCompletionCheck)</h4>
+  <h4 id="Sensus_Protocol_ScheduleAgentControlCompletionCheckAsync_Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheck_" data-uid="Sensus.Protocol.ScheduleAgentControlCompletionCheckAsync(Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck)">ScheduleAgentControlCompletionCheckAsync(SensingAgent.ControlCompletionCheck)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -2885,7 +2936,7 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.SensingAgent.ControlCompletionCheck.html">SensingAgent.ControlCompletionCheck</a></td>
+        <td><a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.html">SensingAgent.ControlCompletionCheck</a></td>
         <td><span class="parametername">controlCompletionCheck</span></td>
         <td></td>
       </tr>
@@ -3247,7 +3298,6 @@ to show progress and prevent the user from interacting with the app until the <a
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public bool TryGetProbe&lt;DatumInterface, ProbeType&gt;(out ProbeType probe)
-
     where DatumInterface : IDatum where ProbeType : class, IProbe</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>

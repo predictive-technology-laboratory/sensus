@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>Sensus</PackageId>
-    <PackageVersion>1.45.0</PackageVersion>
+    <PackageVersion>1.46.0</PackageVersion>
     <Authors>Matthew Gerber</Authors>
     <Description>Package for developing plug-ins and other code modules that integrate with Sensus.</Description>
     <ReleaseVersion>2.0.0</ReleaseVersion>

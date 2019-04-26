@@ -1808,11 +1808,11 @@ namespace Sensus
                         throw new Exception("Exception while getting target type (" + setting.TargetTypeName + "):  " + ex.Message, ex);
                     }
 
-                    // if the value is JSON, then assume it is a reference type.
+                    // if the value itself is JSON, then try to deserialize it to a .net type.
                     object newValueObject = null;
-                    if (setting.Value.IsValidJsonObject())
+                    if (setting.Value.ToString().IsValidJsonObject())
                     {
-                        newValueObject = JsonConvert.DeserializeObject(setting.Value);
+                        newValueObject = JsonConvert.DeserializeObject(setting.Value.ToString());
                     }
                     // otherwise, assume it is a value type.
                     else
@@ -1869,7 +1869,7 @@ namespace Sensus
                     }
 
                     // record the setting as a datum in the data store, so that we can analyze effects of updates retrospectively.
-                    _localDataStore.WriteDatum(new ProtocolSettingUpdateDatum(DateTimeOffset.UtcNow, setting.PropertyTypeName, setting.PropertyName, setting.TargetTypeName, setting.Value), cancellationToken);
+                    _localDataStore.WriteDatum(new ProtocolSettingUpdateDatum(DateTimeOffset.UtcNow, setting.PropertyTypeName, setting.PropertyName, setting.TargetTypeName, setting.Value.ToString()), cancellationToken);
 
                     SensusServiceHelper.Get().Logger.Log("Updated protocol:  " + setting.PropertyTypeName + "." + setting.PropertyName + " for each " + setting.TargetTypeName + " = " + setting.Value, LoggingLevel.Normal, GetType());
                 }

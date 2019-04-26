@@ -145,10 +145,10 @@ shows the correct selection:</li>
 <ol>
 <li><p>Add a NuGet reference to <a href="https://www.nuget.org/packages/Sensus">the Sensus package</a>.</p>
 </li>
-<li><p>Add a new class that inherits from <a class="xref" href="../api/Sensus.SensingAgent.html">SensingAgent</a>. Be sure to provide a parameterless constructor
+<li><p>Add a new class that inherits from <a class="xref" href="../api/Sensus.AdaptiveSensing.SensingAgent.html">SensingAgent</a>. Be sure to provide a parameterless constructor
 for your class, as this constructor will be called at run time to create your agent. Your class will be required
 to override a few methods related to control. These methods are where your sensing agent should execute its control 
-policy. The <a class="xref" href="../api/Sensus.SensingAgent.html">SensingAgent</a> class provides a set of predefined control criterion functions 
+policy. The <a class="xref" href="../api/Sensus.AdaptiveSensing.SensingAgent.html">SensingAgent</a> class provides a set of predefined control criterion functions 
 <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared.NuGet/SensingAgentControlCriteria.cs">here</a>.
 You can call these diretly from your code or write your own in order to suit your adaptation requirements.</p>
 </li>
@@ -157,11 +157,11 @@ solution is to upload the .dll to a Dropbox directory and copy the sharing URL f
 </li>
 <li><p>Generate a QR code that points to your .dll (e.g., using <a href="https://www.qr-code-generator.com/">QR Code Generator</a>).
 The content of the QR code must be exactly as shown below:</p>
-<pre><code>sensing-agent:URL
+<pre><code class="lang-plain">sensing-agent:URL
 </code></pre><p>where URL is the web-accessible URL that points to your .dll file. If you are using Dropbox, then the QR code
 content will be similar to the one shown below (note the <code>dl=1</code> ending of the URL, and note that the following 
 URL is only an example -- it is not actually valid):</p>
-<pre><code>sensing-agent:https://www.dropbox.com/s/dlaksdjfasfasdf/SensingAgent.dll?dl=1
+<pre><code class="lang-plain">sensing-agent:https://www.dropbox.com/s/dlaksdjfasfasdf/SensingAgent.dll?dl=1
 </code></pre></li>
 <li><p>In your <a class="xref" href="../api/Sensus.Protocol.html">Protocol</a> settings, tap &quot;Set Agent&quot; and scan your QR code. Sensus will fetch your .dll file and 
 extract any agent definitions contained therein. Select your desired agent.</p>
@@ -199,37 +199,14 @@ our team (uva.ptl@gmail.com) to include them in a future release.</p>
 <h2 id="adaptive-sensing-policy-language-aspl">Adaptive Sensing Policy Language (ASPL)</h2>
 <p>In addition to the software-defined adaptive sensing agents described above, Sensus supports adaptive sensing
 policies specified in a general-purpose adaptive sensing policy language (ASPL). ASPL specifies both the 
-control criteria as well as the control actions depicted in the above state diagram. The ASPL listing below 
-shows the elements of an ASPL policy.</p>
-<pre style="overflow-x:scroll;">
-{
-  "action-interval" : "",                    # Hours, minutes, and seconds (00:00:00) for "action interval" (see above).
-  "observation-duration" : "",               # Hours, minutes, and seconds (00:00:00) for "active observation" (see above).
-  "control-completion-check-interval" : "",  # Hours, minutes, and seconds (00:00:00) for "control completion check interval" (see above).
-  "control-criteria" :                       # 1 or more control criteria expressions.
-  [
-    {
-      "datum-property" : "",   # The fully-qualified name for a [datum property](https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Datum.html) to observe.
-      "aggregation", ""        # Aggregation operator for observed property values. Valid values are AVG, MIN, MAX, or SLOPE (for quantitative properties) and MODE, NEWEST, or ANY (for qualitative properties).
-      "relation" : "",         # Relation operator (<=></=>< ==""> >=) used to compare the aggregate property value with the target value. Quantitative properties admit all operators, whereas qualitative properties only admit the == operator.
-      "target" : ""            # A numeric value (for quantitative properties) or regular expression (for qualitative properties) that is compared with the aggregate property value via the relation operator.
-    },
-    ...
-  ],
-  "control-criteria-combination" : "",  # Combination operator for the control criteria. Valid values are "conjunction" and "disjunction".
-  "action" :                            # Action to take if the control criteria combination evaluates to true.
-  {
-    "probe-property" : "",  # The fully-qualified name for a [probe property](https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Probes.Probe.html) to update.
-    "value" : ""            # The new value for the probe property.
-  }
-}
-</pre>
-
+control criteria as well as the control actions depicted in the above state diagram. The 
+<a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared/AdaptiveSensing/example-aspl-policy.json">example ASPL policy file</a>
+shows the format.</p>
 <p>There are pros and cons of software- and ASPL-defined sensing agents:</p>
 <ul>
 <li><p>Software-defined</p>
 <ul>
-<li>Pros:  Sophistication of control criteria and actions are not limited to the logical structure of ASPL.</li>
+<li>Pros:  Sophistication of control criteria. Actions are not limited to the logical structure of ASPL.</li>
 <li>Cons:  Low-level programming is required for Android. Third-party development of iOS agents is complicated
 by iOS&#39;s prohibition of run-time code injection (see above). Changing the agent definition involves modifying
 code and, for iOS, redeploying the application.</li>
@@ -237,10 +214,29 @@ code and, for iOS, redeploying the application.</li>
 </li>
 <li><p>ASPL-defined</p>
 <ul>
-<li>Pros:  Agent definitions use the simpler ASPL syntax. Agent definitions can be loaded at run-time into both
-Android and iOS without the need for code changes or app redeployment.</li>
+<li>Pros:  Agent definitions use the relatively simple ASPL syntax. Agent definitions can be loaded at run-time 
+into both Android and iOS without the need for code changes or app redeployment.</li>
 <li>Cons:  ASPL has limited logical expressiveness.</li>
 </ul>
+</li>
+</ul>
+<p>When using an ASPL-defined sensing agent, one must provide the ASPL policy to the app. This can be done in two 
+ways:</p>
+<ul>
+<li><p>Set within protocol:  In the protocol settings, tap &quot;Set Agent Policy&quot;, then select your ASPL policy file,
+which must be in the format shown in the 
+<a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared/AdaptiveSensing/example-aspl-policy.json">example ASPL policy file</a>.
+This works well to set the initial policy used by the sensing agent; however, this is not a very effective 
+means of providing updated policies to users during an ongoing study. Updating the ASPL policy would require
+the study administrator to edit the protocol and distribute the new protocol to all users (e.g., via email), who
+would then need to manually update their protocols.</p>
+</li>
+<li><p>Send via push notification:  Upload the ASPL policy to the storage location indicated by the
+<code>GetSensingAgentPolicyAsync</code> method of <a class="xref" href="../api/Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a> and then request a 
+<a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS/ec2-push-notifications/example-requests.json">push notification update</a>
+directing the app to pull down and load the ASPL policy from the remote data store. This is 
+an effective option for updating the sensing agent&#39;s policy during ongoing studies, as users
+will not need to do anything in order to receive the updated policies.</p>
 </li>
 </ul>
 <h2 id="testing-and-debugging">Testing and Debugging</h2>
@@ -270,7 +266,7 @@ step through it in the debugger.</p>
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/DocFX/articles/adaptive-sensing.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/aspl-agent/DocFX/articles/adaptive-sensing.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>

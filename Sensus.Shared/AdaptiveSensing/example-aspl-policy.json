@@ -1,9 +1,13 @@
 {
-  "id": "ASPL Acceleration",
-  "description": "Responds to movement and proximity to increase acceleration sampling",
+  "id": "ASPL",
+  "description": "Example",
   "action-interval": "00:00:10",
   "observation-duration": "00:00:05",
   "control-completion-check-interval": "00:00:20",
+  "observed-data": {
+    "max-count": 100,
+    "max-age": null
+  },
   "statements": [
     {
       "description": "Keeps device awake and increases sampling rate if average acceleration exceeds 1.2 in each direction.",

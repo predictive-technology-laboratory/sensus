@@ -313,46 +313,6 @@ namespace Sensus.Android
         #endregion
 
         #region miscellaneous platform-specific functions
-        public override async Task PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
-        {
-            try
-            {
-                Intent intent = new Intent(Intent.ActionGetContent);
-                intent.SetType("*/*");
-                intent.AddCategory(Intent.CategoryOpenable);
-
-                await RunActionUsingMainActivityAsync(mainActivity =>
-                {
-                    mainActivity.GetActivityResultAsync(intent, AndroidActivityResultRequestCode.PromptForFile, async result =>
-                    {
-                        if (result != null && result.Item1 == Result.Ok)
-                        {
-                            try
-                            {
-                                using (StreamReader file = new StreamReader(Application.Context.ContentResolver.OpenInputStream(result.Item2.Data)))
-                                {
-                                    callback(file.ReadToEnd());
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                await FlashNotificationAsync("Error reading text file:  " + ex.Message);
-                            }
-                        }
-                    });
-
-                }, true, false);
-            }
-            catch (ActivityNotFoundException)
-            {
-                await FlashNotificationAsync("Please install a file manager from the Apps store.");
-            }
-            catch (Exception ex)
-            {
-                await FlashNotificationAsync("Something went wrong while prompting you for a file to read:  " + ex.Message);
-            }
-        }
-
         public override async Task ShareFileAsync(string path, string subject, string mimeType)
         {
             try
