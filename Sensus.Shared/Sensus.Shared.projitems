@@ -275,15 +275,16 @@
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\TimeSpanExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\UriExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions\WebRequestExtensions.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)AdaptiveSensing\AsplElement.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)AdaptiveSensing\AsplSensingAgent.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)AdaptiveSensing\AsplAggregation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)AdaptiveSensing\AsplRelation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)AdaptiveSensing\AsplLogic.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Adaptation\AsplElement.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Adaptation\AsplSensingAgent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Adaptation\AsplAggregationType.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Adaptation\AsplRelation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Adaptation\AsplLogic.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolSettingUpdateDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolSetting.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)AdaptiveSensing\AsplCriterion.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)AdaptiveSensing\AsplStatement.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Adaptation\AsplCriterion.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Adaptation\AsplStatement.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Adaptation\AsplAggregation.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\MicrosoftBand\" />
@@ -294,6 +295,6 @@
     <Folder Include="$(MSBuildThisFileDirectory)Extensions\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)AdaptiveSensing\example-aspl-policy.json" />
+    <None Include="$(MSBuildThisFileDirectory)Adaptation\example-aspl-policy.json" />
   </ItemGroup>
 </Project>

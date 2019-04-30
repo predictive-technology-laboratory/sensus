@@ -22,7 +22,7 @@ using Sensus.Probes.Location;
 using Sensus.Probes;
 using System.Threading;
 using Sensus.Extensions;
-using Sensus.AdaptiveSensing;
+using Sensus.Adaptation;
 
 namespace ExampleSensingAgent
 {

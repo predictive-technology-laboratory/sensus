@@ -18,7 +18,7 @@ using System.Linq;
 using Sensus.Probes.Location;
 using Sensus.Probes.Movement;
 
-namespace Sensus.AdaptiveSensing
+namespace Sensus.Adaptation
 {
     /// <summary>
     /// Separates the control criteria into a dedicated file for ease of understanding. We'll 

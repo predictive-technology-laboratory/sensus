@@ -28,7 +28,7 @@ using System.ComponentModel;
 using Sensus.Extensions;
 using Sensus.Exceptions;
 using Sensus.Probes.User.Scripts;
-using static Sensus.AdaptiveSensing.SensingAgent;
+using static Sensus.Adaptation.SensingAgent;
 
 namespace Sensus.Probes
 {
@@ -661,13 +661,6 @@ namespace Sensus.Probes
                 // just add the rates to the properties after event tracking. this way it will still be included in the status.
                 properties.Add("Raw Data / Second", Convert.ToString(rawDataPerSecond));
                 properties.Add("Stored Data / Second", Convert.ToString(storedDataPerSecond));
-            }
-            // the probe might not be running because it's in the middle of being restarted. only 
-            // return a signal to resart the probe if it is not currently being restarted.
-            else if (!_restarting)
-            {
-                Analytics.TrackEvent(eventName, properties);
-                result = HealthTestResult.Restart;
             }
 
             events.Add(new AnalyticsTrackedEvent(eventName, properties));

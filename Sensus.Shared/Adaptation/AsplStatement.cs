@@ -15,7 +15,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Sensus.AdaptiveSensing
+namespace Sensus.Adaptation
 {
     /// <summary>
     /// Combination of an <see cref="AsplCriterion"/> and <see cref="ProtocolSetting"/>s to apply when starting and ending sensing control.

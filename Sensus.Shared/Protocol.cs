@@ -51,8 +51,8 @@ using Sensus.Exceptions;
 using Sensus.Extensions;
 using Plugin.Geolocator.Abstractions;
 using Newtonsoft.Json.Linq;
-using static Sensus.AdaptiveSensing.SensingAgent;
-using Sensus.AdaptiveSensing;
+using static Sensus.Adaptation.SensingAgent;
+using Sensus.Adaptation;
 
 #if __IOS__
 using HealthKit;
@@ -1562,7 +1562,13 @@ namespace Sensus
         }
 
         /// <summary>
-        /// Gets or sets the sensing control agent. See [here](xref:adaptive_sensing) for more information.
+        /// Gets or sets the <see cref="SensingAgent"/> that controls this <see cref="Protocol"/>. See 
+        /// [here](xref:adaptive_sensing) for more information. This property is not serialized because,
+        /// on Android, the assembly containing its type is not necessarily in the app's executing 
+        /// assembly; rather, on Android, the type might be contained in an assembly (i.e., DLL) that 
+        /// has been provided by a third-party for run-time code injection (plug-in). Instead of 
+        /// storing the <see cref="SensingAgent"/> directly, we therefore store the assembly bytes and
+        /// the identifier of the agent within the assembly, so that we can load the agent at run time.
         /// </summary>
         /// <value>The agent.</value>
         [JsonIgnore]
@@ -1620,6 +1626,14 @@ namespace Sensus
         /// </summary>
         /// <value>The agent policy JSON.</value>
         public JObject AgentPolicy { get; set; }
+
+#if __ANDROID__
+        /// <summary>
+        /// Bytes of the assembly in which the <see cref="Agent"/> is contained.
+        /// </summary>
+        /// <value>The agent assembly bytes.</value>
+        public byte[] AgentAssemblyBytes { get; set; }
+#endif
 
         /// <summary>
         /// For JSON deserialization
@@ -2986,12 +3000,40 @@ namespace Sensus
             }
         }
 
-        public SensingAgent GetAgent(string agentId, byte[] assemblyBytes = null)
+        /// <summary>
+        /// Gets a <see cref="SensingAgent"/> from those available.
+        /// </summary>
+        /// <returns>The agent.</returns>
+        /// <param name="agentId">Agent identifier.</param>
+#if __ANDROID__
+        /// <param name="assemblyBytes">Assembly bytes. This is only permitted on Android, as
+        /// iOS does not permit dynamic code loading. Attempting to do this crashes the app.</param>
+        public SensingAgent GetAgent(string agentId, byte[] assemblyBytes)
+#elif __IOS__
+        public SensingAgent GetAgent(string agentId)
+#endif
         {
-            return GetAgents(assemblyBytes).SingleOrDefault(agent => agent.Id == agentId);
+            return GetAgents(
+
+#if __ANDROID__
+                assemblyBytes
+#endif
+
+                ).SingleOrDefault(agent => agent.Id == agentId);
         }
 
-        public List<SensingAgent> GetAgents(byte[] assemblyBytes = null)
+        /// <summary>
+        /// Gets available <see cref="SensingAgent"/>s from the current executing assembly.
+        /// </summary>
+        /// <returns>The agents.</returns>
+#if __ANDROID__
+        /// <param name="assemblyBytes">Additional assembly to scan for <see cref="SensingAgent"/>s. Pass <c>null</c> for no assembly, in
+        /// which case only agents present in the executing assembly (the app codebase) will be loaded.
+        /// Only permitted on Android</param>
+        public List<SensingAgent> GetAgents(byte[] assemblyBytes)
+#elif __IOS__
+        public List<SensingAgent> GetAgents()
+#endif
         {
             List<SensingAgent> agents = new List<SensingAgent>();
 
@@ -3003,16 +3045,26 @@ namespace Sensus
                                     .Cast<SensingAgent>()
                                     .ToList());
 
+#if __ANDROID__
             // add agents from the passed assembly, if any bytes were passed.
             if (assemblyBytes != null)
             {
-                agents.AddRange(Assembly.Load(assemblyBytes)
-                                        .GetTypes()
-                                        .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(SensingAgent)))
-                                        .Select(Activator.CreateInstance)
-                                        .Cast<SensingAgent>()
-                                        .ToList());
+                // don't let an invalid assembly byte array prevent us from proceeding to return the agents.
+                try
+                {
+                    agents.AddRange(Assembly.Load(assemblyBytes)
+                                            .GetTypes()
+                                            .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(SensingAgent)))
+                                            .Select(Activator.CreateInstance)
+                                            .Cast<SensingAgent>()
+                                            .ToList());
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception loading sensing agents from assembly bytes:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
             }
+#endif
 
             // set protocol and service helper on all agents
             foreach (SensingAgent agent in agents)
@@ -3023,12 +3075,6 @@ namespace Sensus
 
             return agents;
         }
-
-        /// <summary>
-        /// Bytes of the assembly in which the <see cref="Agent"/> is contained.
-        /// </summary>
-        /// <value>The agent assembly bytes.</value>
-        public byte[] AgentAssemblyBytes { get; set; }
 
         public async Task UpdateSensingAgentPolicyAsync(CancellationToken cancellationToken)
         {

@@ -20,7 +20,7 @@ Sensus's key features include the following:
   speed, acceleration, light levels, sound levels, after phone calls or text messages, and so on. Virtually 
   any [probed data](xref:Sensus.Probes.Probe) can be used to trigger surveys, or you can schedule surveys to run during 
   particular time blocks.
-* **Support for adaptive sensing and surveys** Sensus is designed to support research into adaptive data collection, both
+* **Adaptive sensing** Sensus is designed to support research into adaptive data collection, both
   for [passive sensing](xref:adaptive_sensing) and [survey sensing](xref:adaptive_surveys).
 * **Fine-grained anonymization controls** Each type of sensed data has several fine-grained facets that can be individually anonymized.
 * **Minimal infrastructure requirements** Sensus is entirely self-contained. No external servers are required unless you 

@@ -256,7 +256,13 @@ study&apos;s <a class="xref" href="Sensus.Protocol.html">Protocol</a>. Study par
   
   <a id="Sensus_Protocol_Agent_" data-uid="Sensus.Protocol.Agent*"></a>
   <h4 id="Sensus_Protocol_Agent" data-uid="Sensus.Protocol.Agent">Agent</h4>
-  <div class="markdown level1 summary"><p>Gets or sets the sensing control agent. See <a class="xref" href="../articles/adaptive-sensing.html">here</a> for more information.</p>
+  <div class="markdown level1 summary"><p>Gets or sets the <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a> that controls this <a class="xref" href="Sensus.Protocol.html">Protocol</a>. See 
+<a class="xref" href="../articles/adaptive-sensing.html">here</a> for more information. This property is not serialized because,
+on Android, the assembly containing its type is not necessarily in the app&apos;s executing 
+assembly; rather, on Android, the type might be contained in an assembly (i.e., DLL) that 
+has been provided by a third-party for run-time code injection (plug-in). Instead of 
+storing the <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a> directly, we therefore store the assembly bytes and
+the identifier of the agent within the assembly, so that we can load the agent at run time.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -273,7 +279,7 @@ study&apos;s <a class="xref" href="Sensus.Protocol.html">Protocol</a>. Study par
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html">SensingAgent</a></td>
+        <td><a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a></td>
         <td><p>The agent.</p>
 </td>
       </tr>
@@ -2690,7 +2696,7 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public SensingAgent GetAgent(string agentId, byte[] assemblyBytes = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public SensingAgent GetAgent(string agentId, byte[] assemblyBytes)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2710,7 +2716,9 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
       <tr>
         <td><span class="xref">System.Byte</span>[]</td>
         <td><span class="parametername">assemblyBytes</span></td>
-        <td></td>
+        <td><p>Assembly bytes. This is only permitted on Android, as
+iOS does not permit dynamic code loading. Attempting to do this crashes the app.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -2724,7 +2732,7 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html">SensingAgent</a></td>
+        <td><a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a></td>
         <td></td>
       </tr>
     </tbody>
@@ -2752,7 +2760,9 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
       <tr>
         <td><span class="xref">System.Byte</span>[]</td>
         <td><span class="parametername">assemblyBytes</span></td>
-        <td></td>
+        <td><p>Additional assembly to scan for <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a>s. 
+Only permitted on Android</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -2766,7 +2776,7 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html">SensingAgent</a>&gt;</td>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a>&gt;</td>
         <td></td>
       </tr>
     </tbody>
@@ -2918,7 +2928,7 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   
   
   <a id="Sensus_Protocol_ScheduleAgentControlCompletionCheckAsync_" data-uid="Sensus.Protocol.ScheduleAgentControlCompletionCheckAsync*"></a>
-  <h4 id="Sensus_Protocol_ScheduleAgentControlCompletionCheckAsync_Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheck_" data-uid="Sensus.Protocol.ScheduleAgentControlCompletionCheckAsync(Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck)">ScheduleAgentControlCompletionCheckAsync(SensingAgent.ControlCompletionCheck)</h4>
+  <h4 id="Sensus_Protocol_ScheduleAgentControlCompletionCheckAsync_Sensus_Adaptation_SensingAgent_ControlCompletionCheck_" data-uid="Sensus.Protocol.ScheduleAgentControlCompletionCheckAsync(Sensus.Adaptation.SensingAgent.ControlCompletionCheck)">ScheduleAgentControlCompletionCheckAsync(SensingAgent.ControlCompletionCheck)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -2936,7 +2946,7 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.ControlCompletionCheck.html">SensingAgent.ControlCompletionCheck</a></td>
+        <td><a class="xref" href="Sensus.Adaptation.SensingAgent.ControlCompletionCheck.html">SensingAgent.ControlCompletionCheck</a></td>
         <td><span class="parametername">controlCompletionCheck</span></td>
         <td></td>
       </tr>

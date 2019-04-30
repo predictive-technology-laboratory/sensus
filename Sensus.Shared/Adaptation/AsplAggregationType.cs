@@ -12,21 +12,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Sensus.AdaptiveSensing
+namespace Sensus.Adaptation
 {
     /// <summary>
-    /// Different ways of combining multiple <see cref="AsplElement"/> values into a single boolean true/false value.
+    /// Different ways of aggregating observed <see cref="IDatum"/> property values into a single value for criterion checking.
     /// </summary>
-    public enum AsplLogic
+    public enum AsplAggregationType
     {
         /// <summary>
-        /// Logical conjunction.
+        /// The minimum observed value.
         /// </summary>
-        Conjunction,
+        Minimum,
 
         /// <summary>
-        /// Logical disjunction.
+        /// The maximum observed value.
         /// </summary>
-        Disjunction
+        Maximum,
+
+        /// <summary>
+        /// The average observed value.
+        /// </summary>
+        Average,
+
+        /// <summary>
+        /// Any observed value.
+        /// </summary>
+        Any,
+
+        /// <summary>
+        /// Most recent observed value.
+        /// </summary>
+        MostRecent
     }
 }

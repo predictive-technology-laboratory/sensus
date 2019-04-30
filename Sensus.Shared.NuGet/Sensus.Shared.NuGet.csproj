@@ -3,9 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>Sensus</PackageId>
-    <PackageVersion>1.47.0</PackageVersion>
+    <PackageVersion>1.48.0</PackageVersion>
     <Authors>Matthew Gerber</Authors>
-    <Description>Package for developing plug-ins and other code modules that integrate with Sensus.</Description>
+    <Description>Package for developing plug-ins and other code modules that integrate with Sensus. The process for releasing a new version of the NuGet package for this project is as follows:  (1) Update the version number in the metadata settings; (2) right-click the project and select "Create NuGet Package"; and (3) upload the resulting package to the NuGet website.</Description>
     <ReleaseVersion>2.0.0</ReleaseVersion>
     <PackageIconUrl>https://github.com/predictive-technology-laboratory/sensus/raw/develop/Graphics/group-of-members-users-icon.png</PackageIconUrl>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -32,6 +32,15 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Extensions\" />
-    <Folder Include="AdaptiveSensing\" />
+    <Folder Include="Adaptation\" />
+    <Folder Include="Probes\" />
+    <Folder Include="Probes\Movement\" />
+    <Folder Include="Probes\Location\" />
+    <Folder Include="Probes\Context\" />
+    <Folder Include="Probes\Device\" />
+    <Folder Include="Probes\Network\" />
+    <Folder Include="Probes\User\" />
+    <Folder Include="Probes\User\Scripts\" />
+    <Folder Include="Probes\Communication\" />
   </ItemGroup>
 </Project>

@@ -130,13 +130,16 @@ then sensing control continues unabated until the next completion check occurs. 
 how long Sensus should wait between each completion check.</p>
 </li>
 </ul>
-<h2 id="android">Android</h2>
-<h3 id="sensing-agent-plug-ins">Sensing Agent Plug-Ins</h3>
-<p>On Android, Sensus supports a plug-in architecture for modules (or agents) that control Sensing configuration.
+<p>Sensus supports two mechanisms for incorporating sensing agents into a study. The first involves
+writing software (in C#) to define the sensing agent. The second involves defining the agent
+in a JSON-based specification language. The following sections provide more information about these
+two alternatives.</p>
+<h2 id="software-defined-sensing-agents">Software-Defined Sensing Agents</h2>
+<h3 id="android">Android</h3>
+<p>On Android, Sensus supports a plug-in architecture for software-defined sensing agents.
 This architecture is intended to support research into adaptive sensing by providing a simple interface
-through which researchers can deploy agents that implement specific adaptation approaches.</p>
-<h3 id="implementing-and-deploying-a-sensing-agent-plug-in">Implementing and Deploying a Sensing Agent Plug-In</h3>
-<p>Follow the steps below to implement and deploy a sensing agent within your Sensus study.</p>
+through which researchers can deploy agents that implement specific adaptation approaches. Follow the 
+steps below to implement and deploy an Android sensing agent.</p>
 <ol>
 <li>Create a new Android Class Library project in Visual Studio. In Visual Studio for Mac, the following image
 shows the correct selection:</li>
@@ -145,12 +148,12 @@ shows the correct selection:</li>
 <ol>
 <li><p>Add a NuGet reference to <a href="https://www.nuget.org/packages/Sensus">the Sensus package</a>.</p>
 </li>
-<li><p>Add a new class that inherits from <a class="xref" href="../api/Sensus.AdaptiveSensing.SensingAgent.html">SensingAgent</a>. Be sure to provide a parameterless constructor
+<li><p>Add a new class that inherits from <a class="xref" href="../api/Sensus.Adaptation.SensingAgent.html">SensingAgent</a>. Be sure to provide a parameterless constructor
 for your class, as this constructor will be called at run time to create your agent. Your class will be required
-to override a few methods related to control. These methods are where your sensing agent should execute its control 
-policy. The <a class="xref" href="../api/Sensus.AdaptiveSensing.SensingAgent.html">SensingAgent</a> class provides a set of predefined control criterion functions 
-<a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared.NuGet/SensingAgentControlCriteria.cs">here</a>.
-You can call these diretly from your code or write your own in order to suit your adaptation requirements.</p>
+to override a few methods related to sensing control. These methods are where your sensing agent should execute its control 
+policy. The <a class="xref" href="../api/Sensus.Adaptation.SensingAgent.html">SensingAgent</a> class provides a set of predefined control criterion functions 
+<a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared.NuGet/Adaptation/SensingAgentControlCriteria.cs">here</a>.
+You can call these diretly from your code or write your own functions to suit your adaptation requirements.</p>
 </li>
 <li><p>Build the library project, and upload the resulting .dll to a web-accessible URL. A convenient
 solution is to upload the .dll to a Dropbox directory and copy the sharing URL for the .dll file.</p>
@@ -167,18 +170,20 @@ URL is only an example -- it is not actually valid):</p>
 extract any agent definitions contained therein. Select your desired agent.</p>
 </li>
 <li><p>Continue with <a class="xref" href="protocol-creation.html">configuration</a> and <a class="xref" href="protocol-distribution.html">distribution</a>
-of your protocol.</p>
+of your protocol. When run, your protocol will invoke the selected sensing agent according to the state diagram shown
+above.</p>
 </li>
 </ol>
-<h3 id="example-sensing-agents">Example Sensing Agents</h3>
-<p>See the following implementations for example agents:</p>
+<h3 id="example">Example</h3>
+<p>See the following implementation for an example:</p>
 <ul>
 <li><a class="xref" href="../api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html">Acceleration</a> (code <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleSensingAgent.Shared/ExampleAccelerationSensingAgent.cs">here</a>):  A 
 sensing agent that samples continuously if the device is moving or near a surface (e.g., face).</li>
 </ul>
-<h2 id="ios">iOS</h2>
+<h3 id="ios">iOS</h3>
 <p>In contrast with Android, iOS does not allow apps to load code (e.g., from the above .dll assembly) at
-run time. Thus, adaptive sensing agents are more limited on iOS compared with Android. Here are the options:</p>
+run time. Thus, software-defined adaptive sensing agents are more limited on iOS compared with Android. Here 
+are the options:</p>
 <ul>
 <li><p>The app comes with one example sensing agent; however, it is simply for demonstration and is unlikely to work
 well in practice. Nonetheless, the examples is:</p>
@@ -193,30 +198,31 @@ sensing agent that samples continuously if the device is moving or near a surfac
 <li><p>You can <a class="xref" href="redeploying-sensus.html">redeploy</a> Sensus as your own app, to which you can add your own agent implementations.</p>
 </li>
 <li><p>You can implement your own agent implementations following the instructions above for Android and email 
-our team (uva.ptl@gmail.com) to include them in a future release.</p>
+our team (uva.ptl@gmail.com) to include your implementation in a future release of the iOS app.</p>
 </li>
 </ul>
-<h2 id="adaptive-sensing-policy-language-aspl">Adaptive Sensing Policy Language (ASPL)</h2>
+<h2 id="adaptive-sensing-policy-language-aspl-defined-sensing-agents">Adaptive Sensing Policy Language (ASPL) Defined Sensing Agents</h2>
 <p>In addition to the software-defined adaptive sensing agents described above, Sensus supports adaptive sensing
 policies specified in a general-purpose adaptive sensing policy language (ASPL). ASPL specifies both the 
 control criteria as well as the control actions depicted in the above state diagram. The 
-<a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared/AdaptiveSensing/example-aspl-policy.json">example ASPL policy file</a>
+<a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared/Adaptation/example-aspl-policy.json">example ASPL policy file</a>
 demonstrates the ASPL format. The elements of the format are described in the documentation for 
-<a class="xref" href="../api/Sensus.AdaptiveSensing.AsplSensingAgent.html">AsplSensingAgent</a>. If more than 1 <a class="xref" href="../api/Sensus.AdaptiveSensing.AsplStatement.html">AsplStatement</a> is 
-provided to the <a class="xref" href="../api/Sensus.AdaptiveSensing.AsplSensingAgent.html">AsplSensingAgent</a>, then the first one whose criterion is satisfied 
+<a class="xref" href="../api/Sensus.Adaptation.AsplSensingAgent.html">AsplSensingAgent</a>. If more than 1 <a class="xref" href="../api/Sensus.Adaptation.AsplStatement.html">AsplStatement</a> is 
+provided to the <a class="xref" href="../api/Sensus.Adaptation.AsplSensingAgent.html">AsplSensingAgent</a>, then the first one whose criterion is satisfied 
 by the observed data will be used for sensing control.</p>
 <h2 id="softare--versus-aspl-defined-sensing-agents">Softare- Versus ASPL-Defined Sensing Agents</h2>
 <p>There are pros and cons of software- and ASPL-defined sensing agents:</p>
 <ul>
-<li><p>Software-defined</p>
+<li><p>Software-Defined</p>
 <ul>
-<li>Pros:  Sophistication of control criteria. Actions are not limited to the logical structure of ASPL.</li>
-<li>Cons:  Low-level programming is required for Android. Third-party development of iOS agents is complicated
-by iOS&#39;s prohibition of run-time code injection (see above). Changing the agent definition involves modifying
-code and, for iOS, redeploying the application.</li>
+<li>Pros:  Sophistication of control criteria. Actions are not limited to the logical structure of ASPL. Any 
+criterion that can be implemented in C# would be feasible.</li>
+<li>Cons:  Low-level programming is required. Third-party deployment of iOS agents is complicated
+by iOS&#39;s prohibition of run-time code loading (see above). Changing the agent definition (whether on Android
+or iOS) involves modifying code and, for iOS, redeploying the application.</li>
 </ul>
 </li>
-<li><p>ASPL-defined</p>
+<li><p>ASPL-Defined</p>
 <ul>
 <li>Pros:  Agent definitions use the relatively simple ASPL syntax. Agent definitions can be loaded at run-time 
 into both Android and iOS without the need for code changes or app redeployment.</li>
@@ -226,7 +232,7 @@ into both Android and iOS without the need for code changes or app redeployment.
 </ul>
 <h2 id="distributing-sensing-agent-policies">Distributing Sensing Agent Policies</h2>
 <p>Regardless of whether a software- or ASPL-defined sensing agent is used, a policy must be provided to the
-agent. This can be done in two ways:</p>
+agent, specifying the agent&#39;s control parameters. This can be done in two ways:</p>
 <ul>
 <li><p>Set within protocol:  In the protocol settings, tap &quot;Set Agent Policy&quot;, then select your JSON policy file. This 
 works well to set the initial policy used by the sensing agent; however, this is not a very effective means of 
@@ -237,8 +243,9 @@ need to manually update their protocols.</p>
 <li><p>Send via push notification:  Request a 
 <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS/ec2-push-notifications/example-requests.json">push notification update</a>
 with the <code>type</code> set to <a class="xref" href="../api/Sensus.Notifications.PushNotificationUpdateType.html#Sensus_Notifications_PushNotificationUpdateType_SensingAgentPolicy">SensingAgentPolicy</a> and <code>content</code> set to the 
-policy you wish to provide. This is an effective option for updating the sensing agent&#39;s policy during ongoing 
-studies, as users will not need to do anything in order to receive the updated policies.</p>
+policy you wish to provide. Sensus will parse the <code>content</code> into a JSON object and pass the resulting object to your
+agent via &lt;xref:Sensus.Adaptation.SensingAgent.SetPolicyAsync&gt;. This is an effective option for updating the sensing 
+agent&#39;s policy during ongoing studies, as users will not need to do anything in order to receive the updated policies.</p>
 </li>
 </ul>
 <h2 id="testing-and-debugging">Testing and Debugging</h2>

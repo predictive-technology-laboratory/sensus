@@ -83,89 +83,20 @@
   
   <h1 id="ExampleSensingAgent_ExampleAccelerationSensingAgent" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent" class="text-break">Class ExampleAccelerationSensingAgent
   </h1>
-  <div class="markdown level0 summary"></div>
+  <div class="markdown level0 summary"><p>Example acceleration sensing agent. Demonstrates concepts related to control criterion checking as well as 
+sensing control, in particular temporary device keep-awake and increased sampling rates.</p>
+</div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
-    <div class="level1"><a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html">SensingAgent</a></div>
-    <div class="level2"><span class="xref">ExampleAccelerationSensingAgent</span></div>
-  </div>
-  <div classs="implements">
-    <h5>Implements</h5>
-    <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
-  </div>
-  <div class="inheritedMembers">
-    <h5>Inherited Members</h5>
-    <div>
-      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_InitializeAsync">SensingAgent.InitializeAsync()</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ObserveAsync_Sensus_IDatum_System_Threading_CancellationToken_">SensingAgent.ObserveAsync(IDatum, CancellationToken)</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_UpdateObservedData_System_Collections_Generic_Dictionary_System_Type_System_Collections_Generic_List_Sensus_IDatum___">SensingAgent.UpdateObservedData(Dictionary&lt;Type, List&lt;IDatum&gt;&gt;)</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_GetObservedData__1">SensingAgent.GetObservedData&lt;DatumInterface&gt;()</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ActAsync_System_Threading_CancellationToken_">SensingAgent.ActAsync(CancellationToken)</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ToString">SensingAgent.ToString()</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_IsNearSurface">SensingAgent.IsNearSurface()</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_AverageLinearAccelerationMagnitudeExceedsThreshold_System_Double_">SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold(Double)</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_SensusServiceHelper">SensingAgent.SensusServiceHelper</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_Protocol">SensingAgent.Protocol</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_State">SensingAgent.State</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_Id">SensingAgent.Id</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_Description">SensingAgent.Description</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ActionInterval">SensingAgent.ActionInterval</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ActionIntervalToleranceBefore">SensingAgent.ActionIntervalToleranceBefore</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ActionIntervalToleranceAfter">SensingAgent.ActionIntervalToleranceAfter</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ObservationDuration">SensingAgent.ObservationDuration</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_ControlCompletionCheckInterval">SensingAgent.ControlCompletionCheckInterval</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_MaxObservedDataCount">SensingAgent.MaxObservedDataCount</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_MaxObservedDataAge">SensingAgent.MaxObservedDataAge</a>
-    </div>
-    <div>
-      <a class="xref" href="Sensus.AdaptiveSensing.SensingAgent.html#Sensus_AdaptiveSensing_SensingAgent_PropertyChanged">SensingAgent.PropertyChanged</a>
-    </div>
+    <div class="level1"><span class="xref">ExampleAccelerationSensingAgent</span></div>
   </div>
   <h6><strong>Namespace</strong>: <a class="xref" href="ExampleSensingAgent.html">ExampleSensingAgent</a></h6>
   <h6><strong>Assembly</strong>: SensusiOS.dll</h6>
   <h5 id="ExampleSensingAgent_ExampleAccelerationSensingAgent_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class ExampleAccelerationSensingAgent : SensingAgent, INotifyPropertyChanged</code></pre>
+    <pre><code class="lang-csharp hljs">public class ExampleAccelerationSensingAgent : SensingAgent</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -173,7 +104,10 @@
   
   <a id="ExampleSensingAgent_ExampleAccelerationSensingAgent__ctor_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.#ctor*"></a>
   <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent__ctor" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.#ctor">ExampleAccelerationSensingAgent()</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="ExampleSensingAgent.ExampleAccelerationSensingAgent.html">ExampleAccelerationSensingAgent</a> class. As noted in
+the <a class="xref" href="../articles/adaptive-sensing.html">adaptive sensing</a> article, this class provides the parameterless constructor required for
+run time initialization of the agent.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -185,7 +119,8 @@
   
   <a id="ExampleSensingAgent_ExampleAccelerationSensingAgent_AverageLinearMagnitudeThreshold_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.AverageLinearMagnitudeThreshold*"></a>
   <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent_AverageLinearMagnitudeThreshold" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.AverageLinearMagnitudeThreshold">AverageLinearMagnitudeThreshold</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the average linear magnitude threshold.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -202,7 +137,8 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Double</span></td>
-        <td></td>
+        <td><p>The average linear magnitude threshold.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -210,7 +146,8 @@
   
   <a id="ExampleSensingAgent_ExampleAccelerationSensingAgent_ControlAccelerometerMaxDataStoresPerSecond_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.ControlAccelerometerMaxDataStoresPerSecond*"></a>
   <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent_ControlAccelerometerMaxDataStoresPerSecond" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.ControlAccelerometerMaxDataStoresPerSecond">ControlAccelerometerMaxDataStoresPerSecond</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the control accelerometer max data stores per second.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -227,7 +164,8 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Double</span>&gt;</td>
-        <td></td>
+        <td><p>The control accelerometer max data stores per second.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -235,7 +173,8 @@
   
   <a id="ExampleSensingAgent_ExampleAccelerationSensingAgent_IdleAccelerometerMaxDataStoresPerSecond_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.IdleAccelerometerMaxDataStoresPerSecond*"></a>
   <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent_IdleAccelerometerMaxDataStoresPerSecond" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.IdleAccelerometerMaxDataStoresPerSecond">IdleAccelerometerMaxDataStoresPerSecond</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the idle accelerometer max data stores per second.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -252,7 +191,8 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Double</span>&gt;</td>
-        <td></td>
+        <td><p>The idle accelerometer max data stores per second.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -346,7 +286,8 @@
   
   <a id="ExampleSensingAgent_ExampleAccelerationSensingAgent_OnEndingControlAsync_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.OnEndingControlAsync*"></a>
   <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent_OnEndingControlAsync_System_Threading_CancellationToken_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.OnEndingControlAsync(System.Threading.CancellationToken)">OnEndingControlAsync(CancellationToken)</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Reverts sensing control.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -365,7 +306,8 @@
       <tr>
         <td><span class="xref">System.Threading.CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
-        <td></td>
+        <td><p>Cancellation token.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -380,7 +322,8 @@
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
+        <td><p>The ending control async.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -468,10 +411,6 @@
       </tr>
     </tbody>
   </table>
-  <h3 id="implements">Implements</h3>
-  <div>
-      <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
-  </div>
 </article>
           </div>
           

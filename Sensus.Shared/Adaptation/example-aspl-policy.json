@@ -11,30 +11,29 @@
   "statements": [
     {
       "id": "Acceleration",
-      "description": "Keeps device awake and increases accelerometer sampling rate based on observed acceleration magnitudes. Demonstrates a few of the quantitative aggregation and relation options.",
+      "description": "Keeps device awake and increases accelerometer sampling rate based on x-axis magnitude.",
       "criterion": {
         "logic": "Disjunction",
         "elements": [
           {
             "property-type": "Sensus.Probes.Movement.AccelerometerDatum",
             "property-name": "X",
-            "aggregation": "Average",
+            "aggregation": {
+              "type": "Any",
+              "horizon": "00:00:05"
+            },
             "relation": "GreaterThan",
-            "target": 1.2
-          },
-          {
-            "property-type": "Sensus.Probes.Movement.AccelerometerDatum",
-            "property-name": "Y",
-            "aggregation": "Maximum",
-            "relation": "GreaterThanOrEqualTo",
             "target": 2
           },
           {
             "property-type": "Sensus.Probes.Movement.AccelerometerDatum",
-            "property-name": "Z",
-            "aggregation": "Maximum",
-            "relation": "GreaterThanOrEqualTo",
-            "target": 2
+            "property-name": "X",
+            "aggregation": {
+              "type": "Any",
+              "horizon": "00:00:05"
+            },
+            "relation": "LessThan",
+            "target": -2
           }
         ]
       },
@@ -69,27 +68,38 @@
     },
     {
       "id": "Proximity and Walking",
-      "description": "Keeps device awake and increases accelerometer sampling rate if device is near a surface or the user begins walking. Demonstrates a few of the qualitative aggregation and relation options.",
+      "description": "Keeps device awake and increases accelerometer sampling rate if device is near a surface or the user is walking.",
       "criterion": {
         "logic": "Disjunction",
         "elements": [
           {
             "property-type": "Sensus.Probes.Location.ProximityDatum",
             "property-name": "Distance",
-            "aggregation": "Newest",
+            "aggregation": {
+              "type": "MostRecent"
+            },
             "relation": "EqualTo",
             "target": 0
           },
           {
             "property-type": "Sensus.Probes.Movement.ActivityDatum",
-            "property-name": "ActivityStarting",
-            "aggregation": "Newest",
+            "property-name": "ActivityContinuing",
+            "aggregation": {
+              "type": "Any",
+              "horizon": "00:00:05"
+            },
             "relation": "EqualTo",
-            "target": "OnFoot"
+            "target": "Walking"
           }
         ]
       },
       "begin-control-settings": [
+        {
+          "property-type": "Sensus.Probes.Probe",
+          "property-name": "Enabled",
+          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+          "value": true
+        },
         {
           "property-type": "Sensus.Probes.ListeningProbe",
           "property-name": "KeepDeviceAwake",
@@ -105,16 +115,10 @@
       ],
       "end-control-settings": [
         {
-          "property-type": "Sensus.Probes.ListeningProbe",
-          "property-name": "KeepDeviceAwake",
+          "property-type": "Sensus.Probes.Probe",
+          "property-name": "Enabled",
           "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
           "value": false
-        },
-        {
-          "property-type": "Sensus.Probes.ListeningProbe",
-          "property-name": "MaxDataStoresPerSecond",
-          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
-          "value": 5
         }
       ]
     }

@@ -31,7 +31,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net;
-using Sensus.AdaptiveSensing;
+using Sensus.Adaptation;
 using Newtonsoft.Json.Linq;
 
 namespace Sensus.UI

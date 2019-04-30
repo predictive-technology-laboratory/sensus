@@ -19,7 +19,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
-namespace Sensus.AdaptiveSensing
+namespace Sensus.Adaptation
 {
     /// <summary>
     /// A general-purpose ASPL agent. See the [adaptive sensing](xref:adaptive_sensing) article for more information.

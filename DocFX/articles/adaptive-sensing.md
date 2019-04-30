@@ -56,15 +56,18 @@ sampling rates), and the sensing agent returns to its idle state. If the criteri
 then sensing control continues unabated until the next completion check occurs. This parameter governs 
 how long Sensus should wait between each completion check.
 
-## Android
+Sensus supports two mechanisms for incorporating sensing agents into a study. The first involves
+writing software (in C#) to define the sensing agent. The second involves defining the agent
+in a JSON-based specification language. The following sections provide more information about these
+two alternatives.
 
-### Sensing Agent Plug-Ins
-On Android, Sensus supports a plug-in architecture for modules (or agents) that control Sensing configuration.
+## Software-Defined Sensing Agents
+
+### Android
+On Android, Sensus supports a plug-in architecture for software-defined sensing agents.
 This architecture is intended to support research into adaptive sensing by providing a simple interface
-through which researchers can deploy agents that implement specific adaptation approaches.
-
-### Implementing and Deploying a Sensing Agent Plug-In
-Follow the steps below to implement and deploy a sensing agent within your Sensus study.
+through which researchers can deploy agents that implement specific adaptation approaches. Follow the 
+steps below to implement and deploy an Android sensing agent.
 
 1. Create a new Android Class Library project in Visual Studio. In Visual Studio for Mac, the following image
 shows the correct selection:
@@ -73,12 +76,12 @@ shows the correct selection:
 
 1. Add a NuGet reference to [the Sensus package](https://www.nuget.org/packages/Sensus).
 
-1. Add a new class that inherits from <xref:Sensus.AdaptiveSensing.SensingAgent>. Be sure to provide a parameterless constructor
+1. Add a new class that inherits from <xref:Sensus.Adaptation.SensingAgent>. Be sure to provide a parameterless constructor
 for your class, as this constructor will be called at run time to create your agent. Your class will be required
-to override a few methods related to control. These methods are where your sensing agent should execute its control 
-policy. The <xref:Sensus.AdaptiveSensing.SensingAgent> class provides a set of predefined control criterion functions 
-[here](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared.NuGet/SensingAgentControlCriteria.cs).
-You can call these diretly from your code or write your own in order to suit your adaptation requirements.
+to override a few methods related to sensing control. These methods are where your sensing agent should execute its control 
+policy. The <xref:Sensus.Adaptation.SensingAgent> class provides a set of predefined control criterion functions 
+[here](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared.NuGet/Adaptation/SensingAgentControlCriteria.cs).
+You can call these diretly from your code or write your own functions to suit your adaptation requirements.
 
 1. Build the library project, and upload the resulting .dll to a web-accessible URL. A convenient
 solution is to upload the .dll to a Dropbox directory and copy the sharing URL for the .dll file.
@@ -99,58 +102,58 @@ sensing-agent:https://www.dropbox.com/s/dlaksdjfasfasdf/SensingAgent.dll?dl=1
 extract any agent definitions contained therein. Select your desired agent.
 
 1. Continue with [configuration](xref:protocol_creation) and [distribution](xref:protocol_distribution)
-of your protocol.
+of your protocol. When run, your protocol will invoke the selected sensing agent according to the state diagram shown
+above.
 
-### Example Sensing Agents
-See the following implementations for example agents:
+See the following implementation for an example:
 
 * [Acceleration](xref:ExampleSensingAgent.ExampleAccelerationSensingAgent) (code [here](https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleSensingAgent.Shared/ExampleAccelerationSensingAgent.cs)):  A 
 sensing agent that samples continuously if the device is moving or near a surface (e.g., face).
 
-## iOS
+### iOS
 In contrast with Android, iOS does not allow apps to load code (e.g., from the above .dll assembly) at
-run time. Thus, adaptive sensing agents are more limited on iOS compared with Android. Here are the options:
+run time. Thus, software-defined adaptive sensing agents are more limited on iOS compared with Android. Here 
+are the options:
 
-* The app comes with one example sensing agent; however, it is simply for demonstration and is unlikely to work
-well in practice. Nonetheless, the examples is:
-
-  * [Acceleration](xref:ExampleSensingAgent.ExampleAccelerationSensingAgent) (code [here](https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleSensingAgent.Shared/ExampleAccelerationSensingAgent.cs)):  A 
-sensing agent that samples continuously if the device is moving or near a surface (e.g., face).
-
-You can select this agent when configuring the <xref:Sensus.Protocol>.
+* The app comes with one 
+[example](xref:ExampleSensingAgent.ExampleAccelerationSensingAgent) sensing agent (code 
+[here](https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleSensingAgent.Shared/ExampleAccelerationSensingAgent.cs)); 
+however, this is simply for demonstration and is unlikely to work well in practice. Nonetheless, you 
+can select this agent when configuring the <xref:Sensus.Protocol>.
 
 * You can [redeploy](xref:redeploying) Sensus as your own app, to which you can add your own agent implementations.
 
 * You can implement your own agent implementations following the instructions above for Android and email 
-our team (uva.ptl@gmail.com) to include them in a future release.
+our team (uva.ptl@gmail.com) to include your implementation in a future release of the iOS app.
 
-## Adaptive Sensing Policy Language (ASPL)
-In addition to the software-defined adaptive sensing agents described above, Sensus supports adaptive sensing
-policies specified in a general-purpose adaptive sensing policy language (ASPL). ASPL specifies both the 
+## Adaptive Sensing Policy Language (ASPL) Defined Sensing Agents
+In addition to the software-defined adaptive sensing agents described above, Sensus supports the definition
+of sensing agents in a general-purpose adaptive sensing policy language (ASPL). ASPL specifies both the 
 control criteria as well as the control actions depicted in the above state diagram. The 
-[example ASPL policy file](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared/AdaptiveSensing/example-aspl-policy.json)
+[example ASPL policy file](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared/Adaptation/example-aspl-policy.json)
 demonstrates the ASPL format. The elements of the format are described in the documentation for 
-<xref:Sensus.AdaptiveSensing.AsplSensingAgent>. If more than 1 <xref:Sensus.AdaptiveSensing.AsplStatement> is 
-provided to the <xref:Sensus.AdaptiveSensing.AsplSensingAgent>, then the first one whose criterion is satisfied 
+<xref:Sensus.Adaptation.AsplSensingAgent>. If more than 1 <xref:Sensus.Adaptation.AsplStatement> is 
+provided to the <xref:Sensus.Adaptation.AsplSensingAgent>, then the first one whose criterion is satisfied 
 by the observed data will be used for sensing control.
 
 ## Softare- Versus ASPL-Defined Sensing Agents
 There are pros and cons of software- and ASPL-defined sensing agents:
 
-* Software-defined
-  * Pros:  Sophistication of control criteria. Actions are not limited to the logical structure of ASPL.
-  * Cons:  Low-level programming is required for Android. Third-party development of iOS agents is complicated
-  by iOS's prohibition of run-time code injection (see above). Changing the agent definition involves modifying
-  code and, for iOS, redeploying the application.
+* Software-Defined
+  * Pros:  Sophistication of control criteria. Actions are not limited to the logical structure of ASPL. Any 
+  criterion that can be implemented in C# would be feasible.
+  * Cons:  Low-level programming is required. Third-party deployment of iOS agents is complicated
+  by iOS's prohibition of run-time code loading (see above). Changing the agent definition (whether on Android
+  or iOS) involves modifying code and, for iOS, redeploying the application.
   
-* ASPL-defined
+* ASPL-Defined
   * Pros:  Agent definitions use the relatively simple ASPL syntax. Agent definitions can be loaded at run-time 
   into both Android and iOS without the need for code changes or app redeployment.
   * Cons:  ASPL has limited logical expressiveness.
   
 ## Distributing Sensing Agent Policies
 Regardless of whether a software- or ASPL-defined sensing agent is used, a policy must be provided to the
-agent. This can be done in two ways:
+agent, specifying the agent's control parameters. This can be done in two ways:
 
 * Set within protocol:  In the protocol settings, tap "Set Agent Policy", then select your JSON policy file. This 
 works well to set the initial policy used by the sensing agent; however, this is not a very effective means of 
@@ -161,8 +164,9 @@ need to manually update their protocols.
 * Send via push notification:  Request a 
 [push notification update](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS/ec2-push-notifications/example-requests.json)
 with the `type` set to <xref:Sensus.Notifications.PushNotificationUpdateType.SensingAgentPolicy> and `content` set to the 
-policy you wish to provide. This is an effective option for updating the sensing agent's policy during ongoing 
-studies, as users will not need to do anything in order to receive the updated policies.
+policy you wish to provide. Sensus will parse the `content` into a JSON object and pass the resulting object to your
+agent via <xref:Sensus.Adaptation.SensingAgent.SetPolicyAsync>. This is an effective option for updating the sensing 
+agent's policy during ongoing studies, as users will not need to do anything in order to receive the updated policies.
 
 ## Testing and Debugging
 Regardless of whether your sensing agent targets Android or iOS, there are a few ways to test and debug it:
