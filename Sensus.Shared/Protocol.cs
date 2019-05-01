@@ -28,7 +28,6 @@ using System.Linq;
 using System.Reflection;
 using Sensus.Probes.Location;
 using Sensus.UI.Inputs;
-using Sensus.Probes.Apps;
 using Sensus.Probes.Movement;
 using System.Text;
 using System.Threading.Tasks;
@@ -447,12 +446,6 @@ namespace Sensus
                     {
                         // UI testing is problematic with probes that take us away from Sensus, since it's difficult to automate UI 
                         // interaction outside of Sensus. disable any probes that might take us away from Sensus.
-
-                        if (probe is FacebookProbe)
-                        {
-                            probe.Enabled = false;
-                        }
-
 #if __IOS__
                         if (probe is iOSHealthKitProbe)
                         {
@@ -2982,16 +2975,21 @@ namespace Sensus
             }
         }
 
+#if __ANDROID__
         /// <summary>
         /// Gets a <see cref="SensingAgent"/> from those available.
         /// </summary>
         /// <returns>The agent.</returns>
         /// <param name="agentId">Agent identifier.</param>
-#if __ANDROID__
         /// <param name="assemblyBytes">Assembly bytes. This is only permitted on Android, as
         /// iOS does not permit dynamic code loading. Attempting to do this crashes the app.</param>
         public SensingAgent GetAgent(string agentId, byte[] assemblyBytes)
 #elif __IOS__
+        /// <summary>
+        /// Gets a <see cref="SensingAgent"/> from those available.
+        /// </summary>
+        /// <returns>The agent.</returns>
+        /// <param name="agentId">Agent identifier.</param>
         public SensingAgent GetAgent(string agentId)
 #endif
         {
@@ -3004,16 +3002,20 @@ namespace Sensus
                 ).SingleOrDefault(agent => agent.Id == agentId);
         }
 
+#if __ANDROID__
         /// <summary>
         /// Gets available <see cref="SensingAgent"/>s from the current executing assembly.
         /// </summary>
         /// <returns>The agents.</returns>
-#if __ANDROID__
         /// <param name="assemblyBytes">Additional assembly to scan for <see cref="SensingAgent"/>s. Pass <c>null</c> for no assembly, in
         /// which case only agents present in the executing assembly (the app codebase) will be loaded.
         /// Only permitted on Android</param>
         public List<SensingAgent> GetAgents(byte[] assemblyBytes)
 #elif __IOS__
+        /// <summary>
+        /// Gets available <see cref="SensingAgent"/>s from the current executing assembly.
+        /// </summary>
+        /// <returns>The agents.</returns>
         public List<SensingAgent> GetAgents()
 #endif
         {

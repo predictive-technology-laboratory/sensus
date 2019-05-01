@@ -137,9 +137,9 @@ namespace Sensus.Probes.Context
             _readDurationMS = (int)TimeSpan.FromSeconds(10).TotalMilliseconds;
         }
 
-        protected override async Task ProtectedStartAsync()
+        protected override async Task ProtectedInitializeAsync()
         {
-            ReadAttemptCount = ReadSuccessCount = 0;
+            await base.ProtectedInitializeAsync();
 
             if (!await SensusServiceHelper.Get().EnableBluetoothAsync(true, "Sensus uses Bluetooth, which is being used in one of your studies."))
             {
@@ -150,6 +150,11 @@ namespace Sensus.Probes.Context
                 throw new Exception(error);
             }
 
+            ReadAttemptCount = ReadSuccessCount = 0;
+        }
+
+        protected override async Task ProtectedStartAsync()
+        {
             await base.ProtectedStartAsync();
 
             try
@@ -157,7 +162,7 @@ namespace Sensus.Probes.Context
                 SensusServiceHelper.Get().Logger.Log("Starting advertising.", LoggingLevel.Normal, GetType());
                 StartAdvertising();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 SensusServiceHelper.Get().Logger.Log("Exception while starting advertising:  " + ex, LoggingLevel.Normal, GetType());
             }

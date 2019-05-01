@@ -51,11 +51,20 @@ namespace Sensus.Android.Probes.Location
             });
         }
 
-        protected override Task StartListeningAsync()
+        protected override async Task ProtectedInitializeAsync()
         {
-            _magnetometerListener.Start(MinDataStoreDelay);
-            _accelerometerListener.Start(MinDataStoreDelay);
-            return Task.CompletedTask;
+            await base.ProtectedInitializeAsync();
+
+            _magnetometerListener.Initialize(MinDataStoreDelay);
+            _accelerometerListener.Initialize(MinDataStoreDelay);
+        }
+
+        protected override async Task StartListeningAsync()
+        {
+            await base.StartListeningAsync();
+
+            _magnetometerListener.Start();
+            _accelerometerListener.Start();
         }
 
         private async Task StoreHeadingAsync(float[] magneticFieldValues = null, float[] accelerometerValues = null)
@@ -99,11 +108,12 @@ namespace Sensus.Android.Probes.Location
             }
         }
 
-        protected override Task StopListeningAsync()
+        protected override async Task StopListeningAsync()
         {
+            await base.StopListeningAsync();
+
             _magnetometerListener.Stop();
             _accelerometerListener.Stop();
-            return Task.CompletedTask;
         }
 
         protected override ChartSeries GetChartSeries()

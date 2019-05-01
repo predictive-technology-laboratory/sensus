@@ -84,9 +84,9 @@ namespace Sensus.Android.Probes.Movement
             };
         }
 
-        protected override async Task StartListeningAsync()
+        protected override async Task ProtectedInitializeAsync()
         {
-            await base.StartListeningAsync();
+            await base.ProtectedInitializeAsync();
 
             if (AwarenessApiClient.IsConnected)
             {
@@ -101,6 +101,11 @@ namespace Sensus.Android.Probes.Movement
             {
                 throw new Exception("Failed to connect with Google Awareness API.");
             }
+        }
+
+        protected override async Task StartListeningAsync()
+        {
+            await base.StartListeningAsync();
 
             // request a location to start location fencing
             await RequestLocationSnapshotAsync();
@@ -128,12 +133,12 @@ namespace Sensus.Android.Probes.Movement
 
         protected override async Task StopListeningAsync()
         {
+            await base.StopListeningAsync();
+
             // remove location fence
             FenceUpdateRequestBuilder locationFenceRequestBuilder = new FenceUpdateRequestBuilder();
             UpdateRequestBuilder(null, AWARENESS_EXITING_LOCATION_FENCE_KEY, FenceUpdateAction.Remove, ref locationFenceRequestBuilder);
             await UpdateFencesAsync(locationFenceRequestBuilder.Build());
-
-            await base.StopListeningAsync();
         }
     }
 }

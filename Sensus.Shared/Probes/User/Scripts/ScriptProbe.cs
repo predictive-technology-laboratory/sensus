@@ -230,15 +230,29 @@ namespace Sensus.Probes.User.Scripts
             _scriptRunners = new ObservableCollection<ScriptRunner>();
         }
 
-        protected override async Task ProtectedStartAsync()
+        protected override async Task ProtectedInitializeAsync()
         {
-            await (Agent?.InitializeAsync(SensusServiceHelper.Get(), Protocol) ?? Task.CompletedTask);
+            await base.ProtectedInitializeAsync();
 
             foreach (ScriptRunner scriptRunner in _scriptRunners)
             {
                 if (scriptRunner.Enabled)
                 {
                     await scriptRunner.InitializeAsync();
+                }
+            }
+
+            await (Agent?.InitializeAsync(SensusServiceHelper.Get(), Protocol) ?? Task.CompletedTask);
+        }
+
+        protected override async Task ProtectedStartAsync()
+        {
+            await base.ProtectedStartAsync();
+
+            foreach (ScriptRunner scriptRunner in _scriptRunners)
+            {
+                if (scriptRunner.Enabled)
+                {
                     await scriptRunner.StartAsync();
                 }
             }
@@ -303,6 +317,8 @@ namespace Sensus.Probes.User.Scripts
 
         protected override async Task ProtectedStopAsync()
         {
+            await base.ProtectedStopAsync();
+
             foreach (ScriptRunner scriptRunner in _scriptRunners)
             {
                 await scriptRunner.StopAsync();

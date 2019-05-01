@@ -122,8 +122,10 @@ namespace Sensus.Probes.Location
             };
         }
 
-        protected sealed override async Task StartListeningAsync()
+        protected override async Task ProtectedInitializeAsync()
         {
+            await base.ProtectedInitializeAsync();
+
             if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable GPS in the future
@@ -132,12 +134,19 @@ namespace Sensus.Probes.Location
                 await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
+        }
+
+        protected override async Task StartListeningAsync()
+        {
+            await base.StartListeningAsync();
 
             await GpsReceiver.Get().AddListenerAsync(_positionChangedHandler, false);
         }
 
-        protected sealed override async Task StopListeningAsync()
+        protected override async Task StopListeningAsync()
         {
+            await base.StopListeningAsync();
+
             await GpsReceiver.Get().RemoveListenerAsync(_positionChangedHandler);
         }
 

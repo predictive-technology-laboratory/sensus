@@ -24,7 +24,6 @@ using Sensus.UI;
 using Sensus.Context;
 using Xamarin;
 using Xamarin.Forms;
-using Xamarin.Facebook;
 using Xamarin.Forms.Platform.Android;
 using Plugin.CurrentActivity;
 using System.Threading.Tasks;
@@ -35,8 +34,6 @@ using Sensus.Android.Notifications;
 #if __ANDROID_23__
 using Plugin.Permissions;
 #endif
-
-[assembly: MetaData("com.facebook.sdk.ApplicationId", Value = "@string/app_id")]
 
 namespace Sensus.Android
 {
@@ -49,15 +46,9 @@ namespace Sensus.Android
         private ManualResetEvent _activityResultWait;
         private AndroidActivityResultRequestCode _activityResultRequestCode;
         private Tuple<Result, Intent> _activityResult;
-        private ICallbackManager _facebookCallbackManager;
         private ManualResetEvent _serviceBindWait;
 
         private readonly object _locker = new object();
-
-        public ICallbackManager FacebookCallbackManager
-        {
-            get { return _facebookCallbackManager; }
-        }
 
         protected override async void OnCreate(Bundle savedInstanceState)
         {
@@ -70,7 +61,6 @@ namespace Sensus.Android
             base.OnCreate(savedInstanceState);
 
             _activityResultWait = new ManualResetEvent(false);
-            _facebookCallbackManager = CallbackManagerFactory.Create();
             _serviceBindWait = new ManualResetEvent(false);
 
             Window.AddFlags(global::Android.Views.WindowManagerFlags.DismissKeyguard);
@@ -409,8 +399,6 @@ namespace Sensus.Android
                 _activityResult = new Tuple<Result, Intent>(resultCode, data);
                 _activityResultWait.Set();
             }
-
-            _facebookCallbackManager.OnActivityResult(requestCode, (int)resultCode, data);
         }
 
 #if __ANDROID_23__

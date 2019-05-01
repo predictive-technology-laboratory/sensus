@@ -37,7 +37,7 @@ namespace Sensus.Android.Probes
             _listening = false;
         }
 
-        public void Start(TimeSpan? sensorDelay)
+        public void Initialize(TimeSpan? sensorDelay)
         {
             _sensorDelay = sensorDelay;
             _sensorManager = ((AndroidSensusServiceHelper)SensusServiceHelper.Get()).GetSensorManager();
@@ -47,7 +47,10 @@ namespace Sensus.Android.Probes
             {
                 throw new NotSupportedException("No sensors present for sensor type " + _sensorType);
             }
+        }
 
+        public void Start()
+        {
             lock (_locker)
             {
                 if (_listening)

@@ -39,16 +39,25 @@ namespace Sensus.Android.Probes.Context
             });
         }
 
-        protected override Task StartListeningAsync()
+        protected override async Task ProtectedInitializeAsync()
         {
-            _temperatureListener.Start(MinDataStoreDelay);
-            return Task.CompletedTask;
+            await base.ProtectedInitializeAsync();
+
+            _temperatureListener.Initialize(MinDataStoreDelay);
         }
 
-        protected override Task StopListeningAsync()
+        protected override async Task StartListeningAsync()
         {
+            await base.StartListeningAsync();
+
+            _temperatureListener.Start();
+        }
+
+        protected override async Task StopListeningAsync()
+        {
+            await base.StopListeningAsync();
+
             _temperatureListener.Stop();
-            return Task.CompletedTask;
         }
     }
 }

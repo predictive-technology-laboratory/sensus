@@ -318,11 +318,11 @@ namespace Sensus.Probes
         {
             lock (_stateLocker)
             {
-                // don't attempt to start the probe if it is not enabled. this can happen, e.g., when remote protocol updates
-                // disable the probe and the probe is subsequently restarted to take on the update values. bail out.
+                // don't attempt to start the probe if it is not enabled. this can happen, e.g., when remote protocol 
+                // updates disable the probe and the probe is subsequently restarted to take on the update values.
                 if (Enabled && _state == ProbeState.Stopped)
                 {
-                    _state = ProbeState.Starting;
+                    _state = ProbeState.Initializing;
                 }
                 else
                 {
@@ -333,47 +333,28 @@ namespace Sensus.Probes
 
             try
             {
-                SensusServiceHelper.Get().Logger.Log("Starting.", LoggingLevel.Normal, GetType());
+                await ProtectedInitializeAsync();
 
-                lock (_chartData)
+                lock (_stateLocker)
                 {
-                    _chartData.Clear();
+                    _state = ProbeState.Starting;
                 }
 
-                _mostRecentDatum = null;
-                _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;  // mark storage delay from initialization of probe
-
-                // track/limit the raw data rate
-                _rawRateCalculator = new DataRateCalculator(DataRateSampleSize, MaxDataStoresPerSecond);
-                _rawRateCalculator.Start();
-
-                // track the storage rate
-                _storageRateCalculator = new DataRateCalculator(DataRateSampleSize);
-                _storageRateCalculator.Start();
-
-                // track/limit the UI update rate
-                _uiUpdateRateCalculator = new DataRateCalculator(DataRateSampleSize, 1);
-                _uiUpdateRateCalculator.Start();
-
-                // hook into the AC charge event signal -- add handler to AC broadcast receiver
-                SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;
-
                 await ProtectedStartAsync();
+
+                lock (_stateLocker)
+                {
+                    _state = ProbeState.Running;
+                }
 
                 lock (_startStopTimes)
                 {
                     _startStopTimes.Add(new Tuple<bool, DateTime>(true, DateTime.Now));
                     _startStopTimes.RemoveAll(t => t.Item2 < Protocol.ParticipationHorizon);
                 }
-
-                lock (_stateLocker)
-                {
-                    _state = ProbeState.Running;
-                }
             }
             catch (Exception startException)
             {
-                // disable probe if it is not supported on the device (or if the user has elected not to enable it -- e.g., by refusing to log into facebook)
                 if (startException is NotSupportedException)
                 {
                     Enabled = false;
@@ -397,7 +378,41 @@ namespace Sensus.Probes
             }
         }
 
-        protected abstract Task ProtectedStartAsync();
+        protected virtual Task ProtectedInitializeAsync()
+        {
+            SensusServiceHelper.Get().Logger.Log("Initializing...", LoggingLevel.Normal, GetType());
+
+            lock (_chartData)
+            {
+                _chartData.Clear();
+            }
+
+            _mostRecentDatum = null;
+            _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;  // mark storage delay from initialization of probe
+
+            // track/limit the raw data rate
+            _rawRateCalculator = new DataRateCalculator(DataRateSampleSize, MaxDataStoresPerSecond);
+            _rawRateCalculator.Start();
+
+            // track the storage rate
+            _storageRateCalculator = new DataRateCalculator(DataRateSampleSize);
+            _storageRateCalculator.Start();
+
+            // track/limit the UI update rate
+            _uiUpdateRateCalculator = new DataRateCalculator(DataRateSampleSize, 1);
+            _uiUpdateRateCalculator.Start();
+
+            // hook into the AC charge event signal -- add handler to AC broadcast receiver
+            SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;
+
+            return Task.CompletedTask;
+        }
+
+        protected virtual Task ProtectedStartAsync()
+        {
+            SensusServiceHelper.Get().Logger.Log("Starting...", LoggingLevel.Normal, GetType());
+            return Task.CompletedTask;
+        }
 
         /// <summary>
         /// Stores a <see cref="Datum"/> within the <see cref="LocalDataStore"/>. Will not throw an <see cref="Exception"/>.
@@ -593,8 +608,10 @@ namespace Sensus.Probes
 
             try
             {
-                SensusServiceHelper.Get().Logger.Log("Stopping.", LoggingLevel.Normal, GetType());
-
+                await ProtectedStopAsync();
+            }
+            finally
+            {
                 lock (_startStopTimes)
                 {
                     _startStopTimes.Add(new Tuple<bool, DateTime>(false, DateTime.Now));
@@ -604,10 +621,6 @@ namespace Sensus.Probes
                 // unhook from the AC charge event signal -- remove handler to AC broadcast receiver
                 SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged -= _powerConnectionChanged;
 
-                await ProtectedStopAsync();
-            }
-            finally
-            {
                 lock (_stateLocker)
                 {
                     _state = ProbeState.Stopped;
@@ -615,7 +628,11 @@ namespace Sensus.Probes
             }
         }
 
-        protected abstract Task ProtectedStopAsync();
+        protected virtual Task ProtectedStopAsync()
+        {
+            SensusServiceHelper.Get().Logger.Log("Stopping...", LoggingLevel.Normal, GetType());
+            return Task.CompletedTask;
+        }
 
         public async Task RestartAsync()
         {

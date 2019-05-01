@@ -59,16 +59,16 @@ namespace Sensus.Probes.Context
             _sampleLengthMS = 5000;
         }
 
-        protected override async Task ProtectedStartAsync()
+        protected override async Task ProtectedInitializeAsync()
         {
+            await base.ProtectedInitializeAsync();
+
             if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Microphone) != PermissionStatus.Granted)
             {
                 string error = "Microphone use is not permitted on this device. Cannot start sound probe.";
                 await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
-
-            await base.ProtectedStartAsync();
         }
 
         protected override ChartSeries GetChartSeries()

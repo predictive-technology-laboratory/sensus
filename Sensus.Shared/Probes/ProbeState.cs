@@ -17,6 +17,7 @@ namespace Sensus.Probes
     public enum ProbeState
     {
         Stopped,
+        Initializing,
         Starting,
         Running,
         Stopping

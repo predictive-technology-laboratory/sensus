@@ -77,8 +77,10 @@ namespace Sensus.Android.Probes.Context
         [JsonIgnore]
         public override int DefaultPollingSleepDurationMS => (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
 
-        protected override async Task ProtectedStartAsync()
+        protected override async Task ProtectedInitializeAsync()
         {
+            await base.ProtectedInitializeAsync();
+
             // BLE requires location permissions
             if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
             {
@@ -96,8 +98,6 @@ namespace Sensus.Android.Probes.Context
             _deviceIdService.AddCharacteristic(_deviceIdCharacteristic);
 
             _bluetoothAdvertiserCallback = new AndroidBluetoothServerAdvertisingCallback(_deviceIdService, _deviceIdCharacteristic);
-
-            await base.ProtectedStartAsync();
         }
 
         #region central -- scan

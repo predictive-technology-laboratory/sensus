@@ -39,16 +39,25 @@ namespace Sensus.Android.Probes.Location
             });
         }
 
-        protected override Task StartListeningAsync()
+        protected override async Task ProtectedInitializeAsync()
         {
-            _altitudeListener.Start(MinDataStoreDelay);
-            return Task.CompletedTask;
+            await base.ProtectedInitializeAsync();
+
+            _altitudeListener.Initialize(MinDataStoreDelay);
         }
 
-        protected override Task StopListeningAsync()
+        protected override async Task StartListeningAsync()
         {
+            await base.StopListeningAsync();
+
+            _altitudeListener.Start();
+        }
+
+        protected override async Task StopListeningAsync()
+        {
+            await base.StopListeningAsync();
+
             _altitudeListener.Stop();
-            return Task.CompletedTask;
         }
     }
 }

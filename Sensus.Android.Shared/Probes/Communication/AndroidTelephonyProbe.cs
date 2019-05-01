@@ -59,8 +59,10 @@ namespace Sensus.Android.Probes.Communication
             };
         }
 
-        protected override async Task StartListeningAsync()
+        protected override async Task ProtectedInitializeAsync()
         {
+            await base.ProtectedInitializeAsync();
+
             if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Phone) == PermissionStatus.Granted)
             {
                 _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
@@ -77,16 +79,22 @@ namespace Sensus.Android.Probes.Communication
                 await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
+        }
+
+        protected override async Task StartListeningAsync()
+        {
+            await base.StartListeningAsync();
 
             AndroidTelephonyOutgoingBroadcastReceiver.OUTGOING_CALL += _outgoingCallCallback;
             _telephonyManager.Listen(_idleIncomingCallListener, PhoneStateListenerFlags.CallState);
         }
 
-        protected override Task StopListeningAsync()
+        protected override async Task StopListeningAsync()
         {
+            await base.StopListeningAsync();
+
             AndroidTelephonyOutgoingBroadcastReceiver.OUTGOING_CALL -= _outgoingCallCallback;
             _telephonyManager.Listen(_idleIncomingCallListener, PhoneStateListenerFlags.None);
-            return Task.CompletedTask;
         }
     }
 }

@@ -50,23 +50,31 @@ namespace Sensus.Android.Probes.Location
             });
         }
 
-        protected override Task StartListeningAsync()
+        protected override async Task ProtectedInitializeAsync()
         {
+            await base.ProtectedInitializeAsync();
+
             // get the maximum range of the proximity sensor. must do the following within initialize rather than 
             // in the constructor, as upon JSON deserialization we will not yet have a service helper to get.
             SensorManager sensorManager = ((AndroidSensusServiceHelper)SensusServiceHelper.Get()).GetSensorManager();
             Sensor proximitySensor = sensorManager.GetDefaultSensor(SensorType.Proximity);
             _maximumRange = proximitySensor.MaximumRange;
 
-            _proximityListener.Start(MinDataStoreDelay);
-
-            return Task.CompletedTask;
+            _proximityListener.Initialize(MinDataStoreDelay);
         }
 
-        protected override Task StopListeningAsync()
+        protected override async Task StartListeningAsync()
         {
+            await base.StartListeningAsync();
+
+            _proximityListener.Start();
+        }
+
+        protected override async Task StopListeningAsync()
+        {
+            await base.StopListeningAsync();
+
             _proximityListener.Stop();
-            return Task.CompletedTask;
         }
     }
 }

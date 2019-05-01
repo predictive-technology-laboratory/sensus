@@ -88,6 +88,8 @@ namespace Sensus.Android.Probes.Location
 
         protected override async Task StartListeningAsync()
         {
+            await base.StartListeningAsync();
+
             Notification notification = (SensusContext.Current.Notifier as AndroidNotifier).CreateNotificationBuilder(AndroidNotifier.SensusNotificationChannel.ForegroundService)
                                                                                                .SetSmallIcon(Resource.Drawable.notification_icon_background)
                                                                                                .SetContentTitle("Beacon Scan")
@@ -152,8 +154,10 @@ namespace Sensus.Android.Probes.Location
             }
         }
 
-        protected override Task StopListeningAsync()
+        protected override async Task StopListeningAsync()
         {
+            await base.StopListeningAsync();
+
             if (Beacons.Count > 0)
             {
                 _proximityObservationHandler.Stop();
@@ -163,8 +167,6 @@ namespace Sensus.Android.Probes.Location
             {
                 _indoorLocationManager.StopPositioning();
             }
-
-            return Task.CompletedTask;
         }
     }
 }

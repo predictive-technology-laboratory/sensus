@@ -331,6 +331,8 @@ namespace Sensus.Probes
 
         protected override async Task ProtectedStartAsync()
         {
+            await base.ProtectedStartAsync();
+
             // we used to use an initial delay of zero in order to poll immediately; however, this causes the following
             // problems:
             // 
@@ -449,6 +451,7 @@ namespace Sensus.Probes
 
         protected override async Task ProtectedStopAsync()
         {
+            await base.ProtectedStopAsync();
 
 #if __IOS__
             if (_significantChangePoll)

@@ -96,9 +96,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ListeningSpeedProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\ListeningWlanProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\PollingWlanProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\FacebookDatum.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\FacebookPermission.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\FacebookProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\ValueOmittingAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\PointOfInterest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\PollingPointsOfInterestProximityProbe.cs" />
