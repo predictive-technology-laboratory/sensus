@@ -62,10 +62,8 @@ namespace Sensus.Probes.Location
             _triggers = new ObservableCollection<PointOfInterestProximityTrigger>();
         }
 
-        protected override async Task InitializeAsync()
+        protected override async Task ProtectedStartAsync()
         {
-            await base.InitializeAsync();
-
             if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable GPS in the future
@@ -74,6 +72,8 @@ namespace Sensus.Probes.Location
                 await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
+
+            await base.ProtectedStartAsync();
         }
 
         protected override async Task<List<Datum>> PollAsync(CancellationToken cancellationToken)

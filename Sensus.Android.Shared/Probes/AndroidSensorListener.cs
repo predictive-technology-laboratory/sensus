@@ -37,7 +37,7 @@ namespace Sensus.Android.Probes
             _listening = false;
         }
 
-        public void Initialize(TimeSpan? sensorDelay)
+        public void Start(TimeSpan? sensorDelay)
         {
             _sensorDelay = sensorDelay;
             _sensorManager = ((AndroidSensusServiceHelper)SensusServiceHelper.Get()).GetSensorManager();
@@ -46,14 +46,6 @@ namespace Sensus.Android.Probes
             if (_sensor == null)
             {
                 throw new NotSupportedException("No sensors present for sensor type " + _sensorType);
-            }
-        }
-
-        public void Start()
-        {
-            if (_sensor == null)
-            {
-                return;
             }
 
             lock (_locker)
@@ -65,25 +57,25 @@ namespace Sensus.Android.Probes
                 else
                 {
                     // use the largest delay that will provide samples at least as fast as the desired rate:  https://developer.android.com/guide/topics/sensors/sensors_overview.html#sensors-monitor
-                    SensorDelay sensorDelay = SensorDelay.Fastest;
+                    SensorDelay androidSensorDelay = SensorDelay.Fastest;
                     if (_sensorDelay.HasValue)
                     {
                         long sensorDelayMicroseconds = _sensorDelay.Value.Ticks / 10;
                         if (sensorDelayMicroseconds >= 200000)
                         {
-                            sensorDelay = SensorDelay.Normal;
+                            androidSensorDelay = SensorDelay.Normal;
                         }
                         else if (sensorDelayMicroseconds >= 60000)
                         {
-                            sensorDelay = SensorDelay.Ui;
+                            androidSensorDelay = SensorDelay.Ui;
                         }
                         else if (sensorDelayMicroseconds >= 20000)
                         {
-                            sensorDelay = SensorDelay.Game;
+                            androidSensorDelay = SensorDelay.Game;
                         }
                     }
 
-                    _sensorManager.RegisterListener(this, _sensor, sensorDelay);
+                    _sensorManager.RegisterListener(this, _sensor, androidSensorDelay);
                     _listening = true;
                 }
             }

@@ -331,8 +331,6 @@ namespace Sensus.Probes
 
         protected override async Task ProtectedStartAsync()
         {
-            await base.ProtectedStartAsync();
-
             // we used to use an initial delay of zero in order to poll immediately; however, this causes the following
             // problems:
             // 
@@ -348,7 +346,7 @@ namespace Sensus.Probes
             // reading at the very beginning.
             _pollCallback = new ScheduledCallback(async cancellationToken =>
             {
-                if (Running)
+                if (State == ProbeState.Running)
                 {
                     _isPolling = true;
 
@@ -449,9 +447,8 @@ namespace Sensus.Probes
 
         protected abstract Task<List<Datum>> PollAsync(CancellationToken cancellationToken);
 
-        public override async Task StopAsync()
+        protected override async Task ProtectedStopAsync()
         {
-            await base.StopAsync();
 
 #if __IOS__
             if (_significantChangePoll)
@@ -475,7 +472,7 @@ namespace Sensus.Probes
         {
             HealthTestResult result = await base.TestHealthAsync(events);
 
-            if (Running)
+            if (State == ProbeState.Running)
             {
 
 #if __IOS__

@@ -68,16 +68,10 @@ namespace Sensus.Probes.Movement
             get { return typeof(AccelerometerDatum); }
         }
 
-        protected override async Task InitializeAsync()
-        {
-            await base.InitializeAsync();
-
-            _stabilizing = true;
-        }
-
         protected override async Task StartListeningAsync()
         {
             // allow the accelerometer to stabilize...the first few readings can be extremely erratic
+            _stabilizing = true;
             await Task.Delay(2000);
             _stabilizing = false;
 

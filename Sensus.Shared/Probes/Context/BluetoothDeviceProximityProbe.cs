@@ -137,10 +137,8 @@ namespace Sensus.Probes.Context
             _readDurationMS = (int)TimeSpan.FromSeconds(10).TotalMilliseconds;
         }
 
-        protected override async Task InitializeAsync()
+        protected override async Task ProtectedStartAsync()
         {
-            await base.InitializeAsync();
-
             ReadAttemptCount = ReadSuccessCount = 0;
 
             if (!await SensusServiceHelper.Get().EnableBluetoothAsync(true, "Sensus uses Bluetooth, which is being used in one of your studies."))
@@ -151,10 +149,7 @@ namespace Sensus.Probes.Context
                 await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
-        }
 
-        protected sealed override async Task ProtectedStartAsync()
-        {
             await base.ProtectedStartAsync();
 
             try
@@ -236,9 +231,9 @@ namespace Sensus.Probes.Context
             return result;
         }
 
-        public sealed override async Task StopAsync()
+        protected override async Task ProtectedStopAsync()
         {
-            await base.StopAsync();
+            await base.ProtectedStopAsync();
 
             try
             {

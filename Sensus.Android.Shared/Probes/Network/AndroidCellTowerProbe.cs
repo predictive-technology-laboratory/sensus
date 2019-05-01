@@ -35,10 +35,8 @@ namespace Sensus.Android.Probes.Network
             };
         }
 
-        protected override async Task InitializeAsync()
+        protected override async Task StartListeningAsync()
         {
-            await base.InitializeAsync();
-
             if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) == PermissionStatus.Granted)
             {
                 _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
@@ -55,12 +53,8 @@ namespace Sensus.Android.Probes.Network
                 await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
-        }
 
-        protected override Task StartListeningAsync()
-        {
             _telephonyManager.Listen(_cellTowerChangeListener, PhoneStateListenerFlags.CellLocation);
-            return Task.CompletedTask;
         }
 
         protected override Task StopListeningAsync()

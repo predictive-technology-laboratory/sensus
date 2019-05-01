@@ -22,7 +22,6 @@ using System.Threading;
 using Syncfusion.SfChart.XForms;
 using System.Threading.Tasks;
 using Sensus.Context;
-using Sensus.Probes.User.MicrosoftBand;
 using Microsoft.AppCenter.Analytics;
 using System.ComponentModel;
 using Sensus.Extensions;
@@ -71,7 +70,6 @@ namespace Sensus.Probes
         public event PropertyChangedEventHandler PropertyChanged;
 
         private bool _enabled;
-        private bool _running;
         private Datum _mostRecentDatum;
         private Protocol _protocol;
         private bool _storeData;
@@ -86,8 +84,9 @@ namespace Sensus.Probes
         private DataRateCalculator _uiUpdateRateCalculator;
         private EventHandler<bool> _powerConnectionChanged;
         private CancellationTokenSource _processDataCanceller;
-        private readonly object _restartLocker = new object();
-        private bool _restarting = false;
+
+        private ProbeState _state;
+        private readonly object _stateLocker = new object();
 
         [JsonIgnore]
         public abstract string DisplayName { get; }
@@ -107,9 +106,14 @@ namespace Sensus.Probes
             {
                 if (value != _enabled)
                 {
-                    _enabled = value;
+                    // lock the state so that enabling/disabling does not interfere with ongoing
+                    // starting, stop, restart, etc. operation.
+                    lock (_stateLocker)
+                    {
+                        _enabled = value;
 
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Enabled)));
+                        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Enabled)));
+                    }
                 }
             }
         }
@@ -135,9 +139,9 @@ namespace Sensus.Probes
         }
 
         [JsonIgnore]
-        public bool Running
+        public ProbeState State
         {
-            get { return _running; }
+            get { return _state; }
         }
 
         [JsonIgnore]
@@ -271,7 +275,8 @@ namespace Sensus.Probes
 
         protected Probe()
         {
-            _enabled = _running = false;
+            _enabled = false;
+            _state = ProbeState.Stopped;
             _storeData = true;
             _startStopTimes = new List<Tuple<bool, DateTime>>();
             _successfulHealthTestTimes = new List<DateTime>();
@@ -309,80 +314,51 @@ namespace Sensus.Probes
             };
         }
 
-        protected virtual Task InitializeAsync()
-        {
-            lock (_chartData)
-            {
-                _chartData.Clear();
-            }
-
-            _mostRecentDatum = null;
-            _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;  // mark storage delay from initialization of probe
-
-            // data rate calculators
-            _rawRateCalculator = new DataRateCalculator(DataRateSampleSize, MaxDataStoresPerSecond);  // track/limit the raw data rate
-            _storageRateCalculator = new DataRateCalculator(DataRateSampleSize);                      // track the storage rate
-            _uiUpdateRateCalculator = new DataRateCalculator(DataRateSampleSize, 1);                  // track/limit the UI update rate
-
-            return Task.CompletedTask;
-        }
-
         public async Task StartAsync()
         {
-            // don't attempt to start the probe if it is not enabled. this can happen, e.g., when remote protocol updates
-            // disable the probe and the probe is subsequently restarted to take on the update values. bail out.
-            if (!Enabled)
+            lock (_stateLocker)
             {
-                SensusServiceHelper.Get().Logger.Log("Probe is not enabled. Not starting", LoggingLevel.Normal, GetType());
-                return;
+                // don't attempt to start the probe if it is not enabled. this can happen, e.g., when remote protocol updates
+                // disable the probe and the probe is subsequently restarted to take on the update values. bail out.
+                if (Enabled && _state == ProbeState.Stopped)
+                {
+                    _state = ProbeState.Starting;
+                }
+                else
+                {
+                    SensusServiceHelper.Get().Logger.Log("Attempted to start probe, but it was already in state " + _state + " with " + nameof(Enabled) + "=" + Enabled + ".", LoggingLevel.Normal, GetType());
+                    return;
+                }
             }
 
             try
             {
-                await ProtectedStartAsync();
-            }
-            catch (Exception startException)
-            {
-                // stop probe to clean up any inconsistent state information. the only time we don't want to do this is when
-                // starting a band probe and getting a client connect exception. in this case we want to leave the probe running
-                // so that we can attempt to reconnect to the band at a later time via the band's health test.
-                if (!(startException is MicrosoftBandClientConnectException))
-                {
-                    try
-                    {
-                        await StopAsync();
-                    }
-                    catch (Exception stopException)
-                    {
-                        SensusServiceHelper.Get().Logger.Log("Failed to stop probe after failing to start it:  " + stopException.Message, LoggingLevel.Normal, GetType());
-                    }
-                }
-
-                string message = "Sensus failed to start probe \"" + GetType().Name + "\":  " + startException.Message;
-                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
-                await SensusServiceHelper.Get().FlashNotificationAsync(message);
-
-                // disable probe if it is not supported on the device (or if the user has elected not to enable it -- e.g., by refusing to log into facebook)
-                if (startException is NotSupportedException)
-                {
-                    Enabled = false;
-                }
-
-                throw startException;
-            }
-        }
-
-        protected virtual async Task ProtectedStartAsync()
-        {
-            if (_running)
-            {
-                SensusServiceHelper.Get().Logger.Log("Attempted to start probe, but it was already running.", LoggingLevel.Normal, GetType());
-            }
-            else
-            {
                 SensusServiceHelper.Get().Logger.Log("Starting.", LoggingLevel.Normal, GetType());
 
-                await InitializeAsync();
+                lock (_chartData)
+                {
+                    _chartData.Clear();
+                }
+
+                _mostRecentDatum = null;
+                _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;  // mark storage delay from initialization of probe
+
+                // track/limit the raw data rate
+                _rawRateCalculator = new DataRateCalculator(DataRateSampleSize, MaxDataStoresPerSecond);
+                _rawRateCalculator.Start();
+
+                // track the storage rate
+                _storageRateCalculator = new DataRateCalculator(DataRateSampleSize);
+                _storageRateCalculator.Start();
+
+                // track/limit the UI update rate
+                _uiUpdateRateCalculator = new DataRateCalculator(DataRateSampleSize, 1);
+                _uiUpdateRateCalculator.Start();
+
+                // hook into the AC charge event signal -- add handler to AC broadcast receiver
+                SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;
+
+                await ProtectedStartAsync();
 
                 lock (_startStopTimes)
                 {
@@ -390,19 +366,38 @@ namespace Sensus.Probes
                     _startStopTimes.RemoveAll(t => t.Item2 < Protocol.ParticipationHorizon);
                 }
 
-                _rawRateCalculator.Start();
-                _storageRateCalculator.Start();
-                _uiUpdateRateCalculator.Start();
+                lock (_stateLocker)
+                {
+                    _state = ProbeState.Running;
+                }
+            }
+            catch (Exception startException)
+            {
+                // disable probe if it is not supported on the device (or if the user has elected not to enable it -- e.g., by refusing to log into facebook)
+                if (startException is NotSupportedException)
+                {
+                    Enabled = false;
+                }
 
-                // hook into the AC charge event signal -- add handler to AC broadcast receiver
-                SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;
+                // stop probe to clean up any inconsistent state information
+                try
+                {
+                    await StopAsync();
+                }
+                catch (Exception stopException)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Failed to stop probe after failing to start it:  " + stopException.Message, LoggingLevel.Normal, GetType());
+                }
 
-                // the probe has successfully initialized and can now be considered started/running. derived classes might
-                // still have work to do upon return from the current method, but that's okay as far as code in this class
-                // is concerned.
-                _running = true;
+                string message = "Sensus failed to start probe \"" + GetType().Name + "\":  " + startException.Message;
+                SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                await SensusServiceHelper.Get().FlashNotificationAsync(message);
+
+                throw startException;
             }
         }
+
+        protected abstract Task ProtectedStartAsync();
 
         /// <summary>
         /// Stores a <see cref="Datum"/> within the <see cref="LocalDataStore"/>. Will not throw an <see cref="Exception"/>.
@@ -581,13 +576,24 @@ namespace Sensus.Probes
             }
         }
 
-        public virtual Task StopAsync()
+        public async Task StopAsync()
         {
-            if (_running)
+            lock (_stateLocker)
+            {
+                if (_state == ProbeState.Stopped || _state == ProbeState.Stopping)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Attempted to stop probe, but it was already in state " + _state + ".", LoggingLevel.Normal, GetType());
+                    return;
+                }
+                else
+                {
+                    _state = ProbeState.Stopping;
+                }
+            }
+
+            try
             {
                 SensusServiceHelper.Get().Logger.Log("Stopping.", LoggingLevel.Normal, GetType());
-
-                _running = false;
 
                 lock (_startStopTimes)
                 {
@@ -597,82 +603,73 @@ namespace Sensus.Probes
 
                 // unhook from the AC charge event signal -- remove handler to AC broadcast receiver
                 SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged -= _powerConnectionChanged;
-            }
-            else
-            {
-                SensusServiceHelper.Get().Logger.Log("Attempted to stop probe, but it wasn't running.", LoggingLevel.Normal, GetType());
-            }
 
-            return Task.CompletedTask;
-        }
-
-        public async Task RestartAsync()
-        {
-            // prevent concurrent restarts
-            lock (_restartLocker)
-            {
-                if (_restarting)
-                {
-                    return;
-                }
-                else
-                {
-                    _restarting = true;
-                }
-            }
-
-            try
-            {
-                await StopAsync();
-                await StartAsync();
+                await ProtectedStopAsync();
             }
             finally
             {
-                _restarting = false;
+                lock (_stateLocker)
+                {
+                    _state = ProbeState.Stopped;
+                }
             }
+        }
+
+        protected abstract Task ProtectedStopAsync();
+
+        public async Task RestartAsync()
+        {
+            await StopAsync();
+            await StartAsync();
         }
 
         public virtual Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
         {
             HealthTestResult result = HealthTestResult.Okay;
 
-            string eventName = TrackedEvent.Health + ":" + GetType().Name;
-            Dictionary<string, string> properties = new Dictionary<string, string>
+            lock (_stateLocker)
             {
-                { "Running", _running.ToString() }
-            };
-
-            // we'll only have data rates if the probe is running -- it might have failed to initialize.
-            if (_running)
-            {
-                double? rawDataPerSecond = _rawRateCalculator.GetDataPerSecond();
-                double? storedDataPerSecond = _storageRateCalculator.GetDataPerSecond();
-                double? percentageNominalStoreRate = null;
-                if (storedDataPerSecond.HasValue && MaxDataStoresPerSecond.HasValue)
+                string eventName = TrackedEvent.Health + ":" + GetType().Name;
+                Dictionary<string, string> properties = new Dictionary<string, string>
                 {
-                    percentageNominalStoreRate = (storedDataPerSecond.Value / MaxDataStoresPerSecond.Value) * 100;
+                    { "State", _state.ToString() }
+                };
+
+                // we'll only have data rates if the probe is running -- it might have failed to start.
+                if (_state == ProbeState.Running)
+                {
+                    double? rawDataPerSecond = _rawRateCalculator.GetDataPerSecond();
+                    double? storedDataPerSecond = _storageRateCalculator.GetDataPerSecond();
+                    double? percentageNominalStoreRate = null;
+                    if (storedDataPerSecond.HasValue && MaxDataStoresPerSecond.HasValue)
+                    {
+                        percentageNominalStoreRate = (storedDataPerSecond.Value / MaxDataStoresPerSecond.Value) * 100;
+                    }
+
+                    properties.Add("Percentage Nominal Storage Rate", Convert.ToString(percentageNominalStoreRate?.RoundToWhole(5)));
+
+                    Analytics.TrackEvent(eventName, properties);
+
+                    // we don't have a great way of tracking data rates, as they are continuous values and event tracking is string-based. so,
+                    // just add the rates to the properties after event tracking. this way it will still be included in the status.
+                    properties.Add("Raw Data / Second", Convert.ToString(rawDataPerSecond));
+                    properties.Add("Stored Data / Second", Convert.ToString(storedDataPerSecond));
                 }
 
-                properties.Add("Percentage Nominal Storage Rate", Convert.ToString(percentageNominalStoreRate?.RoundToWhole(5)));
-
-                Analytics.TrackEvent(eventName, properties);
-
-                // we don't have a great way of tracking data rates, as they are continuous values and event tracking is string-based. so,
-                // just add the rates to the properties after event tracking. this way it will still be included in the status.
-                properties.Add("Raw Data / Second", Convert.ToString(rawDataPerSecond));
-                properties.Add("Stored Data / Second", Convert.ToString(storedDataPerSecond));
+                events.Add(new AnalyticsTrackedEvent(eventName, properties));
             }
-
-            events.Add(new AnalyticsTrackedEvent(eventName, properties));
 
             return Task.FromResult(result);
         }
 
         public virtual Task ResetAsync()
         {
-            if (_running)
+            lock (_stateLocker)
             {
-                throw new Exception("Cannot reset probe while it is running.");
+                if (_state != ProbeState.Stopped)
+                {
+                    throw new Exception("Cannot reset probe unless it is stopped.");
+                }
             }
 
             lock (_chartData)

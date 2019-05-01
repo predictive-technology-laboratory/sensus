@@ -47,10 +47,8 @@ namespace Sensus.Probes.Movement
             }
         }
 
-        protected override async Task InitializeAsync()
+        protected override async Task ProtectedStartAsync()
         {
-            await base.InitializeAsync();
-
             if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable GPS in the future
@@ -59,10 +57,7 @@ namespace Sensus.Probes.Movement
                 await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
-        }
 
-        protected override async Task ProtectedStartAsync()
-        {
             // reset previous position before starting the base-class poller so it doesn't race to grab a stale previous location.
             _previousPosition = null;
 

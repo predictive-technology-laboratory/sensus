@@ -61,14 +61,14 @@ namespace Sensus.Probes.Apps
             }
         }
 
-        protected override async Task InitializeAsync()
+        protected override Task ProtectedStartAsync()
         {
-            await base.InitializeAsync();
-
             if (GetRequiredPermissionNames().Length == 0)
             {
                 throw new NotSupportedException("No Facebook permissions requested. Will not start Facebook probe.");
             }
+
+            return base.ProtectedStartAsync();
         }
 
         /// <summary>

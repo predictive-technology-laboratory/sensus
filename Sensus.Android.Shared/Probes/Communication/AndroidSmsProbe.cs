@@ -46,10 +46,8 @@ namespace Sensus.Android.Probes.Communication
             };
         }
 
-        protected override async Task InitializeAsync()
+        protected override async Task StartListeningAsync()
         {
-            await base.InitializeAsync();
-
             if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Sms) == PermissionStatus.Granted)
             {
                 _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
@@ -69,16 +67,11 @@ namespace Sensus.Android.Probes.Communication
                 await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
-        }
 
-        protected override Task StartListeningAsync()
-        {
             Application.Context.ContentResolver.RegisterContentObserver(global::Android.Net.Uri.Parse("content://sms"), true, _smsOutgoingObserver);
             Application.Context.ContentResolver.RegisterContentObserver(global::Android.Net.Uri.Parse("content://mms-sms"), true, _smsOutgoingObserver);
 
             AndroidSmsIncomingBroadcastReceiver.INCOMING_SMS += _incomingSmsCallback;
-
-            return Task.CompletedTask;
         }
 
         protected override Task StopListeningAsync()

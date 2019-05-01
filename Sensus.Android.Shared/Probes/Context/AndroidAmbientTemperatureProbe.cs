@@ -39,16 +39,9 @@ namespace Sensus.Android.Probes.Context
             });
         }
 
-        protected override async Task InitializeAsync()
-        {
-            await base.InitializeAsync();
-
-            _temperatureListener.Initialize(MinDataStoreDelay);
-        }
-
         protected override Task StartListeningAsync()
         {
-            _temperatureListener.Start();
+            _temperatureListener.Start(MinDataStoreDelay);
             return Task.CompletedTask;
         }
 

@@ -26,6 +26,7 @@ using System.Threading;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Linq;
+using Sensus.Probes;
 
 namespace Sensus.Android.Probes.Context
 {
@@ -76,10 +77,8 @@ namespace Sensus.Android.Probes.Context
         [JsonIgnore]
         public override int DefaultPollingSleepDurationMS => (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
 
-        protected override async Task InitializeAsync()
+        protected override async Task ProtectedStartAsync()
         {
-            await base.InitializeAsync();
-
             // BLE requires location permissions
             if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
             {
@@ -97,6 +96,8 @@ namespace Sensus.Android.Probes.Context
             _deviceIdService.AddCharacteristic(_deviceIdCharacteristic);
 
             _bluetoothAdvertiserCallback = new AndroidBluetoothServerAdvertisingCallback(_deviceIdService, _deviceIdCharacteristic);
+
+            await base.ProtectedStartAsync();
         }
 
         #region central -- scan
@@ -209,7 +210,7 @@ namespace Sensus.Android.Probes.Context
         {
             HealthTestResult result = await base.TestHealthAsync(events);
 
-            if (Running)
+            if (State == ProbeState.Running)
             {
                 // if the user disables/enables BT manually, we will no longer be advertising the service. start advertising
                 // on each health test to ensure we're advertising.

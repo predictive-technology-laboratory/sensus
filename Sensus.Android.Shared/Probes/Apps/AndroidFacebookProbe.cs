@@ -151,11 +151,11 @@ namespace Sensus.Android.Probes.Apps
             }
         }
 
-        protected override async Task InitializeAsync()
+        protected override async Task ProtectedStartAsync()
         {
-            await base.InitializeAsync();
-
             ObtainAccessToken(GetRequiredPermissionNames());
+
+            await base.ProtectedStartAsync();
         }
 
         protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)

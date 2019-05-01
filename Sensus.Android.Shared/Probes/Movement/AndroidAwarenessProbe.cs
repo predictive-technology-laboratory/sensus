@@ -96,10 +96,8 @@ namespace Sensus.Android.Probes.Movement
             _fencePendingIntent = PendingIntent.GetBroadcast(Application.Context, 0, new Intent(AWARENESS_PENDING_INTENT_ACTION), 0);
         }
 
-        protected override async Task InitializeAsync()
+        protected override async Task StartListeningAsync()
         {
-            await base.InitializeAsync();
-
             // check for availability of Google Play Services
             int googlePlayServicesAvailability = GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable(Application.Context);
 
@@ -149,13 +147,9 @@ namespace Sensus.Android.Probes.Movement
             _awarenessApiClient.Connect();
 
             await clientConnectCompletionSource.Task;
-        }
 
-        protected override Task StartListeningAsync()
-        {
             // register receiver for all awareness intent actions
             Application.Context.RegisterReceiver(_awarenessBroadcastReceiver, new IntentFilter(AWARENESS_PENDING_INTENT_ACTION));
-            return Task.CompletedTask;
         }
 
         protected override Task StopListeningAsync()

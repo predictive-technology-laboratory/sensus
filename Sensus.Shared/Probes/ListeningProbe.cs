@@ -288,23 +288,19 @@ namespace Sensus.Probes
         protected sealed override async Task ProtectedStartAsync()
         {
             // only keep device awake if we're not already running.
-            if (!Running && _keepDeviceAwake)
+            if (State != ProbeState.Running && _keepDeviceAwake)
             {
                 await SensusServiceHelper.Get().KeepDeviceAwakeAsync();
                 _deviceAwake = true;
             }
-
-            await base.ProtectedStartAsync();
 
             await StartListeningAsync();
         }
 
         protected abstract Task StartListeningAsync();
 
-        public sealed override async Task StopAsync()
+        protected sealed override async Task ProtectedStopAsync()
         {
-            await base.StopAsync();
-
             await StopListeningAsync();
 
             if (_deviceAwake)

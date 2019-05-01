@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,15 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-
-namespace Sensus.Probes.User.MicrosoftBand
+namespace Sensus.Probes
 {
-    public class MicrosoftBandClientConnectException : Exception
+    public enum ProbeState
     {
-        public MicrosoftBandClientConnectException(string message)
-            : base(message)
-        {
-        }
+        Stopped,
+        Starting,
+        Running,
+        Stopping
     }
 }

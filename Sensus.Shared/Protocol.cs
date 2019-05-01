@@ -33,7 +33,6 @@ using Sensus.Probes.Movement;
 using System.Text;
 using System.Threading.Tasks;
 using Sensus.Context;
-using Sensus.Probes.User.MicrosoftBand;
 using Sensus.Probes.User.Scripts;
 using Sensus.Callbacks;
 using Sensus.Encryption;
@@ -1821,7 +1820,7 @@ namespace Sensus
                                 {
                                     property.SetValue(probe, newValueObject);
 
-                                    if (probe.Running || probe.Enabled)
+                                    if (probe.State == ProbeState.Running || probe.Enabled)
                                     {
                                         if (!probesToRestart.Contains(probe))
                                         {
@@ -2125,31 +2124,17 @@ namespace Sensus
 
                         SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal, GetType());
                         int probesEnabled = 0;
-                        bool startMicrosoftBandProbes = true;
                         int numProbesToStart = _probes.Count(p => p.Enabled);
                         double perProbeStartProgressPercent = perStepPercent / numProbesToStart;
                         foreach (Probe probe in _probes)
                         {
                             if (probe.Enabled)
                             {
-                                if (probe is MicrosoftBandProbeBase && !startMicrosoftBandProbes)
-                                {
-                                    await (_protocolStartAddProgressAsync?.Invoke(perProbeStartProgressPercent) ?? Task.CompletedTask);
-                                    continue;
-                                }
-
                                 cancellationToken.ThrowIfCancellationRequested();
 
                                 try
                                 {
                                     await probe.StartAsync();
-                                }
-                                catch (MicrosoftBandClientConnectException)
-                                {
-                                    // if we failed to start a microsoft band probe due to a client connect exception, don't attempt to start the other
-                                    // band probes. instead, rely on the band health check to periodically attempt to connect to the band. if and when this
-                                    // succeeds, all band probes will then be started.
-                                    startMicrosoftBandProbes = false;
                                 }
                                 catch (Exception probeStartException)
                                 {
@@ -2830,16 +2815,13 @@ namespace Sensus
 
                 foreach (Probe probe in _probes)
                 {
-                    if (probe.Running)
+                    try
                     {
-                        try
-                        {
-                            await probe.StopAsync();
-                        }
-                        catch (Exception ex)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Failed to stop " + probe.GetType().FullName + ":  " + ex.Message, LoggingLevel.Normal, GetType());
-                        }
+                        await probe.StopAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to stop " + probe.GetType().FullName + ":  " + ex.Message, LoggingLevel.Normal, GetType());
                     }
                 }
 

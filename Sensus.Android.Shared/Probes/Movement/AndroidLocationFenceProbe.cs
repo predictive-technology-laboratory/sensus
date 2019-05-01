@@ -84,9 +84,9 @@ namespace Sensus.Android.Probes.Movement
             };
         }
 
-        protected override async Task InitializeAsync()
+        protected override async Task StartListeningAsync()
         {
-            await base.InitializeAsync();
+            await base.StartListeningAsync();
 
             if (AwarenessApiClient.IsConnected)
             {
@@ -101,11 +101,6 @@ namespace Sensus.Android.Probes.Movement
             {
                 throw new Exception("Failed to connect with Google Awareness API.");
             }
-        }
-
-        protected override async Task StartListeningAsync()
-        {
-            await base.StartListeningAsync();
 
             // request a location to start location fencing
             await RequestLocationSnapshotAsync();

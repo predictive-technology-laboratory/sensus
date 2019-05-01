@@ -51,18 +51,10 @@ namespace Sensus.Android.Probes.Location
             });
         }
 
-        protected override async Task InitializeAsync()
-        {
-            await base.InitializeAsync();
-
-            _magnetometerListener.Initialize(MinDataStoreDelay);
-            _accelerometerListener.Initialize(MinDataStoreDelay);
-        }
-
         protected override Task StartListeningAsync()
         {
-            _magnetometerListener.Start();
-            _accelerometerListener.Start();
+            _magnetometerListener.Start(MinDataStoreDelay);
+            _accelerometerListener.Start(MinDataStoreDelay);
             return Task.CompletedTask;
         }
 
