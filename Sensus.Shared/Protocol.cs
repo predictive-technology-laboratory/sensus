@@ -1918,7 +1918,7 @@ namespace Sensus
             {
                 await probe.ResetAsync();
 
-                // reset enabled status of probes to the original values. probes can be disabled when the protocol is started (e.g., if the user cancels out of facebook login.)
+                // reset enabled status of probes to the original values. probes can be disabled when the protocol is started (e.g., if the user denies health kit).
                 probe.Enabled = probe.OriginallyEnabled;
 
                 // if we reset the protocol id, assign new group and input ids to all scripts

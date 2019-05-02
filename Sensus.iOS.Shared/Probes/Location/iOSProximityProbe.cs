@@ -51,8 +51,10 @@ namespace Sensus.iOS.Probes.Location
             }
         }
 
-        protected override Task StartListeningAsync()
+        protected override async Task StartListeningAsync()
         {
+            await base.StartListeningAsync();
+
             // Check to see if Proximity enabled is true, this would mean that the device can monitor proximity
             if (UIDevice.CurrentDevice.ProximityMonitoringEnabled)
             {
@@ -71,18 +73,16 @@ namespace Sensus.iOS.Probes.Location
                     }
                 });
             }
-
-            return Task.CompletedTask;
         }
 
-        protected override Task StopListeningAsync()
+        protected override async Task StopListeningAsync()
         {
+            await base.StopListeningAsync();
+
             // disable proximity monitoring, as it might be slightly irritating to the user for the screen to go blank.
             UIDevice.CurrentDevice.ProximityMonitoringEnabled = false;
 
             _notification.Dispose();
-
-            return Task.CompletedTask;
         }
     }
 }

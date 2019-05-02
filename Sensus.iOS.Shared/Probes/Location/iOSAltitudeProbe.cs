@@ -31,10 +31,7 @@ namespace Sensus.iOS.Probes.Location
         {
             await base.InitializeAsync();
 
-            //the IsRelativeAltitudeAvailable is used to check to see if the device has altitude capablities based on
-            //documentation here https://developer.apple.com/documentation/coremotion/cmaltimeter
-
-            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Sensors) == PermissionStatus.Granted && CMAltimeter.IsRelativeAltitudeAvailable)
+            if (CMAltimeter.IsRelativeAltitudeAvailable && await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Sensors) == PermissionStatus.Granted)
             {
                 _altitudeChangeListener = new CMAltimeter();
             }
@@ -48,8 +45,10 @@ namespace Sensus.iOS.Probes.Location
             }
         }
 
-        protected override Task StartListeningAsync()
+        protected override async Task StartListeningAsync()
         {
+            await base.StartListeningAsync();
+
             _altitudeChangeListener?.StartRelativeAltitudeUpdates(new NSOperationQueue(), async (data, error) =>
             {
                 if (data?.Pressure != null && error == null)
@@ -60,15 +59,13 @@ namespace Sensus.iOS.Probes.Location
                     await StoreDatumAsync(new AltitudeDatum(DateTimeOffset.UtcNow, data.Pressure.DoubleValue * 10));
                 }
             });
-
-            return Task.CompletedTask;
         }
 
-        protected override Task StopListeningAsync()
+        protected override async Task StopListeningAsync()
         {
-            _altitudeChangeListener?.StopRelativeAltitudeUpdates();
+            await base.StopListeningAsync();
 
-            return Task.CompletedTask;
+            _altitudeChangeListener?.StopRelativeAltitudeUpdates();
         }
     }
 }

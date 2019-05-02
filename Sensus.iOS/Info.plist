@@ -55,10 +55,6 @@
 			<string>Viewer</string>
 		</dict>
 	</array>
-	<key>FacebookAppID</key>
-	<string>873948892650954</string>
-	<key>FacebookDisplayName</key>
-	<string>Sensus</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
