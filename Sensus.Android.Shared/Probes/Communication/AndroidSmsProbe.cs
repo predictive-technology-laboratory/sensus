@@ -71,21 +71,21 @@ namespace Sensus.Android.Probes.Communication
             }
         }
 
-        protected override Task StartListeningAsync()
+        protected override async Task StartListeningAsync()
         {
+            await base.StartListeningAsync();
+
             Application.Context.ContentResolver.RegisterContentObserver(global::Android.Net.Uri.Parse("content://sms"), true, _smsOutgoingObserver);
             Application.Context.ContentResolver.RegisterContentObserver(global::Android.Net.Uri.Parse("content://mms-sms"), true, _smsOutgoingObserver);
-
             AndroidSmsIncomingBroadcastReceiver.INCOMING_SMS += _incomingSmsCallback;
-
-            return Task.CompletedTask;
         }
 
-        protected override Task StopListeningAsync()
+        protected override async Task StopListeningAsync()
         {
+            await base.StopListeningAsync();
+
             Application.Context.ContentResolver.UnregisterContentObserver(_smsOutgoingObserver);
             AndroidSmsIncomingBroadcastReceiver.INCOMING_SMS -= _incomingSmsCallback;
-            return Task.CompletedTask;
         }
     }
 }

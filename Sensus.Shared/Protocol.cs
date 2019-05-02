@@ -28,12 +28,10 @@ using System.Linq;
 using System.Reflection;
 using Sensus.Probes.Location;
 using Sensus.UI.Inputs;
-using Sensus.Probes.Apps;
 using Sensus.Probes.Movement;
 using System.Text;
 using System.Threading.Tasks;
 using Sensus.Context;
-using Sensus.Probes.User.MicrosoftBand;
 using Sensus.Probes.User.Scripts;
 using Sensus.Callbacks;
 using Sensus.Encryption;
@@ -448,12 +446,6 @@ namespace Sensus
                     {
                         // UI testing is problematic with probes that take us away from Sensus, since it's difficult to automate UI 
                         // interaction outside of Sensus. disable any probes that might take us away from Sensus.
-
-                        if (probe is FacebookProbe)
-                        {
-                            probe.Enabled = false;
-                        }
-
 #if __IOS__
                         if (probe is iOSHealthKitProbe)
                         {
@@ -1821,7 +1813,7 @@ namespace Sensus
                                 {
                                     property.SetValue(probe, newValueObject);
 
-                                    if (probe.Running || probe.Enabled)
+                                    if (probe.State == ProbeState.Running || probe.Enabled)
                                     {
                                         if (!probesToRestart.Contains(probe))
                                         {
@@ -1926,7 +1918,7 @@ namespace Sensus
             {
                 await probe.ResetAsync();
 
-                // reset enabled status of probes to the original values. probes can be disabled when the protocol is started (e.g., if the user cancels out of facebook login.)
+                // reset enabled status of probes to the original values. probes can be disabled when the protocol is started (e.g., if the user denies health kit).
                 probe.Enabled = probe.OriginallyEnabled;
 
                 // if we reset the protocol id, assign new group and input ids to all scripts
@@ -2125,31 +2117,17 @@ namespace Sensus
 
                         SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal, GetType());
                         int probesEnabled = 0;
-                        bool startMicrosoftBandProbes = true;
                         int numProbesToStart = _probes.Count(p => p.Enabled);
                         double perProbeStartProgressPercent = perStepPercent / numProbesToStart;
                         foreach (Probe probe in _probes)
                         {
                             if (probe.Enabled)
                             {
-                                if (probe is MicrosoftBandProbeBase && !startMicrosoftBandProbes)
-                                {
-                                    await (_protocolStartAddProgressAsync?.Invoke(perProbeStartProgressPercent) ?? Task.CompletedTask);
-                                    continue;
-                                }
-
                                 cancellationToken.ThrowIfCancellationRequested();
 
                                 try
                                 {
                                     await probe.StartAsync();
-                                }
-                                catch (MicrosoftBandClientConnectException)
-                                {
-                                    // if we failed to start a microsoft band probe due to a client connect exception, don't attempt to start the other
-                                    // band probes. instead, rely on the band health check to periodically attempt to connect to the band. if and when this
-                                    // succeeds, all band probes will then be started.
-                                    startMicrosoftBandProbes = false;
                                 }
                                 catch (Exception probeStartException)
                                 {
@@ -2830,16 +2808,13 @@ namespace Sensus
 
                 foreach (Probe probe in _probes)
                 {
-                    if (probe.Running)
+                    try
                     {
-                        try
-                        {
-                            await probe.StopAsync();
-                        }
-                        catch (Exception ex)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Failed to stop " + probe.GetType().FullName + ":  " + ex.Message, LoggingLevel.Normal, GetType());
-                        }
+                        await probe.StopAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to stop " + probe.GetType().FullName + ":  " + ex.Message, LoggingLevel.Normal, GetType());
                     }
                 }
 
@@ -3000,16 +2975,21 @@ namespace Sensus
             }
         }
 
+#if __ANDROID__
         /// <summary>
         /// Gets a <see cref="SensingAgent"/> from those available.
         /// </summary>
         /// <returns>The agent.</returns>
         /// <param name="agentId">Agent identifier.</param>
-#if __ANDROID__
         /// <param name="assemblyBytes">Assembly bytes. This is only permitted on Android, as
         /// iOS does not permit dynamic code loading. Attempting to do this crashes the app.</param>
         public SensingAgent GetAgent(string agentId, byte[] assemblyBytes)
 #elif __IOS__
+        /// <summary>
+        /// Gets a <see cref="SensingAgent"/> from those available.
+        /// </summary>
+        /// <returns>The agent.</returns>
+        /// <param name="agentId">Agent identifier.</param>
         public SensingAgent GetAgent(string agentId)
 #endif
         {
@@ -3022,16 +3002,20 @@ namespace Sensus
                 ).SingleOrDefault(agent => agent.Id == agentId);
         }
 
+#if __ANDROID__
         /// <summary>
         /// Gets available <see cref="SensingAgent"/>s from the current executing assembly.
         /// </summary>
         /// <returns>The agents.</returns>
-#if __ANDROID__
         /// <param name="assemblyBytes">Additional assembly to scan for <see cref="SensingAgent"/>s. Pass <c>null</c> for no assembly, in
         /// which case only agents present in the executing assembly (the app codebase) will be loaded.
         /// Only permitted on Android</param>
         public List<SensingAgent> GetAgents(byte[] assemblyBytes)
 #elif __IOS__
+        /// <summary>
+        /// Gets available <see cref="SensingAgent"/>s from the current executing assembly.
+        /// </summary>
+        /// <returns>The agents.</returns>
         public List<SensingAgent> GetAgents()
 #endif
         {

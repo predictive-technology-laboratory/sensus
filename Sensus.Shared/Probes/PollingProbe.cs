@@ -97,7 +97,8 @@ namespace Sensus.Probes
             get { return _pollingSleepDurationMS; }
             set
             {
-                // we set this the same as CALLBACK_NOTIFICATION_HORIZON_THRESHOLD
+                // this must be at least as larged as CALLBACK_NOTIFICATION_HORIZON_THRESHOLD,
+                // in order to prevent immediate poll-repoll cycles.
                 if (value <= 5000)
                 {
                     value = 5000;
@@ -348,7 +349,7 @@ namespace Sensus.Probes
             // reading at the very beginning.
             _pollCallback = new ScheduledCallback(async cancellationToken =>
             {
-                if (Running)
+                if (State == ProbeState.Running)
                 {
                     _isPolling = true;
 
@@ -449,9 +450,9 @@ namespace Sensus.Probes
 
         protected abstract Task<List<Datum>> PollAsync(CancellationToken cancellationToken);
 
-        public override async Task StopAsync()
+        protected override async Task ProtectedStopAsync()
         {
-            await base.StopAsync();
+            await base.ProtectedStopAsync();
 
 #if __IOS__
             if (_significantChangePoll)
@@ -475,7 +476,7 @@ namespace Sensus.Probes
         {
             HealthTestResult result = await base.TestHealthAsync(events);
 
-            if (Running)
+            if (State == ProbeState.Running)
             {
 
 #if __IOS__

@@ -285,25 +285,28 @@ namespace Sensus.Probes
             _deviceAwake = false;
         }
 
-        protected sealed override async Task ProtectedStartAsync()
+        protected override async Task ProtectedStartAsync()
         {
-            // only keep device awake if we're not already running.
-            if (!Running && _keepDeviceAwake)
+            await base.ProtectedStartAsync();
+
+            if (_keepDeviceAwake)
             {
                 await SensusServiceHelper.Get().KeepDeviceAwakeAsync();
                 _deviceAwake = true;
             }
 
-            await base.ProtectedStartAsync();
-
             await StartListeningAsync();
         }
 
-        protected abstract Task StartListeningAsync();
-
-        public sealed override async Task StopAsync()
+        protected virtual Task StartListeningAsync()
         {
-            await base.StopAsync();
+            SensusServiceHelper.Get().Logger.Log("Starting listening...", LoggingLevel.Normal, GetType());
+            return Task.CompletedTask;
+        }
+
+        protected override async Task ProtectedStopAsync()
+        {
+            await base.ProtectedStopAsync();
 
             await StopListeningAsync();
 
@@ -314,7 +317,11 @@ namespace Sensus.Probes
             }
         }
 
-        protected abstract Task StopListeningAsync();
+        protected virtual Task StopListeningAsync()
+        {
+            SensusServiceHelper.Get().Logger.Log("Stopping listening...", LoggingLevel.Normal, GetType());
+            return Task.CompletedTask;
+        }
 
         public override async Task ResetAsync()
         {

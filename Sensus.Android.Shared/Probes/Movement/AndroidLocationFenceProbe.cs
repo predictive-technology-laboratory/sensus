@@ -133,12 +133,12 @@ namespace Sensus.Android.Probes.Movement
 
         protected override async Task StopListeningAsync()
         {
+            await base.StopListeningAsync();
+
             // remove location fence
             FenceUpdateRequestBuilder locationFenceRequestBuilder = new FenceUpdateRequestBuilder();
             UpdateRequestBuilder(null, AWARENESS_EXITING_LOCATION_FENCE_KEY, FenceUpdateAction.Remove, ref locationFenceRequestBuilder);
             await UpdateFencesAsync(locationFenceRequestBuilder.Build());
-
-            await base.StopListeningAsync();
         }
     }
 }

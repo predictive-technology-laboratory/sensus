@@ -396,14 +396,14 @@ namespace Sensus.Probes.User.Scripts
                             // must be running and must have a current datum
                             lock (_locker)
                             {
-                                if (!Probe.Running || !_enabled || currentDatum == null)
+                                if (Probe.State != ProbeState.Running || !_enabled || currentDatum == null)
                                 {
                                     trigger.FireValueConditionMetOnPreviousCall = false;  // this covers the case when the current datum is null. for some probes, the null datum is meaningful and is emitted in order for their state to be tracked appropriately (e.g., POI probe).
                                     return;
                                 }
                             }
 
-                            // get the value that might trigger the script -- it might be null in the case where the property is nullable and is not set (e.g., facebook fields, input locations, etc.)
+                            // get the value that might trigger the script -- it might be null in the case where the property is nullable and is not set (e.g., input locations, etc.)
                             object currentDatumValue = trigger.DatumProperty.GetValue(currentDatum);
                             if (currentDatumValue == null)
                             {
@@ -662,7 +662,7 @@ namespace Sensus.Probes.User.Scripts
             {
                 SensusServiceHelper.Get().Logger.Log("Running script \"" + Name + "\".", LoggingLevel.Normal, GetType());
 
-                if (!Probe.Running || !_enabled)
+                if (Probe.State != ProbeState.Running || !_enabled)
                 {
                     return;
                 }
