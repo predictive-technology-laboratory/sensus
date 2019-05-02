@@ -47,9 +47,9 @@ namespace Sensus.Probes.Movement
             }
         }
 
-        protected override async Task ProtectedInitializeAsync()
+        protected override async Task InitializeAsync()
         {
-            await base.ProtectedInitializeAsync();
+            await base.InitializeAsync();
 
             if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
             {

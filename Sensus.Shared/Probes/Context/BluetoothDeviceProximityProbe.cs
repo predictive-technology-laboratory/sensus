@@ -137,9 +137,9 @@ namespace Sensus.Probes.Context
             _readDurationMS = (int)TimeSpan.FromSeconds(10).TotalMilliseconds;
         }
 
-        protected override async Task ProtectedInitializeAsync()
+        protected override async Task InitializeAsync()
         {
-            await base.ProtectedInitializeAsync();
+            await base.InitializeAsync();
 
             if (!await SensusServiceHelper.Get().EnableBluetoothAsync(true, "Sensus uses Bluetooth, which is being used in one of your studies."))
             {

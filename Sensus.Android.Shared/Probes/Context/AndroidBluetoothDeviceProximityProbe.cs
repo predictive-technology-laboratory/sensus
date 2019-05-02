@@ -77,9 +77,9 @@ namespace Sensus.Android.Probes.Context
         [JsonIgnore]
         public override int DefaultPollingSleepDurationMS => (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
 
-        protected override async Task ProtectedInitializeAsync()
+        protected override async Task InitializeAsync()
         {
-            await base.ProtectedInitializeAsync();
+            await base.InitializeAsync();
 
             // BLE requires location permissions
             if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)

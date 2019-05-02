@@ -151,9 +151,9 @@ namespace Sensus.Probes.Location
             _beacons = new ConcurrentObservableCollection<EstimoteBeacon>();
         }
 
-        protected override async Task ProtectedInitializeAsync()
+        protected override async Task InitializeAsync()
         {
-            await base.ProtectedInitializeAsync();
+            await base.InitializeAsync();
 
             if (string.IsNullOrWhiteSpace(EstimoteCloudAppId) || string.IsNullOrEmpty(EstimoteCloudAppToken))
             {

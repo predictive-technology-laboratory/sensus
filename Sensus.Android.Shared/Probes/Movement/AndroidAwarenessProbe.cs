@@ -96,9 +96,9 @@ namespace Sensus.Android.Probes.Movement
             _fencePendingIntent = PendingIntent.GetBroadcast(Application.Context, 0, new Intent(AWARENESS_PENDING_INTENT_ACTION), 0);
         }
 
-        protected override async Task ProtectedInitializeAsync()
+        protected override async Task InitializeAsync()
         {
-            await base.ProtectedInitializeAsync();
+            await base.InitializeAsync();
 
             // check for availability of Google Play Services
             int googlePlayServicesAvailability = GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable(Application.Context);

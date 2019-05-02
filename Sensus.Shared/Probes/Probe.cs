@@ -333,7 +333,7 @@ namespace Sensus.Probes
 
             try
             {
-                await ProtectedInitializeAsync();
+                await InitializeAsync();
 
                 lock (_stateLocker)
                 {
@@ -378,7 +378,7 @@ namespace Sensus.Probes
             }
         }
 
-        protected virtual Task ProtectedInitializeAsync()
+        protected virtual Task InitializeAsync()
         {
             SensusServiceHelper.Get().Logger.Log("Initializing...", LoggingLevel.Normal, GetType());
 

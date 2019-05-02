@@ -230,9 +230,9 @@ namespace Sensus.Probes.User.Scripts
             _scriptRunners = new ObservableCollection<ScriptRunner>();
         }
 
-        protected override async Task ProtectedInitializeAsync()
+        protected override async Task InitializeAsync()
         {
-            await base.ProtectedInitializeAsync();
+            await base.InitializeAsync();
 
             foreach (ScriptRunner scriptRunner in _scriptRunners)
             {
