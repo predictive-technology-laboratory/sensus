@@ -289,7 +289,7 @@ namespace Sensus.Probes
         {
             await base.ProtectedStartAsync();
 
-            if (_keepDeviceAwake && !_deviceAwake)
+            if (_keepDeviceAwake)
             {
                 await SensusServiceHelper.Get().KeepDeviceAwakeAsync();
                 _deviceAwake = true;

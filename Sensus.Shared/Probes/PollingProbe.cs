@@ -97,7 +97,8 @@ namespace Sensus.Probes
             get { return _pollingSleepDurationMS; }
             set
             {
-                // we set this the same as CALLBACK_NOTIFICATION_HORIZON_THRESHOLD
+                // this must be at least as larged as CALLBACK_NOTIFICATION_HORIZON_THRESHOLD,
+                // in order to prevent immediate poll-repoll cycles.
                 if (value <= 5000)
                 {
                     value = 5000;
