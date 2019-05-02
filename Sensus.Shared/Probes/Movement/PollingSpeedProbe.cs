@@ -60,7 +60,6 @@ namespace Sensus.Probes.Movement
                 throw new Exception(error);
             }
 
-            // reset previous position before starting the base-class poller so it doesn't race to grab a stale previous location.
             _previousPosition = null;
         }
 

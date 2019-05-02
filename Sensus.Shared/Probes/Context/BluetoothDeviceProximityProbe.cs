@@ -141,6 +141,8 @@ namespace Sensus.Probes.Context
         {
             await base.InitializeAsync();
 
+            ReadAttemptCount = ReadSuccessCount = 0;
+
             if (!await SensusServiceHelper.Get().EnableBluetoothAsync(true, "Sensus uses Bluetooth, which is being used in one of your studies."))
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable BLE in the future
@@ -149,8 +151,6 @@ namespace Sensus.Probes.Context
                 await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
-
-            ReadAttemptCount = ReadSuccessCount = 0;
         }
 
         protected override async Task ProtectedStartAsync()

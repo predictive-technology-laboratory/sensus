@@ -107,7 +107,7 @@ namespace Sensus.Probes
                 if (value != _enabled)
                 {
                     // lock the state so that enabling/disabling does not interfere with ongoing
-                    // starting, stop, restart, etc. operation.
+                    // start, stop, restart, etc. operations.
                     lock (_stateLocker)
                     {
                         _enabled = value;
@@ -314,6 +314,33 @@ namespace Sensus.Probes
             };
         }
 
+        protected virtual Task InitializeAsync()
+        {
+            SensusServiceHelper.Get().Logger.Log("Initializing...", LoggingLevel.Normal, GetType());
+
+            lock (_chartData)
+            {
+                _chartData.Clear();
+            }
+
+            _mostRecentDatum = null;
+            _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;  // mark storage delay from initialization of probe
+
+            // track/limit the raw data rate
+            _rawRateCalculator = new DataRateCalculator(DataRateSampleSize, MaxDataStoresPerSecond);
+
+            // track the storage rate
+            _storageRateCalculator = new DataRateCalculator(DataRateSampleSize);
+
+            // track/limit the UI update rate
+            _uiUpdateRateCalculator = new DataRateCalculator(DataRateSampleSize, 1);
+
+            // hook into the AC charge event signal -- add handler to AC broadcast receiver
+            SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;
+
+            return Task.CompletedTask;
+        }
+
         public async Task StartAsync()
         {
             lock (_stateLocker)
@@ -339,6 +366,11 @@ namespace Sensus.Probes
                 {
                     _state = ProbeState.Starting;
                 }
+
+                // start data rate calculators
+                _rawRateCalculator.Start();
+                _storageRateCalculator.Start();
+                _uiUpdateRateCalculator.Start();
 
                 await ProtectedStartAsync();
 
@@ -376,36 +408,6 @@ namespace Sensus.Probes
 
                 throw startException;
             }
-        }
-
-        protected virtual Task InitializeAsync()
-        {
-            SensusServiceHelper.Get().Logger.Log("Initializing...", LoggingLevel.Normal, GetType());
-
-            lock (_chartData)
-            {
-                _chartData.Clear();
-            }
-
-            _mostRecentDatum = null;
-            _mostRecentStoreTimestamp = DateTimeOffset.UtcNow;  // mark storage delay from initialization of probe
-
-            // track/limit the raw data rate
-            _rawRateCalculator = new DataRateCalculator(DataRateSampleSize, MaxDataStoresPerSecond);
-            _rawRateCalculator.Start();
-
-            // track the storage rate
-            _storageRateCalculator = new DataRateCalculator(DataRateSampleSize);
-            _storageRateCalculator.Start();
-
-            // track/limit the UI update rate
-            _uiUpdateRateCalculator = new DataRateCalculator(DataRateSampleSize, 1);
-            _uiUpdateRateCalculator.Start();
-
-            // hook into the AC charge event signal -- add handler to AC broadcast receiver
-            SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;
-
-            return Task.CompletedTask;
         }
 
         protected virtual Task ProtectedStartAsync()
