@@ -166,7 +166,9 @@ rather than executing immediately. This is in part a practical question, in that
 callback immediately rather than using a notification can improve performance -- imagine the
 app coming to the foreground and executing the callback right away versus deferring it to a 
 future notification. This is also an iOS API consideration, as the iOS system will not schedule 
-a notification if its fire date is in the past by the time it gets around to doing the scheduling.</p>
+a notification if its fire date is in the past by the time it gets around to doing the scheduling.
+Whatever the value, it needs to be less than the 
+<a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_DefaultPollingSleepDurationMS">DefaultPollingSleepDurationMS</a> value.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>

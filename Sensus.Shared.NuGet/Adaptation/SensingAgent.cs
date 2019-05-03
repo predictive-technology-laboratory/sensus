@@ -23,7 +23,8 @@ using Newtonsoft.Json.Linq;
 namespace Sensus.Adaptation
 {
     /// <summary>
-    /// An agent that observes data collected by the app and controls sensing parameters.
+    /// An agent that observes data collected by the app and controls sensing parameters. See the
+    /// [adaptive sensing](xref:adaptive_sensing) article for more information.
     /// </summary>
     public abstract partial class SensingAgent : INotifyPropertyChanged
     {
@@ -144,6 +145,14 @@ namespace Sensus.Adaptation
         /// </summary>
         /// <value>The max observed data age.</value>
         public TimeSpan? MaxObservedDataAge { get; set; }
+
+        /// <summary>
+        /// A human-readable description of the <see cref="SensingAgent"/>'s current state. Used to track
+        /// the state trajectory of the <see cref="SensingAgent"/> and to tag each <see cref="IDatum"/>
+        /// produced while the <see cref="SensingAgent"/> is exerting sensing control.
+        /// </summary>
+        /// <value>The state description.</value>
+        public abstract string StateDescription { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:Sensus.SensingAgent"/> class, with a repeating action call.
@@ -501,6 +510,11 @@ namespace Sensus.Adaptation
                     if (transitionPermitted)
                     {
                         SensusServiceHelper.Logger.Log("Permitting transition from " + State + " to " + newState + ".", LoggingLevel.Normal, GetType());
+
+                        // record the state change within the protocol's local data store
+                        Protocol.WriteSensingAgentStateDatum(State, newState, StateDescription, cancellationToken);
+
+                        // set new state
                         State = newState;
                         stateChanged = true;
                         _stateIsTransitioning = true;

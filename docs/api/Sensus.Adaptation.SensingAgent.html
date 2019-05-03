@@ -83,13 +83,15 @@
   
   <h1 id="Sensus_Adaptation_SensingAgent" data-uid="Sensus.Adaptation.SensingAgent" class="text-break">Class SensingAgent
   </h1>
-  <div class="markdown level0 summary"><p>An agent that observes data collected by the app and controls sensing parameters.</p>
+  <div class="markdown level0 summary"><p>An agent that observes data collected by the app and controls sensing parameters. See the
+<a class="xref" href="../articles/adaptive-sensing.html">adaptive sensing</a> article for more information.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><span class="xref">SensingAgent</span></div>
+      <div class="level2"><a class="xref" href="ExampleSensingAgent.ExampleAccelerationSensingAgent.html">ExampleAccelerationSensingAgent</a></div>
       <div class="level2"><a class="xref" href="Sensus.Adaptation.AsplSensingAgent.html">AsplSensingAgent</a></div>
   </div>
   <div classs="implements">
@@ -533,6 +535,35 @@ is <code>null</code>, then this value is ignored.</p>
       <tr>
         <td><a class="xref" href="Sensus.Adaptation.SensingAgentState.html">SensingAgentState</a></td>
         <td><p>The state.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_StateDescription_" data-uid="Sensus.Adaptation.SensingAgent.StateDescription*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_StateDescription" data-uid="Sensus.Adaptation.SensingAgent.StateDescription">StateDescription</h4>
+  <div class="markdown level1 summary"><p>A human-readable description of the <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a>&apos;s current state. Used to track
+the state trajectory of the <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a> and to tag each <a class="xref" href="Sensus.IDatum.html">IDatum</a>
+produced while the <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a> is exerting sensing control.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract string StateDescription { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The state description.</p>
 </td>
       </tr>
     </tbody>

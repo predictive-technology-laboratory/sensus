@@ -174,7 +174,6 @@ of your protocol. When run, your protocol will invoke the selected sensing agent
 above.</p>
 </li>
 </ol>
-<h3 id="example">Example</h3>
 <p>See the following implementation for an example:</p>
 <ul>
 <li><a class="xref" href="../api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html">Acceleration</a> (code <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleSensingAgent.Shared/ExampleAccelerationSensingAgent.cs">here</a>):  A 
@@ -185,16 +184,12 @@ sensing agent that samples continuously if the device is moving or near a surfac
 run time. Thus, software-defined adaptive sensing agents are more limited on iOS compared with Android. Here 
 are the options:</p>
 <ul>
-<li><p>The app comes with one example sensing agent; however, it is simply for demonstration and is unlikely to work
-well in practice. Nonetheless, the examples is:</p>
-<ul>
-<li><a class="xref" href="../api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html">Acceleration</a> (code <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleSensingAgent.Shared/ExampleAccelerationSensingAgent.cs">here</a>):  A 
-sensing agent that samples continuously if the device is moving or near a surface (e.g., face).</li>
-</ul>
+<li><p>The app comes with one 
+<a class="xref" href="../api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html">example</a> sensing agent (code 
+<a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleSensingAgent.Shared/ExampleAccelerationSensingAgent.cs">here</a>); 
+however, this is simply for demonstration and is unlikely to work well in practice. Nonetheless, you 
+can select this agent when configuring the <a class="xref" href="../api/Sensus.Protocol.html">Protocol</a>.</p>
 </li>
-</ul>
-<p>You can select this agent when configuring the <a class="xref" href="../api/Sensus.Protocol.html">Protocol</a>.</p>
-<ul>
 <li><p>You can <a class="xref" href="redeploying-sensus.html">redeploy</a> Sensus as your own app, to which you can add your own agent implementations.</p>
 </li>
 <li><p>You can implement your own agent implementations following the instructions above for Android and email 
@@ -202,8 +197,8 @@ our team (uva.ptl@gmail.com) to include your implementation in a future release 
 </li>
 </ul>
 <h2 id="adaptive-sensing-policy-language-aspl-defined-sensing-agents">Adaptive Sensing Policy Language (ASPL) Defined Sensing Agents</h2>
-<p>In addition to the software-defined adaptive sensing agents described above, Sensus supports adaptive sensing
-policies specified in a general-purpose adaptive sensing policy language (ASPL). ASPL specifies both the 
+<p>In addition to the software-defined adaptive sensing agents described above, Sensus supports the definition
+of sensing agents in a general-purpose adaptive sensing policy language (ASPL). ASPL specifies both the 
 control criteria as well as the control actions depicted in the above state diagram. The 
 <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared/Adaptation/example-aspl-policy.json">example ASPL policy file</a>
 demonstrates the ASPL format. The elements of the format are described in the documentation for 
@@ -265,6 +260,21 @@ messages will appear for a short duration.</p>
 <li><p>Run your agent in the debugger:  By far the most useful approach is to <a class="xref" href="configuring-a-development-system.html">configure a development system</a> and
 run Sensus in the debugger with your sensing agent. You will need to add your agent code to the Sensus app projects in order to 
 step through it in the debugger.</p>
+</li>
+</ul>
+<h2 id="data-streams">Data Streams</h2>
+<p>In addition to directly impacting the data streams that are collected (e.g., via sampling rates and enabling/disabling
+<a class="xref" href="../api/Sensus.Probes.Probe.html">probes</a>), the use of a sensing agent will cause additional data to be written to the 
+<a class="xref" href="../api/Sensus.DataStores.Local.LocalDataStore.html">local data store</a>. These include:</p>
+<ul>
+<li><p>Datum-level tagging:  Each <a class="xref" href="../api/Sensus.Datum.html">Datum</a> collected by the app will be tagged with a description of the sensing 
+agent&#39;s state at the time when the <a class="xref" href="../api/Sensus.Datum.html">Datum</a> was collected. This is achieved by setting 
+<a class="xref" href="../api/Sensus.Datum.html#Sensus_Datum_SensingAgentStateDescription">SensingAgentStateDescription</a> to the value of <a class="xref" href="../api/Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_StateDescription">StateDescription</a>.</p>
+</li>
+<li><p>Sensing agent lifecycle:  Each time the sensing agent transitions from one state to another, a 
+<a class="xref" href="../api/Sensus.Adaptation.SensingAgentStateDatum.html">SensingAgentStateDatum</a> will be written to the 
+<a class="xref" href="../api/Sensus.DataStores.Local.LocalDataStore.html">local data store</a> to record the transition. This will be done regardless 
+of whether any other <a class="xref" href="../api/Sensus.Datum.html">Datum</a> readings are collected.</p>
 </li>
 </ul>
 </article>

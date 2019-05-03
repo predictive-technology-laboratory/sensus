@@ -3074,5 +3074,16 @@ namespace Sensus
                 await Agent.SetPolicyAsync(policy);
             }
         }
+
+        public void WriteSensingAgentStateDatum(SensingAgentState previousState, SensingAgentState currentState, string description, CancellationToken cancellationToken)
+        {
+            SensingAgentStateDatum datum = new SensingAgentStateDatum(DateTimeOffset.UtcNow, previousState, currentState, description)
+            {
+                ProtocolId = Id,
+                ParticipantId = ParticipantId
+            };
+
+            _localDataStore.WriteDatum(datum, cancellationToken);
+        }
     }
 }

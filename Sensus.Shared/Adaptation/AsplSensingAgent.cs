@@ -38,6 +38,17 @@ namespace Sensus.Adaptation
 
         private readonly object _statementLocker = new object();
 
+        public override string StateDescription
+        {
+            get
+            {
+                lock (_statementLocker)
+                {
+                    return State + ":  " + (_ongoingControlStatement?.Id ?? "[no control]");
+                }
+            }
+        }
+
         public AsplSensingAgent()
             : base("ASPL", "ASPL-Defined Agent", TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(5))
         {

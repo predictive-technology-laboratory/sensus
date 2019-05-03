@@ -186,3 +186,16 @@ messages will appear for a short duration.
 run Sensus in the debugger with your sensing agent. You will need to add your agent code to the Sensus app projects in order to 
 step through it in the debugger.
 
+## Data Streams
+In addition to directly impacting the data streams that are collected (e.g., via sampling rates and enabling/disabling
+[probes](<xref:Sensus.Probes.Probe)), the use of a sensing agent will cause additional data to be written to the 
+[local data store](xref:Sensus.DataStores.Local.LocalDataStore). These include:
+
+* Datum-level tagging:  Each <xref:Sensus.Datum> collected by the app will be tagged with a description of the sensing 
+agent's state at the time when the <xref:Sensus.Datum> was collected. This is achieved by setting 
+<xref:Sensus.Datum.SensingAgentStateDescription> to the value of <xref:Sensus.Adaptation.SensingAgent.StateDescription>.
+
+* Sensing agent lifecycle:  Each time the sensing agent transitions from one state to another, a 
+<xref:Sensus.Adaptation.SensingAgentStateDatum> will be written to the 
+[local data store](xref:Sensus.DataStores.Local.LocalDataStore) to record the transition. This will be done regardless 
+of whether any other <xref:Sensus.Datum> readings are collected.

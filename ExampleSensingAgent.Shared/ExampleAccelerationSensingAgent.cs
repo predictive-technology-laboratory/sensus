@@ -50,6 +50,8 @@ namespace ExampleSensingAgent
         /// <value>The idle accelerometer max data stores per second.</value>
         public double? IdleAccelerometerMaxDataStoresPerSecond { get; set; }
 
+        public override string StateDescription => "Dummy description";
+
         /// <summary>
         /// Initializes a new instance of the <see cref="T:ExampleSensingAgent.ExampleAccelerationSensingAgent"/> class. As noted in
         /// the [adaptive sensing](xref:adaptive_sensing) article, this class provides the parameterless constructor required for

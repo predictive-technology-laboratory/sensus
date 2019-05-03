@@ -770,7 +770,7 @@ namespace Sensus.Probes.User.Scripts
 
                 if (deliverFutureTime.Item1)
                 {
-                    await Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.AgentAccepted, script.RunTime.Value, script), CancellationToken.None);
+                    Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.AgentAccepted, script.RunTime.Value, script), CancellationToken.None);
                 }
                 else
                 {
@@ -778,13 +778,13 @@ namespace Sensus.Probes.User.Scripts
                     {
                         SensusServiceHelper.Get().Logger.Log("Agent has declined survey without deferral.", LoggingLevel.Normal, GetType());
 
-                        await Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.AgentDeclined, script.RunTime.Value, script), CancellationToken.None);
+                        Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.AgentDeclined, script.RunTime.Value, script), CancellationToken.None);
                     }
                     else if (deliverFutureTime.Item2.Value > DateTimeOffset.UtcNow)
                     {
                         SensusServiceHelper.Get().Logger.Log("Agent has deferred survey until:  " + deliverFutureTime.Item2.Value, LoggingLevel.Normal, GetType());
 
-                        await Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.AgentDeferred, script.RunTime.Value, script), CancellationToken.None);
+                        Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.AgentDeferred, script.RunTime.Value, script), CancellationToken.None);
 
                         // check whether we need to expire the rescheduled script at some future point
                         DateTime? expiration = null;
@@ -825,7 +825,7 @@ namespace Sensus.Probes.User.Scripts
 
             // let the script agent know and store a datum to record the event
             await (Probe.Agent?.ObserveAsync(script, ScriptState.Delivered) ?? Task.CompletedTask);
-            await Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Delivered, script.RunTime.Value, script), CancellationToken.None);
+            Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Delivered, script.RunTime.Value, script), CancellationToken.None);
         }
     }
 }

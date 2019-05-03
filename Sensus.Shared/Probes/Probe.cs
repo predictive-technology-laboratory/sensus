@@ -459,6 +459,12 @@ namespace Sensus.Probes
                     datum.TaggedEventId = taggedEventId;
                     datum.TaggedEventTags = taggedEventTags;
                 }
+
+                // if the protocol is configured with a sensing agent, 
+                if (Protocol.Agent != null)
+                {
+                    datum.SensingAgentStateDescription = Protocol.Agent.StateDescription;
+                }
             }
 
             // store non-null data

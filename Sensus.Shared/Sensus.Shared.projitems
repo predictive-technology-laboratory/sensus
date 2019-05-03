@@ -250,6 +250,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Adaptation\AsplStatement.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Adaptation\AsplAggregation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\ProbeState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Adaptation\SensingAgentStateDatum.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ProbeTriggerProperties\" />

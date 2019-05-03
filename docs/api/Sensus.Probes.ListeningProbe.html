@@ -112,7 +112,6 @@ depends on the operating system (Android or iOS) as well as the setting of <a cl
       <div class="level3"><a class="xref" href="Sensus.Probes.Movement.ListeningSpeedProbe.html">ListeningSpeedProbe</a></div>
       <div class="level3"><a class="xref" href="Sensus.Probes.Network.CellTowerProbe.html">CellTowerProbe</a></div>
       <div class="level3"><a class="xref" href="Sensus.Probes.Network.ListeningWlanProbe.html">ListeningWlanProbe</a></div>
-      <div class="level3"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.html">MicrosoftBandProbeBase</a></div>
   </div>
   <div classs="implements">
     <h5>Implements</h5>
@@ -147,6 +146,9 @@ depends on the operating system (Android or iOS) as well as the setting of <a cl
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetParticipation">Probe.GetParticipation()</a>
     </div>
     <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StopAsync">Probe.StopAsync()</a>
+    </div>
+    <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_RestartAsync">Probe.RestartAsync()</a>
     </div>
     <div>
@@ -177,7 +179,7 @@ depends on the operating system (Android or iOS) as well as the setting of <a cl
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_OriginallyEnabled">Probe.OriginallyEnabled</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Running">Probe.Running</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_State">Probe.State</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MostRecentStoreTimestamp">Probe.MostRecentStoreTimestamp</a>
@@ -541,7 +543,7 @@ version of the <a class="xref" href="Sensus.Probes.Location.CompassProbe.html">C
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override sealed Task ProtectedStartAsync()</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task ProtectedStartAsync()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -560,6 +562,33 @@ version of the <a class="xref" href="Sensus.Probes.Location.CompassProbe.html">C
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_ProtectedStartAsync">Probe.ProtectedStartAsync()</a></div>
+  
+  
+  <a id="Sensus_Probes_ListeningProbe_ProtectedStopAsync_" data-uid="Sensus.Probes.ListeningProbe.ProtectedStopAsync*"></a>
+  <h4 id="Sensus_Probes_ListeningProbe_ProtectedStopAsync" data-uid="Sensus.Probes.ListeningProbe.ProtectedStopAsync">ProtectedStopAsync()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Task ProtectedStopAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_ProtectedStopAsync">Probe.ProtectedStopAsync()</a></div>
   
   
   <a id="Sensus_Probes_ListeningProbe_ResetAsync_" data-uid="Sensus.Probes.ListeningProbe.ResetAsync*"></a>
@@ -595,7 +624,7 @@ version of the <a class="xref" href="Sensus.Probes.Location.CompassProbe.html">C
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected abstract Task StartListeningAsync()</code></pre>
+    <pre><code class="lang-csharp hljs">protected virtual Task StartListeningAsync()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -612,33 +641,6 @@ version of the <a class="xref" href="Sensus.Probes.Location.CompassProbe.html">C
       </tr>
     </tbody>
   </table>
-  
-  
-  <a id="Sensus_Probes_ListeningProbe_StopAsync_" data-uid="Sensus.Probes.ListeningProbe.StopAsync*"></a>
-  <h4 id="Sensus_Probes_ListeningProbe_StopAsync" data-uid="Sensus.Probes.ListeningProbe.StopAsync">StopAsync()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override sealed Task StopAsync()</code></pre>
-  </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StopAsync">Probe.StopAsync()</a></div>
   
   
   <a id="Sensus_Probes_ListeningProbe_StopListeningAsync_" data-uid="Sensus.Probes.ListeningProbe.StopListeningAsync*"></a>
@@ -647,7 +649,7 @@ version of the <a class="xref" href="Sensus.Probes.Location.CompassProbe.html">C
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected abstract Task StopListeningAsync()</code></pre>
+    <pre><code class="lang-csharp hljs">protected virtual Task StopListeningAsync()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">

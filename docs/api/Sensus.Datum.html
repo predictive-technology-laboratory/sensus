@@ -90,11 +90,11 @@
     <h5>Inheritance</h5>
     <div class="level0"><span class="xref">System.Object</span></div>
     <div class="level1"><span class="xref">Datum</span></div>
+      <div class="level2"><a class="xref" href="Sensus.Adaptation.SensingAgentStateDatum.html">SensingAgentStateDatum</a></div>
       <div class="level2"><a class="xref" href="Sensus.HeartbeatDatum.html">HeartbeatDatum</a></div>
       <div class="level2"><a class="xref" href="Sensus.ImpreciseDatum.html">ImpreciseDatum</a></div>
       <div class="level2"><a class="xref" href="Sensus.ParticipationReportDatum.html">ParticipationReportDatum</a></div>
       <div class="level2"><a class="xref" href="Sensus.ParticipationRewardDatum.html">ParticipationRewardDatum</a></div>
-      <div class="level2"><a class="xref" href="Sensus.Probes.Apps.FacebookDatum.html">FacebookDatum</a></div>
       <div class="level2"><a class="xref" href="Sensus.Probes.Communication.SmsDatum.html">SmsDatum</a></div>
       <div class="level2"><a class="xref" href="Sensus.Probes.Communication.TelephonyDatum.html">TelephonyDatum</a></div>
       <div class="level2"><a class="xref" href="Sensus.Probes.Context.AmbientTemperatureDatum.html">AmbientTemperatureDatum</a></div>
@@ -128,21 +128,6 @@
       <div class="level2"><a class="xref" href="Sensus.Probes.User.Health.StepCountDatum.html">StepCountDatum</a></div>
       <div class="level2"><a class="xref" href="Sensus.Probes.User.Health.WeightDatum.html">WeightDatum</a></div>
       <div class="level2"><a class="xref" href="Sensus.Probes.User.Health.WheelChairUseDatum.html">WheelChairUseDatum</a></div>
-      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandAccelerometerDatum.html">MicrosoftBandAccelerometerDatum</a></div>
-      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandAirPressureDatum.html">MicrosoftBandAirPressureDatum</a></div>
-      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandAirTemperatureDatum.html">MicrosoftBandAirTemperatureDatum</a></div>
-      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandCaloriesDatum.html">MicrosoftBandCaloriesDatum</a></div>
-      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandContactDatum.html">MicrosoftBandContactDatum</a></div>
-      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandDistanceDatum.html">MicrosoftBandDistanceDatum</a></div>
-      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandGsrDatum.html">MicrosoftBandGsrDatum</a></div>
-      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandGyroscopeDatum.html">MicrosoftBandGyroscopeDatum</a></div>
-      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandHeartRateDatum.html">MicrosoftBandHeartRateDatum</a></div>
-      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandLightDatum.html">MicrosoftBandLightDatum</a></div>
-      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandPedometerDatum.html">MicrosoftBandPedometerDatum</a></div>
-      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandRRIntervalDatum.html">MicrosoftBandRRIntervalDatum</a></div>
-      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandSkinTemperatureDatum.html">MicrosoftBandSkinTemperatureDatum</a></div>
-      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandStepDatum.html">MicrosoftBandStepDatum</a></div>
-      <div class="level2"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandUltravioletLightDatum.html">MicrosoftBandUltravioletLightDatum</a></div>
       <div class="level2"><a class="xref" href="Sensus.Probes.User.Scripts.ScriptDatum.html">ScriptDatum</a></div>
       <div class="level2"><a class="xref" href="Sensus.Probes.User.Scripts.ScriptStateDatum.html">ScriptStateDatum</a></div>
       <div class="level2"><a class="xref" href="Sensus.ProtocolSettingUpdateDatum.html">ProtocolSettingUpdateDatum</a></div>
@@ -501,6 +486,38 @@ then this will be the value entered by the user. If <a class="xref" href="Sensus
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><p>The protocol identifier.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Datum_SensingAgentStateDescription_" data-uid="Sensus.Datum.SensingAgentStateDescription*"></a>
+  <h4 id="Sensus_Datum_SensingAgentStateDescription" data-uid="Sensus.Datum.SensingAgentStateDescription">SensingAgentStateDescription</h4>
+  <div class="markdown level1 summary"><p>If the <a class="xref" href="Sensus.Protocol.html">Protocol</a> is configured with a <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a>, then
+this will contain the value of <a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_StateDescription">StateDescription</a> for 
+convenience in evaluating the effects of a <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a>. Note that
+the <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a> will also submit <a class="xref" href="Sensus.Adaptation.SensingAgentStateDatum.html">SensingAgentStateDatum</a>
+objects to record the <a class="xref" href="Sensus.Adaptation.SensingAgentState.html">SensingAgentState</a> trajectory of the 
+<a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a> over time.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string SensingAgentStateDescription { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The sensing agent state description.</p>
 </td>
       </tr>
     </tbody>

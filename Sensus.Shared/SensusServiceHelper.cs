@@ -941,7 +941,7 @@ namespace Sensus
                 {
                     // let the script agent know and store a datum to record the event
                     await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Expired) ?? Task.CompletedTask);
-                    await script.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Expired, DateTimeOffset.UtcNow, script), CancellationToken.None);
+                    script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Expired, DateTimeOffset.UtcNow, script), CancellationToken.None);
 
                     if (RemoveScripts(script))
                     {
@@ -959,7 +959,7 @@ namespace Sensus
             {
                 // let the script agent know and store a datum to record the event
                 await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Deleted) ?? Task.CompletedTask);
-                await script.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Deleted, DateTimeOffset.UtcNow, script), CancellationToken.None);
+                script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Deleted, DateTimeOffset.UtcNow, script), CancellationToken.None);
             }
 
             return RemoveScripts(_scriptsToRun.ToArray());

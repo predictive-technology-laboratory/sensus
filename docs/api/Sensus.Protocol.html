@@ -2692,7 +2692,8 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   
   <a id="Sensus_Protocol_GetAgent_" data-uid="Sensus.Protocol.GetAgent*"></a>
   <h4 id="Sensus_Protocol_GetAgent_System_String_System_Byte___" data-uid="Sensus.Protocol.GetAgent(System.String,System.Byte[])">GetAgent(String, Byte[])</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets a <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a> from those available.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
@@ -2711,7 +2712,8 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
       <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">agentId</span></td>
-        <td></td>
+        <td><p>Agent identifier.</p>
+</td>
       </tr>
       <tr>
         <td><span class="xref">System.Byte</span>[]</td>
@@ -2733,7 +2735,8 @@ iOS does not permit dynamic code loading. Attempting to do this crashes the app.
     <tbody>
       <tr>
         <td><a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a></td>
-        <td></td>
+        <td><p>The agent.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -2741,11 +2744,12 @@ iOS does not permit dynamic code loading. Attempting to do this crashes the app.
   
   <a id="Sensus_Protocol_GetAgents_" data-uid="Sensus.Protocol.GetAgents*"></a>
   <h4 id="Sensus_Protocol_GetAgents_System_Byte___" data-uid="Sensus.Protocol.GetAgents(System.Byte[])">GetAgents(Byte[])</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets available <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a>s from the current executing assembly.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public List&lt;SensingAgent&gt; GetAgents(byte[] assemblyBytes = null)</code></pre>
+    <pre><code class="lang-csharp hljs">public List&lt;SensingAgent&gt; GetAgents(byte[] assemblyBytes)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2760,7 +2764,8 @@ iOS does not permit dynamic code loading. Attempting to do this crashes the app.
       <tr>
         <td><span class="xref">System.Byte</span>[]</td>
         <td><span class="parametername">assemblyBytes</span></td>
-        <td><p>Additional assembly to scan for <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a>s. 
+        <td><p>Additional assembly to scan for <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a>s. Pass <code>null</code> for no assembly, in
+which case only agents present in the executing assembly (the app codebase) will be loaded.
 Only permitted on Android</p>
 </td>
       </tr>
@@ -2777,7 +2782,8 @@ Only permitted on Android</p>
     <tbody>
       <tr>
         <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a>&gt;</td>
-        <td></td>
+        <td><p>The agents.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -3525,6 +3531,48 @@ to show progress and prevent the user from interacting with the app until the <a
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_WriteSensingAgentStateDatum_" data-uid="Sensus.Protocol.WriteSensingAgentStateDatum*"></a>
+  <h4 id="Sensus_Protocol_WriteSensingAgentStateDatum_Sensus_Adaptation_SensingAgentState_Sensus_Adaptation_SensingAgentState_System_String_System_Threading_CancellationToken_" data-uid="Sensus.Protocol.WriteSensingAgentStateDatum(Sensus.Adaptation.SensingAgentState,Sensus.Adaptation.SensingAgentState,System.String,System.Threading.CancellationToken)">WriteSensingAgentStateDatum(SensingAgentState, SensingAgentState, String, CancellationToken)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void WriteSensingAgentStateDatum(SensingAgentState previousState, SensingAgentState currentState, string description, CancellationToken cancellationToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Adaptation.SensingAgentState.html">SensingAgentState</a></td>
+        <td><span class="parametername">previousState</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Sensus.Adaptation.SensingAgentState.html">SensingAgentState</a></td>
+        <td><span class="parametername">currentState</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">description</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
         <td></td>
       </tr>
     </tbody>

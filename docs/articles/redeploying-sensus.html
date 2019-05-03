@@ -96,10 +96,6 @@ only commercial library that Sensus uses, and it is not essential to proper func
 in-app visualization of certain data streams.</p>
 <p>You should carefully inspect the terms and conditions associated with other libraries and packages consumed by 
 Sensus to ensure that your intended use is compliant.</p>
-<h2 id="facebook-api">Facebook API</h2>
-<p>Sensus uses the Facebook API to collect public profile information from users who grant this permission. To do this, 
-visit the <a href="https://developers.facebook.com">Facebook developer console</a> and create a new app, noting your app name and ID.
-If you do not do this, you will not be able to use the <a class="xref" href="../api/Sensus.Probes.Apps.FacebookProbe.html">Facebook Probe</a>.</p>
 <h2 id="keys-and-ids">Keys and IDs</h2>
 <p>Edit the following fields of <code>Sensus.SensusServiceHelper.cs</code> (in the <code>Sensus.Shared</code> project):</p>
 <pre><code>        /// &lt;summary&gt;
@@ -173,9 +169,6 @@ Also restrict this credential to use the following APIs:</p>
 </code></pre></li>
 </ul>
 </li>
-<li><p>If you wish to use the <a class="xref" href="../api/Sensus.Probes.Apps.FacebookProbe.html">Facebook Probe</a> to collect public profile information from 
-users who explicitly permit it, then add your Facebook app name and ID to the <code>Sensus.Android/Resources/values/strings.xml</code> file.</p>
-</li>
 </ol>
 <h2 id="sensus-ios">Sensus iOS</h2>
 <p>Sensus iOS consumes services provided by Apple. Since these services and their authorized consumers are tied
@@ -194,18 +187,12 @@ certificates in a known and secure location. You will use them to configure <a c
 <li><code>CFBundleDisplayName</code></li>
 <li><code>CFBundleIdentifier</code></li>
 <li>Each <code>CFBundleURLSchemes</code> element under <code>CFBundleURLTypes</code></li>
-<li><code>FacebookAppID</code></li>
-<li><code>FacebookDisplayName</code></li>
 <li><code>CFBundleDocumentTypes</code></li>
 <li>Elements under <code>UTExportedTypeDeclarations</code></li>
 <li><code>CFBundleShortVersionString</code></li>
 <li><code>CFBundleVersion</code></li>
 <li>Each of the usage descriptions.</li>
 </ul>
-</li>
-<li><p>If you wish to use the <a class="xref" href="../api/Sensus.Probes.Apps.FacebookProbe.html">Facebook Probe</a> to collect public profile information from 
-users who explicit permit it, then add your Facebook app name and ID to the <code>Sensus.iOS/AppDelegate.cs</code> file at the location 
-indicated in the comments.</p>
 </li>
 </ol>
 </article>
@@ -216,7 +203,7 @@ indicated in the comments.</p>
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/DocFX/articles/redeploying-sensus.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/aspl-agent/DocFX/articles/redeploying-sensus.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>
