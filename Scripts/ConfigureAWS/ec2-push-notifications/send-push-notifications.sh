@@ -182,10 +182,6 @@ do
 # reverse sort by the creation time (newest first) and output the path
 done | sort -n -r -k1 | cut -f2 -d " " > $local_request_path_list
 
-# there must be only one protocol for all requests in the bucket. check
-# each request as we process it.
-protocol=""
-
 # process push notification requests
 declare -A processed_ids
 echo -e "\n\n************* PROCESSING REQUESTS *************"
@@ -208,17 +204,7 @@ do
     device=$(jq -r '.device' $local_request_path)
     format=$(jq -r '.format' $local_request_path)
     time=$(jq -r '.time' $local_request_path)
-
-    # check that all requests target the same protocol
-    curr_protocol=$(jq -r '.protocol' $local_request_path)
-    if [[ $protocol = "" ]]
-    then
-	protocol=$curr_protocol
-    elif [[ $curr_protocol != $protocol ]]
-    then
-	echo "ERROR:  Current request targets unexpected protocol."
-	continue
-    fi
+    protocol=$(jq -r '.protocol' $local_request_path)
 
     # extract other JSON field values. we'll use these to form JSON, so retain
     # the values in their quoted/escaped forms (no -r option).
