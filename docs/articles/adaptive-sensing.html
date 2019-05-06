@@ -205,6 +205,24 @@ demonstrates the ASPL format. The elements of the format are described in the do
 <a class="xref" href="../api/Sensus.Adaptation.AsplSensingAgent.html">AsplSensingAgent</a>. If more than 1 <a class="xref" href="../api/Sensus.Adaptation.AsplStatement.html">AsplStatement</a> is 
 provided to the <a class="xref" href="../api/Sensus.Adaptation.AsplSensingAgent.html">AsplSensingAgent</a>, then the first one whose criterion is satisfied 
 by the observed data will be used for sensing control.</p>
+<p>In the example ASPL policy file, you will see many places where property types and property names are specified. In
+general, each <a class="xref" href="../api/Sensus.Adaptation.AsplElement.html">AsplElement</a> will specify a property type that is the fully-qualified 
+name of a <a class="xref" href="../api/Sensus.Datum.html">Datum</a> sub-type. The fully-qualified type name is the concatenation of the type&#39;s namespace
+and name. For example, the <a class="xref" href="../api/Sensus.Probes.Movement.AccelerometerDatum.html">AccelerometerDatum</a> type has namespace <code>Sensus.Probes.Movement</code> 
+and name <code>AccelerometerDatum</code>. The fully-qualified type name is thus <code>Sensus.Probes.Movement.AccelerometerDatum</code>. 
+You can find the namespace for each type in the API documentation (e.g., see 
+<a class="xref" href="../api/Sensus.Probes.Movement.AccelerometerDatum.html">here</a>). The API documentation page for each type also lists
+the properties available for that type (e.g., 
+<a href="https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Probes.Movement.AccelerometerDatum.html#properties">here</a>).
+So, for example, if you wish to specify the <a class="xref" href="../api/Sensus.Probes.Movement.AccelerometerDatum.html#Sensus_Probes_Movement_AccelerometerDatum_X">X</a> 
+property within the <a class="xref" href="../api/Sensus.Adaptation.AsplElement.html">AsplElement</a>, then the property type should be 
+<code>Sensus.Probes.Movement.AccelerometerDatum</code> and the property name should be <code>X</code>.</p>
+<p>The other places where property types and property names appear in ASPL are the 
+<a class="xref" href="../api/Sensus.Adaptation.AsplStatement.html#Sensus_Adaptation_AsplStatement_BeginControlSettings">BeginControlSettings</a> and <a class="xref" href="../api/Sensus.Adaptation.AsplStatement.html#Sensus_Adaptation_AsplStatement_EndControlSettings">EndControlSettings</a>.
+These types and names refer to the <a class="xref" href="../api/Sensus.Probes.Probe.html">Probe</a> properties that should be changed to begin and end sensing control.
+For example, you may wish to begin control by enabling the <a class="xref" href="../api/Sensus.Probes.Movement.AccelerometerProbe.html">AccelerometerProbe</a> with a sampling 
+rate of 50 Hz. This involves two settings:  (1) enabling the probe, and (2) setting the sampling rate. Each of these
+is specified within a <a class="xref" href="../api/Sensus.ProtocolSetting.html">ProtocolSetting</a> in the ASPL JSON.</p>
 <h2 id="softare--versus-aspl-defined-sensing-agents">Softare- Versus ASPL-Defined Sensing Agents</h2>
 <p>There are pros and cons of software- and ASPL-defined sensing agents:</p>
 <ul>

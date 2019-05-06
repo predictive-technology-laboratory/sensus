@@ -16,6 +16,8 @@ namespace Sensus.Adaptation
 {
     /// <summary>
     /// Different ways of aggregating observed <see cref="IDatum"/> property values into a single value for criterion checking.
+    /// The goal is to transform a collection of values into a single value, which can be checked against a target value to
+    /// determine whether or not sensing control should be applied. See <see cref="AsplElement"/> for more information.
     /// </summary>
     public enum AsplAggregationType
     {

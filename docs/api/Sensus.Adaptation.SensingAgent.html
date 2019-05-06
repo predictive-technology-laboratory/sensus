@@ -376,7 +376,11 @@ will increase the number of batched actions and thereby decrease battery consump
   <div class="markdown level1 summary"><p>Maximum age of observed <a class="xref" href="Sensus.IDatum.html">IDatum</a> readings to retain for state estimation. Can be
 <code>null</code> to place no limit on the age of retained readings; however, either
 <a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_MaxObservedDataCount">MaxObservedDataCount</a> or <a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_MaxObservedDataAge">MaxObservedDataAge</a> should be enabled, or
-readings will be retained indefinitely, likely exhausting memory over time.</p>
+readings will be retained indefinitely, likely exhausting memory over time. This setting applies
+to all <a class="xref" href="Sensus.IDatum.html">IDatum</a> regardless of type. As different types of <a class="xref" href="Sensus.IDatum.html">IDatum</a> have 
+dramatically different data rates (e.g., <a class="xref" href="Sensus.Probes.Movement.IAccelerometerDatum.html">IAccelerometerDatum</a> versus
+<a class="xref" href="Sensus.Probes.Movement.IActivityDatum.html">IActivityDatum</a>), this should be set sufficiently high to avoid
+data loss.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -406,7 +410,11 @@ readings will be retained indefinitely, likely exhausting memory over time.</p>
   <div class="markdown level1 summary"><p>Maximum number of observed <a class="xref" href="Sensus.IDatum.html">IDatum</a> readings to retain for state estimation. Can be
 <code>null</code> to place no limit on the number of retained readings; however, either
 <a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_MaxObservedDataCount">MaxObservedDataCount</a> or <a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_MaxObservedDataAge">MaxObservedDataAge</a> should be enabled, or
-readings will be retained indefinitely, likely exhausting memory over time.</p>
+readings will be retained indefinitely, likely exhausting memory over time. This setting applies
+to all <a class="xref" href="Sensus.IDatum.html">IDatum</a> regardless of type. As different types of <a class="xref" href="Sensus.IDatum.html">IDatum</a> have 
+dramatically different data rates (e.g., <a class="xref" href="Sensus.Probes.Movement.IAccelerometerDatum.html">IAccelerometerDatum</a> versus
+<a class="xref" href="Sensus.Probes.Movement.IActivityDatum.html">IActivityDatum</a>), this should be set sufficiently high to avoid
+data loss.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>

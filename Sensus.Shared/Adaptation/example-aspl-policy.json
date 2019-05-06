@@ -1,17 +1,45 @@
 {
-  "id": "ASPL",
-  "description": "Example",
+  "id": "Example",
+  "description": "A multi-statement ASPL policy focused on movement and proximity.",
   "action-interval": "00:00:10",
   "observation-duration": "00:00:05",
   "control-completion-check-interval": "00:00:20",
   "observed-data": {
-    "max-count": 100,
+    "max-count": 1000,
     "max-age": null
   },
   "statements": [
     {
       "id": "Acceleration",
-      "description": "Keeps device awake and increases accelerometer sampling rate based on x-axis magnitude.",
+      "description": "If any x-axis acceleration reading within the past 5 seconds is either greater than 2 or less than -2, then keep the device awake and increase the sampling rate.",
+      "begin-active-sensing-settings": [
+        {
+          "property-type": "Sensus.Probes.Probe",
+          "property-name": "Enabled",
+          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+          "value": true
+        },
+        {
+          "property-type": "Sensus.Probes.ListeningProbe",
+          "property-name": "KeepDeviceAwake",
+          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+          "value": true
+        },
+        {
+          "property-type": "Sensus.Probes.ListeningProbe",
+          "property-name": "MaxDataStoresPerSecond",
+          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+          "value": 50
+        }
+      ],
+      "end-active-sensing-settings": [
+        {
+          "property-type": "Sensus.Probes.Probe",
+          "property-name": "Enabled",
+          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+          "value": false
+        }
+      ],
       "criterion": {
         "logic": "Disjunction",
         "elements": [
@@ -20,7 +48,7 @@
             "property-name": "X",
             "aggregation": {
               "type": "Any",
-              "horizon": "00:00:05"
+              "max-age": "00:00:05"
             },
             "relation": "GreaterThan",
             "target": 2
@@ -30,7 +58,7 @@
             "property-name": "X",
             "aggregation": {
               "type": "Any",
-              "horizon": "00:00:05"
+              "max-age": "00:00:05"
             },
             "relation": "LessThan",
             "target": -2
@@ -68,7 +96,7 @@
     },
     {
       "id": "Proximity and Walking",
-      "description": "Keeps device awake and increases accelerometer sampling rate if device is near a surface or the user is walking.",
+      "description": "If the most recent proximity reading equals 0 (the device is covered by a surface), or if the user was estimated to be walking any time in the past 2 minutes, then enable the accelerometer probe with a high sampling rate.",
       "criterion": {
         "logic": "Disjunction",
         "elements": [
@@ -83,10 +111,20 @@
           },
           {
             "property-type": "Sensus.Probes.Movement.ActivityDatum",
+            "property-name": "ActivityStarting",
+            "aggregation": {
+              "type": "Any",
+              "max-age": "00:02:00"
+            },
+            "relation": "EqualTo",
+            "target": "Walking"
+          },
+          {
+            "property-type": "Sensus.Probes.Movement.ActivityDatum",
             "property-name": "ActivityContinuing",
             "aggregation": {
               "type": "Any",
-              "horizon": "00:00:05"
+              "max-age": "00:02:00"
             },
             "relation": "EqualTo",
             "target": "Walking"

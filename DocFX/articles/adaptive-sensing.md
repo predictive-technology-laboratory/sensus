@@ -136,6 +136,26 @@ demonstrates the ASPL format. The elements of the format are described in the do
 provided to the <xref:Sensus.Adaptation.AsplSensingAgent>, then the first one whose criterion is satisfied 
 by the observed data will be used for sensing control.
 
+In the example ASPL policy file, you will see many places where property types and property names are specified. In
+general, each <xref:Sensus.Adaptation.AsplElement> will specify a property type that is the fully-qualified 
+name of a <xref:Sensus.Datum> sub-type. The fully-qualified type name is the concatenation of the type's namespace
+and name. For example, the <xref:Sensus.Probes.Movement.AccelerometerDatum> type has namespace `Sensus.Probes.Movement` 
+and name `AccelerometerDatum`. The fully-qualified type name is thus `Sensus.Probes.Movement.AccelerometerDatum`. 
+You can find the namespace for each type in the API documentation (e.g., see 
+[here](<xref:Sensus.Probes.Movement.AccelerometerDatum>)). The API documentation page for each type also lists
+the properties available for that type (e.g., 
+[here](https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Probes.Movement.AccelerometerDatum.html#properties)).
+So, for example, if you wish to specify the <xref:Sensus.Probes.Movement.AccelerometerDatum.X> 
+property within the <xref:Sensus.Adaptation.AsplElement>, then the property type should be 
+`Sensus.Probes.Movement.AccelerometerDatum` and the property name should be `X`.
+
+The other places where property types and property names appear in ASPL are the 
+<xref:Sensus.Adaptation.AsplStatement.BeginControlSettings> and <xref:Sensus.Adaptation.AsplStatement.EndControlSettings>.
+These types and names refer to the <xref:Sensus.Probes.Probe> properties that should be changed to begin and end sensing control.
+For example, you may wish to begin control by enabling the <xref:Sensus.Probes.Movement.AccelerometerProbe> with a sampling 
+rate of 50 Hz. This involves two settings:  (1) enabling the probe, and (2) setting the sampling rate. Each of these
+is specified within a <xref:Sensus.ProtocolSetting> in the ASPL JSON.
+
 ## Softare- Versus ASPL-Defined Sensing Agents
 There are pros and cons of software- and ASPL-defined sensing agents:
 

@@ -15,17 +15,17 @@
 namespace Sensus.Adaptation
 {
     /// <summary>
-    /// Different ways of combining multiple <see cref="AsplElement"/> values into a single boolean true/false value.
+    /// Different ways of combining multiple <see cref="AsplElement"/> satisfaction values into a single boolean true/false value.
     /// </summary>
     public enum AsplLogic
     {
         /// <summary>
-        /// Logical conjunction.
+        /// Logical conjunction. All <see cref="AsplElement"/>s must be satisfied.
         /// </summary>
         Conjunction,
 
         /// <summary>
-        /// Logical disjunction.
+        /// Logical disjunction. Any <see cref="AsplElement"/> may be satisfied.
         /// </summary>
         Disjunction
     }

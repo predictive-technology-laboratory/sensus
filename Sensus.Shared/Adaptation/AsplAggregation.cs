@@ -27,15 +27,25 @@ namespace Sensus.Adaptation
         public AsplAggregationType Type { get; set; }
 
         /// <summary>
-        /// Time horizon (how far back in the data to go).
+        /// Maximum age of observed data to aggregate. If <c>null</c>, then the <see cref="AsplAggregationType"/> specified
+        /// by <see cref="Type"/> will be applied to all observed data that are currently held in <see cref="SensingAgent"/>'s
+        /// cache; otherwise, only observed data whose ages (i.e., time between <see cref="Datum.Timestamp"/> and the current wall 
+        /// clock time) are less than <see cref="MaxAge"/> will be aggregated. This property should not be confused with 
+        /// <see cref="SensingAgent.MaxObservedDataAge"/>. This property determines the data that should be aggregated for 
+        /// <see cref="AsplCriterion"/> checking. These data are a subset of the currently cached data observations. The value
+        /// of <see cref="SensingAgent.MaxObservedDataAge"/> determines the size of the observation cache. So, the intent
+        /// of <see cref="MaxAge"/> is to improve the sensitivity of the <see cref="AsplCriterion"/>, whereas the intent of
+        /// <see cref="SensingAgent.MaxObservedDataAge"/> is to relieve memory pressure. Caution should exercised when setting
+        /// these two properties, since an <see cref="AsplCriterion"/> that requires <see cref="MaxAge"/> of 5 minutes would
+        /// not operate properly if <see cref="SensingAgent.MaxObservedDataAge"/> were set to 30 seconds.
         /// </summary>
         /// <value>The horizon.</value>
-        [JsonProperty("horizon")]
-        public TimeSpan? Horizon { get; set; }
+        [JsonProperty("max-age")]
+        public TimeSpan? MaxAge { get; set; }
 
         public override string ToString()
         {
-            return Type + (Horizon == null ? "" : " over past " + Horizon);
+            return Type + (MaxAge == null ? "" : " within " + MaxAge);
         }
     }
 }

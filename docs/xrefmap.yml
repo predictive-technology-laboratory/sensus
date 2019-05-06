@@ -559,18 +559,18 @@ references:
   commentId: Overload:Sensus.Adaptation.AsplAggregation.#ctor
   fullName: Sensus.Adaptation.AsplAggregation.AsplAggregation
   nameWithType: AsplAggregation.AsplAggregation
-- uid: Sensus.Adaptation.AsplAggregation.Horizon
-  name: Horizon
-  href: api/Sensus.Adaptation.AsplAggregation.html#Sensus_Adaptation_AsplAggregation_Horizon
-  commentId: P:Sensus.Adaptation.AsplAggregation.Horizon
-  fullName: Sensus.Adaptation.AsplAggregation.Horizon
-  nameWithType: AsplAggregation.Horizon
-- uid: Sensus.Adaptation.AsplAggregation.Horizon*
-  name: Horizon
-  href: api/Sensus.Adaptation.AsplAggregation.html#Sensus_Adaptation_AsplAggregation_Horizon_
-  commentId: Overload:Sensus.Adaptation.AsplAggregation.Horizon
-  fullName: Sensus.Adaptation.AsplAggregation.Horizon
-  nameWithType: AsplAggregation.Horizon
+- uid: Sensus.Adaptation.AsplAggregation.MaxAge
+  name: MaxAge
+  href: api/Sensus.Adaptation.AsplAggregation.html#Sensus_Adaptation_AsplAggregation_MaxAge
+  commentId: P:Sensus.Adaptation.AsplAggregation.MaxAge
+  fullName: Sensus.Adaptation.AsplAggregation.MaxAge
+  nameWithType: AsplAggregation.MaxAge
+- uid: Sensus.Adaptation.AsplAggregation.MaxAge*
+  name: MaxAge
+  href: api/Sensus.Adaptation.AsplAggregation.html#Sensus_Adaptation_AsplAggregation_MaxAge_
+  commentId: Overload:Sensus.Adaptation.AsplAggregation.MaxAge
+  fullName: Sensus.Adaptation.AsplAggregation.MaxAge
+  nameWithType: AsplAggregation.MaxAge
 - uid: Sensus.Adaptation.AsplAggregation.ToString
   name: ToString()
   href: api/Sensus.Adaptation.AsplAggregation.html#Sensus_Adaptation_AsplAggregation_ToString

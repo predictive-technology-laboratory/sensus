@@ -15,7 +15,8 @@
 namespace Sensus.Adaptation
 {
     /// <summary>
-    /// Different ways of comparing the aggregated criterion value (see <see cref="AsplAggregationType"/>) with a target value to determine whether a <see cref="AsplElement"/> was satisfied.
+    /// Different ways of comparing the aggregated criterion value (see <see cref="AsplAggregation"/>) with a target value to 
+    /// determine whether a <see cref="AsplElement"/> was satisfied.
     /// </summary>
     public enum AsplRelation
     {

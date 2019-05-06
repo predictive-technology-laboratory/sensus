@@ -132,7 +132,11 @@ namespace Sensus.Adaptation
         /// Maximum number of observed <see cref="IDatum"/> readings to retain for state estimation. Can be
         /// <c>null</c> to place no limit on the number of retained readings; however, either
         /// <see cref="MaxObservedDataCount"/> or <see cref="MaxObservedDataAge"/> should be enabled, or
-        /// readings will be retained indefinitely, likely exhausting memory over time.
+        /// readings will be retained indefinitely, likely exhausting memory over time. This setting applies
+        /// to all <see cref="IDatum"/> regardless of type. As different types of <see cref="IDatum"/> have 
+        /// dramatically different data rates (e.g., <see cref="Probes.Movement.IAccelerometerDatum"/> versus
+        /// <see cref="Probes.Movement.IActivityDatum"/>), this should be set sufficiently high to avoid
+        /// data loss.
         /// </summary>
         /// <value>The max observed data count.</value>
         public int? MaxObservedDataCount { get; set; }
@@ -141,7 +145,11 @@ namespace Sensus.Adaptation
         /// Maximum age of observed <see cref="IDatum"/> readings to retain for state estimation. Can be
         /// <c>null</c> to place no limit on the age of retained readings; however, either
         /// <see cref="MaxObservedDataCount"/> or <see cref="MaxObservedDataAge"/> should be enabled, or
-        /// readings will be retained indefinitely, likely exhausting memory over time.
+        /// readings will be retained indefinitely, likely exhausting memory over time. This setting applies
+        /// to all <see cref="IDatum"/> regardless of type. As different types of <see cref="IDatum"/> have 
+        /// dramatically different data rates (e.g., <see cref="Probes.Movement.IAccelerometerDatum"/> versus
+        /// <see cref="Probes.Movement.IActivityDatum"/>), this should be set sufficiently high to avoid
+        /// data loss.
         /// </summary>
         /// <value>The max observed data age.</value>
         public TimeSpan? MaxObservedDataAge { get; set; }
@@ -319,12 +327,23 @@ namespace Sensus.Adaptation
                     data.RemoveAt(0);
                 }
 
-                // trim collection by age. oldest data are first, so we can stop as soon as
-                // we find a datum that doesn't exceed the age threshold.
-                TimeSpan maxAge = MaxObservedDataAge.GetValueOrDefault(TimeSpan.MaxValue);
-                while (data.Count > 0 && DateTimeOffset.UtcNow - data[0].Timestamp > maxAge)
+                // trim collection by age. we can't assume that the data are sorted, so 
+                // we'll need to scan the entire collection.
+                if (MaxObservedDataAge != null)
                 {
-                    data.RemoveAt(0);
+                    for (int i = 0; i < data.Count;)
+                    {
+                        TimeSpan currentAge = DateTimeOffset.UtcNow - data[i].Timestamp;
+
+                        if (currentAge > MaxObservedDataAge.Value)
+                        {
+                            data.RemoveAt(i);
+                        }
+                        else
+                        {
+                            ++i;
+                        }
+                    }
                 }
             }
         }
@@ -511,13 +530,16 @@ namespace Sensus.Adaptation
                     {
                         SensusServiceHelper.Logger.Log("Permitting transition from " + State + " to " + newState + ".", LoggingLevel.Normal, GetType());
 
-                        // record the state change within the protocol's local data store
-                        Protocol.WriteSensingAgentStateDatum(State, newState, StateDescription, cancellationToken);
+                        // hang on to previous state for reporting below, as we're about to set the state.
+                        SensingAgentState previousState = State;
 
                         // set new state
                         State = newState;
                         stateChanged = true;
                         _stateIsTransitioning = true;
+
+                        // record the state change within the protocol's local data store
+                        Protocol.WriteSensingAgentStateDatum(previousState, State, StateDescription, cancellationToken);
                     }
                     else
                     {

@@ -33,7 +33,7 @@ namespace Sensus.Adaptation
         /// <value>The statements.</value>
         public List<AsplStatement> Statements { get; set; }
 
-        private AsplStatement _currentlySatisfiedStatement;
+        private AsplStatement _statementToBeginControl;
         private AsplStatement _ongoingControlStatement;
 
         private readonly object _statementLocker = new object();
@@ -44,7 +44,22 @@ namespace Sensus.Adaptation
             {
                 lock (_statementLocker)
                 {
-                    return State + ":  " + (_ongoingControlStatement?.Id ?? "[no control]");
+                    string description = State + ":  ";
+
+                    if (_statementToBeginControl != null)
+                    {
+                        description += _statementToBeginControl.Id;
+                    }
+                    else if (_ongoingControlStatement != null)
+                    {
+                        description += _ongoingControlStatement.Id;
+                    }
+                    else
+                    {
+                        description += "[no control]";
+                    }
+
+                    return description;
                 }
             }
         }
@@ -68,14 +83,25 @@ namespace Sensus.Adaptation
             {
                 bool satisfied = false;
 
-                foreach (AsplStatement statement in Statements)
+                // if there is no ongoing control statement, then check all available statements.
+                if (_ongoingControlStatement == null)
                 {
-                    if (statement.Criterion.SatisfiedBy(typeData))
+                    foreach (AsplStatement statement in Statements)
                     {
-                        _currentlySatisfiedStatement = statement;
-                        satisfied = true;
-                        break;
+                        if (statement.Criterion.SatisfiedBy(typeData))
+                        {
+                            _statementToBeginControl = statement;
+                            satisfied = true;
+                            break;
+                        }
                     }
+                }
+                // otherwise, recheck the criterion of the ongoing control statement. we'll continue
+                // with control as long as the ongoing criterion continues to be satisfied. we will
+                // not switch to a new control statement until the current one is unsatisfied.
+                else
+                {
+                    satisfied = _ongoingControlStatement.Criterion.SatisfiedBy(typeData);
                 }
 
                 return satisfied;
@@ -96,11 +122,15 @@ namespace Sensus.Adaptation
         {
             lock (_statementLocker)
             {
-                if (_ongoingControlStatement == null && _currentlySatisfiedStatement != null)
+                if (_ongoingControlStatement == null && _statementToBeginControl != null)
                 {
-                    // hang on to the currently satisified statement. we need ensure that the 
+                    // hang on to the newly satisified statement. we need ensure that the 
                     // same statement used to begin control is also used to end it.
-                    _ongoingControlStatement = _currentlySatisfiedStatement;
+                    _ongoingControlStatement = _statementToBeginControl;
+
+                    // reset the newly satisfied statement. we won't set it again until 
+                    // control has ended and we've reset the ongoing control statement.
+                    _statementToBeginControl = null;
                 }
                 else
                 {

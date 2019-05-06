@@ -306,6 +306,7 @@ namespace Sensus
         private ConcurrentObservableCollection<Script> _scriptsToRun;
         private bool _updatingPushNotificationRegistrations;
         private bool _updatePushNotificationRegistrationsOnNextHealthTest;
+        private bool _saving;
 
         private readonly object _healthTestCallbackLocker = new object();
         private readonly object _shareFileLocker = new object();
@@ -675,27 +676,44 @@ namespace Sensus
             {
                 lock (_saveLocker)
                 {
+                    if (_saving)
+                    {
+                        _logger.Log("Already saving. Aborting save.", LoggingLevel.Normal, GetType());
+                        return;
+                    }
+                    else
+                    {
+                        _saving = true;
+                    }
+                }
+
+                try
+                {
                     _logger.Log("Serializing service helper.", LoggingLevel.Normal, GetType());
 
-                    try
-                    {
-                        string serviceHelperJSON = JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS);
+                    string serviceHelperJSON = JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS);
 
-                        // once upon a time, we made the poor decision to encode protocols as unicode (UTF-16). can't switch to UTF-8 now...
-                        byte[] encryptedBytes = SensusContext.Current.SymmetricEncryption.Encrypt(serviceHelperJSON, Encoding.Unicode);
-                        File.WriteAllBytes(SERIALIZATION_PATH, encryptedBytes);
+                    // once upon a time, we made the poor decision to encode protocols as unicode (UTF-16). can't switch to UTF-8 now...
+                    byte[] encryptedBytes = SensusContext.Current.SymmetricEncryption.Encrypt(serviceHelperJSON, Encoding.Unicode);
+                    File.WriteAllBytes(SERIALIZATION_PATH, encryptedBytes);
 
-                        _logger.Log("Serialized service helper with " + _registeredProtocols.Count + " protocols.", LoggingLevel.Normal, GetType());
-                    }
-                    catch (Exception ex)
-                    {
-                        string message = "Exception while serializing service helper:  " + ex;
-                        SensusException.Report(message, ex);
-                        _logger.Log(message, LoggingLevel.Normal, GetType());
-                    }
+                    _logger.Log("Serialized service helper with " + _registeredProtocols.Count + " protocols.", LoggingLevel.Normal, GetType());
 
                     // ensure that all logged messages make it into the file.
                     _logger.CommitMessageBuffer();
+                }
+                catch (Exception ex)
+                {
+                    string message = "Exception while serializing service helper:  " + ex;
+                    SensusException.Report(message, ex);
+                    _logger.Log(message, LoggingLevel.Normal, GetType());
+                }
+                finally
+                {
+                    lock (_saveLocker)
+                    {
+                        _saving = false;
+                    }
                 }
             });
         }

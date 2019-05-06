@@ -47,7 +47,7 @@
   "Sensus.Adaptation": "Sensus.Adaptation.yml",
   "Sensus.Adaptation.AsplAggregation": "Sensus.Adaptation.AsplAggregation.yml",
   "Sensus.Adaptation.AsplAggregation.#ctor": "Sensus.Adaptation.AsplAggregation.yml",
-  "Sensus.Adaptation.AsplAggregation.Horizon": "Sensus.Adaptation.AsplAggregation.yml",
+  "Sensus.Adaptation.AsplAggregation.MaxAge": "Sensus.Adaptation.AsplAggregation.yml",
   "Sensus.Adaptation.AsplAggregation.ToString": "Sensus.Adaptation.AsplAggregation.yml",
   "Sensus.Adaptation.AsplAggregation.Type": "Sensus.Adaptation.AsplAggregation.yml",
   "Sensus.Adaptation.AsplAggregationType": "Sensus.Adaptation.AsplAggregationType.yml",

@@ -17,8 +17,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Sensus.Exceptions;
 
 namespace Sensus.Adaptation
 {
@@ -77,6 +75,11 @@ namespace Sensus.Adaptation
         [JsonProperty("target")]
         public object Target { get; set; }
 
+        /// <summary>
+        /// Checks whether the current <see cref="AsplElement"/> is satisfied by a collection of <see cref="IDatum"/>.
+        /// </summary>
+        /// <returns><c>true</c>, if by was satisfieded, <c>false</c> otherwise.</returns>
+        /// <param name="data">Data.</param>
         public bool SatisfiedBy(List<IDatum> data)
         {
             bool satisfied = false;
@@ -85,11 +88,20 @@ namespace Sensus.Adaptation
             {
                 PropertyInfo property = data[0].GetType().GetProperty(PropertyName);
 
+                // property will be null if the specified property name does not exist in the data type. this
+                // can happen if the aspl policy was written incorrectly. every property name must be defined
+                // within the type. log the error and return.
+                if (property == null)
+                {
+                    SensusServiceHelper.Get().Logger.Log("No property named " + PropertyName + " found on type " + data[0].GetType() + ". Likely cause:  Invalid ASPL policy JSON.", LoggingLevel.Normal, GetType());
+                    return false;
+                }
+
                 // get the earliest timestamp we will consider during evaluation
                 DateTimeOffset? timestampCutoff = null;
-                if (Aggregation.Horizon != null)
+                if (Aggregation.MaxAge != null)
                 {
-                    timestampCutoff = DateTimeOffset.UtcNow - Aggregation.Horizon;
+                    timestampCutoff = DateTimeOffset.UtcNow - Aggregation.MaxAge;
                 }
 
                 // if we're only looking at the most recent observation, get the most recent 
