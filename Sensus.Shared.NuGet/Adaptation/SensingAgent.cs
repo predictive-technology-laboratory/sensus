@@ -277,32 +277,26 @@ namespace Sensus.Adaptation
                 UpdateObservedData(_typeData);
             }
 
-            // check control criterion and begin opportunistic control if warranted. note that we
-            // do not in principal need to check the state before doing this. if we disregard the
-            // state and the observed data meet the control criterion, then the state machine will
-            // engage to restrict transition to opportunistic control as appropriate. however, 
-            // letting allowing this sequence of events to unfold, only to arrive at a prohibited
-            // transition to opportunistic control is particularly costly given the context of the
-            // current method. the current method will be called upon arrival of each stored datum,
-            // the rate of which will be substantial (e.g., for accelerometry). control criterion
-            // checking can be costly if large amounts of data are processed. thus, it makes sense
-            // to do a bit of preemptive state checking and only proceed with criterion evaluation
-            // when the outcome might possibly be useful. there is certainly a race condition here,
-            // in that the current state might be idle causing us to proceed, but by the time we
-            // attempt to transition to opportunistic control another call might have already 
-            // transitioned the state. this is fine.
+            // run opportunistic observation and control if warranted
             ControlCompletionCheck opportunisticControlCompletionCheck = null;
-            if (State == SensingAgentState.Idle && ObservedDataMeetControlCriterion())
+            try
             {
-                try
+                if (await TransitionToNewStateAsync(SensingAgentState.OpportunisticObservation, cancellationToken))
                 {
-                    opportunisticControlCompletionCheck = await BeginControlAsync(SensingAgentState.OpportunisticControl, cancellationToken);
+                    if (ObservedDataMeetControlCriterion())
+                    {
+                        opportunisticControlCompletionCheck = await BeginControlAsync(SensingAgentState.OpportunisticControl, cancellationToken);
+                    }
+                    else
+                    {
+                        await TransitionToNewStateAsync(SensingAgentState.Idle, cancellationToken);
+                    }
                 }
-                catch (Exception ex)
-                {
-                    await EndControlAsync(cancellationToken);
-                    throw ex;
-                }
+            }
+            catch (Exception ex)
+            {
+                await ReturnToIdle(cancellationToken);
+                throw ex;
             }
 
             return opportunisticControlCompletionCheck;
@@ -356,7 +350,16 @@ namespace Sensus.Adaptation
         {
             lock (_typeData)
             {
-                return ObservedDataMeetControlCriterion(_typeData);
+                // catch any exceptions, as we don't know who will implement the method.
+                try
+                {
+                    return ObservedDataMeetControlCriterion(_typeData);
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Logger.Log("Exception while checking observed data against control criterion:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    return false;
+                }
             }
         }
 
@@ -407,19 +410,10 @@ namespace Sensus.Adaptation
                     // observe data for the specified duration. the current method is run as a scheduled callback, so we're guaranteed
                     // to have some amount of background time. but watch out for background time expiration on iOS by monitoring the
                     // passed cancellation token.
-                    try
-                    {
-                        SensusServiceHelper.Logger.Log("Sensing agent " + Id + " is observing data for " + ObservationDuration.Value + ".", LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Logger.Log("Sensing agent " + Id + " is observing data for " + ObservationDuration.Value + ".", LoggingLevel.Normal, GetType());
+                    await Task.Delay(ObservationDuration.Value, cancellationToken);
 
-                        await Task.Delay(ObservationDuration.Value, cancellationToken);
-                    }
-                    // catch cancellation exception (e.g., due to background time expiration), but let other exceptions percolate back 
-                    // up (they'll be caught and reported to app center).
-                    catch (OperationCanceledException ex)
-                    {
-                        SensusServiceHelper.Logger.Log("Observation cancelled:  " + ex.Message, LoggingLevel.Normal, GetType());
-                    }
-
+                    // check criterion and begin control if warranted
                     if (ObservedDataMeetControlCriterion())
                     {
                         controlCompletionCheck = await BeginControlAsync(SensingAgentState.ActiveControl, cancellationToken);
@@ -434,14 +428,19 @@ namespace Sensus.Adaptation
             }
             catch (Exception ex)
             {
-                // if anything goes wrong, ensure that we terminate sensing control and leave ourselves in the idle state.
-                await EndControlAsync(cancellationToken);
+                await ReturnToIdle(cancellationToken);
                 throw ex;
             }
         }
 
         private async Task<ControlCompletionCheck> BeginControlAsync(SensingAgentState controlState, CancellationToken cancellationToken)
         {
+            // this is a convenience method for beginning both active and opportunistic control. control state must be one of these two.
+            if (controlState != SensingAgentState.ActiveControl && controlState != SensingAgentState.OpportunisticControl)
+            {
+                throw new Exception("Unrecognized control state:  " + controlState);
+            }
+
             ControlCompletionCheck controlCompletionCheck = null;
 
             if (await TransitionToNewStateAsync(controlState, cancellationToken))
@@ -453,7 +452,7 @@ namespace Sensus.Adaptation
                     // protocol remains running. if the conrol criterion is not met, then also end control.
                     if (Protocol.State != ProtocolState.Running || !ObservedDataMeetControlCriterion())
                     {
-                        await EndControlAsync(controlCompletionCheckCancellationToken);
+                        await ReturnToIdle(controlCompletionCheckCancellationToken);
                     }
 
                     return State;
@@ -464,8 +463,12 @@ namespace Sensus.Adaptation
             return controlCompletionCheck;
         }
 
-        private async Task EndControlAsync(CancellationToken cancellationToken)
+        private async Task ReturnToIdle(CancellationToken cancellationToken)
         {
+            // all states are either (1) idle, (2) states that may transition directly to idle, or (3) states that 
+            // may transition to the ending control state, which may transition directly to idle. therefore, 
+            // attempting to transition to ending control followed by transitioning to idle will guarantee that we
+            // end up idle. see the state diagram.
             try
             {
                 await TransitionToNewStateAsync(SensingAgentState.EndingControl, cancellationToken);
@@ -503,9 +506,13 @@ namespace Sensus.Adaptation
 
                     if (State == SensingAgentState.Idle)
                     {
-                        transitionPermitted = newState == SensingAgentState.OpportunisticControl ||
-                                              newState == SensingAgentState.ActiveObservation ||
-                                              newState == SensingAgentState.EndingControl;
+                        transitionPermitted = newState == SensingAgentState.OpportunisticObservation ||
+                                              newState == SensingAgentState.ActiveObservation;
+                    }
+                    else if (State == SensingAgentState.OpportunisticObservation)
+                    {
+                        transitionPermitted = newState == SensingAgentState.Idle ||
+                                              newState == SensingAgentState.OpportunisticControl;
                     }
                     else if (State == SensingAgentState.OpportunisticControl)
                     {
@@ -513,9 +520,8 @@ namespace Sensus.Adaptation
                     }
                     else if (State == SensingAgentState.ActiveObservation)
                     {
-                        transitionPermitted = newState == SensingAgentState.ActiveControl ||
-                                              newState == SensingAgentState.Idle ||
-                                              newState == SensingAgentState.EndingControl;
+                        transitionPermitted = newState == SensingAgentState.Idle ||
+                                              newState == SensingAgentState.ActiveControl;
                     }
                     else if (State == SensingAgentState.ActiveControl)
                     {
@@ -553,7 +559,11 @@ namespace Sensus.Adaptation
                 // call the concrete control methods. catch exceptions as we don't know who is implementing them.
                 try
                 {
-                    if (State == SensingAgentState.OpportunisticControl)
+                    if (State == SensingAgentState.ActiveObservation)
+                    {
+                        await OnActiveObservationAsync(cancellationToken);
+                    }
+                    else if (State == SensingAgentState.OpportunisticControl)
                     {
                         await OnOpportunisticControlAsync(cancellationToken);
                     }
@@ -564,6 +574,10 @@ namespace Sensus.Adaptation
                     else if (State == SensingAgentState.EndingControl)
                     {
                         await OnEndingControlAsync(cancellationToken);
+                    }
+                    else if (State == SensingAgentState.Idle)
+                    {
+                        await OnIdleAsync(cancellationToken);
                     }
                 }
                 catch (Exception ex)
@@ -582,28 +596,39 @@ namespace Sensus.Adaptation
         }
 
         /// <summary>
-        /// Called when opportunistic control is starting.
+        /// Called when the <see cref="SensingAgent"/> is entering the <see cref="SensingAgentState.ActiveObservation"/> state.
+        /// </summary>
+        /// <returns>Task.</returns>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        protected abstract Task OnActiveObservationAsync(CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Called when the <see cref="SensingAgent"/> is entering the <see cref="SensingAgentState.OpportunisticControl"/> state.
         /// </summary>
         /// <returns>Task.</returns>
         /// <param name="cancellationToken">Cancellation token.</param>
         protected abstract Task OnOpportunisticControlAsync(CancellationToken cancellationToken);
 
         /// <summary>
-        /// Called when active control is starting.
+        /// Called when the <see cref="SensingAgent"/> is entering the <see cref="SensingAgentState.ActiveControl"/> state.
         /// </summary>
         /// <returns>Task.</returns>
         /// <param name="cancellationToken">Cancellation token.</param>
         protected abstract Task OnActiveControlAsync(CancellationToken cancellationToken);
 
         /// <summary>
-        /// Called when control is ending, e.g., due to control completion, an exception when
-        /// starting control, or other conditions that result in the end of control. The
-        /// concrete implementation of this method should not assume that the agent is in any
-        /// particular state when this method is called, as it can be called for several reasons.
+        /// Called when the <see cref="SensingAgent"/> is entering the <see cref="SensingAgentState.EndingControl"/> state.
         /// </summary>
-        /// <returns>The ending control async.</returns>
+        /// <returns>Task.</returns>
         /// <param name="cancellationToken">Cancellation token.</param>
         protected abstract Task OnEndingControlAsync(CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Called when the <see cref="SensingAgent"/> is entering the <see cref="SensingAgentState.Idle"/> state.
+        /// </summary>
+        /// <returns>Task.</returns>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        protected abstract Task OnIdleAsync(CancellationToken cancellationToken);
 
         private void FireStateChangedEvent()
         {

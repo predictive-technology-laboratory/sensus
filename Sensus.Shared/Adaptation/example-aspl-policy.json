@@ -2,6 +2,34 @@
   "id": "Example",
   "description": "A multi-statement ASPL policy focused on movement and proximity.",
   "action-interval": "00:00:10",
+  "begin-active-sensing-settings": [
+    {
+      "property-type": "Sensus.Probes.Probe",
+      "property-name": "Enabled",
+      "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+      "value": true
+    },
+    {
+      "property-type": "Sensus.Probes.ListeningProbe",
+      "property-name": "KeepDeviceAwake",
+      "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+      "value": true
+    },
+    {
+      "property-type": "Sensus.Probes.ListeningProbe",
+      "property-name": "MaxDataStoresPerSecond",
+      "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+      "value": 50
+    }
+  ],
+  "end-active-sensing-settings": [
+    {
+      "property-type": "Sensus.Probes.Probe",
+      "property-name": "Enabled",
+      "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+      "value": false
+    }
+  ],
   "observation-duration": "00:00:05",
   "control-completion-check-interval": "00:00:20",
   "observed-data": {
@@ -11,35 +39,7 @@
   "statements": [
     {
       "id": "Acceleration",
-      "description": "If any x-axis acceleration reading within the past 5 seconds is either greater than 2 or less than -2, then keep the device awake and increase the sampling rate.",
-      "begin-active-sensing-settings": [
-        {
-          "property-type": "Sensus.Probes.Probe",
-          "property-name": "Enabled",
-          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
-          "value": true
-        },
-        {
-          "property-type": "Sensus.Probes.ListeningProbe",
-          "property-name": "KeepDeviceAwake",
-          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
-          "value": true
-        },
-        {
-          "property-type": "Sensus.Probes.ListeningProbe",
-          "property-name": "MaxDataStoresPerSecond",
-          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
-          "value": 50
-        }
-      ],
-      "end-active-sensing-settings": [
-        {
-          "property-type": "Sensus.Probes.Probe",
-          "property-name": "Enabled",
-          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
-          "value": false
-        }
-      ],
+      "description": "If any x-axis acceleration reading within the past 5 seconds is either greater than 2 or less than -2, then enable continuous, high-rate accelerometry. Uses continuous, high-rate accelerometry during active observation.",
       "criterion": {
         "logic": "Disjunction",
         "elements": [
@@ -67,6 +67,12 @@
       },
       "begin-control-settings": [
         {
+          "property-type": "Sensus.Probes.Probe",
+          "property-name": "Enabled",
+          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+          "value": true
+        },
+        {
           "property-type": "Sensus.Probes.ListeningProbe",
           "property-name": "KeepDeviceAwake",
           "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
@@ -81,16 +87,10 @@
       ],
       "end-control-settings": [
         {
-          "property-type": "Sensus.Probes.ListeningProbe",
-          "property-name": "KeepDeviceAwake",
+          "property-type": "Sensus.Probes.Probe",
+          "property-name": "Enabled",
           "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
           "value": false
-        },
-        {
-          "property-type": "Sensus.Probes.ListeningProbe",
-          "property-name": "MaxDataStoresPerSecond",
-          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
-          "value": 5
         }
       ]
     },

@@ -27,6 +27,18 @@ namespace Sensus.Adaptation
     public class AsplSensingAgent : SensingAgent
     {
         /// <summary>
+        /// <see cref="ProtocolSetting"/>s to apply when active observation begins.
+        /// </summary>
+        /// <value>The begin active observation settings.</value>
+        public List<ProtocolSetting> BeginActiveObservationSettings { get; set; }
+
+        /// <summary>
+        /// <see cref="ProtocolSetting"/>s to apply when active observation ends.
+        /// </summary>
+        /// <value>The end active observation settings.</value>
+        public List<ProtocolSetting> EndActiveObservationSettings { get; set; }
+
+        /// <summary>
         /// The <see cref="AsplStatement"/>s to be checked against objective <see cref="IDatum"/> readings to
         /// determine whether sensing control is warranted.
         /// </summary>
@@ -35,34 +47,9 @@ namespace Sensus.Adaptation
 
         private AsplStatement _statementToBeginControl;
         private AsplStatement _ongoingControlStatement;
+        private string _stateDescription;
 
-        private readonly object _statementLocker = new object();
-
-        public override string StateDescription
-        {
-            get
-            {
-                lock (_statementLocker)
-                {
-                    string description = State + ":  ";
-
-                    if (_statementToBeginControl != null)
-                    {
-                        description += _statementToBeginControl.Id;
-                    }
-                    else if (_ongoingControlStatement != null)
-                    {
-                        description += _ongoingControlStatement.Id;
-                    }
-                    else
-                    {
-                        description += "[no control]";
-                    }
-
-                    return description;
-                }
-            }
-        }
+        public override string StateDescription => _stateDescription;
 
         public AsplSensingAgent()
             : base("ASPL", "ASPL-Defined Agent", TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(5))
@@ -72,6 +59,8 @@ namespace Sensus.Adaptation
 
         public override async Task SetPolicyAsync(JObject policy)
         {
+            BeginActiveObservationSettings = (policy["begin-active-observation-settings"] as JArray).Select(setting => setting.ToObject<ProtocolSetting>()).ToList();
+            EndActiveObservationSettings = (policy["end-active-observation-settings"] as JArray).Select(setting => setting.ToObject<ProtocolSetting>()).ToList();
             Statements = (policy["statements"] as JArray).Select(statement => statement.ToObject<AsplStatement>()).ToList();
 
             await base.SetPolicyAsync(policy);
@@ -79,32 +68,38 @@ namespace Sensus.Adaptation
 
         protected override bool ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>> typeData)
         {
-            lock (_statementLocker)
-            {
-                bool satisfied = false;
+            bool satisfied = false;
 
-                // if there is no ongoing control statement, then check all available statements.
-                if (_ongoingControlStatement == null)
+            // if there is no ongoing control statement, then check all available statements.
+            if (_ongoingControlStatement == null)
+            {
+                foreach (AsplStatement statement in Statements)
                 {
-                    foreach (AsplStatement statement in Statements)
+                    if (statement.Criterion.SatisfiedBy(typeData))
                     {
-                        if (statement.Criterion.SatisfiedBy(typeData))
-                        {
-                            _statementToBeginControl = statement;
-                            satisfied = true;
-                            break;
-                        }
+                        _statementToBeginControl = statement;
+                        satisfied = true;
+                        _stateDescription = State + ":  " + _statementToBeginControl.Id;
+                        break;
                     }
                 }
-                // otherwise, recheck the criterion of the ongoing control statement. we'll continue
-                // with control as long as the ongoing criterion continues to be satisfied. we will
-                // not switch to a new control statement until the current one is unsatisfied.
-                else
-                {
-                    satisfied = _ongoingControlStatement.Criterion.SatisfiedBy(typeData);
-                }
+            }
+            // otherwise, recheck the criterion of the ongoing control statement. we'll continue
+            // with control as long as the ongoing criterion continues to be satisfied. we will
+            // not switch to a new control statement until the current one is unsatisfied.
+            else
+            {
+                satisfied = _ongoingControlStatement.Criterion.SatisfiedBy(typeData);
+            }
 
-                return satisfied;
+            return satisfied;
+        }
+
+        protected override async Task OnActiveObservationAsync(CancellationToken cancellationToken)
+        {
+            if (BeginActiveObservationSettings != null)
+            {
+                await (Protocol as Protocol).ApplySettingsAsync(BeginActiveObservationSettings, cancellationToken);
             }
         }
 
@@ -120,23 +115,14 @@ namespace Sensus.Adaptation
 
         private async Task OnControlAsync(CancellationToken cancellationToken)
         {
-            lock (_statementLocker)
-            {
-                if (_ongoingControlStatement == null && _statementToBeginControl != null)
-                {
-                    // hang on to the newly satisified statement. we need ensure that the 
-                    // same statement used to begin control is also used to end it.
-                    _ongoingControlStatement = _statementToBeginControl;
+            // hang on to the newly satisified statement. we need ensure that the 
+            // same statement used to begin control is also used to end it.
+            _ongoingControlStatement = _statementToBeginControl;
+            _stateDescription = State + ":  " + _ongoingControlStatement.Id;
 
-                    // reset the newly satisfied statement. we won't set it again until 
-                    // control has ended and we've reset the ongoing control statement.
-                    _statementToBeginControl = null;
-                }
-                else
-                {
-                    return;
-                }
-            }
+            // reset the newly satisfied statement. we won't set it again until 
+            // control has ended and we've reset the ongoing control statement.
+            _statementToBeginControl = null;
 
             SensusServiceHelper.Logger.Log("Applying start-control settings for statement:  " + _ongoingControlStatement.Id, LoggingLevel.Normal, GetType());
             await (Protocol as Protocol).ApplySettingsAsync(_ongoingControlStatement.BeginControlSettings, cancellationToken);
@@ -146,7 +132,7 @@ namespace Sensus.Adaptation
         {
             AsplStatement ongoingControlStatement;
 
-            lock (_statementLocker)
+            lock (_stateLocker)
             {
                 if (_ongoingControlStatement == null)
                 {
@@ -161,6 +147,11 @@ namespace Sensus.Adaptation
 
             SensusServiceHelper.Logger.Log("Applying end-control settings for statement:  " + ongoingControlStatement.Id, LoggingLevel.Normal, GetType());
             await (Protocol as Protocol).ApplySettingsAsync(ongoingControlStatement.EndControlSettings, cancellationToken);
+        }
+
+        protected override Task OnIdleAsync(CancellationToken cancellationToken)
+        {
+
         }
     }
 }

@@ -44,7 +44,7 @@ namespace Sensus.Adaptation
         public AsplCriterion Criterion { get; set; }
 
         /// <summary>
-        /// <see cref="ProtocolSetting"/>s to apply when control starts.
+        /// <see cref="ProtocolSetting"/>s to apply when control begins.
         /// </summary>
         /// <value>The begin control settings.</value>
         [JsonProperty("begin-control-settings")]

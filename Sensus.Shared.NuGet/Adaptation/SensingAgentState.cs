@@ -22,7 +22,15 @@ namespace Sensus.Adaptation
         Idle,
 
         /// <summary>
-        /// The <see cref="SensingAgent"/> is controlling sensing in response to opportunistic observation.
+        /// The <see cref="SensingAgent"/> is observing data opportunistically through normal
+        /// operation of the <see cref="IProtocol"/> when the <see cref="SensingAgent"/> is 
+        /// in the <see cref="Idle"/> state.
+        /// </summary>
+        OpportunisticObservation,
+
+        /// <summary>
+        /// The <see cref="SensingAgent"/> is controlling sensing in response to data observed
+        /// during <see cref="OpportunisticObservation"/>.
         /// </summary>
         OpportunisticControl,
 
