@@ -2841,7 +2841,7 @@ namespace Sensus
 
                 if (_agentIntervalActionScheduledCallback != null)
                 {
-                    // cancel interval action callback ssociated with the sensing agent, if there is one.
+                    // cancel interval action callback associated with the sensing agent, if there is one.
                     await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_agentIntervalActionScheduledCallback);
                     _agentIntervalActionScheduledCallback = null;
 
