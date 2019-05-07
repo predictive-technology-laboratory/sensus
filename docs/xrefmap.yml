@@ -442,66 +442,30 @@ references:
   commentId: Overload:ExampleSensingAgent.ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion
   fullName: ExampleSensingAgent.ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion
   nameWithType: ExampleAccelerationSensingAgent.ObservedDataMeetControlCriterion
-- uid: ExampleSensingAgent.ExampleAccelerationSensingAgent.OnActiveControlAsync(System.Threading.CancellationToken)
-  name: OnActiveControlAsync(CancellationToken)
-  href: api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html#ExampleSensingAgent_ExampleAccelerationSensingAgent_OnActiveControlAsync_System_Threading_CancellationToken_
-  commentId: M:ExampleSensingAgent.ExampleAccelerationSensingAgent.OnActiveControlAsync(System.Threading.CancellationToken)
-  fullName: ExampleSensingAgent.ExampleAccelerationSensingAgent.OnActiveControlAsync(System.Threading.CancellationToken)
-  nameWithType: ExampleAccelerationSensingAgent.OnActiveControlAsync(CancellationToken)
-- uid: ExampleSensingAgent.ExampleAccelerationSensingAgent.OnActiveControlAsync*
-  name: OnActiveControlAsync
-  href: api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html#ExampleSensingAgent_ExampleAccelerationSensingAgent_OnActiveControlAsync_
-  commentId: Overload:ExampleSensingAgent.ExampleAccelerationSensingAgent.OnActiveControlAsync
-  fullName: ExampleSensingAgent.ExampleAccelerationSensingAgent.OnActiveControlAsync
-  nameWithType: ExampleAccelerationSensingAgent.OnActiveControlAsync
-- uid: ExampleSensingAgent.ExampleAccelerationSensingAgent.OnEndingControlAsync(System.Threading.CancellationToken)
-  name: OnEndingControlAsync(CancellationToken)
-  href: api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html#ExampleSensingAgent_ExampleAccelerationSensingAgent_OnEndingControlAsync_System_Threading_CancellationToken_
-  commentId: M:ExampleSensingAgent.ExampleAccelerationSensingAgent.OnEndingControlAsync(System.Threading.CancellationToken)
-  fullName: ExampleSensingAgent.ExampleAccelerationSensingAgent.OnEndingControlAsync(System.Threading.CancellationToken)
-  nameWithType: ExampleAccelerationSensingAgent.OnEndingControlAsync(CancellationToken)
-- uid: ExampleSensingAgent.ExampleAccelerationSensingAgent.OnEndingControlAsync*
-  name: OnEndingControlAsync
-  href: api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html#ExampleSensingAgent_ExampleAccelerationSensingAgent_OnEndingControlAsync_
-  commentId: Overload:ExampleSensingAgent.ExampleAccelerationSensingAgent.OnEndingControlAsync
-  fullName: ExampleSensingAgent.ExampleAccelerationSensingAgent.OnEndingControlAsync
-  nameWithType: ExampleAccelerationSensingAgent.OnEndingControlAsync
-- uid: ExampleSensingAgent.ExampleAccelerationSensingAgent.OnOpportunisticControlAsync(System.Threading.CancellationToken)
-  name: OnOpportunisticControlAsync(CancellationToken)
-  href: api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html#ExampleSensingAgent_ExampleAccelerationSensingAgent_OnOpportunisticControlAsync_System_Threading_CancellationToken_
-  commentId: M:ExampleSensingAgent.ExampleAccelerationSensingAgent.OnOpportunisticControlAsync(System.Threading.CancellationToken)
-  fullName: ExampleSensingAgent.ExampleAccelerationSensingAgent.OnOpportunisticControlAsync(System.Threading.CancellationToken)
-  nameWithType: ExampleAccelerationSensingAgent.OnOpportunisticControlAsync(CancellationToken)
-- uid: ExampleSensingAgent.ExampleAccelerationSensingAgent.OnOpportunisticControlAsync*
-  name: OnOpportunisticControlAsync
-  href: api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html#ExampleSensingAgent_ExampleAccelerationSensingAgent_OnOpportunisticControlAsync_
-  commentId: Overload:ExampleSensingAgent.ExampleAccelerationSensingAgent.OnOpportunisticControlAsync
-  fullName: ExampleSensingAgent.ExampleAccelerationSensingAgent.OnOpportunisticControlAsync
-  nameWithType: ExampleAccelerationSensingAgent.OnOpportunisticControlAsync
-- uid: ExampleSensingAgent.ExampleAccelerationSensingAgent.SetPolicyAsync(Newtonsoft.Json.Linq.JObject)
-  name: SetPolicyAsync(JObject)
-  href: api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html#ExampleSensingAgent_ExampleAccelerationSensingAgent_SetPolicyAsync_Newtonsoft_Json_Linq_JObject_
-  commentId: M:ExampleSensingAgent.ExampleAccelerationSensingAgent.SetPolicyAsync(Newtonsoft.Json.Linq.JObject)
-  fullName: ExampleSensingAgent.ExampleAccelerationSensingAgent.SetPolicyAsync(Newtonsoft.Json.Linq.JObject)
-  nameWithType: ExampleAccelerationSensingAgent.SetPolicyAsync(JObject)
-- uid: ExampleSensingAgent.ExampleAccelerationSensingAgent.SetPolicyAsync*
-  name: SetPolicyAsync
-  href: api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html#ExampleSensingAgent_ExampleAccelerationSensingAgent_SetPolicyAsync_
-  commentId: Overload:ExampleSensingAgent.ExampleAccelerationSensingAgent.SetPolicyAsync
-  fullName: ExampleSensingAgent.ExampleAccelerationSensingAgent.SetPolicyAsync
-  nameWithType: ExampleAccelerationSensingAgent.SetPolicyAsync
-- uid: ExampleSensingAgent.ExampleAccelerationSensingAgent.StateDescription
-  name: StateDescription
-  href: api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html#ExampleSensingAgent_ExampleAccelerationSensingAgent_StateDescription
-  commentId: P:ExampleSensingAgent.ExampleAccelerationSensingAgent.StateDescription
-  fullName: ExampleSensingAgent.ExampleAccelerationSensingAgent.StateDescription
-  nameWithType: ExampleAccelerationSensingAgent.StateDescription
-- uid: ExampleSensingAgent.ExampleAccelerationSensingAgent.StateDescription*
-  name: StateDescription
-  href: api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html#ExampleSensingAgent_ExampleAccelerationSensingAgent_StateDescription_
-  commentId: Overload:ExampleSensingAgent.ExampleAccelerationSensingAgent.StateDescription
-  fullName: ExampleSensingAgent.ExampleAccelerationSensingAgent.StateDescription
-  nameWithType: ExampleAccelerationSensingAgent.StateDescription
+- uid: ExampleSensingAgent.ExampleAccelerationSensingAgent.OnStateChangedAsync(Sensus.Adaptation.SensingAgentState,Sensus.Adaptation.SensingAgentState,System.Threading.CancellationToken)
+  name: OnStateChangedAsync(SensingAgentState, SensingAgentState, CancellationToken)
+  href: api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html#ExampleSensingAgent_ExampleAccelerationSensingAgent_OnStateChangedAsync_Sensus_Adaptation_SensingAgentState_Sensus_Adaptation_SensingAgentState_System_Threading_CancellationToken_
+  commentId: M:ExampleSensingAgent.ExampleAccelerationSensingAgent.OnStateChangedAsync(Sensus.Adaptation.SensingAgentState,Sensus.Adaptation.SensingAgentState,System.Threading.CancellationToken)
+  fullName: ExampleSensingAgent.ExampleAccelerationSensingAgent.OnStateChangedAsync(Sensus.Adaptation.SensingAgentState, Sensus.Adaptation.SensingAgentState, System.Threading.CancellationToken)
+  nameWithType: ExampleAccelerationSensingAgent.OnStateChangedAsync(SensingAgentState, SensingAgentState, CancellationToken)
+- uid: ExampleSensingAgent.ExampleAccelerationSensingAgent.OnStateChangedAsync*
+  name: OnStateChangedAsync
+  href: api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html#ExampleSensingAgent_ExampleAccelerationSensingAgent_OnStateChangedAsync_
+  commentId: Overload:ExampleSensingAgent.ExampleAccelerationSensingAgent.OnStateChangedAsync
+  fullName: ExampleSensingAgent.ExampleAccelerationSensingAgent.OnStateChangedAsync
+  nameWithType: ExampleAccelerationSensingAgent.OnStateChangedAsync
+- uid: ExampleSensingAgent.ExampleAccelerationSensingAgent.ProtectedSetPolicyAsync(Newtonsoft.Json.Linq.JObject)
+  name: ProtectedSetPolicyAsync(JObject)
+  href: api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html#ExampleSensingAgent_ExampleAccelerationSensingAgent_ProtectedSetPolicyAsync_Newtonsoft_Json_Linq_JObject_
+  commentId: M:ExampleSensingAgent.ExampleAccelerationSensingAgent.ProtectedSetPolicyAsync(Newtonsoft.Json.Linq.JObject)
+  fullName: ExampleSensingAgent.ExampleAccelerationSensingAgent.ProtectedSetPolicyAsync(Newtonsoft.Json.Linq.JObject)
+  nameWithType: ExampleAccelerationSensingAgent.ProtectedSetPolicyAsync(JObject)
+- uid: ExampleSensingAgent.ExampleAccelerationSensingAgent.ProtectedSetPolicyAsync*
+  name: ProtectedSetPolicyAsync
+  href: api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html#ExampleSensingAgent_ExampleAccelerationSensingAgent_ProtectedSetPolicyAsync_
+  commentId: Overload:ExampleSensingAgent.ExampleAccelerationSensingAgent.ProtectedSetPolicyAsync
+  fullName: ExampleSensingAgent.ExampleAccelerationSensingAgent.ProtectedSetPolicyAsync
+  nameWithType: ExampleAccelerationSensingAgent.ProtectedSetPolicyAsync
 - uid: github
   name: Configuring GitHub
   href: articles/github.html
@@ -877,6 +841,30 @@ references:
   commentId: Overload:Sensus.Adaptation.AsplSensingAgent.#ctor
   fullName: Sensus.Adaptation.AsplSensingAgent.AsplSensingAgent
   nameWithType: AsplSensingAgent.AsplSensingAgent
+- uid: Sensus.Adaptation.AsplSensingAgent.BeginActiveObservationSettings
+  name: BeginActiveObservationSettings
+  href: api/Sensus.Adaptation.AsplSensingAgent.html#Sensus_Adaptation_AsplSensingAgent_BeginActiveObservationSettings
+  commentId: P:Sensus.Adaptation.AsplSensingAgent.BeginActiveObservationSettings
+  fullName: Sensus.Adaptation.AsplSensingAgent.BeginActiveObservationSettings
+  nameWithType: AsplSensingAgent.BeginActiveObservationSettings
+- uid: Sensus.Adaptation.AsplSensingAgent.BeginActiveObservationSettings*
+  name: BeginActiveObservationSettings
+  href: api/Sensus.Adaptation.AsplSensingAgent.html#Sensus_Adaptation_AsplSensingAgent_BeginActiveObservationSettings_
+  commentId: Overload:Sensus.Adaptation.AsplSensingAgent.BeginActiveObservationSettings
+  fullName: Sensus.Adaptation.AsplSensingAgent.BeginActiveObservationSettings
+  nameWithType: AsplSensingAgent.BeginActiveObservationSettings
+- uid: Sensus.Adaptation.AsplSensingAgent.EndActiveObservationSettings
+  name: EndActiveObservationSettings
+  href: api/Sensus.Adaptation.AsplSensingAgent.html#Sensus_Adaptation_AsplSensingAgent_EndActiveObservationSettings
+  commentId: P:Sensus.Adaptation.AsplSensingAgent.EndActiveObservationSettings
+  fullName: Sensus.Adaptation.AsplSensingAgent.EndActiveObservationSettings
+  nameWithType: AsplSensingAgent.EndActiveObservationSettings
+- uid: Sensus.Adaptation.AsplSensingAgent.EndActiveObservationSettings*
+  name: EndActiveObservationSettings
+  href: api/Sensus.Adaptation.AsplSensingAgent.html#Sensus_Adaptation_AsplSensingAgent_EndActiveObservationSettings_
+  commentId: Overload:Sensus.Adaptation.AsplSensingAgent.EndActiveObservationSettings
+  fullName: Sensus.Adaptation.AsplSensingAgent.EndActiveObservationSettings
+  nameWithType: AsplSensingAgent.EndActiveObservationSettings
 - uid: Sensus.Adaptation.AsplSensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}})
   name: ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>>)
   href: api/Sensus.Adaptation.AsplSensingAgent.html#Sensus_Adaptation_AsplSensingAgent_ObservedDataMeetControlCriterion_System_Collections_Generic_Dictionary_System_Type_System_Collections_Generic_List_Sensus_IDatum___
@@ -892,66 +880,30 @@ references:
   commentId: Overload:Sensus.Adaptation.AsplSensingAgent.ObservedDataMeetControlCriterion
   fullName: Sensus.Adaptation.AsplSensingAgent.ObservedDataMeetControlCriterion
   nameWithType: AsplSensingAgent.ObservedDataMeetControlCriterion
-- uid: Sensus.Adaptation.AsplSensingAgent.OnActiveControlAsync(System.Threading.CancellationToken)
-  name: OnActiveControlAsync(CancellationToken)
-  href: api/Sensus.Adaptation.AsplSensingAgent.html#Sensus_Adaptation_AsplSensingAgent_OnActiveControlAsync_System_Threading_CancellationToken_
-  commentId: M:Sensus.Adaptation.AsplSensingAgent.OnActiveControlAsync(System.Threading.CancellationToken)
-  fullName: Sensus.Adaptation.AsplSensingAgent.OnActiveControlAsync(System.Threading.CancellationToken)
-  nameWithType: AsplSensingAgent.OnActiveControlAsync(CancellationToken)
-- uid: Sensus.Adaptation.AsplSensingAgent.OnActiveControlAsync*
-  name: OnActiveControlAsync
-  href: api/Sensus.Adaptation.AsplSensingAgent.html#Sensus_Adaptation_AsplSensingAgent_OnActiveControlAsync_
-  commentId: Overload:Sensus.Adaptation.AsplSensingAgent.OnActiveControlAsync
-  fullName: Sensus.Adaptation.AsplSensingAgent.OnActiveControlAsync
-  nameWithType: AsplSensingAgent.OnActiveControlAsync
-- uid: Sensus.Adaptation.AsplSensingAgent.OnEndingControlAsync(System.Threading.CancellationToken)
-  name: OnEndingControlAsync(CancellationToken)
-  href: api/Sensus.Adaptation.AsplSensingAgent.html#Sensus_Adaptation_AsplSensingAgent_OnEndingControlAsync_System_Threading_CancellationToken_
-  commentId: M:Sensus.Adaptation.AsplSensingAgent.OnEndingControlAsync(System.Threading.CancellationToken)
-  fullName: Sensus.Adaptation.AsplSensingAgent.OnEndingControlAsync(System.Threading.CancellationToken)
-  nameWithType: AsplSensingAgent.OnEndingControlAsync(CancellationToken)
-- uid: Sensus.Adaptation.AsplSensingAgent.OnEndingControlAsync*
-  name: OnEndingControlAsync
-  href: api/Sensus.Adaptation.AsplSensingAgent.html#Sensus_Adaptation_AsplSensingAgent_OnEndingControlAsync_
-  commentId: Overload:Sensus.Adaptation.AsplSensingAgent.OnEndingControlAsync
-  fullName: Sensus.Adaptation.AsplSensingAgent.OnEndingControlAsync
-  nameWithType: AsplSensingAgent.OnEndingControlAsync
-- uid: Sensus.Adaptation.AsplSensingAgent.OnOpportunisticControlAsync(System.Threading.CancellationToken)
-  name: OnOpportunisticControlAsync(CancellationToken)
-  href: api/Sensus.Adaptation.AsplSensingAgent.html#Sensus_Adaptation_AsplSensingAgent_OnOpportunisticControlAsync_System_Threading_CancellationToken_
-  commentId: M:Sensus.Adaptation.AsplSensingAgent.OnOpportunisticControlAsync(System.Threading.CancellationToken)
-  fullName: Sensus.Adaptation.AsplSensingAgent.OnOpportunisticControlAsync(System.Threading.CancellationToken)
-  nameWithType: AsplSensingAgent.OnOpportunisticControlAsync(CancellationToken)
-- uid: Sensus.Adaptation.AsplSensingAgent.OnOpportunisticControlAsync*
-  name: OnOpportunisticControlAsync
-  href: api/Sensus.Adaptation.AsplSensingAgent.html#Sensus_Adaptation_AsplSensingAgent_OnOpportunisticControlAsync_
-  commentId: Overload:Sensus.Adaptation.AsplSensingAgent.OnOpportunisticControlAsync
-  fullName: Sensus.Adaptation.AsplSensingAgent.OnOpportunisticControlAsync
-  nameWithType: AsplSensingAgent.OnOpportunisticControlAsync
-- uid: Sensus.Adaptation.AsplSensingAgent.SetPolicyAsync(Newtonsoft.Json.Linq.JObject)
-  name: SetPolicyAsync(JObject)
-  href: api/Sensus.Adaptation.AsplSensingAgent.html#Sensus_Adaptation_AsplSensingAgent_SetPolicyAsync_Newtonsoft_Json_Linq_JObject_
-  commentId: M:Sensus.Adaptation.AsplSensingAgent.SetPolicyAsync(Newtonsoft.Json.Linq.JObject)
-  fullName: Sensus.Adaptation.AsplSensingAgent.SetPolicyAsync(Newtonsoft.Json.Linq.JObject)
-  nameWithType: AsplSensingAgent.SetPolicyAsync(JObject)
-- uid: Sensus.Adaptation.AsplSensingAgent.SetPolicyAsync*
-  name: SetPolicyAsync
-  href: api/Sensus.Adaptation.AsplSensingAgent.html#Sensus_Adaptation_AsplSensingAgent_SetPolicyAsync_
-  commentId: Overload:Sensus.Adaptation.AsplSensingAgent.SetPolicyAsync
-  fullName: Sensus.Adaptation.AsplSensingAgent.SetPolicyAsync
-  nameWithType: AsplSensingAgent.SetPolicyAsync
-- uid: Sensus.Adaptation.AsplSensingAgent.StateDescription
-  name: StateDescription
-  href: api/Sensus.Adaptation.AsplSensingAgent.html#Sensus_Adaptation_AsplSensingAgent_StateDescription
-  commentId: P:Sensus.Adaptation.AsplSensingAgent.StateDescription
-  fullName: Sensus.Adaptation.AsplSensingAgent.StateDescription
-  nameWithType: AsplSensingAgent.StateDescription
-- uid: Sensus.Adaptation.AsplSensingAgent.StateDescription*
-  name: StateDescription
-  href: api/Sensus.Adaptation.AsplSensingAgent.html#Sensus_Adaptation_AsplSensingAgent_StateDescription_
-  commentId: Overload:Sensus.Adaptation.AsplSensingAgent.StateDescription
-  fullName: Sensus.Adaptation.AsplSensingAgent.StateDescription
-  nameWithType: AsplSensingAgent.StateDescription
+- uid: Sensus.Adaptation.AsplSensingAgent.OnStateChangedAsync(Sensus.Adaptation.SensingAgentState,Sensus.Adaptation.SensingAgentState,System.Threading.CancellationToken)
+  name: OnStateChangedAsync(SensingAgentState, SensingAgentState, CancellationToken)
+  href: api/Sensus.Adaptation.AsplSensingAgent.html#Sensus_Adaptation_AsplSensingAgent_OnStateChangedAsync_Sensus_Adaptation_SensingAgentState_Sensus_Adaptation_SensingAgentState_System_Threading_CancellationToken_
+  commentId: M:Sensus.Adaptation.AsplSensingAgent.OnStateChangedAsync(Sensus.Adaptation.SensingAgentState,Sensus.Adaptation.SensingAgentState,System.Threading.CancellationToken)
+  fullName: Sensus.Adaptation.AsplSensingAgent.OnStateChangedAsync(Sensus.Adaptation.SensingAgentState, Sensus.Adaptation.SensingAgentState, System.Threading.CancellationToken)
+  nameWithType: AsplSensingAgent.OnStateChangedAsync(SensingAgentState, SensingAgentState, CancellationToken)
+- uid: Sensus.Adaptation.AsplSensingAgent.OnStateChangedAsync*
+  name: OnStateChangedAsync
+  href: api/Sensus.Adaptation.AsplSensingAgent.html#Sensus_Adaptation_AsplSensingAgent_OnStateChangedAsync_
+  commentId: Overload:Sensus.Adaptation.AsplSensingAgent.OnStateChangedAsync
+  fullName: Sensus.Adaptation.AsplSensingAgent.OnStateChangedAsync
+  nameWithType: AsplSensingAgent.OnStateChangedAsync
+- uid: Sensus.Adaptation.AsplSensingAgent.ProtectedSetPolicyAsync(Newtonsoft.Json.Linq.JObject)
+  name: ProtectedSetPolicyAsync(JObject)
+  href: api/Sensus.Adaptation.AsplSensingAgent.html#Sensus_Adaptation_AsplSensingAgent_ProtectedSetPolicyAsync_Newtonsoft_Json_Linq_JObject_
+  commentId: M:Sensus.Adaptation.AsplSensingAgent.ProtectedSetPolicyAsync(Newtonsoft.Json.Linq.JObject)
+  fullName: Sensus.Adaptation.AsplSensingAgent.ProtectedSetPolicyAsync(Newtonsoft.Json.Linq.JObject)
+  nameWithType: AsplSensingAgent.ProtectedSetPolicyAsync(JObject)
+- uid: Sensus.Adaptation.AsplSensingAgent.ProtectedSetPolicyAsync*
+  name: ProtectedSetPolicyAsync
+  href: api/Sensus.Adaptation.AsplSensingAgent.html#Sensus_Adaptation_AsplSensingAgent_ProtectedSetPolicyAsync_
+  commentId: Overload:Sensus.Adaptation.AsplSensingAgent.ProtectedSetPolicyAsync
+  fullName: Sensus.Adaptation.AsplSensingAgent.ProtectedSetPolicyAsync
+  nameWithType: AsplSensingAgent.ProtectedSetPolicyAsync
 - uid: Sensus.Adaptation.AsplSensingAgent.Statements
   name: Statements
   href: api/Sensus.Adaptation.AsplSensingAgent.html#Sensus_Adaptation_AsplSensingAgent_Statements
@@ -1042,6 +994,36 @@ references:
   commentId: Overload:Sensus.Adaptation.AsplStatement.Id
   fullName: Sensus.Adaptation.AsplStatement.Id
   nameWithType: AsplStatement.Id
+- uid: Sensus.Adaptation.ISensingAgentStateDatum
+  name: ISensingAgentStateDatum
+  href: api/Sensus.Adaptation.ISensingAgentStateDatum.html
+  commentId: T:Sensus.Adaptation.ISensingAgentStateDatum
+  fullName: Sensus.Adaptation.ISensingAgentStateDatum
+  nameWithType: ISensingAgentStateDatum
+- uid: Sensus.Adaptation.ISensingAgentStateDatum.CurrentState
+  name: CurrentState
+  href: api/Sensus.Adaptation.ISensingAgentStateDatum.html#Sensus_Adaptation_ISensingAgentStateDatum_CurrentState
+  commentId: P:Sensus.Adaptation.ISensingAgentStateDatum.CurrentState
+  fullName: Sensus.Adaptation.ISensingAgentStateDatum.CurrentState
+  nameWithType: ISensingAgentStateDatum.CurrentState
+- uid: Sensus.Adaptation.ISensingAgentStateDatum.CurrentState*
+  name: CurrentState
+  href: api/Sensus.Adaptation.ISensingAgentStateDatum.html#Sensus_Adaptation_ISensingAgentStateDatum_CurrentState_
+  commentId: Overload:Sensus.Adaptation.ISensingAgentStateDatum.CurrentState
+  fullName: Sensus.Adaptation.ISensingAgentStateDatum.CurrentState
+  nameWithType: ISensingAgentStateDatum.CurrentState
+- uid: Sensus.Adaptation.ISensingAgentStateDatum.PreviousState
+  name: PreviousState
+  href: api/Sensus.Adaptation.ISensingAgentStateDatum.html#Sensus_Adaptation_ISensingAgentStateDatum_PreviousState
+  commentId: P:Sensus.Adaptation.ISensingAgentStateDatum.PreviousState
+  fullName: Sensus.Adaptation.ISensingAgentStateDatum.PreviousState
+  nameWithType: ISensingAgentStateDatum.PreviousState
+- uid: Sensus.Adaptation.ISensingAgentStateDatum.PreviousState*
+  name: PreviousState
+  href: api/Sensus.Adaptation.ISensingAgentStateDatum.html#Sensus_Adaptation_ISensingAgentStateDatum_PreviousState_
+  commentId: Overload:Sensus.Adaptation.ISensingAgentStateDatum.PreviousState
+  fullName: Sensus.Adaptation.ISensingAgentStateDatum.PreviousState
+  nameWithType: ISensingAgentStateDatum.PreviousState
 - uid: Sensus.Adaptation.SensingAgent
   name: SensingAgent
   href: api/Sensus.Adaptation.SensingAgent.html
@@ -1114,6 +1096,18 @@ references:
   commentId: Overload:Sensus.Adaptation.SensingAgent.ActionIntervalToleranceBefore
   fullName: Sensus.Adaptation.SensingAgent.ActionIntervalToleranceBefore
   nameWithType: SensingAgent.ActionIntervalToleranceBefore
+- uid: Sensus.Adaptation.SensingAgent.ActiveObservationDuration
+  name: ActiveObservationDuration
+  href: api/Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_ActiveObservationDuration
+  commentId: P:Sensus.Adaptation.SensingAgent.ActiveObservationDuration
+  fullName: Sensus.Adaptation.SensingAgent.ActiveObservationDuration
+  nameWithType: SensingAgent.ActiveObservationDuration
+- uid: Sensus.Adaptation.SensingAgent.ActiveObservationDuration*
+  name: ActiveObservationDuration
+  href: api/Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_ActiveObservationDuration_
+  commentId: Overload:Sensus.Adaptation.SensingAgent.ActiveObservationDuration
+  fullName: Sensus.Adaptation.SensingAgent.ActiveObservationDuration
+  nameWithType: SensingAgent.ActiveObservationDuration
 - uid: Sensus.Adaptation.SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold(System.Double)
   name: AverageLinearAccelerationMagnitudeExceedsThreshold(Double)
   href: api/Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_AverageLinearAccelerationMagnitudeExceedsThreshold_System_Double_
@@ -1345,18 +1339,6 @@ references:
   commentId: Overload:Sensus.Adaptation.SensingAgent.MaxObservedDataCount
   fullName: Sensus.Adaptation.SensingAgent.MaxObservedDataCount
   nameWithType: SensingAgent.MaxObservedDataCount
-- uid: Sensus.Adaptation.SensingAgent.ObservationDuration
-  name: ObservationDuration
-  href: api/Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_ObservationDuration
-  commentId: P:Sensus.Adaptation.SensingAgent.ObservationDuration
-  fullName: Sensus.Adaptation.SensingAgent.ObservationDuration
-  nameWithType: SensingAgent.ObservationDuration
-- uid: Sensus.Adaptation.SensingAgent.ObservationDuration*
-  name: ObservationDuration
-  href: api/Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_ObservationDuration_
-  commentId: Overload:Sensus.Adaptation.SensingAgent.ObservationDuration
-  fullName: Sensus.Adaptation.SensingAgent.ObservationDuration
-  nameWithType: SensingAgent.ObservationDuration
 - uid: Sensus.Adaptation.SensingAgent.ObserveAsync(Sensus.IDatum,System.Threading.CancellationToken)
   name: ObserveAsync(IDatum, CancellationToken)
   href: api/Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_ObserveAsync_Sensus_IDatum_System_Threading_CancellationToken_
@@ -1384,48 +1366,36 @@ references:
   commentId: Overload:Sensus.Adaptation.SensingAgent.ObservedDataMeetControlCriterion
   fullName: Sensus.Adaptation.SensingAgent.ObservedDataMeetControlCriterion
   nameWithType: SensingAgent.ObservedDataMeetControlCriterion
-- uid: Sensus.Adaptation.SensingAgent.OnActiveControlAsync(System.Threading.CancellationToken)
-  name: OnActiveControlAsync(CancellationToken)
-  href: api/Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_OnActiveControlAsync_System_Threading_CancellationToken_
-  commentId: M:Sensus.Adaptation.SensingAgent.OnActiveControlAsync(System.Threading.CancellationToken)
-  fullName: Sensus.Adaptation.SensingAgent.OnActiveControlAsync(System.Threading.CancellationToken)
-  nameWithType: SensingAgent.OnActiveControlAsync(CancellationToken)
-- uid: Sensus.Adaptation.SensingAgent.OnActiveControlAsync*
-  name: OnActiveControlAsync
-  href: api/Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_OnActiveControlAsync_
-  commentId: Overload:Sensus.Adaptation.SensingAgent.OnActiveControlAsync
-  fullName: Sensus.Adaptation.SensingAgent.OnActiveControlAsync
-  nameWithType: SensingAgent.OnActiveControlAsync
-- uid: Sensus.Adaptation.SensingAgent.OnEndingControlAsync(System.Threading.CancellationToken)
-  name: OnEndingControlAsync(CancellationToken)
-  href: api/Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_OnEndingControlAsync_System_Threading_CancellationToken_
-  commentId: M:Sensus.Adaptation.SensingAgent.OnEndingControlAsync(System.Threading.CancellationToken)
-  fullName: Sensus.Adaptation.SensingAgent.OnEndingControlAsync(System.Threading.CancellationToken)
-  nameWithType: SensingAgent.OnEndingControlAsync(CancellationToken)
-- uid: Sensus.Adaptation.SensingAgent.OnEndingControlAsync*
-  name: OnEndingControlAsync
-  href: api/Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_OnEndingControlAsync_
-  commentId: Overload:Sensus.Adaptation.SensingAgent.OnEndingControlAsync
-  fullName: Sensus.Adaptation.SensingAgent.OnEndingControlAsync
-  nameWithType: SensingAgent.OnEndingControlAsync
-- uid: Sensus.Adaptation.SensingAgent.OnOpportunisticControlAsync(System.Threading.CancellationToken)
-  name: OnOpportunisticControlAsync(CancellationToken)
-  href: api/Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_OnOpportunisticControlAsync_System_Threading_CancellationToken_
-  commentId: M:Sensus.Adaptation.SensingAgent.OnOpportunisticControlAsync(System.Threading.CancellationToken)
-  fullName: Sensus.Adaptation.SensingAgent.OnOpportunisticControlAsync(System.Threading.CancellationToken)
-  nameWithType: SensingAgent.OnOpportunisticControlAsync(CancellationToken)
-- uid: Sensus.Adaptation.SensingAgent.OnOpportunisticControlAsync*
-  name: OnOpportunisticControlAsync
-  href: api/Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_OnOpportunisticControlAsync_
-  commentId: Overload:Sensus.Adaptation.SensingAgent.OnOpportunisticControlAsync
-  fullName: Sensus.Adaptation.SensingAgent.OnOpportunisticControlAsync
-  nameWithType: SensingAgent.OnOpportunisticControlAsync
+- uid: Sensus.Adaptation.SensingAgent.OnStateChangedAsync(Sensus.Adaptation.SensingAgentState,Sensus.Adaptation.SensingAgentState,System.Threading.CancellationToken)
+  name: OnStateChangedAsync(SensingAgentState, SensingAgentState, CancellationToken)
+  href: api/Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_OnStateChangedAsync_Sensus_Adaptation_SensingAgentState_Sensus_Adaptation_SensingAgentState_System_Threading_CancellationToken_
+  commentId: M:Sensus.Adaptation.SensingAgent.OnStateChangedAsync(Sensus.Adaptation.SensingAgentState,Sensus.Adaptation.SensingAgentState,System.Threading.CancellationToken)
+  fullName: Sensus.Adaptation.SensingAgent.OnStateChangedAsync(Sensus.Adaptation.SensingAgentState, Sensus.Adaptation.SensingAgentState, System.Threading.CancellationToken)
+  nameWithType: SensingAgent.OnStateChangedAsync(SensingAgentState, SensingAgentState, CancellationToken)
+- uid: Sensus.Adaptation.SensingAgent.OnStateChangedAsync*
+  name: OnStateChangedAsync
+  href: api/Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_OnStateChangedAsync_
+  commentId: Overload:Sensus.Adaptation.SensingAgent.OnStateChangedAsync
+  fullName: Sensus.Adaptation.SensingAgent.OnStateChangedAsync
+  nameWithType: SensingAgent.OnStateChangedAsync
 - uid: Sensus.Adaptation.SensingAgent.PropertyChanged
   name: PropertyChanged
   href: api/Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_PropertyChanged
   commentId: E:Sensus.Adaptation.SensingAgent.PropertyChanged
   fullName: Sensus.Adaptation.SensingAgent.PropertyChanged
   nameWithType: SensingAgent.PropertyChanged
+- uid: Sensus.Adaptation.SensingAgent.ProtectedSetPolicyAsync(Newtonsoft.Json.Linq.JObject)
+  name: ProtectedSetPolicyAsync(JObject)
+  href: api/Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_ProtectedSetPolicyAsync_Newtonsoft_Json_Linq_JObject_
+  commentId: M:Sensus.Adaptation.SensingAgent.ProtectedSetPolicyAsync(Newtonsoft.Json.Linq.JObject)
+  fullName: Sensus.Adaptation.SensingAgent.ProtectedSetPolicyAsync(Newtonsoft.Json.Linq.JObject)
+  nameWithType: SensingAgent.ProtectedSetPolicyAsync(JObject)
+- uid: Sensus.Adaptation.SensingAgent.ProtectedSetPolicyAsync*
+  name: ProtectedSetPolicyAsync
+  href: api/Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_ProtectedSetPolicyAsync_
+  commentId: Overload:Sensus.Adaptation.SensingAgent.ProtectedSetPolicyAsync
+  fullName: Sensus.Adaptation.SensingAgent.ProtectedSetPolicyAsync
+  nameWithType: SensingAgent.ProtectedSetPolicyAsync
 - uid: Sensus.Adaptation.SensingAgent.Protocol
   name: Protocol
   href: api/Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_Protocol
@@ -1549,6 +1519,12 @@ references:
   commentId: F:Sensus.Adaptation.SensingAgentState.OpportunisticControl
   fullName: Sensus.Adaptation.SensingAgentState.OpportunisticControl
   nameWithType: SensingAgentState.OpportunisticControl
+- uid: Sensus.Adaptation.SensingAgentState.OpportunisticObservation
+  name: OpportunisticObservation
+  href: api/Sensus.Adaptation.SensingAgentState.html#Sensus_Adaptation_SensingAgentState_OpportunisticObservation
+  commentId: F:Sensus.Adaptation.SensingAgentState.OpportunisticObservation
+  fullName: Sensus.Adaptation.SensingAgentState.OpportunisticObservation
+  nameWithType: SensingAgentState.OpportunisticObservation
 - uid: Sensus.Adaptation.SensingAgentState.value__
   name: value__
   href: api/Sensus.Adaptation.SensingAgentState.html#Sensus_Adaptation_SensingAgentState_value__

@@ -103,6 +103,9 @@ sensing control, in particular temporary device keep-awake and increased samplin
       <a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_InitializeAsync">SensingAgent.InitializeAsync()</a>
     </div>
     <div>
+      <a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_SetPolicyAsync_Newtonsoft_Json_Linq_JObject_">SensingAgent.SetPolicyAsync(JObject)</a>
+    </div>
+    <div>
       <a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_ObserveAsync_Sensus_IDatum_System_Threading_CancellationToken_">SensingAgent.ObserveAsync(IDatum, CancellationToken)</a>
     </div>
     <div>
@@ -148,7 +151,7 @@ sensing control, in particular temporary device keep-awake and increased samplin
       <a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_ActionIntervalToleranceAfter">SensingAgent.ActionIntervalToleranceAfter</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_ObservationDuration">SensingAgent.ObservationDuration</a>
+      <a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_ActiveObservationDuration">SensingAgent.ActiveObservationDuration</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_ControlCompletionCheckInterval">SensingAgent.ControlCompletionCheckInterval</a>
@@ -158,6 +161,9 @@ sensing control, in particular temporary device keep-awake and increased samplin
     </div>
     <div>
       <a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_MaxObservedDataAge">SensingAgent.MaxObservedDataAge</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_StateDescription">SensingAgent.StateDescription</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_PropertyChanged">SensingAgent.PropertyChanged</a>
@@ -267,33 +273,6 @@ run time initialization of the agent.</p>
       </tr>
     </tbody>
   </table>
-  
-  
-  <a id="ExampleSensingAgent_ExampleAccelerationSensingAgent_StateDescription_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.StateDescription*"></a>
-  <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent_StateDescription" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.StateDescription">StateDescription</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override string StateDescription { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_StateDescription">SensingAgent.StateDescription</a></div>
   <h3 id="methods">Methods
   </h3>
   
@@ -340,13 +319,13 @@ run time initialization of the agent.</p>
   </table>
   
   
-  <a id="ExampleSensingAgent_ExampleAccelerationSensingAgent_OnActiveControlAsync_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.OnActiveControlAsync*"></a>
-  <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent_OnActiveControlAsync_System_Threading_CancellationToken_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.OnActiveControlAsync(System.Threading.CancellationToken)">OnActiveControlAsync(CancellationToken)</h4>
+  <a id="ExampleSensingAgent_ExampleAccelerationSensingAgent_OnStateChangedAsync_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.OnStateChangedAsync*"></a>
+  <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent_OnStateChangedAsync_Sensus_Adaptation_SensingAgentState_Sensus_Adaptation_SensingAgentState_System_Threading_CancellationToken_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.OnStateChangedAsync(Sensus.Adaptation.SensingAgentState,Sensus.Adaptation.SensingAgentState,System.Threading.CancellationToken)">OnStateChangedAsync(SensingAgentState, SensingAgentState, CancellationToken)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override Task OnActiveControlAsync(CancellationToken cancellationToken)</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task OnStateChangedAsync(SensingAgentState previousState, SensingAgentState currentState, CancellationToken cancellationToken)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -358,6 +337,16 @@ run time initialization of the agent.</p>
       </tr>
     </thead>
     <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Adaptation.SensingAgentState.html">SensingAgentState</a></td>
+        <td><span class="parametername">previousState</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Sensus.Adaptation.SensingAgentState.html">SensingAgentState</a></td>
+        <td><span class="parametername">currentState</span></td>
+        <td></td>
+      </tr>
       <tr>
         <td><span class="xref">System.Threading.CancellationToken</span></td>
         <td><span class="parametername">cancellationToken</span></td>
@@ -382,100 +371,13 @@ run time initialization of the agent.</p>
   </table>
   
   
-  <a id="ExampleSensingAgent_ExampleAccelerationSensingAgent_OnEndingControlAsync_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.OnEndingControlAsync*"></a>
-  <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent_OnEndingControlAsync_System_Threading_CancellationToken_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.OnEndingControlAsync(System.Threading.CancellationToken)">OnEndingControlAsync(CancellationToken)</h4>
-  <div class="markdown level1 summary"><p>Reverts sensing control.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override Task OnEndingControlAsync(CancellationToken cancellationToken)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.CancellationToken</span></td>
-        <td><span class="parametername">cancellationToken</span></td>
-        <td><p>Cancellation token.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td><p>The ending control async.</p>
-</td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="ExampleSensingAgent_ExampleAccelerationSensingAgent_OnOpportunisticControlAsync_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.OnOpportunisticControlAsync*"></a>
-  <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent_OnOpportunisticControlAsync_System_Threading_CancellationToken_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.OnOpportunisticControlAsync(System.Threading.CancellationToken)">OnOpportunisticControlAsync(CancellationToken)</h4>
+  <a id="ExampleSensingAgent_ExampleAccelerationSensingAgent_ProtectedSetPolicyAsync_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.ProtectedSetPolicyAsync*"></a>
+  <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent_ProtectedSetPolicyAsync_Newtonsoft_Json_Linq_JObject_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.ProtectedSetPolicyAsync(Newtonsoft.Json.Linq.JObject)">ProtectedSetPolicyAsync(JObject)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override Task OnOpportunisticControlAsync(CancellationToken cancellationToken)</code></pre>
-  </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.CancellationToken</span></td>
-        <td><span class="parametername">cancellationToken</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
-  <a id="ExampleSensingAgent_ExampleAccelerationSensingAgent_SetPolicyAsync_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.SetPolicyAsync*"></a>
-  <h4 id="ExampleSensingAgent_ExampleAccelerationSensingAgent_SetPolicyAsync_Newtonsoft_Json_Linq_JObject_" data-uid="ExampleSensingAgent.ExampleAccelerationSensingAgent.SetPolicyAsync(Newtonsoft.Json.Linq.JObject)">SetPolicyAsync(JObject)</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override Task SetPolicyAsync(JObject policy)</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task ProtectedSetPolicyAsync(JObject policy)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">

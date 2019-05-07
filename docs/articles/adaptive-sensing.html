@@ -120,14 +120,14 @@ criterion might specify that sensing control should occur when the average accel
 magnitude exceeds a critical threshold. This is demonstrated in the 
 <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleSensingAgent.Shared/ExampleAccelerationSensingAgent.cs">example</a>
 sensing agent. This agent also demonstrates a control criterion based on proximity of the phone
-to a surface (e.g., face).</p>
+to a surface (e.g., face) and user activities (e.g., walking).</p>
 </li>
-<li><p>Control completion check interval:  Once sensing control is invoked, the app will periodically 
+<li><p>Control completion check interval:  Once sensing control is invoked, the agent will periodically 
 recheck the control criterion to determine whether it is still met. If the criterion is not met, 
 then sensing control ends, the sensing agent transitions sensing settings as needed (e.g., reducing
 sampling rates), and the sensing agent returns to its idle state. If the criterion is still met, 
 then sensing control continues unabated until the next completion check occurs. This parameter governs 
-how long Sensus should wait between each completion check.</p>
+how long the agent should wait between each completion check.</p>
 </li>
 </ul>
 <p>Sensus supports two mechanisms for incorporating sensing agents into a study. The first involves
@@ -201,10 +201,10 @@ our team (uva.ptl@gmail.com) to include your implementation in a future release 
 of sensing agents in a general-purpose adaptive sensing policy language (ASPL). ASPL specifies both the 
 control criteria as well as the control actions depicted in the above state diagram. The 
 <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared/Adaptation/example-aspl-policy.json">example ASPL policy file</a>
-demonstrates the ASPL format. The elements of the format are described in the documentation for 
-<a class="xref" href="../api/Sensus.Adaptation.AsplSensingAgent.html">AsplSensingAgent</a>. If more than 1 <a class="xref" href="../api/Sensus.Adaptation.AsplStatement.html">AsplStatement</a> is 
-provided to the <a class="xref" href="../api/Sensus.Adaptation.AsplSensingAgent.html">AsplSensingAgent</a>, then the first one whose criterion is satisfied 
-by the observed data will be used for sensing control.</p>
+demonstrates the ASPL format. The elements of the format are described in the documentation for
+<a class="xref" href="../api/Sensus.Adaptation.SensingAgent.html">SensingAgent</a> and <a class="xref" href="../api/Sensus.Adaptation.AsplSensingAgent.html">AsplSensingAgent</a>. If more than 1 
+<a class="xref" href="../api/Sensus.Adaptation.AsplStatement.html">AsplStatement</a> is provided to the <a class="xref" href="../api/Sensus.Adaptation.AsplSensingAgent.html">AsplSensingAgent</a>, 
+then the first one whose criterion is satisfied by the observed data will be used for sensing control.</p>
 <p>In the example ASPL policy file, you will see many places where property types and property names are specified. In
 general, each <a class="xref" href="../api/Sensus.Adaptation.AsplElement.html">AsplElement</a> will specify a property type that is the fully-qualified 
 name of a <a class="xref" href="../api/Sensus.Datum.html">Datum</a> sub-type. The fully-qualified type name is the concatenation of the type&#39;s namespace
@@ -257,7 +257,7 @@ need to manually update their protocols.</p>
 <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS/ec2-push-notifications/example-requests.json">push notification update</a>
 with the <code>type</code> set to <a class="xref" href="../api/Sensus.Notifications.PushNotificationUpdateType.html#Sensus_Notifications_PushNotificationUpdateType_SensingAgentPolicy">SensingAgentPolicy</a> and <code>content</code> set to the 
 policy you wish to provide. Sensus will parse the <code>content</code> into a JSON object and pass the resulting object to your
-agent via &lt;xref:Sensus.Adaptation.SensingAgent.SetPolicyAsync&gt;. This is an effective option for updating the sensing 
+agent via &lt;xref:Sensus.Adaptation.SensingAgent.ProtectedSetPolicyAsync&gt;. This is an effective option for updating the sensing 
 agent&#39;s policy during ongoing studies, as users will not need to do anything in order to receive the updated policies.</p>
 </li>
 </ul>
@@ -278,6 +278,21 @@ messages will appear for a short duration.</p>
 <li><p>Run your agent in the debugger:  By far the most useful approach is to <a class="xref" href="configuring-a-development-system.html">configure a development system</a> and
 run Sensus in the debugger with your sensing agent. You will need to add your agent code to the Sensus app projects in order to 
 step through it in the debugger.</p>
+</li>
+</ul>
+<h2 id="known-limitations-and-future-improvements">Known Limitations and Future Improvements</h2>
+<ul>
+<li><p>Initiation of continuous sensing from the background on iOS:  iOS places significant constraints on Sensus&#39;s ability
+to operate in the background. This impacts all sensing agents&#39; ability to initiate continuous sensing from the background. 
+A sensing agent will be able to update its state estimtes from the background upon receipt of a push notification; however, 
+there is no known way to initiate continuous background operation while in the background state. As a result, if the agent&#39;s 
+state estimate indicates that continuous sensing control is warranted, then this control will not be initiated until the 
+next time the app is brought to the foreground by the user. It would be useful to add the option of notifying the user from 
+the background when continuous sensing is requested by the sensing agent.</p>
+</li>
+<li><p>Termination of sensing control:  Currently, sensing control (whether opportunistic or active) can only be terminated
+after the control completion check interval elapses. This is probably too coarse, and it would be helpful to complement
+this check with checks run after a certain number of data readings have been observed while in a control state.</p>
 </li>
 </ul>
 <h2 id="data-streams">Data Streams</h2>

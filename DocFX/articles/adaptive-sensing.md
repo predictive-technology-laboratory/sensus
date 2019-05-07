@@ -47,14 +47,14 @@ criterion might specify that sensing control should occur when the average accel
 magnitude exceeds a critical threshold. This is demonstrated in the 
 [example](https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleSensingAgent.Shared/ExampleAccelerationSensingAgent.cs)
 sensing agent. This agent also demonstrates a control criterion based on proximity of the phone
-to a surface (e.g., face).
+to a surface (e.g., face) and user activities (e.g., walking).
 
-* Control completion check interval:  Once sensing control is invoked, the app will periodically 
+* Control completion check interval:  Once sensing control is invoked, the agent will periodically 
 recheck the control criterion to determine whether it is still met. If the criterion is not met, 
 then sensing control ends, the sensing agent transitions sensing settings as needed (e.g., reducing
 sampling rates), and the sensing agent returns to its idle state. If the criterion is still met, 
 then sensing control continues unabated until the next completion check occurs. This parameter governs 
-how long Sensus should wait between each completion check.
+how long the agent should wait between each completion check.
 
 Sensus supports two mechanisms for incorporating sensing agents into a study. The first involves
 writing software (in C#) to define the sensing agent. The second involves defining the agent
@@ -131,10 +131,10 @@ In addition to the software-defined adaptive sensing agents described above, Sen
 of sensing agents in a general-purpose adaptive sensing policy language (ASPL). ASPL specifies both the 
 control criteria as well as the control actions depicted in the above state diagram. The 
 [example ASPL policy file](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared/Adaptation/example-aspl-policy.json)
-demonstrates the ASPL format. The elements of the format are described in the documentation for 
-<xref:Sensus.Adaptation.AsplSensingAgent>. If more than 1 <xref:Sensus.Adaptation.AsplStatement> is 
-provided to the <xref:Sensus.Adaptation.AsplSensingAgent>, then the first one whose criterion is satisfied 
-by the observed data will be used for sensing control.
+demonstrates the ASPL format. The elements of the format are described in the documentation for
+<xref:Sensus.Adaptation.SensingAgent> and <xref:Sensus.Adaptation.AsplSensingAgent>. If more than 1 
+<xref:Sensus.Adaptation.AsplStatement> is provided to the <xref:Sensus.Adaptation.AsplSensingAgent>, 
+then the first one whose criterion is satisfied by the observed data will be used for sensing control.
 
 In the example ASPL policy file, you will see many places where property types and property names are specified. In
 general, each <xref:Sensus.Adaptation.AsplElement> will specify a property type that is the fully-qualified 
@@ -185,7 +185,7 @@ need to manually update their protocols.
 [push notification update](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS/ec2-push-notifications/example-requests.json)
 with the `type` set to <xref:Sensus.Notifications.PushNotificationUpdateType.SensingAgentPolicy> and `content` set to the 
 policy you wish to provide. Sensus will parse the `content` into a JSON object and pass the resulting object to your
-agent via <xref:Sensus.Adaptation.SensingAgent.SetPolicyAsync>. This is an effective option for updating the sensing 
+agent via <xref:Sensus.Adaptation.SensingAgent.ProtectedSetPolicyAsync>. This is an effective option for updating the sensing 
 agent's policy during ongoing studies, as users will not need to do anything in order to receive the updated policies.
 
 ## Testing and Debugging
@@ -205,6 +205,20 @@ messages will appear for a short duration.
 * Run your agent in the debugger:  By far the most useful approach is to [configure a development system](xref:dev_config) and
 run Sensus in the debugger with your sensing agent. You will need to add your agent code to the Sensus app projects in order to 
 step through it in the debugger.
+
+## Known Limitations and Future Improvements
+
+* Initiation of continuous sensing from the background on iOS:  iOS places significant constraints on Sensus's ability
+to operate in the background. This impacts all sensing agents' ability to initiate continuous sensing from the background. 
+A sensing agent will be able to update its state estimtes from the background upon receipt of a push notification; however, 
+there is no known way to initiate continuous background operation while in the background state. As a result, if the agent's 
+state estimate indicates that continuous sensing control is warranted, then this control will not be initiated until the 
+next time the app is brought to the foreground by the user. It would be useful to add the option of notifying the user from 
+the background when continuous sensing is requested by the sensing agent.
+
+* Termination of sensing control:  Currently, sensing control (whether opportunistic or active) can only be terminated
+after the control completion check interval elapses. This is probably too coarse, and it would be helpful to complement
+this check with checks run after a certain number of data readings have been observed while in a control state.
 
 ## Data Streams
 In addition to directly impacting the data streams that are collected (e.g., via sampling rates and enabling/disabling

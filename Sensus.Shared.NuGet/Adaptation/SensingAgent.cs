@@ -254,6 +254,11 @@ namespace Sensus.Adaptation
             await SensusServiceHelper.SaveAsync();
         }
 
+        /// <summary>
+        /// Implemented by the concrete class to set the <see cref="SensingAgent"/>'s policy.
+        /// </summary>
+        /// <returns>The set policy async.</returns>
+        /// <param name="policy">Policy.</param>
         protected abstract Task ProtectedSetPolicyAsync(JObject policy);
 
         /// <summary>
