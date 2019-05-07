@@ -50,8 +50,6 @@ namespace ExampleSensingAgent
         /// <value>The idle accelerometer max data stores per second.</value>
         public double? IdleAccelerometerMaxDataStoresPerSecond { get; set; }
 
-        public override string StateDescription => "Dummy description";
-
         /// <summary>
         /// Initializes a new instance of the <see cref="T:ExampleSensingAgent.ExampleAccelerationSensingAgent"/> class. As noted in
         /// the [adaptive sensing](xref:adaptive_sensing) article, this class provides the parameterless constructor required for
@@ -79,55 +77,39 @@ namespace ExampleSensingAgent
             return IsNearSurface() || AverageLinearAccelerationMagnitudeExceedsThreshold(AverageLinearMagnitudeThreshold);
         }
 
-        protected override async Task OnOpportunisticControlAsync(CancellationToken cancellationToken)
+        protected override async Task OnStateChangedAsync(SensingAgentState previousState, SensingAgentState currentState, CancellationToken cancellationToken)
         {
-            await OnControlAsync(cancellationToken);
-        }
+            await base.OnStateChangedAsync(previousState, currentState, cancellationToken);
 
-        protected override async Task OnActiveControlAsync(CancellationToken cancellationToken)
-        {
-            await OnControlAsync(cancellationToken);
-        }
-
-        /// <summary>
-        /// Keeps the device awake and increases acceleration sampling rate.
-        /// </summary>
-        /// <returns>The control async.</returns>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        private async Task OnControlAsync(CancellationToken cancellationToken)
-        {
-            // keep device awake
-            await SensusServiceHelper.KeepDeviceAwakeAsync();
-
-            // increase sampling rate
-            if (Protocol.TryGetProbe<IAccelerometerDatum, IListeningProbe>(out IListeningProbe accelerometerProbe))
+            if (currentState == SensingAgentState.OpportunisticControl || currentState == SensingAgentState.ActiveControl)
             {
+                // keep device awake
+                await SensusServiceHelper.KeepDeviceAwakeAsync();
+
                 // increase sampling rate
-                accelerometerProbe.MaxDataStoresPerSecond = ControlAccelerometerMaxDataStoresPerSecond;
+                if (Protocol.TryGetProbe<IAccelerometerDatum, IListeningProbe>(out IListeningProbe accelerometerProbe))
+                {
+                    // increase sampling rate
+                    accelerometerProbe.MaxDataStoresPerSecond = ControlAccelerometerMaxDataStoresPerSecond;
 
-                // restart probe to take on new settings
-                await accelerometerProbe.RestartAsync();
+                    // restart probe to take on new settings
+                    await accelerometerProbe.RestartAsync();
+                }
             }
-        }
-
-        /// <summary>
-        /// Reverts sensing control.
-        /// </summary>
-        /// <returns>The ending control async.</returns>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        protected override async Task OnEndingControlAsync(CancellationToken cancellationToken)
-        {
-            if (Protocol.TryGetProbe<IAccelerometerDatum, IListeningProbe>(out IListeningProbe accelerometerProbe))
+            else if (currentState == SensingAgentState.EndingControl)
             {
-                // decrease sampling rate
-                accelerometerProbe.MaxDataStoresPerSecond = IdleAccelerometerMaxDataStoresPerSecond;
+                if (Protocol.TryGetProbe<IAccelerometerDatum, IListeningProbe>(out IListeningProbe accelerometerProbe))
+                {
+                    // decrease sampling rate
+                    accelerometerProbe.MaxDataStoresPerSecond = IdleAccelerometerMaxDataStoresPerSecond;
 
-                // restart probe to take on original settings
-                await accelerometerProbe.RestartAsync();
+                    // restart probe to take on original settings
+                    await accelerometerProbe.RestartAsync();
+                }
+
+                // let device sleep
+                await SensusServiceHelper.LetDeviceSleepAsync();
             }
-
-            // let device sleep
-            await SensusServiceHelper.LetDeviceSleepAsync();
         }
     }
 }

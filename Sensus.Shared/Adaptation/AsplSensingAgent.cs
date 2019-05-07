@@ -47,9 +47,6 @@ namespace Sensus.Adaptation
 
         private AsplStatement _statementToBeginControl;
         private AsplStatement _ongoingControlStatement;
-        private string _stateDescription;
-
-        public override string StateDescription => _stateDescription;
 
         public AsplSensingAgent()
             : base("ASPL", "ASPL-Defined Agent", TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(5))
@@ -79,14 +76,13 @@ namespace Sensus.Adaptation
                     {
                         _statementToBeginControl = statement;
                         satisfied = true;
-                        _stateDescription = State + ":  " + _statementToBeginControl.Id;
                         break;
                     }
                 }
             }
             // otherwise, recheck the criterion of the ongoing control statement. we'll continue
             // with control as long as the ongoing criterion continues to be satisfied. we will
-            // not switch to a new control statement until the current one is unsatisfied.
+            // not switch to a new control statement until the current one becomes unsatisfied.
             else
             {
                 satisfied = _ongoingControlStatement.Criterion.SatisfiedBy(typeData);
@@ -95,63 +91,43 @@ namespace Sensus.Adaptation
             return satisfied;
         }
 
-        protected override async Task OnActiveObservationAsync(CancellationToken cancellationToken)
+        protected override async Task OnStateChangedAsync(SensingAgentState previousState, SensingAgentState currentState, CancellationToken cancellationToken)
         {
-            if (BeginActiveObservationSettings != null)
+            await base.OnStateChangedAsync(previousState, currentState, cancellationToken);
+
+            if (currentState == SensingAgentState.ActiveObservation && BeginActiveObservationSettings != null)
             {
                 await (Protocol as Protocol).ApplySettingsAsync(BeginActiveObservationSettings, cancellationToken);
             }
-        }
 
-        protected override async Task OnOpportunisticControlAsync(CancellationToken cancellationToken)
-        {
-            await OnControlAsync(cancellationToken);
-        }
-
-        protected override async Task OnActiveControlAsync(CancellationToken cancellationToken)
-        {
-            await OnControlAsync(cancellationToken);
-        }
-
-        private async Task OnControlAsync(CancellationToken cancellationToken)
-        {
-            // hang on to the newly satisified statement. we need ensure that the 
-            // same statement used to begin control is also used to end it.
-            _ongoingControlStatement = _statementToBeginControl;
-            _stateDescription = State + ":  " + _ongoingControlStatement.Id;
-
-            // reset the newly satisfied statement. we won't set it again until 
-            // control has ended and we've reset the ongoing control statement.
-            _statementToBeginControl = null;
-
-            SensusServiceHelper.Logger.Log("Applying start-control settings for statement:  " + _ongoingControlStatement.Id, LoggingLevel.Normal, GetType());
-            await (Protocol as Protocol).ApplySettingsAsync(_ongoingControlStatement.BeginControlSettings, cancellationToken);
-        }
-
-        protected override async Task OnEndingControlAsync(CancellationToken cancellationToken)
-        {
-            AsplStatement ongoingControlStatement;
-
-            lock (_stateLocker)
+            if (previousState == SensingAgentState.ActiveObservation && EndActiveObservationSettings != null)
             {
-                if (_ongoingControlStatement == null)
-                {
-                    return;
-                }
-                else
-                {
-                    ongoingControlStatement = _ongoingControlStatement;
-                    _ongoingControlStatement = null;
-                }
+                await (Protocol as Protocol).ApplySettingsAsync(EndActiveObservationSettings, cancellationToken);
             }
 
-            SensusServiceHelper.Logger.Log("Applying end-control settings for statement:  " + ongoingControlStatement.Id, LoggingLevel.Normal, GetType());
-            await (Protocol as Protocol).ApplySettingsAsync(ongoingControlStatement.EndControlSettings, cancellationToken);
-        }
+            if (currentState == SensingAgentState.OpportunisticControl || currentState == SensingAgentState.ActiveControl)
+            {
+                // hang on to the newly satisified statement. we need ensure that the 
+                // same statement used to begin control is also used to end it.
+                _ongoingControlStatement = _statementToBeginControl;
 
-        protected override Task OnIdleAsync(CancellationToken cancellationToken)
-        {
+                // reset the newly satisfied statement. we won't set it again until 
+                // control has ended and we've reset the ongoing control statement.
+                _statementToBeginControl = null;
 
+                SensusServiceHelper.Logger.Log("Applying start-control settings for statement:  " + _ongoingControlStatement.Id, LoggingLevel.Normal, GetType());
+                await (Protocol as Protocol).ApplySettingsAsync(_ongoingControlStatement.BeginControlSettings, cancellationToken);
+
+                // update state description to include the ongoing control statement
+                StateDescription += ":  " + _ongoingControlStatement.Id;
+            }
+
+            if (currentState == SensingAgentState.EndingControl)
+            {
+                SensusServiceHelper.Logger.Log("Applying end-control settings for statement:  " + _ongoingControlStatement.Id, LoggingLevel.Normal, GetType());
+                await (Protocol as Protocol).ApplySettingsAsync(_ongoingControlStatement.EndControlSettings, cancellationToken);
+                _ongoingControlStatement = null;
+            }
         }
     }
 }
