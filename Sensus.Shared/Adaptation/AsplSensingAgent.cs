@@ -45,22 +45,31 @@ namespace Sensus.Adaptation
         /// <value>The statements.</value>
         public List<AsplStatement> Statements { get; set; }
 
+        /// <summary>
+        /// The <see cref="AsplStatement"/> that should be used to begin sensing control.
+        /// </summary>
         private AsplStatement _statementToBeginControl;
+
+        /// <summary>
+        /// The <see cref="AsplStatement"/> that is currently being used in ongoing sensing control.
+        /// </summary>
         private AsplStatement _ongoingControlStatement;
 
         public AsplSensingAgent()
             : base("ASPL", "ASPL-Defined Agent", TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(5))
         {
+            BeginActiveObservationSettings = new List<ProtocolSetting>();
+            EndActiveObservationSettings = new List<ProtocolSetting>();
             Statements = new List<AsplStatement>();
         }
 
-        public override async Task SetPolicyAsync(JObject policy)
+        protected override Task ProtectedSetPolicyAsync(JObject policy)
         {
             BeginActiveObservationSettings = (policy["begin-active-observation-settings"] as JArray).Select(setting => setting.ToObject<ProtocolSetting>()).ToList();
             EndActiveObservationSettings = (policy["end-active-observation-settings"] as JArray).Select(setting => setting.ToObject<ProtocolSetting>()).ToList();
             Statements = (policy["statements"] as JArray).Select(statement => statement.ToObject<AsplStatement>()).ToList();
 
-            await base.SetPolicyAsync(policy);
+            return Task.CompletedTask;
         }
 
         protected override bool ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>> typeData)
@@ -95,38 +104,47 @@ namespace Sensus.Adaptation
         {
             await base.OnStateChangedAsync(previousState, currentState, cancellationToken);
 
-            if (currentState == SensingAgentState.ActiveObservation && BeginActiveObservationSettings != null)
+            List<ProtocolSetting> newSettings = new List<ProtocolSetting>();
+
+            // first gather up settings to apply as a result of exiting the previous state
+
+            if (previousState == SensingAgentState.ActiveObservation)
             {
-                await (Protocol as Protocol).ApplySettingsAsync(BeginActiveObservationSettings, cancellationToken);
+                newSettings.AddRange(EndActiveObservationSettings);
             }
 
-            if (previousState == SensingAgentState.ActiveObservation && EndActiveObservationSettings != null)
-            {
-                await (Protocol as Protocol).ApplySettingsAsync(EndActiveObservationSettings, cancellationToken);
-            }
+            // next gather up settings to apply as a result of entering the current state
 
-            if (currentState == SensingAgentState.OpportunisticControl || currentState == SensingAgentState.ActiveControl)
+            if (currentState == SensingAgentState.ActiveObservation)
             {
-                // hang on to the newly satisified statement. we need ensure that the 
+                newSettings.AddRange(BeginActiveObservationSettings);
+            }
+            else if (currentState == SensingAgentState.OpportunisticControl || currentState == SensingAgentState.ActiveControl)
+            {
+                // hang on to the begin-control statement. we need ensure that the 
                 // same statement used to begin control is also used to end it.
                 _ongoingControlStatement = _statementToBeginControl;
 
-                // reset the newly satisfied statement. we won't set it again until 
+                // reset the begin-control statement. we won't set it again until 
                 // control has ended and we've reset the ongoing control statement.
                 _statementToBeginControl = null;
 
-                SensusServiceHelper.Logger.Log("Applying start-control settings for statement:  " + _ongoingControlStatement.Id, LoggingLevel.Normal, GetType());
-                await (Protocol as Protocol).ApplySettingsAsync(_ongoingControlStatement.BeginControlSettings, cancellationToken);
+                // add the begin-control settings
+                newSettings.AddRange(_ongoingControlStatement.BeginControlSettings);
 
-                // update state description to include the ongoing control statement
+                // update state description to include the ongoing-control statement
                 StateDescription += ":  " + _ongoingControlStatement.Id;
             }
-
-            if (currentState == SensingAgentState.EndingControl)
+            else if (currentState == SensingAgentState.EndingControl)
             {
-                SensusServiceHelper.Logger.Log("Applying end-control settings for statement:  " + _ongoingControlStatement.Id, LoggingLevel.Normal, GetType());
-                await (Protocol as Protocol).ApplySettingsAsync(_ongoingControlStatement.EndControlSettings, cancellationToken);
+                newSettings.AddRange(_ongoingControlStatement.EndControlSettings);
                 _ongoingControlStatement = null;
+            }
+
+            if (newSettings.Count > 0)
+            {
+                SensusServiceHelper.Logger.Log("Applying " + newSettings.Count + " protocol setting(s) for transition from " + previousState + " to " + currentState + ".", LoggingLevel.Normal, GetType());
+                await (Protocol as Protocol).ApplySettingsAsync(newSettings, cancellationToken);
             }
         }
     }

@@ -63,13 +63,13 @@ namespace ExampleSensingAgent
             IdleAccelerometerMaxDataStoresPerSecond = 5;
         }
 
-        public override async Task SetPolicyAsync(JObject policy)
+        protected override Task ProtectedSetPolicyAsync(JObject policy)
         {
             AverageLinearMagnitudeThreshold = double.Parse(policy["alm-threshold"].ToString());
             ControlAccelerometerMaxDataStoresPerSecond = double.Parse(policy["control-acc-rate"].ToString());
             IdleAccelerometerMaxDataStoresPerSecond = double.Parse(policy["idle-acc-rate"].ToString());
 
-            await base.SetPolicyAsync(policy);
+            return Task.CompletedTask;
         }
 
         protected override bool ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>> typeData)

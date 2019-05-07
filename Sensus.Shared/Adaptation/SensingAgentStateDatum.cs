@@ -22,7 +22,7 @@ namespace Sensus.Adaptation
     /// Represents the state of a <see cref="SensingAgent"/>. See the [adaptive sensing](xref:adaptive_sensing) article for 
     /// more information.
     /// </summary>
-    public class SensingAgentStateDatum : Datum
+    public class SensingAgentStateDatum : Datum, ISensingAgentStateDatum
     {
         [JsonConverter(typeof(StringEnumConverter))]
         public SensingAgentState PreviousState { get; set; }

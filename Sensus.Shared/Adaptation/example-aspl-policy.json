@@ -1,8 +1,14 @@
 {
   "id": "Example",
-  "description": "A multi-statement ASPL policy focused on movement and proximity.",
+  "description": "An ASPL policy focused on movement and proximity.",
   "action-interval": "00:00:10",
-  "begin-active-sensing-settings": [
+  "active-observation-duration": "00:00:05",
+  "control-completion-check-interval": "00:00:20",
+  "observed-data": {
+    "max-count": 1000,
+    "max-age": null
+  },
+  "begin-active-observation-settings": [
     {
       "property-type": "Sensus.Probes.Probe",
       "property-name": "Enabled",
@@ -22,7 +28,7 @@
       "value": 50
     }
   ],
-  "end-active-sensing-settings": [
+  "end-active-observation-settings": [
     {
       "property-type": "Sensus.Probes.Probe",
       "property-name": "Enabled",
@@ -30,12 +36,6 @@
       "value": false
     }
   ],
-  "observation-duration": "00:00:05",
-  "control-completion-check-interval": "00:00:20",
-  "observed-data": {
-    "max-count": 1000,
-    "max-age": null
-  },
   "statements": [
     {
       "id": "Acceleration",

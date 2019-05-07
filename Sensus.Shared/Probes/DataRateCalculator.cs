@@ -101,12 +101,10 @@ namespace Sensus.Probes
         {
             lock (_locker)
             {
-                if (_sampleStartTimestamp == null)
-                {
-                    throw SensusException.Report("Data rate calculator has not been started.");
-                }
-
-                if (datum == null)
+                // we've seen race conditions when stopping probes in which the probe is stopped (and its
+                // data rate calculator is also stopped), but some final data come in (e.g., via 
+                // accelerometer). drop any such data.
+                if (datum == null || _sampleStartTimestamp == null)
                 {
                     return SamplingAction.Drop;
                 }
