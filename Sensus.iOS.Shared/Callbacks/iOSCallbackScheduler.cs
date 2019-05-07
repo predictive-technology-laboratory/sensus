@@ -36,8 +36,10 @@ namespace Sensus.iOS.Callbacks
         /// app coming to the foreground and executing the callback right away versus deferring it to a 
         /// future notification. This is also an iOS API consideration, as the iOS system will not schedule 
         /// a notification if its fire date is in the past by the time it gets around to doing the scheduling.
+        /// Whatever the value, it needs to be less than the 
+        /// <see cref="Sensus.Probes.PollingProbe.DefaultPollingSleepDurationMS"/> value.
         /// </summary>
-        public static readonly TimeSpan CALLBACK_NOTIFICATION_HORIZON_THRESHOLD = TimeSpan.FromSeconds(5);
+        public static readonly TimeSpan CALLBACK_NOTIFICATION_HORIZON_THRESHOLD = TimeSpan.FromSeconds(2);
 
         public abstract List<string> CallbackIds { get; }
 

@@ -46,6 +46,8 @@ using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
 using Sensus.DataStores.Remote;
+using Plugin.FilePicker;
+using Plugin.FilePicker.Abstractions;
 
 namespace Sensus
 {
@@ -304,6 +306,7 @@ namespace Sensus
         private ConcurrentObservableCollection<Script> _scriptsToRun;
         private bool _updatingPushNotificationRegistrations;
         private bool _updatePushNotificationRegistrationsOnNextHealthTest;
+        private bool _saving;
 
         private readonly object _healthTestCallbackLocker = new object();
         private readonly object _shareFileLocker = new object();
@@ -591,8 +594,6 @@ namespace Sensus
 
         protected abstract Task ProtectedFlashNotificationAsync(string message);
 
-        public abstract Task PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback);
-
         public abstract Task ShareFileAsync(string path, string subject, string mimeType);
 
         public abstract Task SendEmailAsync(string toAddress, string subject, string message);
@@ -675,27 +676,44 @@ namespace Sensus
             {
                 lock (_saveLocker)
                 {
+                    if (_saving)
+                    {
+                        _logger.Log("Already saving. Aborting save.", LoggingLevel.Normal, GetType());
+                        return;
+                    }
+                    else
+                    {
+                        _saving = true;
+                    }
+                }
+
+                try
+                {
                     _logger.Log("Serializing service helper.", LoggingLevel.Normal, GetType());
 
-                    try
-                    {
-                        string serviceHelperJSON = JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS);
+                    string serviceHelperJSON = JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS);
 
-                        // once upon a time, we made the poor decision to encode protocols as unicode (UTF-16). can't switch to UTF-8 now...
-                        byte[] encryptedBytes = SensusContext.Current.SymmetricEncryption.Encrypt(serviceHelperJSON, Encoding.Unicode);
-                        File.WriteAllBytes(SERIALIZATION_PATH, encryptedBytes);
+                    // once upon a time, we made the poor decision to encode protocols as unicode (UTF-16). can't switch to UTF-8 now...
+                    byte[] encryptedBytes = SensusContext.Current.SymmetricEncryption.Encrypt(serviceHelperJSON, Encoding.Unicode);
+                    File.WriteAllBytes(SERIALIZATION_PATH, encryptedBytes);
 
-                        _logger.Log("Serialized service helper with " + _registeredProtocols.Count + " protocols.", LoggingLevel.Normal, GetType());
-                    }
-                    catch (Exception ex)
-                    {
-                        string message = "Exception while serializing service helper:  " + ex;
-                        SensusException.Report(message, ex);
-                        _logger.Log(message, LoggingLevel.Normal, GetType());
-                    }
+                    _logger.Log("Serialized service helper with " + _registeredProtocols.Count + " protocols.", LoggingLevel.Normal, GetType());
 
                     // ensure that all logged messages make it into the file.
                     _logger.CommitMessageBuffer();
+                }
+                catch (Exception ex)
+                {
+                    string message = "Exception while serializing service helper:  " + ex;
+                    SensusException.Report(message, ex);
+                    _logger.Log(message, LoggingLevel.Normal, GetType());
+                }
+                finally
+                {
+                    lock (_saveLocker)
+                    {
+                        _saving = false;
+                    }
                 }
             });
         }
@@ -941,7 +959,7 @@ namespace Sensus
                 {
                     // let the script agent know and store a datum to record the event
                     await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Expired) ?? Task.CompletedTask);
-                    await script.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Expired, DateTimeOffset.UtcNow, script), CancellationToken.None);
+                    script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Expired, DateTimeOffset.UtcNow, script), CancellationToken.None);
 
                     if (RemoveScripts(script))
                     {
@@ -959,7 +977,7 @@ namespace Sensus
             {
                 // let the script agent know and store a datum to record the event
                 await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Deleted) ?? Task.CompletedTask);
-                await script.Runner.Probe.StoreDatumAsync(new ScriptStateDatum(ScriptState.Deleted, DateTimeOffset.UtcNow, script), CancellationToken.None);
+                script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Deleted, DateTimeOffset.UtcNow, script), CancellationToken.None);
             }
 
             return RemoveScripts(_scriptsToRun.ToArray());
@@ -1122,6 +1140,29 @@ namespace Sensus
             });
 
             return await resultCompletionSource.Task;
+        }
+
+        public async Task<string> PromptForAndReadTextFileAsync()
+        {
+            string text = null;
+
+            try
+            {
+                FileData data = await CrossFilePicker.Current.PickFile();
+
+                if (data != null)
+                {
+                    text = Encoding.UTF8.GetString(data.DataArray);
+                }
+            }
+            catch (Exception ex)
+            {
+                string message = "Error choosing file: " + ex.Message;
+                Logger.Log(message, LoggingLevel.Normal, GetType());
+                await FlashNotificationAsync(message);
+            }
+
+            return text;
         }
 
         public async Task<Input> PromptForInputAsync(string windowTitle, Input input, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress)

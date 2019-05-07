@@ -12,7 +12,7 @@ survey and the personal characteristics and contexts of each user.
 
 ## Android
 
-### Survey Agents Plug-Ins
+### Survey Agent Plug-Ins
 On Android, Sensus supports a plug-in architecture for modules (or agents) that control the delivery of surveys.
 This architecture is intended to support research into adaptive surveys by providing a simple interface
 through which researchers can deploy agents that implement specific adaptation hypotheses. For example,
@@ -70,7 +70,7 @@ survey agent that attempts to adapt to the user by increasing and decreasing the
 In contrast with Android, iOS does not allow apps to load code (e.g., from the above .dll assembly) at
 run time. Thus, adaptive survey agents are more limited on iOS compared with Android. Here are the options:
 
-* The app comes with two example survey agents; however, these are simply for demonstration performance and are unlikely to work
+* The app comes with two example survey agents; however, these are simply for demonstration and are unlikely to work
 well in practice. Nonetheless, the examples are:
 
   * [Random](xref:ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent) (code [here](https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleScriptProbeAgent.Shared/ExampleRandomScriptProbeAgent.cs)):  A 

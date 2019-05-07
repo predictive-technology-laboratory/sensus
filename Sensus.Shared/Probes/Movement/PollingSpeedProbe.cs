@@ -59,14 +59,8 @@ namespace Sensus.Probes.Movement
                 await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
-        }
 
-        protected override async Task ProtectedStartAsync()
-        {
-            // reset previous position before starting the base-class poller so it doesn't race to grab a stale previous location.
             _previousPosition = null;
-
-            await base.ProtectedStartAsync();
         }
 
         protected override async Task<List<Datum>> PollAsync(CancellationToken cancellationToken)

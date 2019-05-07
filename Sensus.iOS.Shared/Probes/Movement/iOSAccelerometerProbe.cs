@@ -49,18 +49,18 @@ namespace Sensus.iOS.Probes.Movement
 
             _motionManager?.StartAccelerometerUpdates(new NSOperationQueue(), async (data, error) =>
             {
-                if (!Stabilizing && data != null && error == null)
+                if (data != null && error == null)
                 {
                     await StoreDatumAsync(new AccelerometerDatum(DateTimeOffset.UtcNow, data.Acceleration.X, data.Acceleration.Y, data.Acceleration.Z));
                 }
             });
         }
 
-        protected override Task StopListeningAsync()
+        protected override async Task StopListeningAsync()
         {
-            _motionManager?.StopAccelerometerUpdates();
+            await base.StopListeningAsync();
 
-            return Task.CompletedTask;
+            _motionManager?.StopAccelerometerUpdates();
         }
     }
 }

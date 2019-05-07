@@ -153,7 +153,7 @@ namespace Sensus.Probes.Context
             }
         }
 
-        protected sealed override async Task ProtectedStartAsync()
+        protected override async Task ProtectedStartAsync()
         {
             await base.ProtectedStartAsync();
 
@@ -162,7 +162,7 @@ namespace Sensus.Probes.Context
                 SensusServiceHelper.Get().Logger.Log("Starting advertising.", LoggingLevel.Normal, GetType());
                 StartAdvertising();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 SensusServiceHelper.Get().Logger.Log("Exception while starting advertising:  " + ex, LoggingLevel.Normal, GetType());
             }
@@ -236,9 +236,9 @@ namespace Sensus.Probes.Context
             return result;
         }
 
-        public sealed override async Task StopAsync()
+        protected override async Task ProtectedStopAsync()
         {
-            await base.StopAsync();
+            await base.ProtectedStopAsync();
 
             try
             {

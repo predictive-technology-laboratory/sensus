@@ -9,19 +9,19 @@ as well as an optional user notification to display after applying the update.
       "property-type" : "Sensus.Probes.ListeningProbe",
       "property-name" : "MaxDataStoresPerSecond",
       "target-type" : "Sensus.Probes.ListeningProbe",
-      "value" : "10"
+      "value" : 10
     },
     {
       "property-type" : "Sensus.Probes.PollingProbe",
       "property-name" : "PollingSleepDurationMS",
       "target-type" : "Sensus.Probes.Location.PollingLocationProbe",
-      "value" : "10000"
+      "value" : 10000
     },
     {
       "property-type" : "Sensus.Protocol",
       "property-name" : "AllowSubmitData",
       "target-type" : "Sensus.Protocol",
-      "value" : "true"
+      "value" : true
     }
   ],
 

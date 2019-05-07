@@ -28,12 +28,10 @@ using System.Linq;
 using System.Reflection;
 using Sensus.Probes.Location;
 using Sensus.UI.Inputs;
-using Sensus.Probes.Apps;
 using Sensus.Probes.Movement;
 using System.Text;
 using System.Threading.Tasks;
 using Sensus.Context;
-using Sensus.Probes.User.MicrosoftBand;
 using Sensus.Probes.User.Scripts;
 using Sensus.Callbacks;
 using Sensus.Encryption;
@@ -51,7 +49,8 @@ using Sensus.Exceptions;
 using Sensus.Extensions;
 using Plugin.Geolocator.Abstractions;
 using Newtonsoft.Json.Linq;
-using static Sensus.SensingAgent;
+using static Sensus.Adaptation.SensingAgent;
+using Sensus.Adaptation;
 
 #if __IOS__
 using HealthKit;
@@ -447,12 +446,6 @@ namespace Sensus
                     {
                         // UI testing is problematic with probes that take us away from Sensus, since it's difficult to automate UI 
                         // interaction outside of Sensus. disable any probes that might take us away from Sensus.
-
-                        if (probe is FacebookProbe)
-                        {
-                            probe.Enabled = false;
-                        }
-
 #if __IOS__
                         if (probe is iOSHealthKitProbe)
                         {
@@ -487,53 +480,6 @@ namespace Sensus
                 throw new Exception(message);
             }
         }
-
-#if __ANDROID__
-
-        // android allows us to dynamically load code assemblies, but iOS does not. so, the current approach
-        // is to only support dynamic loading on android and force compile-time assembly inclusion on ios.
-
-        public static SensingAgent GetAgent(byte[] assemblyBytes, string agentId)
-        {
-            return GetAgents(assemblyBytes).SingleOrDefault(agent => agent.Id == agentId);
-        }
-
-        public static List<SensingAgent> GetAgents(byte[] assemblyBytes)
-        {
-            return Assembly.Load(assemblyBytes)
-                           .GetTypes()
-                           .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(SensingAgent)))
-                           .Select(Activator.CreateInstance)
-                           .Cast<SensingAgent>()
-                           .ToList();
-        }
-
-        /// <summary>
-        /// Bytes of the assembly in which the <see cref="Agent"/> is contained.
-        /// </summary>
-        /// <value>The agent assembly bytes.</value>
-        public byte[] AgentAssemblyBytes { get; set; }
-
-#elif __IOS__
-
-        public static SensingAgent GetAgent(string agentId)
-        {
-            return GetAgents().SingleOrDefault(agent => agent.Id == agentId);
-        }
-
-        public static List<SensingAgent> GetAgents()
-        {
-            // get agents from the current assembly. they must be linked at compile time.
-            return Assembly.GetExecutingAssembly()
-                           .GetTypes()
-                           .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(SensingAgent)))
-                           .Select(Activator.CreateInstance)
-                           .Cast<SensingAgent>()
-                           .ToList();
-        }
-
-#endif
-
         #endregion
 
         public event EventHandler<ProtocolState> StateChanged;
@@ -1608,7 +1554,13 @@ namespace Sensus
         }
 
         /// <summary>
-        /// Gets or sets the sensing control agent. See [here](xref:sensing_agent) for more information.
+        /// Gets or sets the <see cref="SensingAgent"/> that controls this <see cref="Protocol"/>. See 
+        /// [here](xref:adaptive_sensing) for more information. This property is not serialized because,
+        /// on Android, the assembly containing its type is not necessarily in the app's executing 
+        /// assembly; rather, on Android, the type might be contained in an assembly (i.e., DLL) that 
+        /// has been provided by a third-party for run-time code injection (plug-in). Instead of 
+        /// storing the <see cref="SensingAgent"/> directly, we therefore store the assembly bytes and
+        /// the identifier of the agent within the assembly, so that we can load the agent at run time.
         /// </summary>
         /// <value>The agent.</value>
         [JsonIgnore]
@@ -1622,11 +1574,8 @@ namespace Sensus
                     try
                     {
 #if __ANDROID__
-                        // also require an assembly on android, which is where we get the agents from.
-                        if (AgentAssemblyBytes != null)
-                        {
-                            _agent = GetAgent(AgentAssemblyBytes, AgentId);
-                        }
+                        // pass in an existing agent assembly (might be null)
+                        _agent = GetAgent(AgentId, AgentAssemblyBytes);
 #elif __IOS__
                         // there is no assembly in ios per apple restrictions on dynamically loaded code. agents are baked into the app instead.
                         _agent = GetAgent(AgentId);
@@ -1635,7 +1584,9 @@ namespace Sensus
                         // set the agent's policy if we previously received one (e.g., via push notification)
                         if (AgentPolicy != null)
                         {
-                            _agent.SetPolicyAsync(AgentPolicy).Wait();
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                            _agent.SetPolicyAsync(AgentPolicy); // can't await the operation, as we're in a property.
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                         }
                     }
                     catch (Exception ex)
@@ -1664,6 +1615,14 @@ namespace Sensus
         /// </summary>
         /// <value>The agent policy JSON.</value>
         public JObject AgentPolicy { get; set; }
+
+#if __ANDROID__
+        /// <summary>
+        /// Bytes of the assembly in which the <see cref="Agent"/> is contained.
+        /// </summary>
+        /// <value>The agent assembly bytes.</value>
+        public byte[] AgentAssemblyBytes { get; set; }
+#endif
 
         /// <summary>
         /// For JSON deserialization
@@ -1718,18 +1677,201 @@ namespace Sensus
         {
             lock (this)
             {
+                InitTypeProbeMap();
+
+                return _typeProbe.TryGetValue(type, out probe);
+            }
+        }
+
+        public bool TryGetProbe<DatumInterface, ProbeType>(out ProbeType probe) where DatumInterface : IDatum
+                                                                                where ProbeType : class, IProbe
+        {
+            lock (this)
+            {
+                InitTypeProbeMap();
+
+                probe = null;
+
+                foreach (Type type in _typeProbe.Keys)
+                {
+                    ProbeType p = _typeProbe[type] as ProbeType;
+                    PropertyInfo datumTypeProperty = type.GetProperty(nameof(Probe.DatumType));
+                    Type datumType = datumTypeProperty.GetValue(p) as Type;
+
+                    if (datumType.ImplementsInterface<DatumInterface>())
+                    {
+                        probe = p;
+                        break;
+                    }
+                }
+
+                return probe != null;
+            }
+        }
+
+        private void InitTypeProbeMap()
+        {
+            lock (this)
+            {
                 if (_typeProbe == null)
                 {
                     _typeProbe = new Dictionary<Type, Probe>();
 
-                    foreach (Probe p in _probes)
+                    foreach (Probe probe in _probes)
                     {
-                        _typeProbe.Add(p.GetType(), p);
+                        _typeProbe.Add(probe.GetType(), probe);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Applies a list of <see cref="ProtocolSetting"/> to the current <see cref="Protocol"/> and its <see cref="Probe"/>s.
+        /// </summary>
+        /// <returns>True if either the current <see cref="Protocol"/> or any of its <see cref="Probe"/>s were restarted as a result of applying the passed <see cref="ProtocolSetting"/>s.</returns>
+        /// <param name="settings">Settings.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public async Task<bool> ApplySettingsAsync(List<ProtocolSetting> settings, CancellationToken cancellationToken)
+        {
+            bool restartProtocol = false;
+            List<Probe> probesToRestart = new List<Probe>();
+
+            foreach (ProtocolSetting setting in settings)
+            {
+                // catch any exceptions so that we process all settings
+                try
+                {
+                    // get property type
+                    Type propertyType;
+                    try
+                    {
+                        propertyType = Assembly.GetExecutingAssembly().GetType(setting.PropertyTypeName, true);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("Exception while getting property type (" + setting.PropertyTypeName + "):  " + ex.Message, ex);
+                    }
+
+                    // get property
+                    PropertyInfo property = propertyType.GetProperty(setting.PropertyName);
+
+                    // get target type
+                    Type targetType;
+                    try
+                    {
+                        targetType = Assembly.GetExecutingAssembly().GetType(setting.TargetTypeName, true);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("Exception while getting target type (" + setting.TargetTypeName + "):  " + ex.Message, ex);
+                    }
+
+                    // if the value itself is JSON, then try to deserialize it to a .net type.
+                    object newValueObject = null;
+                    if (setting.Value.ToString().IsValidJsonObject())
+                    {
+                        newValueObject = JsonConvert.DeserializeObject(setting.Value.ToString());
+                    }
+                    // otherwise, assume it is a value type.
+                    else
+                    {
+                        // watch out for nullable value types when converting the string to its value type
+                        Type baseType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+                        newValueObject = Convert.ChangeType(setting.Value, baseType);
+                    }
+
+                    // update the protocol and request restart
+                    if (targetType == typeof(Protocol))
+                    {
+                        property.SetValue(this, newValueObject);
+
+                        // restart the protocol if it is starting, running, or paused (other than stopping or stopped)
+                        if (_state == ProtocolState.Starting ||
+                            _state == ProtocolState.Running ||
+                            _state == ProtocolState.Paused)
+                        {
+                            restartProtocol = true;
+                        }
+                    }
+                    else if (targetType.GetAncestorTypes(false).Last() == typeof(Probe))
+                    {
+                        // update each probe derived from the target type
+                        foreach (Probe probe in _probes)
+                        {
+                            if (probe.GetType().GetAncestorTypes(false).Any(ancestorType => ancestorType == targetType))
+                            {
+                                // don't set the new value if it matches the current value
+                                object currentValueObject = property.GetValue(probe);
+                                if (newValueObject.Equals(currentValueObject))
+                                {
+                                    SensusServiceHelper.Get().Logger.Log("Current and new values match. Not setting property on probe.", LoggingLevel.Normal, GetType());
+                                }
+                                else
+                                {
+                                    property.SetValue(probe, newValueObject);
+
+                                    if (probe.State == ProbeState.Running || probe.Enabled)
+                                    {
+                                        if (!probesToRestart.Contains(probe))
+                                        {
+                                            probesToRestart.Add(probe);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Unrecognized target type:  " + targetType.FullName);
+                    }
+
+                    // record the setting as a datum in the data store, so that we can analyze effects of updates retrospectively.
+                    _localDataStore.WriteDatum(new ProtocolSettingUpdateDatum(DateTimeOffset.UtcNow, setting.PropertyTypeName, setting.PropertyName, setting.TargetTypeName, setting.Value.ToString()), cancellationToken);
+
+                    SensusServiceHelper.Get().Logger.Log("Updated protocol:  " + setting.PropertyTypeName + "." + setting.PropertyName + " for each " + setting.TargetTypeName + " = " + setting.Value, LoggingLevel.Normal, GetType());
+                }
+                catch (Exception settingException)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while applying setting:  " + settingException.Message, LoggingLevel.Normal, GetType());
+                }
+            }
+
+            bool restarted = false;
+
+            // restart the protocol if needed. this will have the side-effect of restarting all probes and saving the app state.
+            if (restartProtocol)
+            {
+                await StopAsync();
+                await StartAsync(CancellationToken.None);  // restarting the protocol takes significant time and will almost certainly overrun the ios background time limits. don't pass the cancellation token.
+                restarted = true;
+            }
+            else
+            {
+                // restart individual probes to take on updated settings
+                SensusServiceHelper.Get().Logger.Log("Restarting " + probesToRestart.Count + " updated probe(s) following setting application.", LoggingLevel.Normal, GetType());
+                bool probeRestarted = false;
+                foreach (Probe probeToRestart in probesToRestart)
+                {
+                    try
+                    {
+                        await probeToRestart.RestartAsync();
+                        probeRestarted = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Exception while restarting probe following setting application:  " + ex.Message, LoggingLevel.Normal, GetType());
                     }
                 }
 
-                return _typeProbe.TryGetValue(type, out probe);
+                if (probeRestarted)
+                {
+                    await SensusServiceHelper.Get().SaveAsync();
+                    restarted = true;
+                }
             }
+
+            return restarted;
         }
 
         /// <summary>
@@ -1773,7 +1915,7 @@ namespace Sensus
             {
                 await probe.ResetAsync();
 
-                // reset enabled status of probes to the original values. probes can be disabled when the protocol is started (e.g., if the user cancels out of facebook login.)
+                // reset enabled status of probes to the original values. probes can be disabled when the protocol is started (e.g., if the user denies health kit).
                 probe.Enabled = probe.OriginallyEnabled;
 
                 // if we reset the protocol id, assign new group and input ids to all scripts
@@ -1972,31 +2114,17 @@ namespace Sensus
 
                         SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal, GetType());
                         int probesEnabled = 0;
-                        bool startMicrosoftBandProbes = true;
                         int numProbesToStart = _probes.Count(p => p.Enabled);
                         double perProbeStartProgressPercent = perStepPercent / numProbesToStart;
                         foreach (Probe probe in _probes)
                         {
                             if (probe.Enabled)
                             {
-                                if (probe is MicrosoftBandProbeBase && !startMicrosoftBandProbes)
-                                {
-                                    await (_protocolStartAddProgressAsync?.Invoke(perProbeStartProgressPercent) ?? Task.CompletedTask);
-                                    continue;
-                                }
-
                                 cancellationToken.ThrowIfCancellationRequested();
 
                                 try
                                 {
                                     await probe.StartAsync();
-                                }
-                                catch (MicrosoftBandClientConnectException)
-                                {
-                                    // if we failed to start a microsoft band probe due to a client connect exception, don't attempt to start the other
-                                    // band probes. instead, rely on the band health check to periodically attempt to connect to the band. if and when this
-                                    // succeeds, all band probes will then be started.
-                                    startMicrosoftBandProbes = false;
                                 }
                                 catch (Exception probeStartException)
                                 {
@@ -2055,7 +2183,7 @@ namespace Sensus
                 }
 
                 // start sensing agent if there is one
-                await (Agent?.InitializeAsync(SensusServiceHelper.Get(), this) ?? Task.CompletedTask);
+                await (Agent?.InitializeAsync() ?? Task.CompletedTask);
 
                 // if the sensing agent has requested actions at regular intervals, then schedule a repeating callback.
                 if (Agent?.ActionInterval != null)
@@ -2677,16 +2805,13 @@ namespace Sensus
 
                 foreach (Probe probe in _probes)
                 {
-                    if (probe.Running)
+                    try
                     {
-                        try
-                        {
-                            await probe.StopAsync();
-                        }
-                        catch (Exception ex)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Failed to stop " + probe.GetType().FullName + ":  " + ex.Message, LoggingLevel.Normal, GetType());
-                        }
+                        await probe.StopAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to stop " + probe.GetType().FullName + ":  " + ex.Message, LoggingLevel.Normal, GetType());
                     }
                 }
 
@@ -2716,7 +2841,7 @@ namespace Sensus
 
                 if (_agentIntervalActionScheduledCallback != null)
                 {
-                    // cancel interval action callback ssociated with the sensing agent, if there is one.
+                    // cancel interval action callback associated with the sensing agent, if there is one.
                     await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_agentIntervalActionScheduledCallback);
                     _agentIntervalActionScheduledCallback = null;
 
@@ -2847,6 +2972,91 @@ namespace Sensus
             }
         }
 
+#if __ANDROID__
+        /// <summary>
+        /// Gets a <see cref="SensingAgent"/> from those available.
+        /// </summary>
+        /// <returns>The agent.</returns>
+        /// <param name="agentId">Agent identifier.</param>
+        /// <param name="assemblyBytes">Assembly bytes. This is only permitted on Android, as
+        /// iOS does not permit dynamic code loading. Attempting to do this crashes the app.</param>
+        public SensingAgent GetAgent(string agentId, byte[] assemblyBytes)
+#elif __IOS__
+        /// <summary>
+        /// Gets a <see cref="SensingAgent"/> from those available.
+        /// </summary>
+        /// <returns>The agent.</returns>
+        /// <param name="agentId">Agent identifier.</param>
+        public SensingAgent GetAgent(string agentId)
+#endif
+        {
+            return GetAgents(
+
+#if __ANDROID__
+                assemblyBytes
+#endif
+
+                ).SingleOrDefault(agent => agent.Id == agentId);
+        }
+
+#if __ANDROID__
+        /// <summary>
+        /// Gets available <see cref="SensingAgent"/>s from the current executing assembly.
+        /// </summary>
+        /// <returns>The agents.</returns>
+        /// <param name="assemblyBytes">Additional assembly to scan for <see cref="SensingAgent"/>s. Pass <c>null</c> for no assembly, in
+        /// which case only agents present in the executing assembly (the app codebase) will be loaded.
+        /// Only permitted on Android</param>
+        public List<SensingAgent> GetAgents(byte[] assemblyBytes)
+#elif __IOS__
+        /// <summary>
+        /// Gets available <see cref="SensingAgent"/>s from the current executing assembly.
+        /// </summary>
+        /// <returns>The agents.</returns>
+        public List<SensingAgent> GetAgents()
+#endif
+        {
+            List<SensingAgent> agents = new List<SensingAgent>();
+
+            // add agents from the current assembly. they must be linked at compile time.
+            agents.AddRange(Assembly.GetExecutingAssembly()
+                                    .GetTypes()
+                                    .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(SensingAgent)))
+                                    .Select(Activator.CreateInstance)
+                                    .Cast<SensingAgent>()
+                                    .ToList());
+
+#if __ANDROID__
+            // add agents from the passed assembly, if any bytes were passed.
+            if (assemblyBytes != null)
+            {
+                // don't let an invalid assembly byte array prevent us from proceeding to return the agents.
+                try
+                {
+                    agents.AddRange(Assembly.Load(assemblyBytes)
+                                            .GetTypes()
+                                            .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(SensingAgent)))
+                                            .Select(Activator.CreateInstance)
+                                            .Cast<SensingAgent>()
+                                            .ToList());
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception loading sensing agents from assembly bytes:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+            }
+#endif
+
+            // set protocol and service helper on all agents
+            foreach (SensingAgent agent in agents)
+            {
+                agent.Protocol = this;
+                agent.SensusServiceHelper = SensusServiceHelper.Get();
+            }
+
+            return agents;
+        }
+
         public async Task UpdateSensingAgentPolicyAsync(CancellationToken cancellationToken)
         {
             JObject policy = await RemoteDataStore.GetSensingAgentPolicyAsync(cancellationToken);
@@ -2859,11 +3069,18 @@ namespace Sensus
             if (Agent != null)
             {
                 await Agent.SetPolicyAsync(policy);
-
-                // save policy within app state (agent itself is not serialized)
-                AgentPolicy = policy;
-                await SensusServiceHelper.Get().SaveAsync();
             }
+        }
+
+        public void WriteSensingAgentStateDatum(SensingAgentState previousState, SensingAgentState currentState, string description, CancellationToken cancellationToken)
+        {
+            SensingAgentStateDatum datum = new SensingAgentStateDatum(DateTimeOffset.UtcNow, previousState, currentState, description)
+            {
+                ProtocolId = Id,
+                ParticipantId = ParticipantId
+            };
+
+            _localDataStore.WriteDatum(datum, cancellationToken);
         }
     }
 }

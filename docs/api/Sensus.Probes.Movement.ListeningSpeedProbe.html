@@ -95,6 +95,8 @@
   <div classs="implements">
     <h5>Implements</h5>
     <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
+    <div><a class="xref" href="Sensus.Probes.IListeningProbe.html">IListeningProbe</a></div>
+    <div><a class="xref" href="Sensus.Probes.IProbe.html">IProbe</a></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -102,7 +104,7 @@
       <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_ProtectedStartAsync">ListeningProbe.ProtectedStartAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_StopAsync">ListeningProbe.StopAsync()</a>
+      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_ProtectedStopAsync">ListeningProbe.ProtectedStopAsync()</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_MaxDataStoresPerSecond">ListeningProbe.MaxDataStoresPerSecond</a>
@@ -144,6 +146,9 @@
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetParticipation">Probe.GetParticipation()</a>
     </div>
     <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StopAsync">Probe.StopAsync()</a>
+    </div>
+    <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_RestartAsync">Probe.RestartAsync()</a>
     </div>
     <div>
@@ -159,7 +164,7 @@
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_OriginallyEnabled">Probe.OriginallyEnabled</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Running">Probe.Running</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_State">Probe.State</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MostRecentStoreTimestamp">Probe.MostRecentStoreTimestamp</a>
@@ -199,7 +204,7 @@
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Probes_Movement_ListeningSpeedProbe_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class ListeningSpeedProbe : ListeningProbe, INotifyPropertyChanged</code></pre>
+    <pre><code class="lang-csharp hljs">public class ListeningSpeedProbe : ListeningProbe, INotifyPropertyChanged, IListeningProbe, IProbe</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -567,7 +572,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override sealed Task StartListeningAsync()</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task StartListeningAsync()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -594,7 +599,7 @@
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override sealed Task StopListeningAsync()</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task StopListeningAsync()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -616,6 +621,12 @@
   <h3 id="implements">Implements</h3>
   <div>
       <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
+  </div>
+  <div>
+      <a class="xref" href="Sensus.Probes.IListeningProbe.html">IListeningProbe</a>
+  </div>
+  <div>
+      <a class="xref" href="Sensus.Probes.IProbe.html">IProbe</a>
   </div>
 </article>
           </div>

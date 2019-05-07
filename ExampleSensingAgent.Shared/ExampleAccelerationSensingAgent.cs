@@ -18,76 +18,98 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Sensus;
 using Sensus.Probes.Movement;
-using System.Linq;
 using Sensus.Probes.Location;
+using Sensus.Probes;
+using System.Threading;
+using Sensus.Extensions;
+using Sensus.Adaptation;
 
 namespace ExampleSensingAgent
 {
+    /// <summary>
+    /// Example acceleration sensing agent. Demonstrates concepts related to control criterion checking as well as 
+    /// sensing control, in particular temporary device keep-awake and increased sampling rates.
+    /// </summary>
     public class ExampleAccelerationSensingAgent : SensingAgent
     {
-        private double _averageLinearMagnitudeThreshold;
+        /// <summary>
+        /// Gets or sets the average linear magnitude threshold.
+        /// </summary>
+        /// <value>The average linear magnitude threshold.</value>
+        public double AverageLinearMagnitudeThreshold { get; set; }
 
-        public override string Id => "Acceleration";
+        /// <summary>
+        /// Gets or sets the control accelerometer max data stores per second.
+        /// </summary>
+        /// <value>The control accelerometer max data stores per second.</value>
+        public double? ControlAccelerometerMaxDataStoresPerSecond { get; set; }
 
-        public override string Description => "ALM / Proximity";
+        /// <summary>
+        /// Gets or sets the idle accelerometer max data stores per second.
+        /// </summary>
+        /// <value>The idle accelerometer max data stores per second.</value>
+        public double? IdleAccelerometerMaxDataStoresPerSecond { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:ExampleSensingAgent.ExampleAccelerationSensingAgent"/> class. As noted in
+        /// the [adaptive sensing](xref:adaptive_sensing) article, this class provides the parameterless constructor required for
+        /// run time initialization of the agent.
+        /// </summary>
         public ExampleAccelerationSensingAgent()
+            : base("Acceleration", "ALM / Proximity", TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(5))
         {
-            _averageLinearMagnitudeThreshold = 0.1;
+            AverageLinearMagnitudeThreshold = 0.1;
+            ControlAccelerometerMaxDataStoresPerSecond = 60;
+            IdleAccelerometerMaxDataStoresPerSecond = 5;
         }
 
-        public override async Task SetPolicyAsync(JObject policy)
+        protected override Task ProtectedSetPolicyAsync(JObject policy)
         {
-            await base.SetPolicyAsync(policy);
+            AverageLinearMagnitudeThreshold = double.Parse(policy["alm-threshold"].ToString());
+            ControlAccelerometerMaxDataStoresPerSecond = double.Parse(policy["control-acc-rate"].ToString());
+            IdleAccelerometerMaxDataStoresPerSecond = double.Parse(policy["idle-acc-rate"].ToString());
 
-            _averageLinearMagnitudeThreshold = double.Parse(policy.GetValue("alm-threshold").ToString());
+            return Task.CompletedTask;
         }
 
-        protected override void UpdateObservedData(Dictionary<Type, List<IDatum>> typeData)
+        protected override bool ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>> typeData)
         {
-            foreach (Type type in typeData.Keys)
+            return IsNearSurface() || AverageLinearAccelerationMagnitudeExceedsThreshold(AverageLinearMagnitudeThreshold);
+        }
+
+        protected override async Task OnStateChangedAsync(SensingAgentState previousState, SensingAgentState currentState, CancellationToken cancellationToken)
+        {
+            await base.OnStateChangedAsync(previousState, currentState, cancellationToken);
+
+            if (currentState == SensingAgentState.OpportunisticControl || currentState == SensingAgentState.ActiveControl)
             {
-                List<IDatum> data = typeData[type];
+                // keep device awake
+                await SensusServiceHelper.KeepDeviceAwakeAsync();
 
-                while (data.Count > 100)
+                // increase sampling rate
+                if (Protocol.TryGetProbe<IAccelerometerDatum, IListeningProbe>(out IListeningProbe accelerometerProbe))
                 {
-                    data.RemoveAt(0);
+                    // increase sampling rate
+                    accelerometerProbe.MaxDataStoresPerSecond = ControlAccelerometerMaxDataStoresPerSecond;
+
+                    // restart probe to take on new settings
+                    await accelerometerProbe.RestartAsync();
                 }
             }
-        }
-
-        protected override bool ObservedDataMeetControlCriterion(List<IDatum> data)
-        {
-            bool criterionMet = false;
-
-            if (data.Count > 0)
+            else if (currentState == SensingAgentState.EndingControl)
             {
-                Type dataType = data[0].GetType();
-
-                if (dataType.GetInterfaces().Contains(typeof(IProximityDatum)))
+                if (Protocol.TryGetProbe<IAccelerometerDatum, IListeningProbe>(out IListeningProbe accelerometerProbe))
                 {
-                    IProximityDatum mostRecentProximityDatum = data.Last() as IProximityDatum;
+                    // decrease sampling rate
+                    accelerometerProbe.MaxDataStoresPerSecond = IdleAccelerometerMaxDataStoresPerSecond;
 
-                    if (mostRecentProximityDatum.Distance < mostRecentProximityDatum.MaxDistance)
-                    {
-                        criterionMet = true;
-                    }
+                    // restart probe to take on original settings
+                    await accelerometerProbe.RestartAsync();
                 }
 
-                if (!criterionMet && dataType.GetInterfaces().Contains(typeof(IAccelerometerDatum)))
-                {
-                    double averageLinearMagnitude = data.Cast<IAccelerometerDatum>().Average(accelerometerDatum => Math.Sqrt(Math.Pow(accelerometerDatum.X, 2) + Math.Pow(accelerometerDatum.Y, 2) + Math.Pow(accelerometerDatum.Z, 2)));
-
-                    // acceleration values include gravity. thus, a stationary device will register 1 on one of the axes.
-                    // use absolute deviation from 1 as the criterion value with which to compare the threshold.
-                    if (Math.Abs(averageLinearMagnitude - 1) >= _averageLinearMagnitudeThreshold)
-                    {
-                        criterionMet = true;
-                    }
-                }
+                // let device sleep
+                await SensusServiceHelper.LetDeviceSleepAsync();
             }
-
-            return criterionMet;
         }
     }
 }

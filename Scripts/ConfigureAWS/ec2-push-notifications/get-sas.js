@@ -10,7 +10,7 @@ var args = process.argv.slice(2);
 var url = 'https://' + args[0] + '.servicebus.windows.net/' + args[1] + '/messages';
 
 var expiry = new Date(); 
-expiry.setMinutes(expiry.getMinutes() + 5);
+expiry.setMinutes(expiry.getMinutes() + 60);
 var expiryEpoch = expiry instanceof Date ? expiry.getTime() / 1000 : expiry;
 
 var data = util.format('%s\n%s', encodeURIComponent(url), expiryEpoch);

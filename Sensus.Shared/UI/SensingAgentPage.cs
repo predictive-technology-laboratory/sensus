@@ -14,6 +14,7 @@
 
 using System;
 using System.Globalization;
+using Sensus.Adaptation;
 using Xamarin.Forms;
 
 namespace Sensus.UI
@@ -46,23 +47,14 @@ namespace Sensus.UI
 
             idleLabel.SetBinding(BackgroundColorProperty, new Binding(nameof(SensingAgent.State), converter: new SensingAgentStateColorConverter(), converterParameter: SensingAgentState.Idle));
 
-            Label directObservationLabel = new Label
+            Label opportunisticObservationLabel = new Label
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand,
-                Text = SensingAgentState.ActiveObservation.ToString(),
+                Text = SensingAgentState.OpportunisticObservation.ToString(),
                 BindingContext = sensingAgent
             };
 
-            directObservationLabel.SetBinding(BackgroundColorProperty, new Binding(nameof(SensingAgent.State), converter: new SensingAgentStateColorConverter(), converterParameter: SensingAgentState.ActiveObservation));
-
-            Label directControlLabel = new Label
-            {
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                Text = SensingAgentState.ActiveControl.ToString(),
-                BindingContext = sensingAgent
-            };
-
-            directControlLabel.SetBinding(BackgroundColorProperty, new Binding(nameof(SensingAgent.State), converter: new SensingAgentStateColorConverter(), converterParameter: SensingAgentState.ActiveControl));
+            opportunisticObservationLabel.SetBinding(BackgroundColorProperty, new Binding(nameof(SensingAgent.State), converter: new SensingAgentStateColorConverter(), converterParameter: SensingAgentState.OpportunisticObservation));
 
             Label opportunisticControlLabel = new Label
             {
@@ -72,6 +64,24 @@ namespace Sensus.UI
             };
 
             opportunisticControlLabel.SetBinding(BackgroundColorProperty, new Binding(nameof(SensingAgent.State), converter: new SensingAgentStateColorConverter(), converterParameter: SensingAgentState.OpportunisticControl));
+
+            Label activeObservationLabel = new Label
+            {
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Text = SensingAgentState.ActiveObservation.ToString(),
+                BindingContext = sensingAgent
+            };
+
+            activeObservationLabel.SetBinding(BackgroundColorProperty, new Binding(nameof(SensingAgent.State), converter: new SensingAgentStateColorConverter(), converterParameter: SensingAgentState.ActiveObservation));
+
+            Label activeControlLabel = new Label
+            {
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                Text = SensingAgentState.ActiveControl.ToString(),
+                BindingContext = sensingAgent
+            };
+
+            activeControlLabel.SetBinding(BackgroundColorProperty, new Binding(nameof(SensingAgent.State), converter: new SensingAgentStateColorConverter(), converterParameter: SensingAgentState.ActiveControl));
 
             Label endingControlLabel = new Label
             {
@@ -91,9 +101,10 @@ namespace Sensus.UI
                     Children =
                     {
                         idleLabel,
-                        directObservationLabel,
-                        directControlLabel,
+                        opportunisticObservationLabel,
                         opportunisticControlLabel,
+                        activeObservationLabel,
+                        activeControlLabel,
                         endingControlLabel
                     }
                 }

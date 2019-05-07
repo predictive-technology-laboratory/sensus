@@ -228,6 +228,17 @@ namespace Sensus
         }
 
         /// <summary>
+        /// If the <see cref="Protocol"/> is configured with a <see cref="Adaptation.SensingAgent"/>, then
+        /// this will contain the value of <see cref="Adaptation.SensingAgent.StateDescription"/> for 
+        /// convenience in evaluating the effects of a <see cref="Adaptation.SensingAgent"/>. Note that
+        /// the <see cref="Adaptation.SensingAgent"/> will also submit <see cref="Adaptation.SensingAgentStateDatum"/>
+        /// objects to record the <see cref="Adaptation.SensingAgentState"/> trajectory of the 
+        /// <see cref="Adaptation.SensingAgent"/> over time.
+        /// </summary>
+        /// <value>The sensing agent state description.</value>
+        public string SensingAgentStateDescription { get; set; }
+
+        /// <summary>
         /// The local time zone's offset from UTC.
         /// </summary>
         /// <value>The local offset from UTC.</value>

@@ -24,7 +24,6 @@ using Sensus.Exceptions;
 using Sensus.iOS.Context;
 using UIKit;
 using Foundation;
-using Facebook.CoreKit;
 using Syncfusion.SfChart.XForms.iOS.Renderers;
 using Sensus.iOS.Callbacks;
 using UserNotifications;
@@ -65,10 +64,6 @@ namespace Sensus.iOS
             // local notifications. clear these out now. any callbacks these notifications
             // would have triggered are about to be rescheduled when the app is actived.
             (SensusContext.Current.Notifier as iOSNotifier).RemoveAllNotifications();
-
-            // facebook settings
-            Settings.AppId = "873948892650954";
-            Settings.DisplayName = "Sensus";
 
             // initialize stuff prior to app load
             Forms.Init();
@@ -418,7 +413,7 @@ namespace Sensus.iOS
                 {
                     foreach (Probe probe in protocol.Probes)
                     {
-                        if (probe.Running)
+                        if (probe.State == ProbeState.Running)
                         {
                             lock (probe.StartStopTimes)
                             {

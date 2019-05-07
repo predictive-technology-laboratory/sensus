@@ -97,6 +97,8 @@
   <div classs="implements">
     <h5>Implements</h5>
     <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
+    <div><a class="xref" href="Sensus.Probes.IPollingProbe.html">IPollingProbe</a></div>
+    <div><a class="xref" href="Sensus.Probes.IProbe.html">IProbe</a></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -170,6 +172,9 @@
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetParticipation">Probe.GetParticipation()</a>
     </div>
     <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StopAsync">Probe.StopAsync()</a>
+    </div>
+    <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_RestartAsync">Probe.RestartAsync()</a>
     </div>
     <div>
@@ -182,7 +187,7 @@
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_OriginallyEnabled">Probe.OriginallyEnabled</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Running">Probe.Running</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_State">Probe.State</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MostRecentStoreTimestamp">Probe.MostRecentStoreTimestamp</a>
@@ -222,7 +227,7 @@
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract class BluetoothDeviceProximityProbe : PollingProbe, INotifyPropertyChanged</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract class BluetoothDeviceProximityProbe : PollingProbe, INotifyPropertyChanged, IPollingProbe, IProbe</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -688,7 +693,7 @@ public int ScanDurationMS { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override sealed Task ProtectedStartAsync()</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task ProtectedStartAsync()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -707,6 +712,33 @@ public int ScanDurationMS { get; set; }</code></pre>
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_ProtectedStartAsync">PollingProbe.ProtectedStartAsync()</a></div>
+  
+  
+  <a id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_ProtectedStopAsync_" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.ProtectedStopAsync*"></a>
+  <h4 id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_ProtectedStopAsync" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.ProtectedStopAsync">ProtectedStopAsync()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Task ProtectedStopAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_ProtectedStopAsync">PollingProbe.ProtectedStopAsync()</a></div>
   
   
   <a id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_ReadPeripheralCharacteristicValuesAsync_" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.ReadPeripheralCharacteristicValuesAsync*"></a>
@@ -813,33 +845,6 @@ public int ScanDurationMS { get; set; }</code></pre>
   </div>
   
   
-  <a id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_StopAsync_" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.StopAsync*"></a>
-  <h4 id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_StopAsync" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.StopAsync">StopAsync()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override sealed Task StopAsync()</code></pre>
-  </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_StopAsync">PollingProbe.StopAsync()</a></div>
-  
-  
   <a id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_TestHealthAsync_" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.TestHealthAsync*"></a>
   <h4 id="Sensus_Probes_Context_BluetoothDeviceProximityProbe_TestHealthAsync_System_Collections_Generic_List_Sensus_AnalyticsTrackedEvent__" data-uid="Sensus.Probes.Context.BluetoothDeviceProximityProbe.TestHealthAsync(System.Collections.Generic.List{Sensus.AnalyticsTrackedEvent})">TestHealthAsync(List&lt;AnalyticsTrackedEvent&gt;)</h4>
   <div class="markdown level1 summary"></div>
@@ -885,6 +890,12 @@ public int ScanDurationMS { get; set; }</code></pre>
   <h3 id="implements">Implements</h3>
   <div>
       <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
+  </div>
+  <div>
+      <a class="xref" href="Sensus.Probes.IPollingProbe.html">IPollingProbe</a>
+  </div>
+  <div>
+      <a class="xref" href="Sensus.Probes.IProbe.html">IProbe</a>
   </div>
 </article>
           </div>

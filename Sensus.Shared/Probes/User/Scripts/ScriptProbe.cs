@@ -315,9 +315,9 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
-        public override async Task StopAsync()
+        protected override async Task ProtectedStopAsync()
         {
-            await base.StopAsync();
+            await base.ProtectedStopAsync();
 
             foreach (ScriptRunner scriptRunner in _scriptRunners)
             {

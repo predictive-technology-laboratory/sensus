@@ -101,11 +101,6 @@ namespace Sensus.Tests.Classes
             throw new NotImplementedException();
         }
 
-        public override Task PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
-        {
-            throw new NotImplementedException();
-        }
-
         public override Task<string> RunVoicePromptAsync(string prompt, Action postDisplayCallback)
         {
             throw new NotImplementedException();

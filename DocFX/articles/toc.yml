@@ -42,6 +42,9 @@
   
 - name: Adaptive Surveys
   href: adaptive-surveys.md
+  
+- name: Adaptive Sensing
+  href: adaptive-sensing.md
 
 - name: Push Notifications
   href: push-notifications.md

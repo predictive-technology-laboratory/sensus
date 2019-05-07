@@ -43,18 +43,18 @@ namespace Sensus.Android.Probes.Movement
             _gyroscopeListener.Initialize(MinDataStoreDelay);
         }
 
-        protected override Task StartListeningAsync()
+        protected override async Task StartListeningAsync()
         {
-            _gyroscopeListener.Start();
+            await base.StartListeningAsync();
 
-            return Task.CompletedTask;
+            _gyroscopeListener.Start();
         }
 
-        protected override Task StopListeningAsync()
+        protected override async Task StopListeningAsync()
         {
-            _gyroscopeListener.Stop();
+            await base.StopListeningAsync();
 
-            return Task.CompletedTask;
+            _gyroscopeListener.Stop();
         }
     }
 }

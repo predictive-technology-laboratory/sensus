@@ -84,18 +84,10 @@
   <h1 id="Sensus_Probes_ListeningProbe" data-uid="Sensus.Probes.ListeningProbe" class="text-break">Class ListeningProbe
   </h1>
   <div class="markdown level0 summary"><p>Listening Probes are triggered by a change in state within the underlying device. For example, when an accelerometer reading is emitted, the 
-<a class="xref" href="Sensus.Probes.Movement.AccelerometerProbe.html">AccelerometerProbe</a> is provided with information about device movement in each direction. Listening Probes do not generate
-data unless such state changes occur. Whether or not data streams are discontinued when the app is backgrounded depends on the operating
-system (Android or iOS) as well as specific settings.</p>
-<ul>
-<li><p>Android:  If <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_KeepDeviceAwake">KeepDeviceAwake</a> is enabled on Android, then the app will hold a wake lock thus keeping the device processor powered
-on and delivering readings to the app. If <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_KeepDeviceAwake">KeepDeviceAwake</a> is disabled on Android, then the CPU will be allowed to sleep typically
-discontinuing the delivery of readings to the app.</p>
-</li>
-<li><p>iOS:  The <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_KeepDeviceAwake">KeepDeviceAwake</a> setting has no effect on iOS, and all readings will be discontinued when the app is put into the
-background. See <a class="xref" href="Sensus.Probes.PollingProbe.html">PollingProbe</a> for more information about background considerations.</p>
-</li>
-</ul>
+<a class="xref" href="Sensus.Probes.Movement.AccelerometerProbe.html">AccelerometerProbe</a> is provided with information about device movement in each direction. <a class="xref" href="Sensus.Probes.ListeningProbe.html">ListeningProbe</a>s
+do not generate data unless such state changes occur (however, in the particular case of the <a class="xref" href="Sensus.Probes.Movement.AccelerometerProbe.html">AccelerometerProbe</a>, the 
+hardware accelerometer chip will continuously be registering movement). Whether or not data streams are discontinued when the app is backgrounded 
+depends on the operating system (Android or iOS) as well as the setting of <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_KeepDeviceAwake">KeepDeviceAwake</a>.</p>
 </div>
   <div class="markdown level0 conceptual"></div>
   <div class="inheritance">
@@ -120,11 +112,12 @@ background. See <a class="xref" href="Sensus.Probes.PollingProbe.html">PollingPr
       <div class="level3"><a class="xref" href="Sensus.Probes.Movement.ListeningSpeedProbe.html">ListeningSpeedProbe</a></div>
       <div class="level3"><a class="xref" href="Sensus.Probes.Network.CellTowerProbe.html">CellTowerProbe</a></div>
       <div class="level3"><a class="xref" href="Sensus.Probes.Network.ListeningWlanProbe.html">ListeningWlanProbe</a></div>
-      <div class="level3"><a class="xref" href="Sensus.Probes.User.MicrosoftBand.MicrosoftBandProbeBase.html">MicrosoftBandProbeBase</a></div>
   </div>
   <div classs="implements">
     <h5>Implements</h5>
     <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
+    <div><a class="xref" href="Sensus.Probes.IListeningProbe.html">IListeningProbe</a></div>
+    <div><a class="xref" href="Sensus.Probes.IProbe.html">IProbe</a></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -151,6 +144,9 @@ background. See <a class="xref" href="Sensus.Probes.PollingProbe.html">PollingPr
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetParticipation">Probe.GetParticipation()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StopAsync">Probe.StopAsync()</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_RestartAsync">Probe.RestartAsync()</a>
@@ -183,7 +179,7 @@ background. See <a class="xref" href="Sensus.Probes.PollingProbe.html">PollingPr
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_OriginallyEnabled">Probe.OriginallyEnabled</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Running">Probe.Running</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_State">Probe.State</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MostRecentStoreTimestamp">Probe.MostRecentStoreTimestamp</a>
@@ -226,7 +222,7 @@ background. See <a class="xref" href="Sensus.Probes.PollingProbe.html">PollingPr
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Probes_ListeningProbe_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract class ListeningProbe : Probe, INotifyPropertyChanged</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract class ListeningProbe : Probe, INotifyPropertyChanged, IListeningProbe, IProbe</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -547,7 +543,7 @@ version of the <a class="xref" href="Sensus.Probes.Location.CompassProbe.html">C
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override sealed Task ProtectedStartAsync()</code></pre>
+    <pre><code class="lang-csharp hljs">protected override Task ProtectedStartAsync()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -566,6 +562,33 @@ version of the <a class="xref" href="Sensus.Probes.Location.CompassProbe.html">C
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_ProtectedStartAsync">Probe.ProtectedStartAsync()</a></div>
+  
+  
+  <a id="Sensus_Probes_ListeningProbe_ProtectedStopAsync_" data-uid="Sensus.Probes.ListeningProbe.ProtectedStopAsync*"></a>
+  <h4 id="Sensus_Probes_ListeningProbe_ProtectedStopAsync" data-uid="Sensus.Probes.ListeningProbe.ProtectedStopAsync">ProtectedStopAsync()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Task ProtectedStopAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_ProtectedStopAsync">Probe.ProtectedStopAsync()</a></div>
   
   
   <a id="Sensus_Probes_ListeningProbe_ResetAsync_" data-uid="Sensus.Probes.ListeningProbe.ResetAsync*"></a>
@@ -601,7 +624,7 @@ version of the <a class="xref" href="Sensus.Probes.Location.CompassProbe.html">C
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected abstract Task StartListeningAsync()</code></pre>
+    <pre><code class="lang-csharp hljs">protected virtual Task StartListeningAsync()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -618,33 +641,6 @@ version of the <a class="xref" href="Sensus.Probes.Location.CompassProbe.html">C
       </tr>
     </tbody>
   </table>
-  
-  
-  <a id="Sensus_Probes_ListeningProbe_StopAsync_" data-uid="Sensus.Probes.ListeningProbe.StopAsync*"></a>
-  <h4 id="Sensus_Probes_ListeningProbe_StopAsync" data-uid="Sensus.Probes.ListeningProbe.StopAsync">StopAsync()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override sealed Task StopAsync()</code></pre>
-  </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StopAsync">Probe.StopAsync()</a></div>
   
   
   <a id="Sensus_Probes_ListeningProbe_StopListeningAsync_" data-uid="Sensus.Probes.ListeningProbe.StopListeningAsync*"></a>
@@ -653,7 +649,7 @@ version of the <a class="xref" href="Sensus.Probes.Location.CompassProbe.html">C
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected abstract Task StopListeningAsync()</code></pre>
+    <pre><code class="lang-csharp hljs">protected virtual Task StopListeningAsync()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -673,6 +669,12 @@ version of the <a class="xref" href="Sensus.Probes.Location.CompassProbe.html">C
   <h3 id="implements">Implements</h3>
   <div>
       <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
+  </div>
+  <div>
+      <a class="xref" href="Sensus.Probes.IListeningProbe.html">IListeningProbe</a>
+  </div>
+  <div>
+      <a class="xref" href="Sensus.Probes.IProbe.html">IProbe</a>
   </div>
 </article>
           </div>

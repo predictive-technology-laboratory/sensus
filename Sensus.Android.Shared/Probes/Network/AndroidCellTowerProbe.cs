@@ -57,16 +57,18 @@ namespace Sensus.Android.Probes.Network
             }
         }
 
-        protected override Task StartListeningAsync()
+        protected override async Task StartListeningAsync()
         {
+            await base.StartListeningAsync();
+
             _telephonyManager.Listen(_cellTowerChangeListener, PhoneStateListenerFlags.CellLocation);
-            return Task.CompletedTask;
         }
 
-        protected override Task StopListeningAsync()
+        protected override async Task StopListeningAsync()
         {
+            await base.StopListeningAsync();
+
             _telephonyManager.Listen(_cellTowerChangeListener, PhoneStateListenerFlags.None);
-            return Task.CompletedTask;
         }
     }
 }

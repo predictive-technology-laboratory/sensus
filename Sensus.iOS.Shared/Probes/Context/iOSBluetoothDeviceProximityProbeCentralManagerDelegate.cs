@@ -20,6 +20,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CoreBluetooth;
 using Foundation;
+using Sensus.Probes;
 using Sensus.Probes.Context;
 
 namespace Sensus.iOS.Probes.Context
@@ -47,7 +48,7 @@ namespace Sensus.iOS.Probes.Context
         {
             // the central manager may be powered on/off by the user after the probe has been started. cover the case where this happens,
             // and start scanning if the new central manager state is powered on and the probe is running.
-            if (central.State == CBCentralManagerState.PoweredOn && _probe.Running)
+            if (central.State == CBCentralManagerState.PoweredOn && _probe.State == ProbeState.Running)
             {
                 try
                 {

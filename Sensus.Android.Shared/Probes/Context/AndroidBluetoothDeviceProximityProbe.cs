@@ -26,6 +26,7 @@ using System.Threading;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System.Linq;
+using Sensus.Probes;
 
 namespace Sensus.Android.Probes.Context
 {
@@ -209,7 +210,7 @@ namespace Sensus.Android.Probes.Context
         {
             HealthTestResult result = await base.TestHealthAsync(events);
 
-            if (Running)
+            if (State == ProbeState.Running)
             {
                 // if the user disables/enables BT manually, we will no longer be advertising the service. start advertising
                 // on each health test to ensure we're advertising.

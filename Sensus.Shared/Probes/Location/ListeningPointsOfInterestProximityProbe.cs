@@ -136,13 +136,17 @@ namespace Sensus.Probes.Location
             }
         }
 
-        protected sealed override async Task StartListeningAsync()
-        { 
+        protected override async Task StartListeningAsync()
+        {
+            await base.StartListeningAsync();
+
             await GpsReceiver.Get().AddListenerAsync(_positionChangedHandler, false);
         }
 
-        protected sealed override async Task StopListeningAsync()
+        protected override async Task StopListeningAsync()
         {
+            await base.StopListeningAsync();
+
             await GpsReceiver.Get().RemoveListenerAsync(_positionChangedHandler);
         }
 

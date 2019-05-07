@@ -256,7 +256,13 @@ study&apos;s <a class="xref" href="Sensus.Protocol.html">Protocol</a>. Study par
   
   <a id="Sensus_Protocol_Agent_" data-uid="Sensus.Protocol.Agent*"></a>
   <h4 id="Sensus_Protocol_Agent" data-uid="Sensus.Protocol.Agent">Agent</h4>
-  <div class="markdown level1 summary"><p>Gets or sets the sensing control agent. See <a href="xref:sensing_agent">here</a> for more information.</p>
+  <div class="markdown level1 summary"><p>Gets or sets the <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a> that controls this <a class="xref" href="Sensus.Protocol.html">Protocol</a>. See 
+<a class="xref" href="../articles/adaptive-sensing.html">here</a> for more information. This property is not serialized because,
+on Android, the assembly containing its type is not necessarily in the app&apos;s executing 
+assembly; rather, on Android, the type might be contained in an assembly (i.e., DLL) that 
+has been provided by a third-party for run-time code injection (plug-in). Instead of 
+storing the <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a> directly, we therefore store the assembly bytes and
+the identifier of the agent within the assembly, so that we can load the agent at run time.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -273,7 +279,7 @@ study&apos;s <a class="xref" href="Sensus.Protocol.html">Protocol</a>. Study par
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.SensingAgent.html">SensingAgent</a></td>
+        <td><a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a></td>
         <td><p>The agent.</p>
 </td>
       </tr>
@@ -2286,6 +2292,57 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   </h3>
   
   
+  <a id="Sensus_Protocol_ApplySettingsAsync_" data-uid="Sensus.Protocol.ApplySettingsAsync*"></a>
+  <h4 id="Sensus_Protocol_ApplySettingsAsync_System_Collections_Generic_List_Sensus_ProtocolSetting__System_Threading_CancellationToken_" data-uid="Sensus.Protocol.ApplySettingsAsync(System.Collections.Generic.List{Sensus.ProtocolSetting},System.Threading.CancellationToken)">ApplySettingsAsync(List&lt;ProtocolSetting&gt;, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Applies a list of <a class="xref" href="Sensus.ProtocolSetting.html">ProtocolSetting</a> to the current <a class="xref" href="Sensus.Protocol.html">Protocol</a> and its <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>s.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;bool&gt; ApplySettingsAsync(List&lt;ProtocolSetting&gt; settings, CancellationToken cancellationToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.ProtocolSetting.html">ProtocolSetting</a>&gt;</td>
+        <td><span class="parametername">settings</span></td>
+        <td><p>Settings.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>Cancellation token.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.Boolean</span>&gt;</td>
+        <td><p>True if either the current <a class="xref" href="Sensus.Protocol.html">Protocol</a> or any of its <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>s were restarted as a result of applying the passed <a class="xref" href="Sensus.ProtocolSetting.html">ProtocolSetting</a>s.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Protocol_CancelScheduledStartAsync_" data-uid="Sensus.Protocol.CancelScheduledStartAsync*"></a>
   <h4 id="Sensus_Protocol_CancelScheduledStartAsync" data-uid="Sensus.Protocol.CancelScheduledStartAsync">CancelScheduledStartAsync()</h4>
   <div class="markdown level1 summary"></div>
@@ -2634,12 +2691,13 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   
   
   <a id="Sensus_Protocol_GetAgent_" data-uid="Sensus.Protocol.GetAgent*"></a>
-  <h4 id="Sensus_Protocol_GetAgent_System_Byte___System_String_" data-uid="Sensus.Protocol.GetAgent(System.Byte[],System.String)">GetAgent(Byte[], String)</h4>
-  <div class="markdown level1 summary"></div>
+  <h4 id="Sensus_Protocol_GetAgent_System_String_System_Byte___" data-uid="Sensus.Protocol.GetAgent(System.String,System.Byte[])">GetAgent(String, Byte[])</h4>
+  <div class="markdown level1 summary"><p>Gets a <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a> from those available.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static SensingAgent GetAgent(byte[] assemblyBytes, string agentId)</code></pre>
+    <pre><code class="lang-csharp hljs">public SensingAgent GetAgent(string agentId, byte[] assemblyBytes)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2652,14 +2710,17 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Byte</span>[]</td>
-        <td><span class="parametername">assemblyBytes</span></td>
-        <td></td>
-      </tr>
-      <tr>
         <td><span class="xref">System.String</span></td>
         <td><span class="parametername">agentId</span></td>
-        <td></td>
+        <td><p>Agent identifier.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Byte</span>[]</td>
+        <td><span class="parametername">assemblyBytes</span></td>
+        <td><p>Assembly bytes. This is only permitted on Android, as
+iOS does not permit dynamic code loading. Attempting to do this crashes the app.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -2673,8 +2734,9 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.SensingAgent.html">SensingAgent</a></td>
-        <td></td>
+        <td><a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a></td>
+        <td><p>The agent.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -2682,11 +2744,12 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   
   <a id="Sensus_Protocol_GetAgents_" data-uid="Sensus.Protocol.GetAgents*"></a>
   <h4 id="Sensus_Protocol_GetAgents_System_Byte___" data-uid="Sensus.Protocol.GetAgents(System.Byte[])">GetAgents(Byte[])</h4>
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets available <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a>s from the current executing assembly.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static List&lt;SensingAgent&gt; GetAgents(byte[] assemblyBytes)</code></pre>
+    <pre><code class="lang-csharp hljs">public List&lt;SensingAgent&gt; GetAgents(byte[] assemblyBytes)</code></pre>
   </div>
   <h5 class="parameters">Parameters</h5>
   <table class="table table-bordered table-striped table-condensed">
@@ -2701,7 +2764,10 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
       <tr>
         <td><span class="xref">System.Byte</span>[]</td>
         <td><span class="parametername">assemblyBytes</span></td>
-        <td></td>
+        <td><p>Additional assembly to scan for <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a>s. Pass <code>null</code> for no assembly, in
+which case only agents present in the executing assembly (the app codebase) will be loaded.
+Only permitted on Android</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -2715,8 +2781,9 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.SensingAgent.html">SensingAgent</a>&gt;</td>
-        <td></td>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a>&gt;</td>
+        <td><p>The agents.</p>
+</td>
       </tr>
     </tbody>
   </table>
@@ -2867,7 +2934,7 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
   
   
   <a id="Sensus_Protocol_ScheduleAgentControlCompletionCheckAsync_" data-uid="Sensus.Protocol.ScheduleAgentControlCompletionCheckAsync*"></a>
-  <h4 id="Sensus_Protocol_ScheduleAgentControlCompletionCheckAsync_Sensus_SensingAgent_ControlCompletionCheck_" data-uid="Sensus.Protocol.ScheduleAgentControlCompletionCheckAsync(Sensus.SensingAgent.ControlCompletionCheck)">ScheduleAgentControlCompletionCheckAsync(SensingAgent.ControlCompletionCheck)</h4>
+  <h4 id="Sensus_Protocol_ScheduleAgentControlCompletionCheckAsync_Sensus_Adaptation_SensingAgent_ControlCompletionCheck_" data-uid="Sensus.Protocol.ScheduleAgentControlCompletionCheckAsync(Sensus.Adaptation.SensingAgent.ControlCompletionCheck)">ScheduleAgentControlCompletionCheckAsync(SensingAgent.ControlCompletionCheck)</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
@@ -2885,7 +2952,7 @@ public List&lt;string&gt; VariableValueUiProperty { get; set; }</code></pre>
     </thead>
     <tbody>
       <tr>
-        <td><a class="xref" href="Sensus.SensingAgent.ControlCompletionCheck.html">SensingAgent.ControlCompletionCheck</a></td>
+        <td><a class="xref" href="Sensus.Adaptation.SensingAgent.ControlCompletionCheck.html">SensingAgent.ControlCompletionCheck</a></td>
         <td><span class="parametername">controlCompletionCheck</span></td>
         <td></td>
       </tr>
@@ -3240,6 +3307,69 @@ to show progress and prevent the user from interacting with the app until the <a
   </table>
   
   
+  <a id="Sensus_Protocol_TryGetProbe_" data-uid="Sensus.Protocol.TryGetProbe*"></a>
+  <h4 id="Sensus_Protocol_TryGetProbe__2___1__" data-uid="Sensus.Protocol.TryGetProbe``2(``1@)">TryGetProbe&lt;DatumInterface, ProbeType&gt;(out ProbeType)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetProbe&lt;DatumInterface, ProbeType&gt;(out ProbeType probe)
+
+    where DatumInterface : IDatum where ProbeType : class, IProbe</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">ProbeType</span></td>
+        <td><span class="parametername">probe</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">DatumInterface</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="parametername">ProbeType</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Protocol_UpdateScriptAgentPolicyAsync_" data-uid="Sensus.Protocol.UpdateScriptAgentPolicyAsync*"></a>
   <h4 id="Sensus_Protocol_UpdateScriptAgentPolicyAsync_Newtonsoft_Json_Linq_JObject_" data-uid="Sensus.Protocol.UpdateScriptAgentPolicyAsync(Newtonsoft.Json.Linq.JObject)">UpdateScriptAgentPolicyAsync(JObject)</h4>
   <div class="markdown level1 summary"></div>
@@ -3402,6 +3532,48 @@ to show progress and prevent the user from interacting with the app until the <a
     <tbody>
       <tr>
         <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Protocol_WriteSensingAgentStateDatum_" data-uid="Sensus.Protocol.WriteSensingAgentStateDatum*"></a>
+  <h4 id="Sensus_Protocol_WriteSensingAgentStateDatum_Sensus_Adaptation_SensingAgentState_Sensus_Adaptation_SensingAgentState_System_String_System_Threading_CancellationToken_" data-uid="Sensus.Protocol.WriteSensingAgentStateDatum(Sensus.Adaptation.SensingAgentState,Sensus.Adaptation.SensingAgentState,System.String,System.Threading.CancellationToken)">WriteSensingAgentStateDatum(SensingAgentState, SensingAgentState, String, CancellationToken)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void WriteSensingAgentStateDatum(SensingAgentState previousState, SensingAgentState currentState, string description, CancellationToken cancellationToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Adaptation.SensingAgentState.html">SensingAgentState</a></td>
+        <td><span class="parametername">previousState</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Sensus.Adaptation.SensingAgentState.html">SensingAgentState</a></td>
+        <td><span class="parametername">currentState</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">description</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
         <td></td>
       </tr>
     </tbody>

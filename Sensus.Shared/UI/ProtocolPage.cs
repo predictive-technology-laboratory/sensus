@@ -31,6 +31,8 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Net;
+using Sensus.Adaptation;
+using Newtonsoft.Json.Linq;
 
 namespace Sensus.UI
 {
@@ -354,13 +356,58 @@ namespace Sensus.UI
 
             viewAgentStateButton.Clicked += async (sender, e) =>
             {
-                if (_protocol.Agent != null)
+                if (_protocol.Agent == null)
+                {
+                    await SensusServiceHelper.Get().FlashNotificationAsync("No agent set.");
+                }
+                else
                 {
                     await Navigation.PushAsync(new SensingAgentPage(_protocol.Agent));
                 }
             };
 
             views.Add(viewAgentStateButton);
+
+            Button setAgentPolicyButton = new Button
+            {
+                Text = "Set Agent Policy",
+                FontSize = 20,
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
+
+            setAgentPolicyButton.Clicked += async (sender, e) =>
+            {
+                if (_protocol.Agent == null)
+                {
+                    await SensusServiceHelper.Get().FlashNotificationAsync("No agent set.");
+                }
+                else
+                {
+                    string policyJSON = await SensusServiceHelper.Get().PromptForAndReadTextFileAsync();
+
+                    if (string.IsNullOrWhiteSpace(policyJSON))
+                    {
+                        await SensusServiceHelper.Get().FlashNotificationAsync("Empty policy selected. No changes made.");
+                    }
+                    else
+                    {
+                        try
+                        {
+                            JObject policyObject = JObject.Parse(policyJSON);
+                            await _protocol.Agent.SetPolicyAsync(policyObject);
+                            await SensusServiceHelper.Get().FlashNotificationAsync("Policy set.");
+                        }
+                        catch (Exception ex)
+                        {
+                            string message = "Error setting policy:  " + ex.Message;
+                            SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                            await SensusServiceHelper.Get().FlashNotificationAsync(message);
+                        }
+                    }
+                }
+            };
+
+            views.Add(setAgentPolicyButton);
             #endregion
 
             #region lock
@@ -481,12 +528,12 @@ namespace Sensus.UI
             // try to extract agents from a previously loaded assembly
             try
             {
-              currentAgents = Protocol.GetAgents(_protocol.AgentAssemblyBytes);
+              currentAgents = _protocol.GetAgents(_protocol.AgentAssemblyBytes);
             }
             catch (Exception)
             { }
 #elif __IOS__
-            currentAgents = Protocol.GetAgents();
+            currentAgents = _protocol.GetAgents();
 
             // display warning message, as there is no other option to load agents.
             if (currentAgents.Count == 0)
@@ -500,7 +547,7 @@ namespace Sensus.UI
             ItemPickerPageInput currentAgentsPicker = null;
             if (currentAgents != null && currentAgents.Count > 0)
             {
-                currentAgentsPicker = new ItemPickerPageInput("Available agent" + (currentAgents.Count > 1 ? "s" : "") + ":", currentAgents.Cast<object>().ToList())
+                currentAgentsPicker = new ItemPickerPageInput("Available agent" + (currentAgents.Count > 1 ? "s" : "") + ":", currentAgents.Select(agent => agent.Id).Cast<object>().ToList())
                 {
                     Required = false
                 };
@@ -537,10 +584,17 @@ namespace Sensus.UI
             {
                 if (currentAgentsPicker != null)
                 {
-                    SensingAgent selectedAgent = (currentAgentsPicker.Value as List<object>).FirstOrDefault() as SensingAgent;
+                    string selectedAgentId = (currentAgentsPicker.Value as List<object>).FirstOrDefault() as string;
+
+                    SensingAgent selectedAgent = null;
+
+                    if (selectedAgentId != null)
+                    {
+                        selectedAgent = currentAgents.First(currentAgent => currentAgent.Id == selectedAgentId);
+                    }
 
                     // set the selected agent, watching out for a null (clearing) selection that needs to be confirmed
-                    if (selectedAgent != null || await DisplayAlert("Confirm", "Are you sure you wish to clear the sensing agent?", "Yes", "No"))
+                    if (selectedAgentId != null || await DisplayAlert("Confirm", "Are you sure you wish to clear the sensing agent?", "Yes", "No"))
                     {
                         _protocol.Agent = selectedAgent;
 
@@ -563,7 +617,7 @@ namespace Sensus.UI
                 {
                     // download the assembly and extract agents
                     downloadedBytes = _protocol.AgentAssemblyBytes = await new WebClient().DownloadDataTaskAsync(new Uri(agentURL));
-                    List<SensingAgent> qrCodeAgents = Protocol.GetAgents(downloadedBytes);
+                    List<SensingAgent> qrCodeAgents = _protocol.GetAgents(downloadedBytes);
 
                     if (qrCodeAgents.Count == 0)
                     {
