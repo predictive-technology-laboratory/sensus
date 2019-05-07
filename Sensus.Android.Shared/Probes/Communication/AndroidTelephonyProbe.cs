@@ -81,18 +81,20 @@ namespace Sensus.Android.Probes.Communication
             }
         }
 
-        protected override Task StartListeningAsync()
+        protected override async Task StartListeningAsync()
         {
+            await base.StartListeningAsync();
+
             AndroidTelephonyOutgoingBroadcastReceiver.OUTGOING_CALL += _outgoingCallCallback;
             _telephonyManager.Listen(_idleIncomingCallListener, PhoneStateListenerFlags.CallState);
-            return Task.CompletedTask;
         }
 
-        protected override Task StopListeningAsync()
+        protected override async Task StopListeningAsync()
         {
+            await base.StopListeningAsync();
+
             AndroidTelephonyOutgoingBroadcastReceiver.OUTGOING_CALL -= _outgoingCallCallback;
             _telephonyManager.Listen(_idleIncomingCallListener, PhoneStateListenerFlags.None);
-            return Task.CompletedTask;
         }
     }
 }

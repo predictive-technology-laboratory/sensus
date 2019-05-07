@@ -22,6 +22,7 @@ using Sensus.Probes.Location;
 using Sensus.Probes;
 using System.Threading;
 using Sensus.Extensions;
+using Sensus.Adaptation;
 
 namespace ExampleSensingAgent
 {
@@ -31,9 +32,23 @@ namespace ExampleSensingAgent
     /// </summary>
     public class ExampleAccelerationSensingAgent : SensingAgent
     {
-        private double _averageLinearMagnitudeThreshold;
-        private double? _controlAccelerometerMaxDataStoresPerSecond;
-        private double? _idleAccelerometerMaxDataStoresPerSecond;
+        /// <summary>
+        /// Gets or sets the average linear magnitude threshold.
+        /// </summary>
+        /// <value>The average linear magnitude threshold.</value>
+        public double AverageLinearMagnitudeThreshold { get; set; }
+
+        /// <summary>
+        /// Gets or sets the control accelerometer max data stores per second.
+        /// </summary>
+        /// <value>The control accelerometer max data stores per second.</value>
+        public double? ControlAccelerometerMaxDataStoresPerSecond { get; set; }
+
+        /// <summary>
+        /// Gets or sets the idle accelerometer max data stores per second.
+        /// </summary>
+        /// <value>The idle accelerometer max data stores per second.</value>
+        public double? IdleAccelerometerMaxDataStoresPerSecond { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:ExampleSensingAgent.ExampleAccelerationSensingAgent"/> class. As noted in
@@ -43,107 +58,58 @@ namespace ExampleSensingAgent
         public ExampleAccelerationSensingAgent()
             : base("Acceleration", "ALM / Proximity", TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(5))
         {
-            _averageLinearMagnitudeThreshold = 0.1;
-            _controlAccelerometerMaxDataStoresPerSecond = 60;
+            AverageLinearMagnitudeThreshold = 0.1;
+            ControlAccelerometerMaxDataStoresPerSecond = 60;
+            IdleAccelerometerMaxDataStoresPerSecond = 5;
         }
 
-        public override async Task SetPolicyAsync(JObject policy)
+        protected override Task ProtectedSetPolicyAsync(JObject policy)
         {
-            await base.SetPolicyAsync(policy);
+            AverageLinearMagnitudeThreshold = double.Parse(policy["alm-threshold"].ToString());
+            ControlAccelerometerMaxDataStoresPerSecond = double.Parse(policy["control-acc-rate"].ToString());
+            IdleAccelerometerMaxDataStoresPerSecond = double.Parse(policy["idle-acc-rate"].ToString());
 
-            _averageLinearMagnitudeThreshold = double.Parse(policy.GetValue("alm-threshold").ToString());
-            _idleAccelerometerMaxDataStoresPerSecond = double.Parse(policy.GetValue("control-acc-rate").ToString());
+            return Task.CompletedTask;
         }
 
-        protected override void UpdateObservedData(Dictionary<Type, List<IDatum>> typeData)
+        protected override bool ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>> typeData)
         {
-            foreach (Type type in typeData.Keys)
+            return IsNearSurface() || AverageLinearAccelerationMagnitudeExceedsThreshold(AverageLinearMagnitudeThreshold);
+        }
+
+        protected override async Task OnStateChangedAsync(SensingAgentState previousState, SensingAgentState currentState, CancellationToken cancellationToken)
+        {
+            await base.OnStateChangedAsync(previousState, currentState, cancellationToken);
+
+            if (currentState == SensingAgentState.OpportunisticControl || currentState == SensingAgentState.ActiveControl)
             {
-                List<IDatum> data = typeData[type];
-
-                // trim collections by size
-                while (data.Count > 100)
-                {
-                    data.RemoveAt(0);
-                }
-            }
-        }
-
-        protected override bool ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>> typeData, IDatum opportunisticDatum)
-        {
-            bool criterionMet = false;
-
-            // if the current call was not triggered by an opportunistic observation, then check all control criteria.
-            if (opportunisticDatum == null)
-            {
-                return IsNearSurface() || AverageLinearAccelerationMagnitudeExceedsThreshold(_averageLinearMagnitudeThreshold);
-            }
-            // if the current call was triggered by an opportunistic proximity observation, then check that criterion.
-            else if (opportunisticDatum.GetType().ImplementsInterface<IProximityDatum>())
-            {
-                return IsNearSurface();
-            }
-            // if the current call was triggered by an opportunistic acceleration observation, then check that criterion.
-            else if (opportunisticDatum.GetType().ImplementsInterface<IAccelerometerDatum>())
-            {
-                return AverageLinearAccelerationMagnitudeExceedsThreshold(_averageLinearMagnitudeThreshold);
-            }
-
-            return criterionMet;
-        }
-
-        protected override async Task OnOpportunisticControlAsync(CancellationToken cancellationToken)
-        {
-            await OnControlAsync(cancellationToken);
-        }
-
-        protected override async Task OnActiveControlAsync(CancellationToken cancellationToken)
-        {
-            await OnControlAsync(cancellationToken);
-        }
-
-        /// <summary>
-        /// Keeps the device awake and increases acceleration sampling rate.
-        /// </summary>
-        /// <returns>The control async.</returns>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        private async Task OnControlAsync(CancellationToken cancellationToken)
-        {
-            // keep device awake
-            await SensusServiceHelper.KeepDeviceAwakeAsync();
-
-            // increase sampling rate
-            if (Protocol.TryGetProbe<IAccelerometerDatum, IListeningProbe>(out IListeningProbe accelerometerProbe))
-            {
-                // store original sampling rate
-                _idleAccelerometerMaxDataStoresPerSecond = accelerometerProbe.MaxDataStoresPerSecond;
+                // keep device awake
+                await SensusServiceHelper.KeepDeviceAwakeAsync();
 
                 // increase sampling rate
-                accelerometerProbe.MaxDataStoresPerSecond = _controlAccelerometerMaxDataStoresPerSecond;
+                if (Protocol.TryGetProbe<IAccelerometerDatum, IListeningProbe>(out IListeningProbe accelerometerProbe))
+                {
+                    // increase sampling rate
+                    accelerometerProbe.MaxDataStoresPerSecond = ControlAccelerometerMaxDataStoresPerSecond;
 
-                // restart probe to take on new settings
-                await accelerometerProbe.RestartAsync();
+                    // restart probe to take on new settings
+                    await accelerometerProbe.RestartAsync();
+                }
             }
-        }
-
-        /// <summary>
-        /// Reverts sensing control.
-        /// </summary>
-        /// <returns>The ending control async.</returns>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        protected override async Task OnEndingControlAsync(CancellationToken cancellationToken)
-        {
-            if (Protocol.TryGetProbe<IAccelerometerDatum, IListeningProbe>(out IListeningProbe accelerometerProbe))
+            else if (currentState == SensingAgentState.EndingControl)
             {
-                // revert sampling rate
-                accelerometerProbe.MaxDataStoresPerSecond = _idleAccelerometerMaxDataStoresPerSecond;
+                if (Protocol.TryGetProbe<IAccelerometerDatum, IListeningProbe>(out IListeningProbe accelerometerProbe))
+                {
+                    // decrease sampling rate
+                    accelerometerProbe.MaxDataStoresPerSecond = IdleAccelerometerMaxDataStoresPerSecond;
 
-                // restart probe to take on original settings
-                await accelerometerProbe.RestartAsync();
+                    // restart probe to take on original settings
+                    await accelerometerProbe.RestartAsync();
+                }
+
+                // let device sleep
+                await SensusServiceHelper.LetDeviceSleepAsync();
             }
-
-            // let device sleep
-            await SensusServiceHelper.LetDeviceSleepAsync();
         }
     }
 }

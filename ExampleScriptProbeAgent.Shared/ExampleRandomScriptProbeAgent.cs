@@ -125,7 +125,7 @@ namespace ExampleScriptProbeAgent
         /// <param name="policy">Policy.</param>
         public Task SetPolicyAsync(JObject policy)
         {
-            _deliveryProbability = (double)policy.GetValue("p");
+            _deliveryProbability = (double)policy["p"];
 
             _sensusServiceHelper?.Logger.Log("Script agent policy set:  p=" + _deliveryProbability, LoggingLevel.Normal, GetType());
 

@@ -15,6 +15,7 @@
 using System;
 using CoreBluetooth;
 using Foundation;
+using Sensus.Probes;
 
 namespace Sensus.iOS.Probes.Context
 {
@@ -37,7 +38,7 @@ namespace Sensus.iOS.Probes.Context
 
         public override void StateUpdated(CBPeripheralManager peripheral)
         {
-            if (peripheral.State == CBPeripheralManagerState.PoweredOn && _probe.Running)
+            if (peripheral.State == CBPeripheralManagerState.PoweredOn && _probe.State == ProbeState.Running)
             {
                 try
                 {

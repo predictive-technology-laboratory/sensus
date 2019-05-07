@@ -465,31 +465,6 @@ sharing it with others (e.g., since other people might have temperature hardware
   </table>
   
   
-  <a id="Sensus_Probes_Probe_Running_" data-uid="Sensus.Probes.Probe.Running*"></a>
-  <h4 id="Sensus_Probes_Probe_Running" data-uid="Sensus.Probes.Probe.Running">Running</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public bool Running { get; }</code></pre>
-  </div>
-  <h5 class="propertyValue">Property Value</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Boolean</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  
-  
   <a id="Sensus_Probes_Probe_StartStopTimes_" data-uid="Sensus.Probes.Probe.StartStopTimes*"></a>
   <h4 id="Sensus_Probes_Probe_StartStopTimes" data-uid="Sensus.Probes.Probe.StartStopTimes">StartStopTimes</h4>
   <div class="markdown level1 summary"><p>Gets a list of times at which the probe was started (tuple bool = True) and stopped (tuple bool = False). Only includes 
@@ -513,6 +488,31 @@ those that have occurred within the protocol&apos;s participation horizon.</p>
         <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.Tuple</span>&lt;<span class="xref">System.Boolean</span>, <span class="xref">System.DateTime</span>&gt;&gt;</td>
         <td><p>The start stop times.</p>
 </td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Probes_Probe_State_" data-uid="Sensus.Probes.Probe.State*"></a>
+  <h4 id="Sensus_Probes_Probe_State" data-uid="Sensus.Probes.Probe.State">State</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ProbeState State { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Probes.ProbeState.html">ProbeState</a></td>
+        <td></td>
       </tr>
     </tbody>
   </table>
@@ -802,7 +802,7 @@ protocol&apos;s participation horizon.</p>
 this will be a value between 0 and 1, with 1 indicating perfect participation and 0 indicating no participation. If 
 this probe was not originally enabled within the protocol, then the returned value will be null, indicating that this
 probe should not be included in calculations of overall protocol participation. Probes can become disabled if they
-are not supported on the current device or if the user refuses to initialize them (e.g., by not signing into Facebook).
+are not supported on the current device or if the user refuses to initialize them (e.g., by denying Health Kit).
 Although they become disabled, they were originally enabled within the protocol and participation should reflect this.
 Lastly, this will return null if the probe is not storing its data, as might be the case if a probe is enabled in order
 to trigger scripts but not told to store its data.</p>
@@ -935,6 +935,31 @@ handle multiple calls to this method (even in quick succession and/or concurrent
   </table>
   
   
+  <a id="Sensus_Probes_Probe_ProtectedStopAsync_" data-uid="Sensus.Probes.Probe.ProtectedStopAsync*"></a>
+  <h4 id="Sensus_Probes_Probe_ProtectedStopAsync" data-uid="Sensus.Probes.Probe.ProtectedStopAsync">ProtectedStopAsync()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual Task ProtectedStopAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_Probes_Probe_remove_MostRecentDatumChanged_" data-uid="Sensus.Probes.Probe.remove_MostRecentDatumChanged*"></a>
   <h4 id="Sensus_Probes_Probe_remove_MostRecentDatumChanged_Sensus_Probes_Probe_MostRecentDatumChangedDelegateAsync_" data-uid="Sensus.Probes.Probe.remove_MostRecentDatumChanged(Sensus.Probes.Probe.MostRecentDatumChangedDelegateAsync)">remove_MostRecentDatumChanged(Probe.MostRecentDatumChangedDelegateAsync)</h4>
   <div class="markdown level1 summary"></div>
@@ -1043,7 +1068,7 @@ handle multiple calls to this method (even in quick succession and/or concurrent
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual Task StopAsync()</code></pre>
+    <pre><code class="lang-csharp hljs">public Task StopAsync()</code></pre>
   </div>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">

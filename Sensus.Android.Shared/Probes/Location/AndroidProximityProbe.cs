@@ -60,20 +60,21 @@ namespace Sensus.Android.Probes.Location
             Sensor proximitySensor = sensorManager.GetDefaultSensor(SensorType.Proximity);
             _maximumRange = proximitySensor.MaximumRange;
 
-            // initialize the listener
             _proximityListener.Initialize(MinDataStoreDelay);
         }
 
-        protected override Task StartListeningAsync()
+        protected override async Task StartListeningAsync()
         {
+            await base.StartListeningAsync();
+
             _proximityListener.Start();
-            return Task.CompletedTask;
         }
 
-        protected override Task StopListeningAsync()
+        protected override async Task StopListeningAsync()
         {
+            await base.StopListeningAsync();
+
             _proximityListener.Stop();
-            return Task.CompletedTask;
         }
     }
 }

@@ -151,23 +151,24 @@ namespace Sensus.Android.Probes.Movement
             await clientConnectCompletionSource.Task;
         }
 
-        protected override Task StartListeningAsync()
+        protected override async Task StartListeningAsync()
         {
+            await base.StartListeningAsync();
+
             // register receiver for all awareness intent actions
             Application.Context.RegisterReceiver(_awarenessBroadcastReceiver, new IntentFilter(AWARENESS_PENDING_INTENT_ACTION));
-            return Task.CompletedTask;
         }
 
-        protected override Task StopListeningAsync()
+        protected override async Task StopListeningAsync()
         {
+            await base.StopListeningAsync();
+
             // stop broadcast receiver
             Application.Context.UnregisterReceiver(_awarenessBroadcastReceiver);
 
             // disconnect client
             _awarenessApiClient.Disconnect();
             _awarenessApiClient = null;
-
-            return Task.CompletedTask;
         }
 
         protected void UpdateRequestBuilder(AwarenessFence fence, string fenceKey, FenceUpdateAction action, ref FenceUpdateRequestBuilder requestBuilder)

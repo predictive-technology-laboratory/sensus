@@ -29,7 +29,7 @@ namespace Sensus.Android.Probes.Movement
             _accelerometerListener = new AndroidSensorListener(SensorType.Accelerometer, async e =>
             {
                 // should get x, y, and z values
-                if (e.Values.Count != 3 || Stabilizing)
+                if (e.Values.Count != 3)
                 {
                     return;
                 }
@@ -60,10 +60,11 @@ namespace Sensus.Android.Probes.Movement
             _accelerometerListener.Start();
         }
 
-        protected override Task StopListeningAsync()
+        protected override async Task StopListeningAsync()
         {
+            await base.StopListeningAsync();
+
             _accelerometerListener.Stop();
-            return Task.CompletedTask;
         }
     }
 }

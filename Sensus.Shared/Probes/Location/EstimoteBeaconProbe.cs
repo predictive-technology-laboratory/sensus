@@ -32,14 +32,13 @@ namespace Sensus.Probes.Location
     /// Sensus uses [Estimote Beacons](http://estimote.com/#get-beacons) to track fine-grained locations indoors. This 
     /// Probe is available for Android and iOS and runs while the Sensus app is in the foreground and background. This Probe 
     /// generates proximity event data in the form of <see cref="EstimoteBeaconDatum"/> (for proximity events) and 
-    /// <see cref="EstimoteIndoorLocationDatum"/> (for indoor x-y positioning readings.
+    /// <see cref="EstimoteIndoorLocationDatum"/> (for indoor x-y positioning).
     /// 
     /// # Prerequisites
     /// 
     ///   * Purchase Proximity or Location beacons.
     ///   * The beacons must be configured within the [Estimote Cloud console](https://cloud.estimote.com). To generate 
     ///     proximity (<see cref="EstimoteBeaconDatum"/>) readings, the beacons must have tags attached to them.
-    ///     ```
     /// 
     /// More details are available [here](http://developer.estimote.com/proximity/android-tutorial).
     /// 

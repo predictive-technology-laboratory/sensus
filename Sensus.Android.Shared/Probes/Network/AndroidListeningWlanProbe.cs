@@ -36,26 +36,26 @@ namespace Sensus.Android.Probes.Network
             };
         }
 
-        protected override Task StartListeningAsync()
+        protected override async Task StartListeningAsync()
         {
+            await base.StartListeningAsync();
+
             // register receiver for all WLAN intent actions
 #pragma warning disable CS0618 // Type or member is obsolete
             Application.Context.RegisterReceiver(_wlanBroadcastReceiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
 #pragma warning restore CS0618 // Type or member is obsolete
 
             AndroidWlanBroadcastReceiver.WIFI_CONNECTION_CHANGED += _wlanConnectionChangedCallback;
-
-            return Task.CompletedTask;
         }
 
-        protected override Task StopListeningAsync()
+        protected override async Task StopListeningAsync()
         {
+            await base.StopListeningAsync();
+
             // stop broadcast receiver
             Application.Context.UnregisterReceiver(_wlanBroadcastReceiver);
 
             AndroidWlanBroadcastReceiver.WIFI_CONNECTION_CHANGED -= _wlanConnectionChangedCallback;
-
-            return Task.CompletedTask;
         }
     }
 }

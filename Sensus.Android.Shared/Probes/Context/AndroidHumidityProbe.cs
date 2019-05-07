@@ -46,16 +46,18 @@ namespace Sensus.Android.Probes.Context
             _humidityListener.Initialize(MinDataStoreDelay);
         }
 
-        protected override Task StartListeningAsync()
+        protected override async Task StartListeningAsync()
         {
+            await base.StartListeningAsync();
+
             _humidityListener.Start();
-            return Task.CompletedTask;
         }
 
-        protected override Task StopListeningAsync()
+        protected override async Task StopListeningAsync()
         {
+            await base.StopListeningAsync();
+
             _humidityListener.Stop();
-            return Task.CompletedTask;
         }
     }
 }

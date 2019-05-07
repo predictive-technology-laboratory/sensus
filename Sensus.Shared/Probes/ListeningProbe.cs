@@ -26,16 +26,10 @@ namespace Sensus.Probes
 {
     /// <summary>
     /// Listening Probes are triggered by a change in state within the underlying device. For example, when an accelerometer reading is emitted, the 
-    /// <see cref="Movement.AccelerometerProbe"/> is provided with information about device movement in each direction. Listening Probes do not generate
-    /// data unless such state changes occur. Whether or not data streams are discontinued when the app is backgrounded depends on the operating
-    /// system (Android or iOS) as well as specific settings.
-    /// 
-    /// * Android:  If <see cref="KeepDeviceAwake"/> is enabled on Android, then the app will hold a wake lock thus keeping the device processor powered
-    /// on and delivering readings to the app. If <see cref="KeepDeviceAwake"/> is disabled on Android, then the CPU will be allowed to sleep typically
-    /// discontinuing the delivery of readings to the app.
-    /// 
-    /// * iOS:  The <see cref="KeepDeviceAwake"/> setting has no effect on iOS, and all readings will be discontinued when the app is put into the
-    /// background. See <see cref="PollingProbe"/> for more information about background considerations.
+    /// <see cref="Movement.AccelerometerProbe"/> is provided with information about device movement in each direction. <see cref="ListeningProbe"/>s
+    /// do not generate data unless such state changes occur (however, in the particular case of the <see cref="Movement.AccelerometerProbe"/>, the 
+    /// hardware accelerometer chip will continuously be registering movement). Whether or not data streams are discontinued when the app is backgrounded 
+    /// depends on the operating system (Android or iOS) as well as the setting of <see cref="KeepDeviceAwake"/>.
     /// </summary>
     public abstract class ListeningProbe : Probe, IListeningProbe
     {
@@ -291,25 +285,28 @@ namespace Sensus.Probes
             _deviceAwake = false;
         }
 
-        protected sealed override async Task ProtectedStartAsync()
+        protected override async Task ProtectedStartAsync()
         {
-            // only keep device awake if we're not already running.
-            if (!Running && _keepDeviceAwake)
+            await base.ProtectedStartAsync();
+
+            if (_keepDeviceAwake)
             {
                 await SensusServiceHelper.Get().KeepDeviceAwakeAsync();
                 _deviceAwake = true;
             }
 
-            await base.ProtectedStartAsync();
-
             await StartListeningAsync();
         }
 
-        protected abstract Task StartListeningAsync();
-
-        public sealed override async Task StopAsync()
+        protected virtual Task StartListeningAsync()
         {
-            await base.StopAsync();
+            SensusServiceHelper.Get().Logger.Log("Starting listening...", LoggingLevel.Normal, GetType());
+            return Task.CompletedTask;
+        }
+
+        protected override async Task ProtectedStopAsync()
+        {
+            await base.ProtectedStopAsync();
 
             await StopListeningAsync();
 
@@ -320,7 +317,11 @@ namespace Sensus.Probes
             }
         }
 
-        protected abstract Task StopListeningAsync();
+        protected virtual Task StopListeningAsync()
+        {
+            SensusServiceHelper.Get().Logger.Log("Stopping listening...", LoggingLevel.Normal, GetType());
+            return Task.CompletedTask;
+        }
 
         public override async Task ResetAsync()
         {

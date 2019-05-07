@@ -122,24 +122,30 @@ namespace Sensus.Probes.Movement
                 await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
+
+            _previousPosition = null;
         }
 
-        protected sealed override async Task StartListeningAsync()
+        protected override async Task StartListeningAsync()
         {
-            _previousPosition = null;
+            await base.StartListeningAsync();
+
             await GpsReceiver.Get().AddListenerAsync(_positionChangedHandler, false);
+        }
+
+        protected override async Task StopListeningAsync()
+        {
+            await base.StopListeningAsync();
+
+            await GpsReceiver.Get().RemoveListenerAsync(_positionChangedHandler);
+
+            _previousPosition = null;
         }
 
         public override async Task ResetAsync()
         {
             await base.ResetAsync();
 
-            _previousPosition = null;
-        }
-
-        protected sealed override async Task StopListeningAsync()
-        {
-            await GpsReceiver.Get().RemoveListenerAsync(_positionChangedHandler);
             _previousPosition = null;
         }
 
