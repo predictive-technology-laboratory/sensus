@@ -21,6 +21,9 @@
     
   - name: Remote Updates
     href: remote-updates.md
+    
+  - name: Authentication Servers
+    href: authentication-servers.md
 
 - name: Data Protection
   items:
