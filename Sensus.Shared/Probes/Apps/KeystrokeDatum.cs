@@ -27,6 +27,8 @@ namespace Sensus.Probes.Apps
         public string Key { get => _key; set => _key = value; }
         public string App { get => _app; set => _app = value; }
 
+        public override object StringPlaceholderValue => throw new NotImplementedException();
+
         public override bool Equals(object obj)
         {
             return base.Equals(obj);
@@ -41,7 +43,7 @@ namespace Sensus.Probes.Apps
         {
             return base.ToString() + Environment.NewLine +
                       "Key:  " + _key + Environment.NewLine +
-                      "App:  " + _app + Environment.NewLine ;
+                      "App:  " + _app + Environment.NewLine;
         }
     }
 }

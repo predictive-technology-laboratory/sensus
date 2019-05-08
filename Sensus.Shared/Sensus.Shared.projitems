@@ -28,6 +28,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\SymmetricEncryption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\SensusException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImpreciseDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\KeystrokeDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\KeystrokeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\SmsDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TelephonyDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\HumidityDatum.cs" />

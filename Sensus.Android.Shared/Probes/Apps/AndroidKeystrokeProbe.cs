@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
+using System.Threading;
+using System.Threading.Tasks;
 using Sensus.Probes.Apps;
+using Syncfusion.SfChart.XForms;
+using Android.AccessibilityServices;
+using Android.Views.Accessibility;
+using Android.Content;
+using Android.App;
 
 namespace Sensus.Android.Probes.Apps
 {
@@ -19,19 +18,38 @@ namespace Sensus.Android.Probes.Apps
         {
         }
 
-        protected override void Initialize()
+        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
-            base.Initialize();
+            throw new NotImplementedException();
         }
 
-        protected override void StartListening()
+        protected override ChartAxis GetChartPrimaryAxis()
         {
-            base.StartListening();
+            throw new NotImplementedException();
         }
 
-        protected override void StopListening()
+        protected override RangeAxisBase GetChartSecondaryAxis()
         {
-            base.StopListening();
+            throw new NotImplementedException();
+        }
+
+        protected override ChartSeries GetChartSeries()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override Task StartListeningAsync()
+        {
+            //Intent serviceIntent = new Intent(Application.Context, typeof(AndroidKeystrokeService));
+            //Application.Context.StartService(serviceIntent);
+            return Task.CompletedTask;
+        }
+
+        protected override Task StopListeningAsync()
+        {
+            //Intent serviceIntent = new Intent(Application.Context, typeof(AndroidKeystrokeService));
+            //Application.Context.StopService(serviceIntent);
+            return Task.CompletedTask;
         }
     }
 }

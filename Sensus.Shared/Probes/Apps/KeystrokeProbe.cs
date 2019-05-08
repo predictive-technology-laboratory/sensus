@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Syncfusion.SfChart.XForms;
+using Newtonsoft.Json;
 
 namespace Sensus.Probes.Apps
 {
@@ -20,74 +23,43 @@ namespace Sensus.Probes.Apps
             get { return typeof(KeystrokeDatum); }
         }
 
+        [JsonIgnore]
+        protected override bool DefaultKeepDeviceAwake
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAwakeWarning
+        {
+            get
+            {
+                return "This setting should not be enabled. It does not affect iOS and will unnecessarily reduce battery life on Android.";
+            }
+        }
+
+        [JsonIgnore]
+        protected override string DeviceAsleepWarning
+        {
+            get
+            {
+                return null;
+            }
+        }
+
+        public override double? MaxDataStoresPerSecond { get => base.MaxDataStoresPerSecond; set => base.MaxDataStoresPerSecond = value; }
+
         public override string CollectionDescription => base.CollectionDescription;
 
-        protected override bool DefaultKeepDeviceAwake => throw new NotImplementedException();
-
-        protected override string DeviceAwakeWarning => throw new NotImplementedException();
-
-        protected override string DeviceAsleepWarning => throw new NotImplementedException();
+        protected override bool WillHaveSignificantNegativeImpactOnBattery => base.WillHaveSignificantNegativeImpactOnBattery;
 
         protected override double RawParticipation => base.RawParticipation;
 
-        public override bool Equals(object obj)
-        {
-            return base.Equals(obj);
-        }
+        protected override long DataRateSampleSize => base.DataRateSampleSize;
 
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
-        public override void Reset()
-        {
-            base.Reset();
-        }
-
-        public override bool TestHealth(ref string error, ref string warning, ref string misc)
-        {
-            return base.TestHealth(ref error, ref warning, ref misc);
-        }
-
-        public override string ToString()
-        {
-            return base.ToString();
-        }
-
-        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override ChartAxis GetChartPrimaryAxis()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override RangeAxisBase GetChartSecondaryAxis()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override ChartSeries GetChartSeries()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void Initialize()
-        {
-            base.Initialize();
-        }
-
-        protected override void StartListening()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void StopListening()
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }
