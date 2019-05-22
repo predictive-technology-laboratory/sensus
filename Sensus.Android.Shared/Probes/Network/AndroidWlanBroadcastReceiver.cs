@@ -46,10 +46,19 @@ namespace Sensus.Android.Probes.Network
                     // we've seen duplicate reports of the BSSID. only call the event handler if this is the first report
                     // or if the BSSID has changed to a new value. it's possible for the current to be null multiple times
                     // hence the need for both the first check as well as the change check.
-                    string currAccessPointBSSID = GetAccessPointBSSID();
+                    string currAccessPointBSSID = null;
+                    string currAccessPointRssi = null;
+
+                    if (SensusServiceHelper.Get().WiFiConnected)
+                    {
+                        WifiManager wifiManager = Application.Context.GetSystemService(global::Android.Content.Context.WifiService) as WifiManager;
+                        currAccessPointBSSID = wifiManager.ConnectionInfo.BSSID;
+                        currAccessPointRssi = wifiManager.ConnectionInfo.Rssi.ToString();
+                    }
+
                     if (FIRST_RECEIVE || currAccessPointBSSID != PREVIOUS_ACCESS_POINT_BSSID)
                     {
-                        WIFI_CONNECTION_CHANGED?.Invoke(this, new WlanDatum(DateTimeOffset.UtcNow, currAccessPointBSSID));
+                        WIFI_CONNECTION_CHANGED?.Invoke(this, new WlanDatum(DateTimeOffset.UtcNow, currAccessPointBSSID, currAccessPointRssi));
                         PREVIOUS_ACCESS_POINT_BSSID = currAccessPointBSSID;
                         FIRST_RECEIVE = false;
                     }
@@ -61,17 +70,6 @@ namespace Sensus.Android.Probes.Network
             }
         }
 
-        private string GetAccessPointBSSID()
-        {
-            string accessPointBSSID = null;
-
-            if (SensusServiceHelper.Get().WiFiConnected)
-            {
-                WifiManager wifiManager = Application.Context.GetSystemService(global::Android.Content.Context.WifiService) as WifiManager;
-                accessPointBSSID = wifiManager.ConnectionInfo.BSSID;
-            }
-
-            return accessPointBSSID;
-        }
+        
     }
 }
