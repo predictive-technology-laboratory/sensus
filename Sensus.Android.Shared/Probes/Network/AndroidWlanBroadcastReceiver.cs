@@ -54,6 +54,7 @@ namespace Sensus.Android.Probes.Network
                         WifiManager wifiManager = Application.Context.GetSystemService(global::Android.Content.Context.WifiService) as WifiManager;
                         currAccessPointBSSID = wifiManager.ConnectionInfo.BSSID;
                         currAccessPointRssi = wifiManager.ConnectionInfo.Rssi.ToString();
+                        
                     }
 
                     if (FIRST_RECEIVE || currAccessPointBSSID != PREVIOUS_ACCESS_POINT_BSSID)
