@@ -70,18 +70,6 @@ namespace Sensus.Android.Probes.Network
             }
         }
 
-        private string GetAccessPointBSSID()
-        {
-            string accessPointBSSID = null;
-
-            if (SensusServiceHelper.Get().WiFiConnected)
-            {
-                WifiManager wifiManager = Application.Context.GetSystemService(global::Android.Content.Context.WifiService) as WifiManager;
-                accessPointBSSID = wifiManager.ConnectionInfo.BSSID;
-                wifiManager.ConnectionInfo.Rssi;
-            }
-
-            return accessPointBSSID;
-        }
+        
     }
 }

@@ -32,7 +32,6 @@ namespace Sensus.Android.Probes.Apps
             {
                 SensusException.Report("Exception in Kesystroke service:  " + ex.Message, ex);
             }
-    //StoreDatumAsync(new KeystrokeDatum(DateTimeOffset.UtcNow, heading));
 }
 
         public override void OnCreate()
@@ -48,19 +47,11 @@ namespace Sensus.Android.Probes.Apps
 
         public override ComponentName StartService(Intent service)
         {
-            SensusServiceHelper.Get().FlashNotificationAsync("start");
-
-            //info.EventTypes = EventTypes.ViewTextChanged;
-            //info.FeedbackType = FeedbackFlags.AllMask;
-            //info.NotificationTimeout = 100;
-            //this.SetServiceInfo(info);
-
             return base.StartService(service);
         }
 
         public override bool StopService(Intent name)
         {
-            SensusServiceHelper.Get().FlashNotificationAsync("stop");
             return base.StopService(name);
         }
 
