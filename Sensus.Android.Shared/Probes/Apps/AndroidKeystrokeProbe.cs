@@ -20,19 +20,15 @@ namespace Sensus.Android.Probes.Apps
     {
         private AndroidKeystrokeService _accessibilityListener;
         private DateTime? _accessibilityEventTime;
+        private EventHandler<KeystrokeDatum> _accessibilityCallback;
 
         public AndroidKeystrokeProbe()
         {
-            _accessibilityListener = new AndroidKeystrokeService();
-
-            _accessibilityListener.AccessibilityBroadcast += async (o, key) =>
+            _accessibilityCallback = async (sender, incomingKeystrokedatum) =>
             {
-                _accessibilityEventTime = DateTime.Now;
-                Console.WriteLine("***** OnAccessibilityEvent ***** eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee ");
-
-                await SensusServiceHelper.Get().FlashNotificationAsync(key);
-                //await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber, null));
+              await StoreDatumAsync(incomingKeystrokedatum);
             };
+
         }
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
@@ -60,6 +56,10 @@ namespace Sensus.Android.Probes.Apps
             //SensusServiceHelper.Get().FlashNotificationAsync("arrive");
 
             Boolean b = isAccessibilityServiceEnabled();
+
+
+            AndroidKeystrokeService.AccessibilityBroadcast += _accessibilityCallback;
+            //This doesn't work because the accessibility service can be started and stopped only by system apps
             Intent serviceIntent = new Intent(Application.Context, typeof(AndroidKeystrokeService));
             Application.Context.StartService(serviceIntent);
             return Task.CompletedTask;
@@ -67,6 +67,8 @@ namespace Sensus.Android.Probes.Apps
 
         protected override Task StopListeningAsync()
         {
+            AndroidKeystrokeService.AccessibilityBroadcast += _accessibilityCallback;
+            //This doesn't work
             Intent serviceIntent = new Intent(Application.Context, typeof(AndroidKeystrokeService));
             Application.Context.StopService(serviceIntent);
             return Task.CompletedTask;

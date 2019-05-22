@@ -9,6 +9,7 @@ using Android;
 using Android.Util;
 using Sensus.Probes.Apps;
 using Android.Content;
+using Sensus.Exceptions;
 
 namespace Sensus.Android.Probes.Apps
 {
@@ -17,16 +18,25 @@ namespace Sensus.Android.Probes.Apps
     public class AndroidKeystrokeService : AccessibilityService
     {
         private AccessibilityServiceInfo info = new AccessibilityServiceInfo();
-        public event EventHandler<string> AccessibilityBroadcast;
+        public static event EventHandler<KeystrokeDatum> AccessibilityBroadcast;
         public override void OnAccessibilityEvent(AccessibilityEvent e)
         {
+            try { 
+                if (e.Text.Count > 0)
+                {
+                    //string key = e.Text.ToString();
+                    //Console.WriteLine("***** OnAccessibilityEvent ***** " +e.Text.Count +"   " +e.EventType.ToString() + "   " + e.PackageName + "  " + e.Text[0]);
 
-            string key = e.Text.ToString();
-            Console.WriteLine("***** OnAccessibilityEvent ***** " + e.EventType.ToString() + "   " + e.PackageName + "  " + e.Text);
-
-            AccessibilityBroadcast?.Invoke(this, key);
-            //StoreDatumAsync(new KeystrokeDatum(DateTimeOffset.UtcNow, heading));
-        }
+                    AccessibilityBroadcast?.Invoke(this, new KeystrokeDatum(DateTimeOffset.UtcNow, e.Text[0].ToString(), e.PackageName));
+                }
+                
+            }
+            catch (Exception ex)
+            {
+                SensusException.Report("Exception in Kesystroke service:  " + ex.Message, ex);
+            }
+    //StoreDatumAsync(new KeystrokeDatum(DateTimeOffset.UtcNow, heading));
+}
 
         public override void OnCreate()
         {
