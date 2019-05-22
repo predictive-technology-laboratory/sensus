@@ -13,7 +13,7 @@ using Sensus.Exceptions;
 
 namespace Sensus.Android.Probes.Apps
 {
-    [Service(Label = "AndroidKeystrokeService", Permission = Manifest.Permission.BindAccessibilityService)]
+    [Service(Permission = Manifest.Permission.BindAccessibilityService)]
     [IntentFilter(new[] { "android.accessibilityservice.AccessibilityService" })]
     public class AndroidKeystrokeService : AccessibilityService
     {
@@ -24,9 +24,6 @@ namespace Sensus.Android.Probes.Apps
             try { 
                 if (e.Text.Count > 0)
                 {
-                    //string key = e.Text.ToString();
-                    //Console.WriteLine("***** OnAccessibilityEvent ***** " +e.Text.Count +"   " +e.EventType.ToString() + "   " + e.PackageName + "  " + e.Text[0]);
-
                     AccessibilityBroadcast?.Invoke(this, new KeystrokeDatum(DateTimeOffset.UtcNow, e.Text[0].ToString(), e.PackageName));
                 }
                 

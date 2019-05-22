@@ -586,7 +586,7 @@ namespace Sensus.Android
         public override async Task<bool> EnableBluetoothAsync(bool lowEnergy, string rationale)
         {
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
-
+            
             // ensure that the device has the required feature
             if (bluetoothAdapter == null || !Application.Context.PackageManager.HasSystemFeature(lowEnergy ? PackageManager.FeatureBluetoothLe : PackageManager.FeatureBluetooth))
             {

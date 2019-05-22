@@ -385,7 +385,7 @@ namespace Sensus.Android
                     _activityResultWait.Reset();
 
                     try
-                    {
+                    { 
                         StartActivityForResult(intent, (int)requestCode);
                     }
                     catch (Exception ex)
