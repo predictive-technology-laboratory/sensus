@@ -491,6 +491,7 @@ namespace Sensus
         private ProtocolState _state;
         private ScheduledCallback _scheduledStartCallback;
         private ScheduledCallback _scheduledStopCallback;
+		private ScheduledCallback _scheduledResumeCallback;
         private LocalDataStore _localDataStore;
         private RemoteDataStore _remoteDataStore;
         private string _storageDirectory;
@@ -2331,6 +2332,7 @@ namespace Sensus
             await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(CancellationToken.None);
 
             FireCaptionChanged();
+			await CancelScheduledResumeAsync();
         }
 
         public async Task CancelScheduledStartAsync()
@@ -2770,9 +2772,48 @@ namespace Sensus
             }
 
             await FireStateChangedAsync();
-        }
+			await CancelScheduledResumeAsync();
+		}
 
-        public async Task StopAsync()
+		public async Task ScheduleResumeAsync(DateTime resumeTimestamp)
+		{
+			TimeSpan timeUntilResume = resumeTimestamp - DateTime.Now;
+
+			_scheduledResumeCallback = new ScheduledCallback(async cancellationToken =>
+			{
+				await ResumeAsync();
+				_scheduledResumeCallback = null;
+
+			}, timeUntilResume, "RESUME", _id, this, null, TimeSpan.Zero, TimeSpan.Zero);
+
+#if __ANDROID__
+            _scheduledResumeCallback.UserNotificationMessage = "Resumed study: " + Name;
+#elif __IOS__
+			_scheduledResumeCallback.UserNotificationMessage = "Please open to resume study: " + Name;
+#else
+#error "Unrecognized OS"
+#endif
+
+			await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_scheduledResumeCallback);
+
+			// add the token to the backend, as the push notification for the schedule start needs to be active.
+			await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(CancellationToken.None);
+
+			FireCaptionChanged();
+		}
+
+		public async Task CancelScheduledResumeAsync()
+		{
+			await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_scheduledResumeCallback);
+			_scheduledResumeCallback = null;
+
+			// remove the token to the backend, as the push notification for the schedule start needs to be deactivated.
+			await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(CancellationToken.None);
+
+			FireCaptionChanged();
+		}
+
+		public async Task StopAsync()
         {
             lock (this)
             {
@@ -2802,8 +2843,9 @@ namespace Sensus
 
                 // the user might have force-stopped the protocol before the scheduled stop fired. don't fire the scheduled stop.
                 await CancelScheduledStopAsync();
+				await CancelScheduledResumeAsync();
 
-                foreach (Probe probe in _probes)
+				foreach (Probe probe in _probes)
                 {
                     try
                     {

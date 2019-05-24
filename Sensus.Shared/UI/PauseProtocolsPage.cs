@@ -1,4 +1,5 @@
 ﻿using Sensus.UI.Inputs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,21 @@ namespace Sensus.UI
 		private TaskCompletionSource<bool> _responseTaskCompletionSource;
 
 		public Task<bool> Result => _responseTaskCompletionSource.Task;
+
+		private async Task PauseProtocolsAsync(IEnumerable<Protocol> protocols, DateTime? resumeTimestamp)
+		{
+			foreach (Protocol protocol in protocols)
+			{
+				await protocol.PauseAsync();
+
+				if (resumeTimestamp != null)
+				{
+					await protocol.ScheduleResumeAsync(resumeTimestamp.Value);
+				}
+			}
+
+			_responseTaskCompletionSource.TrySetResult(true);
+		}
 
 		public PauseProtocolsPage(IEnumerable<Protocol> protocols)
 		{
@@ -36,12 +52,7 @@ namespace Sensus.UI
 
 			pauseButton.Clicked += async (s, e) =>
 			{
-				foreach(Protocol protocol in protocols)
-				{
-					await protocol.PauseAsync();
-				}
-
-				_responseTaskCompletionSource.TrySetResult(true);
+				await PauseProtocolsAsync(protocols, null);
 
 				await Navigation.PopAsync();
 			};
@@ -53,12 +64,7 @@ namespace Sensus.UI
 
 			snoozeButton.Clicked += async (s, e) =>
 			{
-				foreach (Protocol protocol in protocols)
-				{
-					await protocol.PauseAsync();
-				}
-
-				_responseTaskCompletionSource.TrySetResult(true);
+				await PauseProtocolsAsync(protocols, DateTime.Now.AddSeconds(5));
 
 				await Navigation.PopAsync();
 			};
