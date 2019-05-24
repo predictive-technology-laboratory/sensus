@@ -142,7 +142,8 @@ namespace Sensus.Android.Probes.Communication
                                     // only keep if we have a message body
                                     if (!string.IsNullOrWhiteSpace(body) && _mostRecentMmsTimestamp != timestamp)
                                     {
-                                        mmsDatum = new SmsDatum(timestamp, null, toNumber, body, true);
+                                        bool? isContact = SensusServiceHelper.GetIsContactAsync(toNumber).Result;
+                                        mmsDatum = new SmsDatum(timestamp, null, toNumber, body, true, isContact);
                                     }
 
                                     break;
@@ -237,7 +238,10 @@ namespace Sensus.Android.Probes.Communication
 
                     if (!string.IsNullOrWhiteSpace(body))
                     {
-                        smsDatum = new SmsDatum(timestamp, null, toNumber, body, true);
+
+                        bool? isContact = SensusServiceHelper.GetIsContactAsync(toNumber).Result;
+
+                        smsDatum = new SmsDatum(timestamp, null, toNumber, body, true, isContact);
                     }
                 }
             }

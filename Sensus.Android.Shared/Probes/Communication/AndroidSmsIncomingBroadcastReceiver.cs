@@ -64,7 +64,8 @@ namespace Sensus.Android.Probes.Communication
 #pragma warning restore 618
                             }
 
-                            INCOMING_SMS(this, new SmsDatum(DateTimeOffset.FromUnixTimeMilliseconds(message.TimestampMillis), message.OriginatingAddress, null, message.MessageBody, false));
+                            bool? isContact = SensusServiceHelper.GetIsContactAsync(message.OriginatingAddress).Result;
+                            INCOMING_SMS(this, new SmsDatum(DateTimeOffset.FromUnixTimeMilliseconds(message.TimestampMillis), message.OriginatingAddress, null, message.MessageBody, false, isContact));
                         }
 
                     }
