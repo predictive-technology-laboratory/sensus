@@ -220,10 +220,11 @@ namespace Sensus.UI
                 }
                 else if (selectedAction == "Pause")
                 {
-                    await selectedProtocol.PauseAsync();
-                }
+					await Navigation.PushAsync(new PauseProtocolsPage(selectedProtocol));
+				}
                 else if (selectedAction == "Resume")
                 {
+					// need to cancel the scheduled resume.
                     await selectedProtocol.ResumeAsync();
                 }
                 else if (selectedAction == "Tag Data")
