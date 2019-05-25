@@ -144,6 +144,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ItemPickerPageInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\LabelOnlyInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\MultiLineTextInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\DateTimeInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\NumberEntryInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\SingleLineTextInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\SliderInput.cs" />

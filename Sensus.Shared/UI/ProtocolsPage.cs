@@ -105,6 +105,11 @@ namespace Sensus.UI
                 else if (selectedProtocol.State == ProtocolState.Paused)
                 {
                     actions.Add("Resume");
+
+					if (selectedProtocol.IsSnoozed)
+					{
+						actions.Add("Cancel Snooze");
+					}
                 }
 
                 if (selectedProtocol.AllowTagging)
@@ -227,6 +232,10 @@ namespace Sensus.UI
 					// need to cancel the scheduled resume.
                     await selectedProtocol.ResumeAsync();
                 }
+				else if (selectedAction == "Cancel Snooze")
+				{
+					await selectedProtocol.CancelScheduledResumeAsync();
+				}
                 else if (selectedAction == "Tag Data")
                 {
                     await Navigation.PushAsync(new TaggingPage(selectedProtocol));

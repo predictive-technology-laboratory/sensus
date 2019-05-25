@@ -1554,6 +1554,9 @@ namespace Sensus
             }
         }
 
+		[JsonIgnore]
+		public bool IsSnoozed => _scheduledResumeCallback != null;
+
         /// <summary>
         /// Gets or sets the <see cref="SensingAgent"/> that controls this <see cref="Protocol"/>. See 
         /// [here](xref:adaptive_sensing) for more information. This property is not serialized because,
