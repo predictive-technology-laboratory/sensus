@@ -225,7 +225,14 @@ namespace Sensus.UI
                 }
                 else if (selectedAction == "Pause")
                 {
-					await Navigation.PushAsync(new PauseProtocolsPage(selectedProtocol));
+					if (selectedProtocol.AllowSnooze)
+					{
+						await Navigation.PushAsync(new PauseProtocolsPage(selectedProtocol));
+					}
+					else
+					{
+						await selectedProtocol.PauseAsync();
+					}
 				}
                 else if (selectedAction == "Resume")
                 {

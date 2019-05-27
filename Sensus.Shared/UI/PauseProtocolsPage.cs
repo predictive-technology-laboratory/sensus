@@ -39,28 +39,48 @@ namespace Sensus.UI
 
 			StringBuilder protocolNames = new StringBuilder();
 
-			LabelOnlyInput protocolList = new LabelOnlyInput()
+			Frame protocolList = new Frame()
 			{
-				LabelText = protocols.Aggregate(protocolNames, (sb, p) => sb.AppendLine(p.Name)).ToString(),
-				Frame = true
+				Content = new Label()
+				{
+					Text = protocols.Aggregate(protocolNames, (sb, p) => sb.AppendLine(p.Name)).ToString()
+				},
+				BorderColor = Color.Accent,
+				BackgroundColor = Color.Transparent,
+				VerticalOptions = LayoutOptions.Start,
+				HasShadow = false,
+				Padding = new Thickness(10)
 			};
 
-			Dictionary<string, int> resumeTimes = new Dictionary<string, int>
+			Dictionary<string, int> resumeUnits = new Dictionary<string, int>
 			{
 				{ "Minute(s)", 1 },
 				{ "Hour(s)", 60 },
 				{ "Day(s)", 1440 }
 			};
 
-			KeyValuePair<string, int> defaultItem = resumeTimes.OrderBy(x => x.Value).TakeWhile(x => x.Value <= DEFAULT_SNOOZE).Last();
-			int selectedIndex = resumeTimes.ToList().IndexOf(defaultItem);
+			Func<int, (double, int)> calculateTimeAmount = t =>
+			{
+				KeyValuePair<string, int> defaultItem = resumeUnits.OrderBy(x => x.Value).TakeWhile(x => x.Value <= t).Last();
+				double timeAmount = Math.Round((double)t / defaultItem.Value, 2);
+				int selectedUnit = resumeUnits.ToList().IndexOf(defaultItem);
+
+				return (timeAmount, selectedUnit);
+			};
+
+			(double Amount, int Unit) initialAmountInUnits = calculateTimeAmount(DEFAULT_SNOOZE);
 
 			Label timeAmountLabel = new Label() { Text = "Snooze for:", FontSize = 20, VerticalTextAlignment = TextAlignment.Center };
-			Entry timeAmountEntry = new Entry() { Keyboard = Keyboard.Numeric, Text = Math.Round((double)DEFAULT_SNOOZE / defaultItem.Value, 2).ToString(), HorizontalOptions = LayoutOptions.FillAndExpand };
+			Entry timeAmountEntry = new Entry()
+			{
+				Keyboard = Keyboard.Numeric,
+				Text = initialAmountInUnits.Amount.ToString(),
+				HorizontalOptions = LayoutOptions.FillAndExpand
+			};
 			Picker timeAmountPicker = new Picker()
 			{
-				ItemsSource = resumeTimes.Keys.ToList(),
-				SelectedIndex = selectedIndex,
+				ItemsSource = resumeUnits.Keys.ToList(),
+				SelectedIndex = initialAmountInUnits.Unit,
 				HorizontalOptions = LayoutOptions.FillAndExpand
 			};
 
@@ -72,7 +92,7 @@ namespace Sensus.UI
 			};
 
 			Switch untilSwitch = new Switch();
-			Label dateTimeLabel = new Label() { Text = "Or until:", FontSize = 20, VerticalTextAlignment = TextAlignment.Center };
+			Label dateTimeLabel = new Label() { Text = "or until:", FontSize = 20, VerticalTextAlignment = TextAlignment.Center };
 			DatePicker datePicker = new DatePicker()
 			{
 				Date = DateTime.Now.Date,
@@ -83,7 +103,67 @@ namespace Sensus.UI
 			{
 				Time = DateTime.Now.AddMinutes(DEFAULT_SNOOZE).TimeOfDay,
 				HorizontalOptions = LayoutOptions.FillAndExpand,
-				IsEnabled = false
+				IsEnabled = false,
+			};
+
+			Func<DateTime> getResumeTime = () =>
+			{
+				return datePicker.Date.Date.AddMinutes((int)timePicker.Time.TotalMinutes);
+			};
+
+			Action syncronize = () =>
+			{
+				if (untilSwitch.IsToggled)
+				{
+					DateTime resumeTime = getResumeTime(); // datePicker.Date.Date.AddMinutes((int)timePicker.Time.TotalMinutes);
+
+					(double Amount, int Unit) amountInUnits = calculateTimeAmount((int)(resumeTime - DateTime.Now).TotalMinutes);
+
+					timeAmountEntry.Text = amountInUnits.Amount.ToString();
+					timeAmountPicker.SelectedIndex = amountInUnits.Unit;
+				}
+				else
+				{
+					if (double.TryParse(timeAmountEntry.Text, out double amount))
+					{
+						DateTime resumeTime = DateTime.Now.AddMinutes(resumeUnits[timeAmountPicker.SelectedItem as string] * amount);
+
+						datePicker.Date = resumeTime.Date;
+						timePicker.Time = resumeTime.TimeOfDay;
+					}
+				}
+			};
+
+			timeAmountEntry.TextChanged += (s, e) =>
+			{
+				if (untilSwitch.IsToggled == false)
+				{
+					syncronize();
+				}
+			};
+
+			timeAmountPicker.SelectedIndexChanged += (s, e) =>
+			{
+				if (untilSwitch.IsToggled == false)
+				{
+					syncronize();
+				}
+			};
+
+			datePicker.DateSelected += (s, e) =>
+			{
+				if (untilSwitch.IsToggled)
+				{
+					syncronize();
+				}
+			};
+
+			timePicker.PropertyChanged += (s, e) =>
+			{
+				if (untilSwitch.IsToggled && e.PropertyName == TimePicker.TimeProperty.PropertyName)
+				{
+					syncronize();
+				}
 			};
 
 			untilSwitch.Toggled += (s, e) =>
@@ -100,13 +180,6 @@ namespace Sensus.UI
 				HorizontalOptions = LayoutOptions.FillAndExpand,
 				Children = { untilSwitch, dateTimeLabel, datePicker, timePicker }
 			};
-
-			//DateTimeInput dateTimeInput = new DateTimeInput()
-			//{
-			//	DisplayNumber = false,
-			//	Required = false,
-			//	LabelText = "Or until:"
-			//};
 
 			StackLayout resumeTimeLayout = new StackLayout()
 			{
@@ -133,7 +206,9 @@ namespace Sensus.UI
 
 			snoozeButton.Clicked += async (s, e) =>
 			{
-				await PauseProtocolsAsync(protocols, DateTime.Now.AddSeconds(5));
+				DateTime resumeTime = getResumeTime();
+
+				await PauseProtocolsAsync(protocols, resumeTime);
 
 				await Navigation.PopAsync();
 			};
@@ -155,16 +230,11 @@ namespace Sensus.UI
 			StackLayout layout = new StackLayout()
 			{
 				Orientation = StackOrientation.Vertical,
-				VerticalOptions = LayoutOptions.FillAndExpand,
-				Children = { protocolList.GetView(1), pauseButton, resumeTimeLayout, snoozeButton, divider, cancelButton }
+				Padding = new Thickness(10, 20, 10, 20),
+				Children = { protocolList, pauseButton, resumeTimeLayout, snoozeButton, divider, cancelButton }
 			};
 
 			Content = layout;
-		}
-
-		private void UntilSwitch_Toggled(object sender, ToggledEventArgs e)
-		{
-			throw new NotImplementedException();
 		}
 
 		public PauseProtocolsPage(Protocol protocol) : this(new Protocol[] { protocol })

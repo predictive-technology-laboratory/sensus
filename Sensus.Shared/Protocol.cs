@@ -1348,11 +1348,17 @@ namespace Sensus
         [OnOffUiProperty("Allow Pause:  ", true, 48)]
         public bool AllowPause { get; set; } = false;
 
-        /// <summary>
-        /// Whether or not to allow the user to request a test push notification.
-        /// </summary>
-        /// <value><c>true</c> if allow test push notification; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow Test Push:  ", true, 49)]
+		[OnOffUiProperty("Allow Snooze:  ", true, 49)]
+		public bool AllowSnooze { get; set; } = false;
+
+		[EntryFloatUiProperty("Max. Snooze (min):  ", true, 50, false)]
+		public int MaxSnoozeTime { get; set; } = 1440;
+
+		/// <summary>
+		/// Whether or not to allow the user to request a test push notification.
+		/// </summary>
+		/// <value><c>true</c> if allow test push notification; otherwise, <c>false</c>.</value>
+		[OnOffUiProperty("Allow Test Push:  ", true, 51)]
         public bool AllowTestPushNotification { get; set; } = false;
 
         /// <summary>
@@ -1390,7 +1396,7 @@ namespace Sensus
         /// for more information.
         /// </summary>
         /// <value>The protocol start confirmation mode.</value>
-        [ListUiProperty("Start Confirmation Mode:", true, 50, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.ParticipantIdDigits, ProtocolStartConfirmationMode.ParticipantIdText, ProtocolStartConfirmationMode.ParticipantIdQrCode }, true)]
+        [ListUiProperty("Start Confirmation Mode:", true, 52, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.ParticipantIdDigits, ProtocolStartConfirmationMode.ParticipantIdText, ProtocolStartConfirmationMode.ParticipantIdQrCode }, true)]
         public ProtocolStartConfirmationMode StartConfirmationMode
         {
             get
@@ -1409,7 +1415,7 @@ namespace Sensus
         /// the <see cref="PushNotificationsSharedAccessSignature"/> for this hub.
         /// </summary>
         /// <value>The push notifications hub.</value>
-        [EntryStringUiProperty("Push Notification Hub:", true, 51, false)]
+        [EntryStringUiProperty("Push Notification Hub:", true, 53, false)]
         public string PushNotificationsHub
         {
             get { return _pushNotificationsHub; }
@@ -1422,7 +1428,7 @@ namespace Sensus
         /// the DefaultListenSharedAccessSignature policy and copy the entire value of the connection string into this field.
         /// </summary>
         /// <value>The push notifications shared access signature.</value>
-        [EntryStringUiProperty("Push Notifications Shared Access Signature:", true, 52, false)]
+        [EntryStringUiProperty("Push Notifications Shared Access Signature:", true, 54, false)]
         public string PushNotificationsSharedAccessSignature
         {
             get { return _pushNotificationsSharedAccessSignature; }
@@ -1441,7 +1447,7 @@ namespace Sensus
         /// Specifies whether the current <see cref="Protocol"/> should be compatible with Android only, iOS only, or both.
         /// </summary>
         /// <value>The protocol compatibility mode.</value>
-        [ListUiProperty("Compatibility:", true, 53, new object[] { ProtocolCompatibilityMode.CrossPlatform, ProtocolCompatibilityMode.AndroidOnly, ProtocolCompatibilityMode.iOSOnly }, true)]
+        [ListUiProperty("Compatibility:", true, 55, new object[] { ProtocolCompatibilityMode.CrossPlatform, ProtocolCompatibilityMode.AndroidOnly, ProtocolCompatibilityMode.iOSOnly }, true)]
         public ProtocolCompatibilityMode CompatibilityMode { get; set; } = ProtocolCompatibilityMode.CrossPlatform;
 
         /// <summary>
@@ -1450,7 +1456,7 @@ namespace Sensus
         /// be displayed.
         /// </summary>
         /// <value><c>true</c> if display participation percentage in foreground service notification; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("(Android) Display Participation:", true, 55)]
+        [OnOffUiProperty("(Android) Display Participation:", true, 56)]
         public bool DisplayParticipationPercentageInForegroundServiceNotification { get; set; } = true;
 
         /// <summary>
