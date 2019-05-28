@@ -1348,10 +1348,10 @@ namespace Sensus
         [OnOffUiProperty("Allow Pause:  ", true, 48)]
         public bool AllowPause { get; set; } = false;
 
-		[OnOffUiProperty("Allow Snooze:  ", true, 49)]
+		[OnOffUiProperty("Allow Snooze:", true, 49)]
 		public bool AllowSnooze { get; set; } = false;
 
-		[EntryFloatUiProperty("Max. Snooze (min):  ", true, 50, false)]
+		[EntryFloatUiProperty("Max. Snooze (Mins.):  ", true, 50, false)]
 		public int MaxSnoozeTime { get; set; } = 1440;
 
 		/// <summary>

@@ -1,5 +1,4 @@
-﻿using Sensus.UI.Inputs;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -36,15 +35,34 @@ namespace Sensus.UI
 			Title = "Pause Protocols";
 
 			protocols = protocols.Where(x => x.AllowPause);
-
+			int maxSnoozeTimeAmount = protocols.Min(x => x.MaxSnoozeTime);
 			StringBuilder protocolNames = new StringBuilder();
 
-			Frame protocolList = new Frame()
+			if(maxSnoozeTimeAmount <= 0)
 			{
-				Content = new Label()
-				{
-					Text = protocols.Aggregate(protocolNames, (sb, p) => sb.AppendLine(p.Name)).ToString()
-				},
+				maxSnoozeTimeAmount = int.MaxValue;
+			}
+
+			Label pageTitle = new Label()
+			{
+				HorizontalOptions = LayoutOptions.CenterAndExpand,
+				FontSize = 20,
+				Text = $"Pause or Snooze the following protocols:"
+			};
+			Label protocolList = new Label()
+			{
+				HorizontalOptions = LayoutOptions.FillAndExpand,
+				Text = protocols.Aggregate(protocolNames, (sb, p) => sb.AppendLine(p.Name)).ToString()
+			};
+			StackLayout protocolListLayout = new StackLayout()
+			{
+				Orientation = StackOrientation.Vertical,
+				Children = { pageTitle, protocolList }
+			};
+
+			Frame protocolListFrame = new Frame()
+			{
+				Content = protocolListLayout,
 				BorderColor = Color.Accent,
 				BackgroundColor = Color.Transparent,
 				VerticalOptions = LayoutOptions.Start,
@@ -59,18 +77,23 @@ namespace Sensus.UI
 				{ "Day(s)", 1440 }
 			};
 
-			Func<int, (double, int)> calculateTimeAmount = t =>
+			Func<int, (double, int, string)> calculateTimeAmount = t =>
 			{
 				KeyValuePair<string, int> defaultItem = resumeUnits.OrderBy(x => x.Value).TakeWhile(x => x.Value <= t).Last();
 				double timeAmount = Math.Round((double)t / defaultItem.Value, 2);
 				int selectedUnit = resumeUnits.ToList().IndexOf(defaultItem);
 
-				return (timeAmount, selectedUnit);
+				return (timeAmount, selectedUnit, defaultItem.Key);
 			};
 
-			(double Amount, int Unit) initialAmountInUnits = calculateTimeAmount(DEFAULT_SNOOZE);
+			(double Amount, int UnitIndex, string UnitDescription) initialAmountInUnits = calculateTimeAmount(Math.Min(DEFAULT_SNOOZE, maxSnoozeTimeAmount));
 
-			Label timeAmountLabel = new Label() { Text = "Snooze for:", FontSize = 20, VerticalTextAlignment = TextAlignment.Center };
+			Label timeAmountLabel = new Label()
+			{
+				Text = "Snooze for:",
+				FontSize = 20,
+				VerticalTextAlignment = TextAlignment.Center
+			};
 			Entry timeAmountEntry = new Entry()
 			{
 				Keyboard = Keyboard.Numeric,
@@ -80,7 +103,7 @@ namespace Sensus.UI
 			Picker timeAmountPicker = new Picker()
 			{
 				ItemsSource = resumeUnits.Keys.ToList(),
-				SelectedIndex = initialAmountInUnits.Unit,
+				SelectedIndex = initialAmountInUnits.UnitIndex,
 				HorizontalOptions = LayoutOptions.FillAndExpand
 			};
 
@@ -101,26 +124,28 @@ namespace Sensus.UI
 			};
 			TimePicker timePicker = new TimePicker()
 			{
-				Time = DateTime.Now.AddMinutes(DEFAULT_SNOOZE).TimeOfDay,
+				Time = DateTime.Now.AddMinutes(Math.Min(DEFAULT_SNOOZE, maxSnoozeTimeAmount)).TimeOfDay,
 				HorizontalOptions = LayoutOptions.FillAndExpand,
 				IsEnabled = false,
 			};
 
-			Func<DateTime> getResumeTime = () =>
+			Func<(DateTime, TimeSpan)> getResumeTime = () =>
 			{
-				return datePicker.Date.Date.AddMinutes((int)timePicker.Time.TotalMinutes);
+				DateTime resumeTime = datePicker.Date.Date.AddMinutes((int)timePicker.Time.TotalMinutes);
+
+				return (resumeTime, resumeTime - DateTime.Now);
 			};
 
 			Action syncronize = () =>
 			{
 				if (untilSwitch.IsToggled)
 				{
-					DateTime resumeTime = getResumeTime(); // datePicker.Date.Date.AddMinutes((int)timePicker.Time.TotalMinutes);
+					(DateTime resumeTime, TimeSpan difference) = getResumeTime();
 
-					(double Amount, int Unit) amountInUnits = calculateTimeAmount((int)(resumeTime - DateTime.Now).TotalMinutes);
+					(double Amount, int UnitIndex, string UnitDescription) amountInUnits = calculateTimeAmount((int)difference.TotalMinutes);
 
 					timeAmountEntry.Text = amountInUnits.Amount.ToString();
-					timeAmountPicker.SelectedIndex = amountInUnits.Unit;
+					timeAmountPicker.SelectedIndex = amountInUnits.UnitIndex;
 				}
 				else
 				{
@@ -181,10 +206,23 @@ namespace Sensus.UI
 				Children = { untilSwitch, dateTimeLabel, datePicker, timePicker }
 			};
 
+			(double Amount, int UnitIndex, string UnitText) maxSnoozeTime = calculateTimeAmount(maxSnoozeTimeAmount);
+
+			Label maxSnoozeLabel = new Label()
+			{
+				HorizontalOptions = LayoutOptions.CenterAndExpand,
+				Text = $"(Max Snooze: {maxSnoozeTime.Amount} {maxSnoozeTime.UnitText.ToLower()})"
+			};
+
+			if(maxSnoozeTimeAmount == int.MaxValue)
+			{
+				maxSnoozeLabel.IsVisible = false;
+			}
+
 			StackLayout resumeTimeLayout = new StackLayout()
 			{
 				Orientation = StackOrientation.Vertical,
-				Children = { timeAmountLayout, dateTimeLayout }
+				Children = { timeAmountLayout, dateTimeLayout, maxSnoozeLabel }
 			};
 
 			Button pauseButton = new Button()
@@ -206,11 +244,18 @@ namespace Sensus.UI
 
 			snoozeButton.Clicked += async (s, e) =>
 			{
-				DateTime resumeTime = getResumeTime();
+				(DateTime resumeTime, TimeSpan difference) = getResumeTime();
 
-				await PauseProtocolsAsync(protocols, resumeTime);
+				if (difference.TotalMinutes <= maxSnoozeTimeAmount)
+				{
+					await PauseProtocolsAsync(protocols, resumeTime);
 
-				await Navigation.PopAsync();
+					await Navigation.PopAsync();
+				}
+				else
+				{
+					await DisplayAlert("Snooze", $"The protocols cannot be Snoozed for more than {maxSnoozeTime.Amount} {maxSnoozeTime.UnitText.ToLower()}", "OK");
+				}
 			};
 
 			Button cancelButton = new Button()
@@ -231,7 +276,7 @@ namespace Sensus.UI
 			{
 				Orientation = StackOrientation.Vertical,
 				Padding = new Thickness(10, 20, 10, 20),
-				Children = { protocolList, pauseButton, resumeTimeLayout, snoozeButton, divider, cancelButton }
+				Children = { protocolListFrame, pauseButton, resumeTimeLayout, snoozeButton, divider, cancelButton }
 			};
 
 			Content = layout;
