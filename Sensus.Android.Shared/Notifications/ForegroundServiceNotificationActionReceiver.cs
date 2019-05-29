@@ -14,9 +14,11 @@
 
 using Android.Content;
 using Sensus.Exceptions;
+using Sensus.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Xamarin.Forms;
 
 namespace Sensus.Android.Notifications
 {
@@ -40,12 +42,9 @@ namespace Sensus.Android.Notifications
                 {
                     if (intent.Action == AndroidNotifier.FOREGROUND_SERVICE_NOTIFICATION_ACTION_PAUSE)
                     {
-                        List<Protocol> pausableProtocols = serviceHelper.RegisteredProtocols.Where(protocol => protocol.AllowPause).ToList();
+                        IEnumerable<Protocol> pausableProtocols = serviceHelper.RegisteredProtocols.Where(protocol => protocol.AllowPause);
 
-                        foreach (Protocol pausableProtocol in pausableProtocols)
-                        {
-                            await pausableProtocol.PauseAsync();
-                        }
+						await (Application.Current as App).DetailPage.Navigation.PushAsync(new PauseProtocolsPage(pausableProtocols));
                     }
                     else if (intent.Action == AndroidNotifier.FOREGROUND_SERVICE_NOTIFICATION_ACTION_RESUME)
                     {

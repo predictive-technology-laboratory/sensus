@@ -491,6 +491,7 @@ namespace Sensus
         private ProtocolState _state;
         private ScheduledCallback _scheduledStartCallback;
         private ScheduledCallback _scheduledStopCallback;
+		private ScheduledCallback _scheduledResumeCallback;
         private LocalDataStore _localDataStore;
         private RemoteDataStore _remoteDataStore;
         private string _storageDirectory;
@@ -1347,11 +1348,17 @@ namespace Sensus
         [OnOffUiProperty("Allow Pause:  ", true, 48)]
         public bool AllowPause { get; set; } = false;
 
-        /// <summary>
-        /// Whether or not to allow the user to request a test push notification.
-        /// </summary>
-        /// <value><c>true</c> if allow test push notification; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow Test Push:  ", true, 49)]
+		[OnOffUiProperty("Allow Snooze:", true, 49)]
+		public bool AllowSnooze { get; set; } = false;
+
+		[EntryFloatUiProperty("Max. Snooze (Mins.):  ", true, 50, false)]
+		public int MaxSnoozeTime { get; set; } = 1440;
+
+		/// <summary>
+		/// Whether or not to allow the user to request a test push notification.
+		/// </summary>
+		/// <value><c>true</c> if allow test push notification; otherwise, <c>false</c>.</value>
+		[OnOffUiProperty("Allow Test Push:  ", true, 51)]
         public bool AllowTestPushNotification { get; set; } = false;
 
         /// <summary>
@@ -1389,7 +1396,7 @@ namespace Sensus
         /// for more information.
         /// </summary>
         /// <value>The protocol start confirmation mode.</value>
-        [ListUiProperty("Start Confirmation Mode:", true, 50, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.ParticipantIdDigits, ProtocolStartConfirmationMode.ParticipantIdText, ProtocolStartConfirmationMode.ParticipantIdQrCode }, true)]
+        [ListUiProperty("Start Confirmation Mode:", true, 52, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.ParticipantIdDigits, ProtocolStartConfirmationMode.ParticipantIdText, ProtocolStartConfirmationMode.ParticipantIdQrCode }, true)]
         public ProtocolStartConfirmationMode StartConfirmationMode
         {
             get
@@ -1408,7 +1415,7 @@ namespace Sensus
         /// the <see cref="PushNotificationsSharedAccessSignature"/> for this hub.
         /// </summary>
         /// <value>The push notifications hub.</value>
-        [EntryStringUiProperty("Push Notification Hub:", true, 51, false)]
+        [EntryStringUiProperty("Push Notification Hub:", true, 53, false)]
         public string PushNotificationsHub
         {
             get { return _pushNotificationsHub; }
@@ -1421,7 +1428,7 @@ namespace Sensus
         /// the DefaultListenSharedAccessSignature policy and copy the entire value of the connection string into this field.
         /// </summary>
         /// <value>The push notifications shared access signature.</value>
-        [EntryStringUiProperty("Push Notifications Shared Access Signature:", true, 52, false)]
+        [EntryStringUiProperty("Push Notifications Shared Access Signature:", true, 54, false)]
         public string PushNotificationsSharedAccessSignature
         {
             get { return _pushNotificationsSharedAccessSignature; }
@@ -1440,7 +1447,7 @@ namespace Sensus
         /// Specifies whether the current <see cref="Protocol"/> should be compatible with Android only, iOS only, or both.
         /// </summary>
         /// <value>The protocol compatibility mode.</value>
-        [ListUiProperty("Compatibility:", true, 53, new object[] { ProtocolCompatibilityMode.CrossPlatform, ProtocolCompatibilityMode.AndroidOnly, ProtocolCompatibilityMode.iOSOnly }, true)]
+        [ListUiProperty("Compatibility:", true, 55, new object[] { ProtocolCompatibilityMode.CrossPlatform, ProtocolCompatibilityMode.AndroidOnly, ProtocolCompatibilityMode.iOSOnly }, true)]
         public ProtocolCompatibilityMode CompatibilityMode { get; set; } = ProtocolCompatibilityMode.CrossPlatform;
 
         /// <summary>
@@ -1449,7 +1456,7 @@ namespace Sensus
         /// be displayed.
         /// </summary>
         /// <value><c>true</c> if display participation percentage in foreground service notification; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("(Android) Display Participation:", true, 55)]
+        [OnOffUiProperty("(Android) Display Participation:", true, 56)]
         public bool DisplayParticipationPercentageInForegroundServiceNotification { get; set; } = true;
 
         /// <summary>
@@ -1552,6 +1559,9 @@ namespace Sensus
                 return _localDataStore?.CaptionText;
             }
         }
+
+		[JsonIgnore]
+		public bool IsSnoozed => _scheduledResumeCallback != null;
 
         /// <summary>
         /// Gets or sets the <see cref="SensingAgent"/> that controls this <see cref="Protocol"/>. See 
@@ -2331,6 +2341,7 @@ namespace Sensus
             await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(CancellationToken.None);
 
             FireCaptionChanged();
+			await CancelScheduledResumeAsync();
         }
 
         public async Task CancelScheduledStartAsync()
@@ -2770,9 +2781,48 @@ namespace Sensus
             }
 
             await FireStateChangedAsync();
-        }
+			await CancelScheduledResumeAsync();
+		}
 
-        public async Task StopAsync()
+		public async Task ScheduleResumeAsync(DateTime resumeTimestamp)
+		{
+			TimeSpan timeUntilResume = resumeTimestamp - DateTime.Now;
+
+			_scheduledResumeCallback = new ScheduledCallback(async cancellationToken =>
+			{
+				await ResumeAsync();
+				_scheduledResumeCallback = null;
+
+			}, timeUntilResume, "RESUME", _id, this, null, TimeSpan.Zero, TimeSpan.Zero);
+
+#if __ANDROID__
+            _scheduledResumeCallback.UserNotificationMessage = "Resumed study: " + Name;
+#elif __IOS__
+			_scheduledResumeCallback.UserNotificationMessage = "Please open to resume study: " + Name;
+#else
+#error "Unrecognized OS"
+#endif
+
+			await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_scheduledResumeCallback);
+
+			// add the token to the backend, as the push notification for the schedule start needs to be active.
+			await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(CancellationToken.None);
+
+			FireCaptionChanged();
+		}
+
+		public async Task CancelScheduledResumeAsync()
+		{
+			await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_scheduledResumeCallback);
+			_scheduledResumeCallback = null;
+
+			// remove the token to the backend, as the push notification for the schedule start needs to be deactivated.
+			await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(CancellationToken.None);
+
+			FireCaptionChanged();
+		}
+
+		public async Task StopAsync()
         {
             lock (this)
             {
@@ -2802,8 +2852,9 @@ namespace Sensus
 
                 // the user might have force-stopped the protocol before the scheduled stop fired. don't fire the scheduled stop.
                 await CancelScheduledStopAsync();
+				await CancelScheduledResumeAsync();
 
-                foreach (Probe probe in _probes)
+				foreach (Probe probe in _probes)
                 {
                     try
                     {
