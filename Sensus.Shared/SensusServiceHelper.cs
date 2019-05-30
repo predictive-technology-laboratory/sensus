@@ -295,14 +295,13 @@ namespace Sensus
             SINGLETON = null;
         }
 
-        public static async Task<bool?> GetIsContactAsync(string phoneNumber)
+        public static async Task<Contact> GetContactAsync(string phoneNumber)
         {
             if (await Get().ObtainPermissionAsync(Permission.Contacts) == PermissionStatus.Granted)
             {
                 IList<Contact> contacts = await Plugin.ContactService.CrossContactService.Current.GetContactListAsync();
 
-                // We need to normalize the phone number due the fact that we get it in e.g. (4345556666) and it comes in the contact list as e.g. (434-555 6666)
-                return contacts.SelectMany(s => s.Numbers).Select(s => Regex.Replace(s, "[^0-9a-z]", "", RegexOptions.IgnoreCase)).Contains(phoneNumber);
+                return contacts.FirstOrDefault(x => x.Numbers.Select(s => Regex.Replace(s, "[^0-9a-z]", "", RegexOptions.IgnoreCase)).Contains(phoneNumber));
             }
 
             return null;

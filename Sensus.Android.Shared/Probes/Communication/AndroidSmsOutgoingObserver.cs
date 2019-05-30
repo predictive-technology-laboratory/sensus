@@ -21,6 +21,7 @@ using Sensus.Probes.Communication;
 using System;
 using System.IO;
 using System.Text;
+using Plugin.ContactService.Shared;
 
 namespace Sensus.Android.Probes.Communication
 {
@@ -142,8 +143,10 @@ namespace Sensus.Android.Probes.Communication
                                     // only keep if we have a message body
                                     if (!string.IsNullOrWhiteSpace(body) && _mostRecentMmsTimestamp != timestamp)
                                     {
-                                        bool? isContact = SensusServiceHelper.GetIsContactAsync(toNumber).Result;
-                                        mmsDatum = new SmsDatum(timestamp, null, toNumber, body, true, isContact);
+                                        Contact contact = SensusServiceHelper.GetContactAsync(toNumber).Result;
+                                        bool isContact = contact != null;
+
+                                        mmsDatum = new SmsDatum(timestamp, null, toNumber, body, true, isContact, contact?.Name);
                                     }
 
                                     break;
@@ -239,9 +242,10 @@ namespace Sensus.Android.Probes.Communication
                     if (!string.IsNullOrWhiteSpace(body))
                     {
 
-                        bool? isContact = SensusServiceHelper.GetIsContactAsync(toNumber).Result;
+                        Contact contact = SensusServiceHelper.GetContactAsync(toNumber).Result;
+                        bool isContact = contact != null;
 
-                        smsDatum = new SmsDatum(timestamp, null, toNumber, body, true, isContact);
+                        smsDatum = new SmsDatum(timestamp, null, toNumber, body, true, isContact, contact?.Name);
                     }
                 }
             }

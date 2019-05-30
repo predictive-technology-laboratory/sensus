@@ -37,9 +37,10 @@ namespace Sensus.Android.Probes.Communication
             _outgoingCallCallback = async (sender, outgoingNumber) =>
             {
                 _outgoingIncomingTime = DateTime.Now;
-                bool? isContact = await SensusServiceHelper.GetIsContactAsync(outgoingNumber);
+                Contact contact = await SensusServiceHelper.GetContactAsync(outgoingNumber);
+                bool isContact = contact != null;
 
-                await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.OutgoingCall, outgoingNumber, null, isContact));
+                await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.OutgoingCall, outgoingNumber, null, isContact, contact?.Name));
             };
 
             _idleIncomingCallListener = new AndroidTelephonyIdleIncomingListener();
@@ -47,9 +48,11 @@ namespace Sensus.Android.Probes.Communication
             _idleIncomingCallListener.IncomingCall += async (o, incomingNumber) =>
             {
                 _outgoingIncomingTime = DateTime.Now;
-                bool? isContact = await SensusServiceHelper.GetIsContactAsync(incomingNumber);
+                Contact contact = await SensusServiceHelper.GetContactAsync(incomingNumber);
+                bool isContact = contact != null;
+                
 
-                await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber, null, isContact));
+                await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber, null, isContact, contact?.Name));
             };
 
             _idleIncomingCallListener.Idle += async (o, phoneNumber) =>
@@ -61,10 +64,10 @@ namespace Sensus.Android.Probes.Communication
                 {
                     callDurationSeconds = (DateTime.Now - _outgoingIncomingTime.Value).TotalSeconds;
                 }
-                bool? isContact = await SensusServiceHelper.GetIsContactAsync(phoneNumber);
+                Contact contact = await SensusServiceHelper.GetContactAsync(phoneNumber);
+                bool isContact = contact != null;
 
-
-                await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.Idle, phoneNumber, callDurationSeconds, isContact));
+                await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.Idle, phoneNumber, callDurationSeconds, isContact, contact?.Name));
             };
         }
 
