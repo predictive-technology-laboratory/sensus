@@ -24,7 +24,7 @@ namespace Sensus.Probes.Apps
 
 		public override object StringPlaceholderValue => throw new NotImplementedException();
 
-		public ImageMetadataDatum(int fileSize, int width, int height, int orientation, double xResolution, double yResolution, int resolutionUnit, bool isColor, int flash, double fNumber, double exposureTime, double? latitude, double? longitude)
+		public ImageMetadataDatum(int fileSize, int width, int height, int orientation, double xResolution, double yResolution, int resolutionUnit, bool isColor, int flash, double fNumber, double exposureTime, double? latitude, double? longitude, DateTimeOffset timestamp)
 		{
 			FileSize = fileSize;
 			Width = width;
@@ -39,6 +39,7 @@ namespace Sensus.Probes.Apps
 			ExposureTime = exposureTime;
 			Latitude = latitude;
 			Longitude = longitude;
+			Timestamp = timestamp;
 		}
 
 		public int FileSize { get; set; }

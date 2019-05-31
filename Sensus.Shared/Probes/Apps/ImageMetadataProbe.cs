@@ -22,31 +22,17 @@ using Syncfusion.SfChart.XForms;
 
 namespace Sensus.Probes.Apps
 {
-	public abstract class ImageMetadataProbe : PollingProbe
+	public abstract class ImageMetadataProbe : ListeningProbe
 	{
-		private int _readDurationMS;
+		protected override bool DefaultKeepDeviceAwake => false;
+
+		public override Type DatumType => typeof(ImageMetadataDatum);
 
 		public override string DisplayName => "Gallery Image Metadata";
 
-		public sealed override Type DatumType => typeof(ImageMetadataDatum);
+		protected override string DeviceAwakeWarning => "";
 
-		[EntryIntegerUiProperty("Read Duration (MS):", true, 5, true)]
-		public int ReadDurationMS
-		{
-			get
-			{
-				return _readDurationMS;
-			}
-			set
-			{
-				if (value < 5000)
-				{
-					value = 5000;
-				}
-
-				_readDurationMS = value;
-			}
-		}
+		protected override string DeviceAsleepWarning => "";
 
 		protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
 		{
@@ -67,16 +53,5 @@ namespace Sensus.Probes.Apps
 		{
 			throw new NotImplementedException();
 		}
-
-		protected async override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
-		{
-			List<Datum> imageMetadataData = new List<Datum>();
-
-			imageMetadataData.AddRange(await GetImages());
-
-			return imageMetadataData;
-		}
-
-		protected abstract Task<List<ImageMetadataDatum>> GetImages();
 	}
 }
