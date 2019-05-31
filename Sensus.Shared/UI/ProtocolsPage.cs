@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 using Sensus.Authentication;
 using System.Net;
 using Sensus.Notifications;
+using System.Text;
 
 #if __ANDROID__
 using Sensus.Android;
@@ -105,6 +106,11 @@ namespace Sensus.UI
                 else if (selectedProtocol.State == ProtocolState.Paused)
                 {
                     actions.Add("Resume");
+
+					if (selectedProtocol.IsSnoozed)
+					{
+						actions.Add("Cancel Snooze");
+					}
                 }
 
                 if (selectedProtocol.AllowTagging)
@@ -220,12 +226,24 @@ namespace Sensus.UI
                 }
                 else if (selectedAction == "Pause")
                 {
-                    await selectedProtocol.PauseAsync();
-                }
+					if (selectedProtocol.AllowSnooze)
+					{
+						await Navigation.PushAsync(new PauseProtocolsPage(selectedProtocol));
+					}
+					else
+					{
+						await selectedProtocol.PauseAsync();
+					}
+				}
                 else if (selectedAction == "Resume")
                 {
+					// need to cancel the scheduled resume.
                     await selectedProtocol.ResumeAsync();
                 }
+				else if (selectedAction == "Cancel Snooze")
+				{
+					await selectedProtocol.CancelScheduledResumeAsync();
+				}
                 else if (selectedAction == "Tag Data")
                 {
                     await Navigation.PushAsync(new TaggingPage(selectedProtocol));
@@ -261,14 +279,17 @@ namespace Sensus.UI
                 {
                     try
                     {
-                        if (await selectedProtocol.RemoteDataStore?.WriteLocalDataStoreAsync(CancellationToken.None))
-                        {
-                            await SensusServiceHelper.Get().FlashNotificationAsync("Data submitted.");
-                        }
-                        else
-                        {
-                            throw new Exception("Failed to submit data.");
-                        }
+						if (await ConfirmSubmission(selectedProtocol))
+						{
+							if (await selectedProtocol.RemoteDataStore?.WriteLocalDataStoreAsync(CancellationToken.None, true))
+							{
+								await SensusServiceHelper.Get().FlashNotificationAsync("Data submitted.");
+							}
+							else
+							{
+								throw new Exception("Failed to submit data.");
+							}
+						}
                     }
                     catch (Exception ex)
                     {
@@ -650,6 +671,47 @@ namespace Sensus.UI
             }, ToolbarItemOrder.Secondary));
             #endregion
         }
+
+		public async Task<bool> ConfirmSubmission(Protocol selectedProtocol)
+		{
+			StringBuilder sb = new StringBuilder();
+			bool submit = true;
+
+			sb.AppendLine("The following requirements for submitting this protocol are not met:");
+			sb.AppendLine();
+
+			if (selectedProtocol.RemoteDataStore.RequireWiFi && !SensusServiceHelper.Get().WiFiConnected)
+			{
+				sb.AppendLine("Wifi is not connected.");
+
+				submit = false;
+			}
+
+			if (selectedProtocol.RemoteDataStore.RequireCharging && !SensusServiceHelper.Get().IsCharging)
+			{
+				sb.AppendLine("The device is not charging.");
+
+				submit = false;
+
+			}
+
+			if (selectedProtocol.RemoteDataStore.RequiredBatteryChargeLevelPercent > 0 && SensusServiceHelper.Get().BatteryChargePercent < selectedProtocol.RemoteDataStore.RequiredBatteryChargeLevelPercent)
+			{
+				sb.AppendLine($"The battery charge is less than {selectedProtocol.RemoteDataStore.RequiredBatteryChargeLevelPercent}%.");
+
+				submit = false;
+			}
+
+			if (submit == false)
+			{
+				sb.AppendLine("");
+				sb.AppendLine("Do you still want to submit?");
+
+				submit = await DisplayAlert("Submit?", sb.ToString(), "Yes", "No");
+			}
+
+			return submit;
+		}
 
         private Tuple<string, string> ParseManagedProtocolURL(string url)
         {

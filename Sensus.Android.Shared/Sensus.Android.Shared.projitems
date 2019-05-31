@@ -11,8 +11,6 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\MainConcurrent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Context\AndroidSensusContext.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\AndroidBluetoothDevice.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\AndroidBluetoothDeviceReceiver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AndroidGyroscopeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SliderInputEffect.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\AndroidCallbackScheduler.cs" />

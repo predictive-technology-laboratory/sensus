@@ -28,6 +28,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\SymmetricEncryption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\SensusException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImpreciseDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\KeystrokeDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\KeystrokeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\SmsDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TelephonyDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\BluetoothScanModes.cs" />
@@ -37,6 +39,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\HumidityProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\SoundDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\BatteryDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\PowerConnectDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\ListeningPowerConnectProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\ScreenDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\ProximityDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\ProximityProbe.cs" />
@@ -145,6 +149,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ItemPickerPageInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\LabelOnlyInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\MultiLineTextInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\DateTimeInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\NumberEntryInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\SingleLineTextInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\SliderInput.cs" />
@@ -169,6 +174,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\ScriptRunnerPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ScriptRunnersPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ScriptTriggersPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\PauseProtocolsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\DateUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\DisplayStringUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\DisplayYesNoUiProperty.cs" />
