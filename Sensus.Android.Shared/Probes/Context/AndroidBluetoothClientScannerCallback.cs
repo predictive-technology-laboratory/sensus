@@ -21,7 +21,6 @@ using System.Threading;
 using Sensus.Probes;
 using Android.OS;
 using Android.Bluetooth;
-using Sensus.Probes.Context;
 
 namespace Sensus.Android.Probes.Context
 {
@@ -61,9 +60,9 @@ namespace Sensus.Android.Probes.Context
             }
         }
 
-        public async Task<List<BluetoothDeviceProximityDatum>> ReadPeripheralCharacteristicValuesAsync(CancellationToken cancellationToken)
+        public async Task<List<Tuple<string, DateTimeOffset>>> ReadPeripheralCharacteristicValuesAsync(CancellationToken cancellationToken)
         {
-            List<BluetoothDeviceProximityDatum> bluetoothDeviceProximityData = new List<BluetoothDeviceProximityDatum>();
+            List<Tuple<string, DateTimeOffset>> characteristicValueTimestamps = new List<Tuple<string, DateTimeOffset>>();
 
             // copy list of peripherals to read. note that the same device may be reported more than once. read each once.
             List<ScanResult> scanResults;
@@ -72,7 +71,7 @@ namespace Sensus.Android.Probes.Context
                 scanResults = _scanResults.GroupBy(scanResult => scanResult.Device.Address).Select(group => group.First()).ToList();
             }
 
-			_probe.ReadAttemptCount += scanResults.Count;
+            _probe.ReadAttemptCount += scanResults.Count;
 
             // read characteristic from each peripheral
             foreach (ScanResult scanResult in scanResults)
@@ -87,22 +86,15 @@ namespace Sensus.Android.Probes.Context
                 try
                 {
                     readCallback = new AndroidBluetoothClientGattCallback(_service, _characteristic);
-					BluetoothGatt gatt = scanResult.Device.ConnectGatt(global::Android.App.Application.Context, false, readCallback);
-					BluetoothGattService service = gatt.GetService(_service.Uuid);
-					string characteristicValue = null;
-					bool runningSensus = service != null;
+                    scanResult.Device.ConnectGatt(global::Android.App.Application.Context, false, readCallback);
+                    string characteristicValue = await readCallback.ReadCharacteristicValueAsync(cancellationToken);
 
-					if (runningSensus)
-					{
-						characteristicValue = await readCallback.ReadCharacteristicValueAsync(cancellationToken);
-					}
-
-                    if (_probe.DiscoverAll || runningSensus)
+                    if (characteristicValue != null)
                     {
                         long msSinceEpoch = Java.Lang.JavaSystem.CurrentTimeMillis() - SystemClock.ElapsedRealtime() + scanResult.TimestampNanos / 1000000;
                         DateTimeOffset encounterTimestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(msSinceEpoch);
 
-                        bluetoothDeviceProximityData.Add(new BluetoothDeviceProximityDatum(encounterTimestamp, characteristicValue, scanResult.Device.Address, scanResult.Device.Name, scanResult.Rssi, scanResult.Device.BondState != Bond.None, runningSensus));
+                        characteristicValueTimestamps.Add(new Tuple<string, DateTimeOffset>(characteristicValue, encounterTimestamp));
                         _probe.ReadSuccessCount++;
                     }
                 }
@@ -116,30 +108,7 @@ namespace Sensus.Android.Probes.Context
                 }
             }
 
-            return bluetoothDeviceProximityData;
+            return characteristicValueTimestamps;
         }
-
-		public List<AndroidBluetoothDevice> GetDiscoveredDevices()
-		{
-			List<AndroidBluetoothDevice> scanResults = new List<AndroidBluetoothDevice>();
-
-			lock (_scanResults)
-			{
-				scanResults = _scanResults.Select(x =>
-				{
-					long msSinceEpoch = Java.Lang.JavaSystem.CurrentTimeMillis() - SystemClock.ElapsedRealtime() + x.TimestampNanos / 1000000;
-					DateTimeOffset encounterTimestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(msSinceEpoch);
-
-					return new AndroidBluetoothDevice
-					{
-						Device = x.Device,
-						Rssi = x.Rssi,
-						Timestamp = encounterTimestamp
-					};
-				}).ToList();
-			}
-
-			return scanResults;
-		}
-	}
+    }
 }
