@@ -31,14 +31,6 @@ namespace Sensus.Probes.Context
             set { _encounteredDeviceId = value; }
         }
 
-		[Anonymizable("Encountered Device Address:", typeof(StringHashAnonymizer), false)]
-		public string Address { get; set; }
-		[Anonymizable("Encountered Device Name:", typeof(StringHashAnonymizer), false)]
-		public string Name { get; set; }
-		public int Rssi { get; set; }
-		public bool Paired { get; set; }
-		public bool RunningSensus { get; set; }
-
         public override string DisplayDetail
         {
             get { return _encounteredDeviceId; }
@@ -61,16 +53,10 @@ namespace Sensus.Probes.Context
         /// </summary>
         private BluetoothDeviceProximityDatum() { }
 
-        public BluetoothDeviceProximityDatum(DateTimeOffset timestamp, string encounteredDeviceId, string address, string name, int rssi, bool paired, bool runningSensus)
+        public BluetoothDeviceProximityDatum(DateTimeOffset timestamp, string encounteredDeviceId)
             : base(timestamp)
         {
             _encounteredDeviceId = encounteredDeviceId;
-
-			Address = address;
-			Name = name;
-			Rssi = rssi;
-			Paired = paired;
-			RunningSensus = RunningSensus;
         }
 
         public override string ToString()
