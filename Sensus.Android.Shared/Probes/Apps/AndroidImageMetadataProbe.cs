@@ -39,9 +39,17 @@ namespace Sensus.Android.Probes.Apps
 
 		public AndroidImageMetadataProbe()
 		{
+			//ICursor cursor = Application.Context.ContentResolver.Query(MediaStore.Images.Media.ExternalContentUri, new string[] { MediaStore.Images.Media.InterfaceConsts.Data }, null, null, /*MediaStore.Images.Media.InterfaceConsts.DateTaken + $" >= ?", new string[] { (Java.Lang.JavaSystem.CurrentTimeMillis() - PollingSleepDurationMS).ToString() },*/ MediaStore.Images.Media.InterfaceConsts.DateTaken + " DESC");
+			//List<string> paths = new List<string>();
+
+			//while (cursor.MoveToNext())
+			//{
+			//	paths.Add(cursor.GetString(cursor.GetColumnIndex(MediaStore.Images.Media.InterfaceConsts.Data)));
+			//}
+
 			_fileObservers = new List<AndroidImageFileObserver>
 			{
-				new AndroidImageFileObserver(Environment.GetExternalStoragePublicDirectory(Environment.DirectoryDcim).Path, this)
+				new AndroidImageFileObserver(Environment.GetExternalStoragePublicDirectory(Environment.DirectoryDcim).CanonicalPath, this)
 			};
 		}
 
