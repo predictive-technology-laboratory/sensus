@@ -33,6 +33,8 @@ namespace Sensus.Probes.Communication
         private TelephonyState _state;
         private string _phoneNumber;
         private double? _callDurationSeconds;
+        private bool? _isContact;
+        private string _name;
 
         /// <summary>
         /// The duration of the call. Note that this includes the time spent ringing.
@@ -44,6 +46,19 @@ namespace Sensus.Probes.Communication
             get { return _callDurationSeconds; }
             set { _callDurationSeconds = value; }
         }
+
+        public bool? IsContact
+        {
+            get { return _isContact; }
+            set { _isContact = value; }
+        }
+
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; }
+        }
+
 
         [ListProbeTriggerProperty(new object[] { TelephonyState.Idle, TelephonyState.IncomingCall, TelephonyState.OutgoingCall })]
         [JsonConverter(typeof(StringEnumConverter))]
@@ -85,12 +100,14 @@ namespace Sensus.Probes.Communication
         {
         }
 
-        public TelephonyDatum(DateTimeOffset timestamp, TelephonyState state, string phoneNumber, double? callDurationSeconds)
+        public TelephonyDatum(DateTimeOffset timestamp, TelephonyState state, string phoneNumber, double? callDurationSeconds, bool? isContact, string name)
             : base(timestamp)
         {
             _state = state;
             _phoneNumber = phoneNumber == null ? "" : phoneNumber;
             _callDurationSeconds = callDurationSeconds;
+            _isContact = isContact;
+            _name = name;
         }
 
         public override string ToString()

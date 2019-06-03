@@ -48,6 +48,8 @@ using System.Net.Security;
 using Sensus.DataStores.Remote;
 using Plugin.FilePicker;
 using Plugin.FilePicker.Abstractions;
+using Plugin.ContactService.Shared;
+using System.Text.RegularExpressions;
 
 namespace Sensus
 {
@@ -291,6 +293,18 @@ namespace Sensus
         public static void ClearSingleton()
         {
             SINGLETON = null;
+        }
+
+        public static async Task<Contact> GetContactAsync(string phoneNumber)
+        {
+            if (await Get().ObtainPermissionAsync(Permission.Contacts) == PermissionStatus.Granted)
+            {
+                IList<Contact> contacts = await Plugin.ContactService.CrossContactService.Current.GetContactListAsync();
+
+                return contacts.FirstOrDefault(x => x.Numbers.Select(s => Regex.Replace(s, "[^0-9a-z]", "", RegexOptions.IgnoreCase)).Contains(phoneNumber));
+            }
+
+            return null;
         }
 
         #endregion
@@ -1561,6 +1575,10 @@ namespace Sensus
                     {
                         rationale = "Sensus must be able to write to your device's storage for proper operation.";
                     }
+                    else if (permission == Permission.Contacts)
+                    {
+                        rationale = "Sensus collects Contact information.";
+                    }
                     else
                     {
                         SensusException.Report("Missing rationale for permission request:  " + permission);
@@ -1790,7 +1808,7 @@ namespace Sensus
                 }
             }
 
-            return removed;               
+            return removed;
         }
 
         private int GetScriptIndex(Script script)

@@ -18,6 +18,7 @@ using Android.OS;
 using Android.Telephony;
 using Sensus.Exceptions;
 using Sensus.Probes.Communication;
+using Plugin.ContactService.Shared;
 using System;
 
 namespace Sensus.Android.Probes.Communication
@@ -64,7 +65,11 @@ namespace Sensus.Android.Probes.Communication
 #pragma warning restore 618
                             }
 
-                            INCOMING_SMS(this, new SmsDatum(DateTimeOffset.FromUnixTimeMilliseconds(message.TimestampMillis), message.OriginatingAddress, null, message.MessageBody, false));
+                            Contact contact = SensusServiceHelper.GetContactAsync(message.OriginatingAddress).Result;
+                            bool isContact = contact != null;
+
+
+                            INCOMING_SMS(this, new SmsDatum(DateTimeOffset.FromUnixTimeMilliseconds(message.TimestampMillis), message.OriginatingAddress, null, message.MessageBody, false, isContact, contact?.Name));
                         }
 
                     }
