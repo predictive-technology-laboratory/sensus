@@ -27,7 +27,7 @@ namespace Sensus.Android.Probes.Apps
 			_probe = probe;
 
 			File pathFile = new File(path);
-			File[] files = pathFile.ListFiles().Where(x => x.IsDirectory).ToArray();
+			File[] files = (pathFile.ListFiles() ?? new File[0]).Where(x => x.IsDirectory).ToArray();
 
 			foreach (File file in files)
 			{
@@ -61,27 +61,7 @@ namespace Sensus.Android.Probes.Apps
 				
 				try
 				{
-					if (new File(fullPath).Exists())
-					{
-						using (FileStream fs = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
-						{
-							JpegInfo info = ExifReader.ReadJpeg(fs);
-							double latitude = 0;
-							double longitude = 0;
-
-							if (info.GpsLatitude != null && info.GpsLongitude != null)
-							{
-								latitude = (Math.Truncate(info.GpsLatitude[0]) + (info.GpsLatitude[1] / 60) + (info.GpsLatitude[2] / 3600)) * (info.GpsLatitudeRef == ExifGpsLatitudeRef.North ? 1 : -1);
-								longitude = (Math.Truncate(info.GpsLongitude[0]) + (info.GpsLongitude[1] / 60) + (info.GpsLongitude[2] / 3600)) * (info.GpsLongitudeRef == ExifGpsLongitudeRef.East ? 1 : -1);
-							}
-
-							fs.Position = 0;
-
-							
-
-							_probe.StoreDatumAsync(new ImageMetadataDatum(info.FileSize, info.Width, info.Height, (int)info.Orientation, info.XResolution, info.YResolution, (int)info.ResolutionUnit, info.IsColor, (int)info.Flash, info.FNumber, info.ExposureTime, latitude, longitude, timestamp)).Wait();
-						}
-					}
+					_probe.CreateAndStoreDatum(fullPath, timestamp);
 				}
 				catch (AggregateException ex)
 				{

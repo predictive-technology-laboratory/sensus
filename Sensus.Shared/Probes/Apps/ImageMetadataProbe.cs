@@ -34,6 +34,9 @@ namespace Sensus.Probes.Apps
 
 		protected override string DeviceAsleepWarning => "";
 
+		[OnOffUiProperty("Collect images/videos:", true, 10)]
+		public bool CollectImages { get; set; }
+
 		protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
 		{
 			throw new NotImplementedException();
