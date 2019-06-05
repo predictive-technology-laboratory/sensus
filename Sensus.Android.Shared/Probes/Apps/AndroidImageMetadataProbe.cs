@@ -12,41 +12,55 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Android;
 using Android.App;
 using Android.Database;
-using Android.Media;
-using Android.OS;
 using Android.Provider;
-using Android.Support.V4.Content;
-using Newtonsoft.Json;
+using ExifLib;
 using Plugin.Permissions.Abstractions;
 using Sensus.Probes.Apps;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ExifLib;
-using System.IO;
-using Syncfusion.SfChart.XForms;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Environment = Android.OS.Environment;
 using File = Java.IO.File;
+using Uri = Android.Net.Uri;
 
 namespace Sensus.Android.Probes.Apps
 {
 	public class AndroidImageMetadataProbe : ImageMetadataProbe
 	{
-		//List<AndroidImageFileObserver> _fileObservers;
+		List<AndroidImageFileObserver> _fileObservers;
 
 		protected override async Task InitializeAsync()
 		{
 			await base.InitializeAsync();
 
-			//_fileObservers = new List<AndroidImageFileObserver>
-			//{
-			//	new AndroidImageFileObserver(Environment.GetExternalStoragePublicDirectory(Environment.DirectoryDcim).CanonicalPath, this)
-			//};
+			if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Storage) == PermissionStatus.Granted)
+			{
+				ICursor cursor = Application.Context.ContentResolver.Query(MediaStore.Images.Media.ExternalContentUri, new string[] { MediaStore.Images.Media.InterfaceConsts.Data }, null, null, MediaStore.Images.Media.InterfaceConsts.DateTaken + " DESC LIMIT 100");
+				List<string> paths = new List<string> { Environment.GetExternalStoragePublicDirectory(Environment.DirectoryDcim).CanonicalPath };
+
+				while (cursor.MoveToNext())
+				{
+					string path = cursor.GetString(cursor.GetColumnIndex(MediaStore.Images.Media.InterfaceConsts.Data));
+					Uri uri = Uri.Parse(path);
+
+					path = File.Separator + Path.Combine(uri.PathSegments.Take(uri.PathSegments.Count - 1).ToArray());
+
+					if (paths.Any(x => path.StartsWith(x)) == false)
+					{
+						paths.Add(path);
+					}
+				}
+
+				_fileObservers = paths.Distinct().Select(x => new AndroidImageFileObserver(x, this)).ToList();
+			}
+			else
+			{
+				throw new Exception("Failed to obtain Storage permission from user.");
+			}
 		}
 
 		public async Task CreateAndStoreDatumAsync(string path, DateTime timestamp)
@@ -79,22 +93,18 @@ namespace Sensus.Android.Probes.Apps
 			}
 		}
 
-		protected  override async Task StartListeningAsync()
+		protected override async Task StartListeningAsync()
 		{
 			await base.StartListeningAsync();
 
-			AndroidImageJobService.Schedule(this);
-
-			//_fileObservers.ForEach(x => x.StartWatching());
+			_fileObservers.ForEach(x => x.StartWatching());
 		}
 
 		protected override async Task StopListeningAsync()
 		{
 			await base.StopListeningAsync();
 
-			AndroidImageJobService.Unschedule();
-
-			//_fileObservers.ForEach(x => x.StopWatching());
+			_fileObservers.ForEach(x => x.StopWatching());
 		}
 
 

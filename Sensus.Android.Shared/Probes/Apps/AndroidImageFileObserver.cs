@@ -3,8 +3,6 @@ using Android.Database;
 using Android.OS;
 using Android.Provider;
 using Android.Runtime;
-using ExifLib;
-using Sensus.Probes.Apps;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -51,25 +49,28 @@ namespace Sensus.Android.Probes.Apps
 
 		public override void OnEvent([GeneratedEnum] FileObserverEvents e, string path)
 		{
-			string fullPath = Path.Combine(_path, path);
-
-			ICursor cursor = Application.Context.ContentResolver.Query(MediaStore.Images.Media.ExternalContentUri, new string[] { MediaStore.Images.Media.InterfaceConsts.DateTaken }, MediaStore.Images.Media.InterfaceConsts.Data + $" = ?", new string[] { fullPath }, MediaStore.Images.Media.InterfaceConsts.DateTaken + " DESC LIMIT 1");
-
-			if (cursor.MoveToNext())
+			if (string.IsNullOrWhiteSpace(path) == false)
 			{
-				DateTime timestamp = DateTimeOffset.FromUnixTimeMilliseconds(cursor.GetLong(cursor.GetColumnIndex(MediaStore.Images.Media.InterfaceConsts.DateTaken))).DateTime;
-				
-				try
+				string fullPath = Path.Combine(_path, path);
+
+				ICursor cursor = Application.Context.ContentResolver.Query(MediaStore.Images.Media.ExternalContentUri, new string[] { MediaStore.Images.Media.InterfaceConsts.DateTaken }, MediaStore.Images.Media.InterfaceConsts.Data + $" = ?", new string[] { fullPath }, MediaStore.Images.Media.InterfaceConsts.DateTaken + " DESC LIMIT 1");
+
+				if (cursor.MoveToNext())
 				{
-					_probe.CreateAndStoreDatum(fullPath, timestamp);
-				}
-				catch (AggregateException ex)
-				{
-					SensusServiceHelper.Get().Logger.Log("Exception while querying images:  " + ex.Flatten().InnerExceptions.First().Message, LoggingLevel.Normal, GetType());
-				}
-				catch (Exception ex)
-				{
-					SensusServiceHelper.Get().Logger.Log("Exception while querying images:  " + ex.Message, LoggingLevel.Normal, GetType());
+					DateTime timestamp = DateTimeOffset.FromUnixTimeMilliseconds(cursor.GetLong(cursor.GetColumnIndex(MediaStore.Images.Media.InterfaceConsts.DateTaken))).DateTime;
+
+					try
+					{
+						_probe.CreateAndStoreDatumAsync(fullPath, timestamp).Wait();
+					}
+					catch (AggregateException ex)
+					{
+						SensusServiceHelper.Get().Logger.Log("Exception while querying images:  " + ex.Flatten().InnerExceptions.First().Message, LoggingLevel.Normal, GetType());
+					}
+					catch (Exception ex)
+					{
+						SensusServiceHelper.Get().Logger.Log("Exception while querying images:  " + ex.Message, LoggingLevel.Normal, GetType());
+					}
 				}
 			}
 		}
