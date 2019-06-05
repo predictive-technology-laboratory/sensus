@@ -32,6 +32,8 @@ namespace Sensus.Android.Probes.Apps
 	public class AndroidImageMetadataProbe : ImageMetadataProbe
 	{
 		List<AndroidImageFileObserver> _fileObservers;
+		private const int QUERY_LAST_IMAGE_COUNT = 100;
+		private const string JPEG_MIME_TYPE = "image/jpeg";
 
 		protected override async Task InitializeAsync()
 		{
@@ -39,7 +41,8 @@ namespace Sensus.Android.Probes.Apps
 
 			if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Storage) == PermissionStatus.Granted)
 			{
-				ICursor cursor = Application.Context.ContentResolver.Query(MediaStore.Images.Media.ExternalContentUri, new string[] { MediaStore.Images.Media.InterfaceConsts.Data }, null, null, MediaStore.Images.Media.InterfaceConsts.DateTaken + " DESC LIMIT 100");
+				// Different phones and camera apps can save images in different physical locations, so look at the last QUERY_LAST_IMAGE_COUNT number of images and observe the location(s) they were saved in.
+				ICursor cursor = Application.Context.ContentResolver.Query(MediaStore.Images.Media.ExternalContentUri, new string[] { MediaStore.Images.Media.InterfaceConsts.Data }, null, null, MediaStore.Images.Media.InterfaceConsts.DateTaken + $" DESC LIMIT {QUERY_LAST_IMAGE_COUNT}");
 				List<string> paths = new List<string> { Environment.GetExternalStoragePublicDirectory(Environment.DirectoryDcim).CanonicalPath };
 
 				while (cursor.MoveToNext())
@@ -63,32 +66,51 @@ namespace Sensus.Android.Probes.Apps
 			}
 		}
 
-		public async Task CreateAndStoreDatumAsync(string path, DateTime timestamp)
+		public async Task CreateAndStoreDatumAsync(string path, string mimeType, DateTime timestamp)
 		{
 			if (new File(path).Exists())
 			{
 				using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
 				{
-					JpegInfo info = ExifReader.ReadJpeg(fs);
-					double latitude = 0;
-					double longitude = 0;
-
-					if (info.GpsLatitude != null && info.GpsLongitude != null)
-					{
-						latitude = (Math.Truncate(info.GpsLatitude[0]) + (info.GpsLatitude[1] / 60) + (info.GpsLatitude[2] / 3600)) * (info.GpsLatitudeRef == ExifGpsLatitudeRef.North ? 1 : -1);
-						longitude = (Math.Truncate(info.GpsLongitude[0]) + (info.GpsLongitude[1] / 60) + (info.GpsLongitude[2] / 3600)) * (info.GpsLongitudeRef == ExifGpsLongitudeRef.East ? 1 : -1);
-					}
-
 					string imageBase64 = null;
-					//fs.Position = 0;
 
+					if (mimeType == JPEG_MIME_TYPE)
+					{
+						JpegInfo info = ExifReader.ReadJpeg(fs);
 
-					//if(_probe.CollectImages)
-					//{
+						double latitude = 0;
+						double longitude = 0;
 
-					//}
+						if (info.GpsLatitude != null && info.GpsLongitude != null)
+						{
+							latitude = (Math.Truncate(info.GpsLatitude[0]) + (info.GpsLatitude[1] / 60) + (info.GpsLatitude[2] / 3600)) * (info.GpsLatitudeRef == ExifGpsLatitudeRef.North ? 1 : -1);
+							longitude = (Math.Truncate(info.GpsLongitude[0]) + (info.GpsLongitude[1] / 60) + (info.GpsLongitude[2] / 3600)) * (info.GpsLongitudeRef == ExifGpsLongitudeRef.East ? 1 : -1);
+						}
 
-					await StoreDatumAsync(new ImageMetadataDatum(info.FileSize, info.Width, info.Height, (int)info.Orientation, info.XResolution, info.YResolution, (int)info.ResolutionUnit, info.IsColor, (int)info.Flash, info.FNumber, info.ExposureTime, info.Software, latitude, longitude, imageBase64, timestamp));
+						if (CollectImages)
+						{
+							fs.Position = 0;
+							byte[] buffer = new byte[fs.Length];
+							fs.Read(buffer, 0, (int)fs.Length);
+
+							imageBase64 = Convert.ToBase64String(buffer);
+						}
+
+						await StoreDatumAsync(new ImageMetadataDatum(info.FileSize, info.Width, info.Height, (int)info.Orientation, info.XResolution, info.YResolution, (int)info.ResolutionUnit, info.IsColor, (int)info.Flash, info.FNumber, info.ExposureTime, info.Software, latitude, longitude, mimeType, imageBase64, timestamp));
+					}
+					else // the file is something else...
+					{
+						if (CollectVideos)
+						{
+							fs.Position = 0;
+							byte[] buffer = new byte[fs.Length];
+							fs.Read(buffer, 0, (int)fs.Length);
+
+							imageBase64 = Convert.ToBase64String(buffer);
+						}
+
+						await StoreDatumAsync(new ImageMetadataDatum((int)fs.Length, null, null, null, null, null, null, null, null, null, null, null, null, null, mimeType, imageBase64, timestamp));
+					}
 				}
 			}
 		}
