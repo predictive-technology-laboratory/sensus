@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.202
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.539
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.Android", "Sensus.Android\Sensus.Android.csproj", "{D33B6CDB-795C-4826-B131-47C526ACE07F}"
 EndProject
@@ -146,6 +146,7 @@ Global
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Ad-Hoc|iPhoneSimulator.Deploy.0 = Release|Any CPU
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|Android.ActiveCfg = Debug|Any CPU
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|Android.Build.0 = Debug|Any CPU
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|Android.Deploy.0 = Debug|Any CPU
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
@@ -308,6 +309,7 @@ Global
 		{1833108D-29EF-4FE0-9D3C-7E2B5FCCBA02} = {D395D4C7-AF3D-4DD5-A52E-73697A5D2DD5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5444207C-6244-435F-8EE8-28557370BE4E}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
