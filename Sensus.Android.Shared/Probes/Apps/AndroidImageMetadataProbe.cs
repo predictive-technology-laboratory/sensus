@@ -66,6 +66,24 @@ namespace Sensus.Android.Probes.Apps
 			}
 		}
 
+		private async Task<byte[]> ReadFile(FileStream fileStream)
+		{
+			const int BUFFER_SIZE = 1024;
+			byte[] fileBuffer = new byte[fileStream.Length];
+			byte[] buffer = new byte[BUFFER_SIZE];
+			int bytesRead = 0;
+			int totalBytesRead = 0;
+
+			while ((bytesRead = await fileStream.ReadAsync(buffer, totalBytesRead, BUFFER_SIZE)) > 0)
+			{
+				Array.Copy(buffer, 0, fileBuffer, totalBytesRead, bytesRead);
+
+				totalBytesRead += bytesRead;
+			}
+
+			return fileBuffer;
+		}
+
 		public async Task CreateAndStoreDatumAsync(string path, string mimeType, DateTime timestamp)
 		{
 			if (new File(path).Exists())
@@ -90,10 +108,8 @@ namespace Sensus.Android.Probes.Apps
 						if (StoreImages)
 						{
 							fs.Position = 0;
-							byte[] buffer = new byte[fs.Length];
-							fs.Read(buffer, 0, (int)fs.Length);
 
-							imageBase64 = Convert.ToBase64String(buffer);
+							imageBase64 = Convert.ToBase64String(await ReadFile(fs));
 						}
 
 						await StoreDatumAsync(new ImageMetadataDatum(info.FileSize, info.Width, info.Height, (int)info.Orientation, info.XResolution, info.YResolution, (int)info.ResolutionUnit, info.IsColor, (int)info.Flash, info.FNumber, info.ExposureTime, info.Software, latitude, longitude, mimeType, imageBase64, timestamp));
@@ -103,10 +119,8 @@ namespace Sensus.Android.Probes.Apps
 						if (StoreVideos)
 						{
 							fs.Position = 0;
-							byte[] buffer = new byte[fs.Length];
-							fs.Read(buffer, 0, (int)fs.Length);
 
-							imageBase64 = Convert.ToBase64String(buffer);
+							imageBase64 = Convert.ToBase64String(await ReadFile(fs));
 						}
 
 						await StoreDatumAsync(new ImageMetadataDatum((int)fs.Length, null, null, null, null, null, null, null, null, null, null, null, null, null, mimeType, imageBase64, timestamp));
