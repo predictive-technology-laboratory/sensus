@@ -87,7 +87,7 @@ namespace Sensus.Android.Probes.Apps
 							longitude = (Math.Truncate(info.GpsLongitude[0]) + (info.GpsLongitude[1] / 60) + (info.GpsLongitude[2] / 3600)) * (info.GpsLongitudeRef == ExifGpsLongitudeRef.East ? 1 : -1);
 						}
 
-						if (CollectImages)
+						if (StoreImages)
 						{
 							fs.Position = 0;
 							byte[] buffer = new byte[fs.Length];
@@ -100,7 +100,7 @@ namespace Sensus.Android.Probes.Apps
 					}
 					else // the file is something else...
 					{
-						if (CollectVideos)
+						if (StoreVideos)
 						{
 							fs.Position = 0;
 							byte[] buffer = new byte[fs.Length];

@@ -34,10 +34,10 @@ namespace Sensus.Probes.Apps
 
 		protected override string DeviceAsleepWarning => "";
 
-		[OnOffUiProperty("Collect images:", true, 2)]
-		public bool CollectImages { get; set; }
-		[OnOffUiProperty("Collect videos:", true, 3)]
-		public bool CollectVideos { get; set; }
+		[OnOffUiProperty("Store images:", true, 2)]
+		public bool StoreImages { get; set; }
+		[OnOffUiProperty("Store videos:", true, 3)]
+		public bool StoreVideos { get; set; }
 
 		protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
 		{

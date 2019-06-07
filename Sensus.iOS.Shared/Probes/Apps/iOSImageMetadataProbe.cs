@@ -27,7 +27,10 @@ namespace Sensus.iOS.Probes.Apps
 		{
 			await base.StartListeningAsync();
 
-			PHPhotoLibrary.SharedPhotoLibrary.RegisterChangeObserver(_changeObserver);
+			if (await PHPhotoLibrary.RequestAuthorizationAsync() == PHAuthorizationStatus.Authorized)
+			{
+				PHPhotoLibrary.SharedPhotoLibrary.RegisterChangeObserver(_changeObserver);
+			}
 		}
 
 		protected override async Task StopListeningAsync()
