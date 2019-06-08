@@ -7,7 +7,7 @@ using Xamarin.Forms;
 
 namespace Sensus.UI
 {
-	public class PauseProtocolsPage : ContentPage
+	public class SnoozeProtocolsPage : ContentPage
 	{
 		private const int DEFAULT_SNOOZE = 60;
 		private TaskCompletionSource<bool> _responseTaskCompletionSource;
@@ -28,13 +28,13 @@ namespace Sensus.UI
 			_responseTaskCompletionSource.TrySetResult(true);
 		}
 
-		public PauseProtocolsPage(IEnumerable<Protocol> protocols)
+		public SnoozeProtocolsPage(IEnumerable<Protocol> protocols)
 		{
 			_responseTaskCompletionSource = new TaskCompletionSource<bool>();
 
-			Title = "Pause Protocols";
+			Title = "Snooze Protocols";
 
-			protocols = protocols.Where(x => x.AllowPause);
+			protocols = protocols.Where(x => x.AllowSnooze);
 			int maxSnoozeTimeAmount = protocols.Min(x => x.MaxSnoozeTime);
 			StringBuilder protocolNames = new StringBuilder();
 
@@ -47,7 +47,7 @@ namespace Sensus.UI
 			{
 				HorizontalOptions = LayoutOptions.CenterAndExpand,
 				FontSize = 20,
-				Text = $"Pause or Snooze the following protocols:"
+				Text = $"You can snooze the following protocols:"
 			};
 			Label protocolList = new Label()
 			{
@@ -225,18 +225,6 @@ namespace Sensus.UI
 				Children = { timeAmountLayout, dateTimeLayout, maxSnoozeLabel }
 			};
 
-			Button pauseButton = new Button()
-			{
-				Text = "Pause"
-			};
-
-			pauseButton.Clicked += async (s, e) =>
-			{
-				await PauseProtocolsAsync(protocols, null);
-
-				await Navigation.PopAsync();
-			};
-
 			Button snoozeButton = new Button()
 			{
 				Text = "Snooze"
@@ -276,13 +264,13 @@ namespace Sensus.UI
 			{
 				Orientation = StackOrientation.Vertical,
 				Padding = new Thickness(10, 20, 10, 20),
-				Children = { protocolListFrame, pauseButton, resumeTimeLayout, snoozeButton, divider, cancelButton }
+				Children = { protocolListFrame, resumeTimeLayout, snoozeButton, divider, cancelButton }
 			};
 
 			Content = layout;
 		}
 
-		public PauseProtocolsPage(Protocol protocol) : this(new Protocol[] { protocol })
+		public SnoozeProtocolsPage(Protocol protocol) : this(new Protocol[] { protocol })
 		{
 
 		}

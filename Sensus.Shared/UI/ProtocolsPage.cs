@@ -98,6 +98,11 @@ namespace Sensus.UI
                     {
                         actions.Add("Pause");
                     }
+
+					if (selectedProtocol.AllowSnooze)
+					{
+						actions.Add("Snooze");
+					}
                 }
                 else if (selectedProtocol.State == ProtocolState.Stopped)
                 {
@@ -226,14 +231,11 @@ namespace Sensus.UI
                 }
                 else if (selectedAction == "Pause")
                 {
-					if (selectedProtocol.AllowSnooze)
-					{
-						await Navigation.PushAsync(new PauseProtocolsPage(selectedProtocol));
-					}
-					else
-					{
-						await selectedProtocol.PauseAsync();
-					}
+					await selectedProtocol.PauseAsync();
+				}
+				else if (selectedAction == "Snooze")
+				{
+					await Navigation.PushAsync(new SnoozeProtocolsPage(selectedProtocol));
 				}
                 else if (selectedAction == "Resume")
                 {
