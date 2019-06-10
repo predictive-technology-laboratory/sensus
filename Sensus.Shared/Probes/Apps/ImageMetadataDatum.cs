@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Sensus.Anonymization;
+using Sensus.Anonymization.Anonymizers;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -56,10 +58,14 @@ namespace Sensus.Probes.Apps
 		public int? Flash { get; set; }
 		public double? FNumber { get; set; }
 		public double? ExposureTime { get; set; }
+		[Anonymizable("Software:", typeof(StringHashAnonymizer), false)]
 		public string Software { get; set; }
+		[Anonymizable(null, new Type[] { typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, -1)]
 		public double? Latitude { get; set; }
+		[Anonymizable(null, new Type[] { typeof(LongitudeParticipantOffsetGpsAnonymizer), typeof(LongitudeStudyOffsetGpsAnonymizer), typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, -1)]
 		public double? Longitude { get; set; }
 		public string MimeType { get; set; }
+		[Anonymizable("Image:", typeof(StringHashAnonymizer), false)]
 		public string ImageBase64 { get; set; }
 	}
 }
