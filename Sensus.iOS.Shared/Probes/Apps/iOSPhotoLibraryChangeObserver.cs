@@ -19,10 +19,6 @@ namespace Sensus.iOS.Probes.Apps
 
 		public override void PhotoLibraryDidChange(PHChange changeInstance)
 		{
-			
-
-			
-
 			//PHFetchResultChangeDetails details = changeInstance.GetFetchResultChangeDetails(BaseF)
 
 			//foreach(PHObject image in details.)
