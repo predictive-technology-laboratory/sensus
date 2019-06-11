@@ -3,19 +3,37 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Sensus.UI.UiProperties;
 using Syncfusion.SfChart.XForms;
 
 namespace Sensus.Probes.Apps
 {
     public abstract class CalendarProbe : PollingProbe
     {
-        public override int DefaultPollingSleepDurationMS => throw new NotImplementedException();
+        private int _readDurationMS;
+        public override string DisplayName => "Calendar Events";
+        public sealed override Type DatumType => typeof(CalendarDatum);
 
-        protected abstract Task<List<Datum>> GetCalendarEvents();
+        [EntryIntegerUiProperty("Read Duration (MS):", true, 5, true)]
 
-        public override string DisplayName => throw new NotImplementedException();
+        public int ReadDurationMS
+        {
+            get
+            {
+                return _readDurationMS;
 
-        public override Type DatumType => throw new NotImplementedException();
+            }
+            set
+            {
+                if (value < 5000)
+                {
+                    value = 5000;
+                }
+
+                _readDurationMS = value;
+            }
+
+        }
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
@@ -26,7 +44,7 @@ namespace Sensus.Probes.Apps
         {
             throw new NotImplementedException();
         }
-       
+
         protected override RangeAxisBase GetChartSecondaryAxis()
         {
             throw new NotImplementedException();
@@ -37,9 +55,19 @@ namespace Sensus.Probes.Apps
             throw new NotImplementedException();
         }
 
-        protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
+        protected async override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            List<Datum> calendarMetaData = new List<Datum>();
+
+            foreach (Datum calendarDatum in await GetCalendarEventsAsync())
+            {
+                calendarMetaData.Add(calendarDatum);
+            }
+
+            return calendarMetaData;
+
         }
+
+        protected abstract Task<List<CalendarDatum>> GetCalendarEventsAsync();
     }
 }
