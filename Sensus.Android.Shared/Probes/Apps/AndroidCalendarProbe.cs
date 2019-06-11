@@ -51,11 +51,8 @@ namespace Sensus.Android.Probes.Apps
                 CalendarContract.Events.InterfaceConsts.IsOrganizer,
             };
 
-            //long now = Java.Lang.JavaSystem.CurrentTimeMillis();
-            //long lastPoll = now - PollingSleepDurationMS;
-
-            long lastPoll = 1560178660;
             long now = Java.Lang.JavaSystem.CurrentTimeMillis();
+            long lastPoll = now - PollingSleepDurationMS;
 
             global::Android.Net.Uri eventsUri = CalendarContract.Events.ContentUri;
 
