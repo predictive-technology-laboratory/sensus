@@ -24,7 +24,6 @@ namespace Sensus.Android.Probes.Apps
         protected override async Task InitializeAsync()
         {
             await base.InitializeAsync();
-
         }
 
         protected async override Task<List<CalendarDatum>> GetCalendarEventsAsync()
@@ -52,8 +51,11 @@ namespace Sensus.Android.Probes.Apps
                 CalendarContract.Events.InterfaceConsts.IsOrganizer,
             };
 
+            //long now = Java.Lang.JavaSystem.CurrentTimeMillis();
+            //long lastPoll = now - PollingSleepDurationMS;
+
+            long lastPoll = 1560178660;
             long now = Java.Lang.JavaSystem.CurrentTimeMillis();
-            long lastPoll = now - PollingSleepDurationMS;
 
             global::Android.Net.Uri eventsUri = CalendarContract.Events.ContentUri;
 
@@ -72,7 +74,7 @@ namespace Sensus.Android.Probes.Apps
                     Description = cursor.GetString(5),
                     EventLocation = cursor.GetString(6),
                     Organizer = cursor.GetString(7),
-                    IsOrganizer = cursor.GetString(8) == "true" ? true : false
+                    IsOrganizer = cursor.GetString(8) == "1" ? true : false
 
                 };
 
