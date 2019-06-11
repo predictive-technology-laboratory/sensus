@@ -1,4 +1,5 @@
-﻿using EventKit;
+﻿
+using EventKit;
 using Foundation;
 using Plugin.Permissions.Abstractions;
 using Sensus.Probes.Apps;
@@ -17,7 +18,6 @@ namespace Sensus.iOS.Probes.Apps
         protected override async Task InitializeAsync()
         {
             await base.InitializeAsync();
-            await PollAsync(new System.Threading.CancellationToken());
         }
 
         protected override async Task<List<CalendarDatum>> GetCalendarEventsAsync()
@@ -36,27 +36,25 @@ namespace Sensus.iOS.Probes.Apps
             EKEventStore store = new EKEventStore();
             EKCalendar[] calendars = store.GetCalendars(EKEntityType.Event);
 
-            DateTime yesterday = new DateTime(2019, 06, 12);
-            DateTime twoMonthsInFuture = new DateTime(2019, 06, 14);
+            DateTime now = DateTime.UtcNow;
+            DateTime lastPoll = now.AddMilliseconds(-PollingSleepDurationMS);
 
-            NSPredicate predicate = store.PredicateForEvents((NSDate)yesterday, (NSDate)twoMonthsInFuture, calendars);
+            NSPredicate predicate = store.PredicateForEvents((NSDate)now, (NSDate)lastPoll, calendars);
             EKEvent[] items = store.EventsMatching(predicate);
-            
+
             foreach (EKEvent item in items)
             {
-                CalendarDatum datum = new CalendarDatum()
+                CalendarDatum datum = new CalendarDatum(DateTimeOffset.UtcNow)
                 {
                     Id = item.EventIdentifier,
-                    Title = item.Calendar.Title,
+                    Title = item.Title,
                     Description = item.Notes,
                     EventLocation = item.Location,
                     Start = item.StartDate?.ToString(),
                     End = item.EndDate?.ToString(),
-                    Organizer = item.Organizer?.ToString(),
-                    IsOrganizer = "false",
+                    Organizer = item.Organizer?.Name,
+                    IsOrganizer = item.Organizer == null || item.Organizer?.IsCurrentUser == true,
                     Duration = ((DateTime)item.StartDate - (DateTime)item.EndDate).TotalMilliseconds
-                    // fill stuff
-                    
                 };
 
                 datums.Add(datum);

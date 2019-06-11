@@ -53,11 +53,11 @@ namespace Sensus.Android.Probes.Apps
             };
 
             long now = Java.Lang.JavaSystem.CurrentTimeMillis();
-            long pastDay = now - PollingSleepDurationMS;
+            long lastPoll = now - PollingSleepDurationMS;
 
             global::Android.Net.Uri eventsUri = CalendarContract.Events.ContentUri;
 
-            ICursor cursor = Application.Context.ContentResolver.Query(eventsUri, eventProperties, $"{CalendarContract.Events.InterfaceConsts.Dtstart} > ? AND {CalendarContract.Events.InterfaceConsts.Dtstart} <= ?", new string[] { pastDay.ToString(), now.ToString() }, CalendarContract.Events.InterfaceConsts.Dtstart + " DESC");
+            ICursor cursor = Application.Context.ContentResolver.Query(eventsUri, eventProperties, $"{CalendarContract.Events.InterfaceConsts.Dtstart} > ? AND {CalendarContract.Events.InterfaceConsts.Dtstart} <= ?", new string[] { lastPoll.ToString(), now.ToString() }, CalendarContract.Events.InterfaceConsts.Dtstart + " DESC");
 
 
             while (cursor.MoveToNext())
@@ -72,7 +72,7 @@ namespace Sensus.Android.Probes.Apps
                     Description = cursor.GetString(5),
                     EventLocation = cursor.GetString(6),
                     Organizer = cursor.GetString(7),
-                    IsOrganizer = cursor.GetString(8)
+                    IsOrganizer = cursor.GetString(8) == "true" ? true : false
 
                 };
 

@@ -25,7 +25,7 @@ namespace Sensus.Probes.Apps
         public string Description { get; set; }
         public string EventLocation { get; set; }
         public string Organizer { get; set; }
-        public string IsOrganizer { get; set; }
+        public bool IsOrganizer { get; set; }
 
         public override string DisplayDetail => throw new NotImplementedException();
 

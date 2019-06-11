@@ -48,7 +48,8 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
-    <CodesignEntitlements>EntitlementsDevelopment.plist</CodesignEntitlements>
+    <CodesignEntitlements>
+    </CodesignEntitlements>
     <CodesignKey>iPhone Developer: Ryan Dagostino (GVSQ4BSSN6)</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
     <IpaPackageName>
