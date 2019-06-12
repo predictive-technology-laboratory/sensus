@@ -123,7 +123,7 @@ namespace Sensus.iOS.Probes.Context
             }
         }
 
-        protected override Task<List<Tuple<string, DateTimeOffset>>> ReadPeripheralCharacteristicValuesAsync(CancellationToken cancellationToken)
+        protected override Task<List<BluetoothDeviceProximityDatum>> ReadPeripheralCharacteristicValuesAsync(CancellationToken cancellationToken)
         {
             return _bluetoothCentralManagerDelegate.ReadPeripheralCharacteristicValuesAsync(cancellationToken);
         }

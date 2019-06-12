@@ -44,7 +44,7 @@ namespace Sensus.Android.Notifications
                     {
                         IEnumerable<Protocol> pausableProtocols = serviceHelper.RegisteredProtocols.Where(protocol => protocol.AllowPause);
 
-						await (Application.Current as App).DetailPage.Navigation.PushAsync(new PauseProtocolsPage(pausableProtocols));
+						await (Application.Current as App).DetailPage.Navigation.PushAsync(new SnoozeProtocolsPage(pausableProtocols));
                     }
                     else if (intent.Action == AndroidNotifier.FOREGROUND_SERVICE_NOTIFICATION_ACTION_RESUME)
                     {
