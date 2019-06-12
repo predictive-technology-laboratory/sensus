@@ -69,7 +69,7 @@ namespace Sensus.Android.Probes.Communication
                             bool isContact = contact != null;
 
 
-                            INCOMING_SMS(this, new SmsDatum(DateTimeOffset.FromUnixTimeMilliseconds(message.TimestampMillis), message.OriginatingAddress, null, message.MessageBody, false, isContact, contact?.Name));
+                            INCOMING_SMS(this, new SmsDatum(DateTimeOffset.FromUnixTimeMilliseconds(message.TimestampMillis), message.OriginatingAddress, null, message.MessageBody, false, isContact, contact?.Name, contact?.Email));
                         }
 
                     }
