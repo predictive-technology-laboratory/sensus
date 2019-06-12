@@ -311,9 +311,9 @@ namespace Sensus.DataStores.Remote
             return result;
         }
 
-        public async Task<bool> WriteLocalDataStoreAsync(CancellationToken cancellationToken)
+		public async Task<bool> WriteLocalDataStoreAsync(CancellationToken cancellationToken, bool ignoreRequirements = false)
         {
-            bool write = false;
+            bool write = ignoreRequirements;
 
             if (cancellationToken.IsCancellationRequested)
             {
