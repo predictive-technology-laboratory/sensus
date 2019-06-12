@@ -33,8 +33,8 @@ namespace Sensus.iOS.Probes.Context
     /// an iOS device running this Probe will detect another device. Detection is possible if the other device is
     /// Android or iOS and if Sensus is foregrounded or backgrounded on the other device.
     /// 
-    /// NOTE:  The value of <see cref="Protocol.Id"/> running on the other device must equal the value of 
-    /// <see cref="Protocol.Id"/> running on the current device. When a Protocol is created from within the
+    /// NOTE:  The value of <see cref="BluetoothDeviceProximityProbe.ServiceUUID"/> running on the other device must equal the value of 
+    /// <see cref="BluetoothDeviceProximityProbe.ServiceUUID"/> running on the current device. When a Protocol is created from within the
     /// Sensus app, it is assigned a unique identifier. This value is maintained or changed depending on what you
     /// do:
     /// 
@@ -48,12 +48,9 @@ namespace Sensus.iOS.Probes.Context
     /// your Protocols in one of the two following ways:
     /// 
     ///   * Create your Protocol on one platform (either Android or iOS) and then share it with a device from the other
-    ///     platform for customization. The <see cref="Protocol.Id"/> values of these Protocols will remain equal
+    ///     platform for customization. The <see cref="BluetoothDeviceProximityProbe.ServiceUUID"/> values of these Protocols will remain equal
     ///     and this <see cref="iOSBluetoothDeviceProximityProbe"/> will detect encounters across platforms.
     /// 
-    ///   * Create your Protocols separately on each platform and then set the <see cref="Protocol.Id"/> field on
-    ///     one platform (using the "Set Study Identifier" button) to match the <see cref="Protocol.Id"/> value
-    ///     of the other platform (obtained via "Copy Study Identifier").
     /// 
     /// See the Android subclass of <see cref="BluetoothDeviceProximityProbe"/> for additional information.
     /// </summary>
@@ -79,7 +76,7 @@ namespace Sensus.iOS.Probes.Context
                                                                   CBAttributePermissions.Readable);
 
             // create service with device id characteristic
-            _deviceIdService = new CBMutableService(CBUUID.FromString(Protocol.Id), true);
+            _deviceIdService = new CBMutableService(CBUUID.FromString(ServiceUUID), true);
             _deviceIdService.Characteristics = new CBCharacteristic[] { _deviceIdCharacteristic };
         }
 

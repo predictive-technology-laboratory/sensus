@@ -45,8 +45,8 @@ namespace Sensus.Android.Probes.Context
     ///   * If the other device is an iOS device with Sensus running in the foreground, detection is possible.
     ///   * If the other device is an iOS device with Sensus running in the background, detection is not possible.
     /// 
-    /// NOTE:  The value of <see cref="Protocol.Id"/> running on the other device must equal the value of 
-    /// <see cref="Protocol.Id"/> running on the current device. When a Protocol is created from within the
+    /// NOTE:  The value of <see cref="BluetoothDeviceProximityProbe.ServiceUUID"/> running on the other device must equal the value of 
+    /// <see cref="BluetoothDeviceProximityProbe.ServiceUUID"/> running on the current device. When a Protocol is created from within the
     /// Sensus app, it is assigned a unique identifier. This value is maintained or changed depending on what you
     /// do:
     /// 
@@ -60,12 +60,8 @@ namespace Sensus.Android.Probes.Context
     /// your Protocols in one of the two following ways:
     /// 
     ///   * Create your Protocol on one platform (either Android or iOS) and then share it with a device from the other
-    ///     platform for customization. The <see cref="Protocol.Id"/> values of these Protocols will remain equal
+    ///     platform for customization. The <see cref="BluetoothDeviceProximityProbe.ServiceUUID"/> values of these Protocols will remain equal
     ///     and this <see cref="AndroidBluetoothDeviceProximityProbe"/> will detect encounters across platforms.
-    /// 
-    ///   * Create your Protocols separately on each platform and then set the <see cref="Protocol.Id"/> field on
-    ///     one platform (using the "Set Study Identifier" button) to match the <see cref="Protocol.Id"/> value
-    ///     of the other platform (obtained via "Copy Study Identifier").
     /// 
     /// See the iOS subclass of <see cref="BluetoothDeviceProximityProbe"/> for additional information.
     /// </summary>
@@ -97,7 +93,7 @@ namespace Sensus.Android.Probes.Context
             _deviceIdCharacteristic = new BluetoothGattCharacteristic(UUID.FromString(DEVICE_ID_CHARACTERISTIC_UUID), GattProperty.Read, GattPermission.Read);
             _deviceIdCharacteristic.SetValue(Encoding.UTF8.GetBytes(SensusServiceHelper.Get().DeviceId));
 
-            _deviceIdService = new BluetoothGattService(UUID.FromString(Protocol.Id), GattServiceType.Primary);
+            _deviceIdService = new BluetoothGattService(UUID.FromString(ServiceUUID), GattServiceType.Primary);
             _deviceIdService.AddCharacteristic(_deviceIdCharacteristic);
 
             _bluetoothAdvertiserCallback = new AndroidBluetoothServerAdvertisingCallback(_deviceIdService, _deviceIdCharacteristic);
