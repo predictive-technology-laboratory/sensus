@@ -35,6 +35,7 @@ namespace Sensus.Probes.Communication
         private double? _callDurationSeconds;
         private bool? _isContact;
         private string _name;
+        private string _email;
 
         /// <summary>
         /// The duration of the call. Note that this includes the time spent ringing.
@@ -57,6 +58,12 @@ namespace Sensus.Probes.Communication
         {
             get { return _name; }
             set { _name = value; }
+        }
+
+        public string Email
+        {
+            get { return _email; }
+            set { _email = value; }
         }
 
 
@@ -100,7 +107,7 @@ namespace Sensus.Probes.Communication
         {
         }
 
-        public TelephonyDatum(DateTimeOffset timestamp, TelephonyState state, string phoneNumber, double? callDurationSeconds, bool? isContact, string name)
+        public TelephonyDatum(DateTimeOffset timestamp, TelephonyState state, string phoneNumber, double? callDurationSeconds, bool? isContact, string name, string email)
             : base(timestamp)
         {
             _state = state;
@@ -108,6 +115,7 @@ namespace Sensus.Probes.Communication
             _callDurationSeconds = callDurationSeconds;
             _isContact = isContact;
             _name = name;
+            _email = email;
         }
 
         public override string ToString()
