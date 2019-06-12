@@ -1,0 +1,351 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Adaptive Sensing | Sensus Documentation </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Adaptive Sensing | Sensus Documentation ">
+    <meta name="generator" content="docfx 2.38.1.0">
+    
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/group-of-members-users-icon.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="adaptive_sensing">
+<h1 id="adaptive-sensing">Adaptive Sensing</h1>
+
+<p>An essential trade off within all mobile sensing apps is between (a) data density (high sampling
+rates) and continuity (no data gaps) and (b) battery drain. It is easy to configure Sensus to 
+optimize either of these objectives in isolation, but striking a balance between them poses significant 
+challenges. For example, one might wish to sample high-density accelerometry when the device
+is likely to be used in particular ways (e.g., while walking). Similarly, one might wish to sample light 
+and temperature data, but only in particular geographic locations. No single, static sensing configuration 
+would satisfy such objectives while also having minimal impact on the battery. Such use cases require
+dynamic sensing configurations that adapt to usage contexts.</p>
+<h2 id="adaptive-control">Adaptive Control</h2>
+<p>The figure below depicts concepts that drive adaptive sensing within Sensus.</p>
+<p><img src="/sensus/images/adaptive-sensing-state-diagram.png" alt="image"></p>
+<p>The following concepts are indicated:</p>
+<ul>
+<li><p>Sensing agent:  An entity that controls sensing parameters (e.g., sampling rates and continuity) on
+the basis of observed state (i.e., <a class="xref" href="../api/Sensus.Datum.html">Datum</a> objects).</p>
+</li>
+<li><p>Opportunistic observation:  Sensing agents can be configured to observe state information actively 
+or opportunistically. Opportunistic observation captures any <a class="xref" href="../api/Sensus.Datum.html">Datum</a> object generated 
+by Sensus during normal operation. In this mode, the app will not take any extra actions to observe 
+data. This has the effect of minimizing battery drain at the expense of weaker state estimates and 
+sensing control.</p>
+</li>
+<li><p>Opportunistic control:  In response to opportunistically observed data, the sensing agent
+may decide to control sensing in a particular way (e.g., by enabling continuous sensing or
+increasing sampling rates). Such decisions are only possible upon the arrival of opportunistic data.</p>
+</li>
+<li><p>Action interval:  In contrast with opportunistic sensing, sensing agents can be configured to actively
+seek out data. This has the effect of strengthening state estimates and sensing control at the expense 
+of increased battery drain. The action interval indicates how frequently Sensus should actively observe 
+data for state estimation.</p>
+</li>
+<li><p>Active observation duration:  Once the action interval elapses, Sensus will begin to actively
+observe each <a class="xref" href="../api/Sensus.Datum.html">Datum</a> generated by the app. This parameter governs how long active
+observation should continue before checking the control criterion.</p>
+</li>
+<li><p>Control criterion:  Regardless of whether Sensus is observing opportunistically or actively, 
+the control criterion defines state estimates that trigger sensing control. For example, a 
+criterion might specify that sensing control should occur when the average acceleration 
+magnitude exceeds a critical threshold. This is demonstrated in the 
+<a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleSensingAgent.Shared/ExampleAccelerationSensingAgent.cs">example</a>
+sensing agent. This agent also demonstrates a control criterion based on proximity of the phone
+to a surface (e.g., face) and user activities (e.g., walking).</p>
+</li>
+<li><p>Control completion check interval:  Once sensing control is invoked, the agent will periodically 
+recheck the control criterion to determine whether it is still met. If the criterion is not met, 
+then sensing control ends, the sensing agent transitions sensing settings as needed (e.g., reducing
+sampling rates), and the sensing agent returns to its idle state. If the criterion is still met, 
+then sensing control continues unabated until the next completion check occurs. This parameter governs 
+how long the agent should wait between each completion check.</p>
+</li>
+</ul>
+<p>Sensus supports two mechanisms for incorporating sensing agents into a study. The first involves
+writing software (in C#) to define the sensing agent. The second involves defining the agent
+in a JSON-based specification language. The following sections provide more information about these
+two alternatives.</p>
+<h2 id="software-defined-sensing-agents">Software-Defined Sensing Agents</h2>
+<h3 id="android">Android</h3>
+<p>On Android, Sensus supports a plug-in architecture for software-defined sensing agents.
+This architecture is intended to support research into adaptive sensing by providing a simple interface
+through which researchers can deploy agents that implement specific adaptation approaches. Follow the 
+steps below to implement and deploy an Android sensing agent.</p>
+<ol>
+<li>Create a new Android Class Library project in Visual Studio. In Visual Studio for Mac, the following image
+shows the correct selection:</li>
+</ol>
+<p><img src="/sensus/images/survey-agent-project.png" alt="image"></p>
+<ol>
+<li><p>Add a NuGet reference to <a href="https://www.nuget.org/packages/Sensus">the Sensus package</a>.</p>
+</li>
+<li><p>Add a new class that inherits from <a class="xref" href="../api/Sensus.Adaptation.SensingAgent.html">SensingAgent</a>. Be sure to provide a parameterless constructor
+for your class, as this constructor will be called at run time to create your agent. Your class will be required
+to override a few methods related to sensing control. These methods are where your sensing agent should execute its control 
+policy. The <a class="xref" href="../api/Sensus.Adaptation.SensingAgent.html">SensingAgent</a> class provides a set of predefined control criterion functions 
+<a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared.NuGet/Adaptation/SensingAgentControlCriteria.cs">here</a>.
+You can call these diretly from your code or write your own functions to suit your adaptation requirements.</p>
+</li>
+<li><p>Build the library project, and upload the resulting .dll to a web-accessible URL. A convenient
+solution is to upload the .dll to a Dropbox directory and copy the sharing URL for the .dll file.</p>
+</li>
+<li><p>Generate a QR code that points to your .dll (e.g., using <a href="https://www.qr-code-generator.com/">QR Code Generator</a>).
+The content of the QR code must be exactly as shown below:</p>
+<pre><code class="lang-plain">sensing-agent:URL
+</code></pre><p>where URL is the web-accessible URL that points to your .dll file. If you are using Dropbox, then the QR code
+content will be similar to the one shown below (note the <code>dl=1</code> ending of the URL, and note that the following 
+URL is only an example -- it is not actually valid):</p>
+<pre><code class="lang-plain">sensing-agent:https://www.dropbox.com/s/dlaksdjfasfasdf/SensingAgent.dll?dl=1
+</code></pre></li>
+<li><p>In your <a class="xref" href="../api/Sensus.Protocol.html">Protocol</a> settings, tap &quot;Set Agent&quot; and scan your QR code. Sensus will fetch your .dll file and 
+extract any agent definitions contained therein. Select your desired agent.</p>
+</li>
+<li><p>Continue with <a class="xref" href="protocol-creation.html">configuration</a> and <a class="xref" href="protocol-distribution.html">distribution</a>
+of your protocol. When run, your protocol will invoke the selected sensing agent according to the state diagram shown
+above.</p>
+</li>
+</ol>
+<p>See the following implementation for an example:</p>
+<ul>
+<li><a class="xref" href="../api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html">Acceleration</a> (code <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleSensingAgent.Shared/ExampleAccelerationSensingAgent.cs">here</a>):  A 
+sensing agent that samples continuously if the device is moving or near a surface (e.g., face).</li>
+</ul>
+<h3 id="ios">iOS</h3>
+<p>In contrast with Android, iOS does not allow apps to load code (e.g., from the above .dll assembly) at
+run time. Thus, software-defined adaptive sensing agents are more limited on iOS compared with Android. Here 
+are the options:</p>
+<ul>
+<li><p>The app comes with one 
+<a class="xref" href="../api/ExampleSensingAgent.ExampleAccelerationSensingAgent.html">example</a> sensing agent (code 
+<a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/ExampleSensingAgent.Shared/ExampleAccelerationSensingAgent.cs">here</a>); 
+however, this is simply for demonstration and is unlikely to work well in practice. Nonetheless, you 
+can select this agent when configuring the <a class="xref" href="../api/Sensus.Protocol.html">Protocol</a>.</p>
+</li>
+<li><p>You can <a class="xref" href="redeploying-sensus.html">redeploy</a> Sensus as your own app, to which you can add your own agent implementations.</p>
+</li>
+<li><p>You can implement your own agent implementations following the instructions above for Android and email 
+our team (uva.ptl@gmail.com) to include your implementation in a future release of the iOS app.</p>
+</li>
+</ul>
+<h2 id="adaptive-sensing-policy-language-aspl-defined-sensing-agents">Adaptive Sensing Policy Language (ASPL) Defined Sensing Agents</h2>
+<p>In addition to the software-defined adaptive sensing agents described above, Sensus supports the definition
+of sensing agents in a general-purpose adaptive sensing policy language (ASPL). ASPL specifies both the 
+control criteria as well as the control actions depicted in the above state diagram. The 
+<a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Shared/Adaptation/example-aspl-policy.json">example ASPL policy file</a>
+demonstrates the ASPL format. The elements of the format are described in the documentation for
+<a class="xref" href="../api/Sensus.Adaptation.SensingAgent.html">SensingAgent</a> and <a class="xref" href="../api/Sensus.Adaptation.AsplSensingAgent.html">AsplSensingAgent</a>. If more than 1 
+<a class="xref" href="../api/Sensus.Adaptation.AsplStatement.html">AsplStatement</a> is provided to the <a class="xref" href="../api/Sensus.Adaptation.AsplSensingAgent.html">AsplSensingAgent</a>, 
+then the first one whose criterion is satisfied by the observed data will be used for sensing control.</p>
+<p>In the example ASPL policy file, you will see many places where property types and property names are specified. In
+general, each <a class="xref" href="../api/Sensus.Adaptation.AsplElement.html">AsplElement</a> will specify a property type that is the fully-qualified 
+name of a <a class="xref" href="../api/Sensus.Datum.html">Datum</a> sub-type. The fully-qualified type name is the concatenation of the type&#39;s namespace
+and name. For example, the <a class="xref" href="../api/Sensus.Probes.Movement.AccelerometerDatum.html">AccelerometerDatum</a> type has namespace <code>Sensus.Probes.Movement</code> 
+and name <code>AccelerometerDatum</code>. The fully-qualified type name is thus <code>Sensus.Probes.Movement.AccelerometerDatum</code>. 
+You can find the namespace for each type in the API documentation (e.g., see 
+<a class="xref" href="../api/Sensus.Probes.Movement.AccelerometerDatum.html">here</a>). The API documentation page for each type also lists
+the properties available for that type (e.g., 
+<a href="https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Probes.Movement.AccelerometerDatum.html#properties">here</a>).
+So, for example, if you wish to specify the <a class="xref" href="../api/Sensus.Probes.Movement.AccelerometerDatum.html#Sensus_Probes_Movement_AccelerometerDatum_X">X</a> 
+property within the <a class="xref" href="../api/Sensus.Adaptation.AsplElement.html">AsplElement</a>, then the property type should be 
+<code>Sensus.Probes.Movement.AccelerometerDatum</code> and the property name should be <code>X</code>.</p>
+<p>The other places where property types and property names appear in ASPL are the 
+<a class="xref" href="../api/Sensus.Adaptation.AsplStatement.html#Sensus_Adaptation_AsplStatement_BeginControlSettings">BeginControlSettings</a> and <a class="xref" href="../api/Sensus.Adaptation.AsplStatement.html#Sensus_Adaptation_AsplStatement_EndControlSettings">EndControlSettings</a>.
+These types and names refer to the <a class="xref" href="../api/Sensus.Probes.Probe.html">Probe</a> properties that should be changed to begin and end sensing control.
+For example, you may wish to begin control by enabling the <a class="xref" href="../api/Sensus.Probes.Movement.AccelerometerProbe.html">AccelerometerProbe</a> with a sampling 
+rate of 50 Hz. This involves two settings:  (1) enabling the probe, and (2) setting the sampling rate. Each of these
+is specified within a <a class="xref" href="../api/Sensus.ProtocolSetting.html">ProtocolSetting</a> in the ASPL JSON.</p>
+<h2 id="softare--versus-aspl-defined-sensing-agents">Softare- Versus ASPL-Defined Sensing Agents</h2>
+<p>There are pros and cons of software- and ASPL-defined sensing agents:</p>
+<ul>
+<li><p>Software-Defined</p>
+<ul>
+<li>Pros:  Sophistication of control criteria. Actions are not limited to the logical structure of ASPL. Any 
+criterion that can be implemented in C# would be feasible.</li>
+<li>Cons:  Low-level programming is required. Third-party deployment of iOS agents is complicated
+by iOS&#39;s prohibition of run-time code loading (see above). Changing the agent definition (whether on Android
+or iOS) involves modifying code and, for iOS, redeploying the application.</li>
+</ul>
+</li>
+<li><p>ASPL-Defined</p>
+<ul>
+<li>Pros:  Agent definitions use the relatively simple ASPL syntax. Agent definitions can be loaded at run-time 
+into both Android and iOS without the need for code changes or app redeployment.</li>
+<li>Cons:  ASPL has limited logical expressiveness.</li>
+</ul>
+</li>
+</ul>
+<h2 id="distributing-sensing-agent-policies">Distributing Sensing Agent Policies</h2>
+<p>Regardless of whether a software- or ASPL-defined sensing agent is used, a policy must be provided to the
+agent, specifying the agent&#39;s control parameters. This can be done in two ways:</p>
+<ul>
+<li><p>Set within protocol:  In the protocol settings, tap &quot;Set Agent Policy&quot;, then select your JSON policy file. This 
+works well to set the initial policy used by the sensing agent; however, this is not a very effective means of 
+providing updated sensing policies to users during an ongoing study. Updating the policy would require the study
+administrator to edit the protocol and distribute the new protocol to all users (e.g., via email), who would then 
+need to manually update their protocols.</p>
+</li>
+<li><p>Send via push notification:  Request a 
+<a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS/ec2-push-notifications/example-requests.json">push notification update</a>
+with the <code>type</code> set to <a class="xref" href="../api/Sensus.Notifications.PushNotificationUpdateType.html#Sensus_Notifications_PushNotificationUpdateType_SensingAgentPolicy">SensingAgentPolicy</a> and <code>content</code> set to the 
+policy you wish to provide. Sensus will parse the <code>content</code> into a JSON object and pass the resulting object to your
+agent via &lt;xref:Sensus.Adaptation.SensingAgent.ProtectedSetPolicyAsync&gt;. This is an effective option for updating the sensing 
+agent&#39;s policy during ongoing studies, as users will not need to do anything in order to receive the updated policies.</p>
+</li>
+</ul>
+<h2 id="testing-and-debugging">Testing and Debugging</h2>
+<p>Regardless of whether your sensing agent targets Android or iOS, there are a few ways to test and debug it:</p>
+<ul>
+<li><p>Monitor the agent state:  Within your <a class="xref" href="../api/Sensus.Protocol.html">Protocol</a> settings, tap &quot;View Agent State&quot; to see a real-time
+display of your agent&#39;s state. You will see it cycle through the state diagram shown above.</p>
+</li>
+<li><p>Write to the log file:  See the code for the example agents above. You will see calls that write to the log file. Use similar
+calls in your code to write information about the behavior of your agent to the log. Run your agent for a while in the app and
+then share the log file with yourself from within the app. Note that the size of the log file is limited, so you might not be 
+able to view the entire log history of your agent.</p>
+</li>
+<li><p>Flash notifications on the screen:  On Android, you can flash notifications on the screen as shown in the example code. These
+messages will appear for a short duration.</p>
+</li>
+<li><p>Run your agent in the debugger:  By far the most useful approach is to <a class="xref" href="configuring-a-development-system.html">configure a development system</a> and
+run Sensus in the debugger with your sensing agent. You will need to add your agent code to the Sensus app projects in order to 
+step through it in the debugger.</p>
+</li>
+</ul>
+<h2 id="known-limitations-and-future-improvements">Known Limitations and Future Improvements</h2>
+<ul>
+<li><p>Initiation of continuous sensing from the background on iOS:  iOS places significant constraints on Sensus&#39;s ability
+to operate in the background. This impacts all sensing agents&#39; ability to initiate continuous sensing from the background. 
+A sensing agent will be able to update its state estimtes from the background upon receipt of a push notification; however, 
+there is no known way to initiate continuous background operation while in the background state. As a result, if the agent&#39;s 
+state estimate indicates that continuous sensing control is warranted, then this control will not be initiated until the 
+next time the app is brought to the foreground by the user. It would be useful to add the option of notifying the user from 
+the background when continuous sensing is requested by the sensing agent.</p>
+</li>
+<li><p>Termination of sensing control:  Currently, sensing control (whether opportunistic or active) can only be terminated
+after the control completion check interval elapses. This is probably too coarse, and it would be helpful to complement
+this check with checks run after a certain number of data readings have been observed while in a control state.</p>
+</li>
+</ul>
+<h2 id="data-streams">Data Streams</h2>
+<p>In addition to directly impacting the data streams that are collected (e.g., via sampling rates and enabling/disabling
+<a class="xref" href="../api/Sensus.Probes.Probe.html">probes</a>), the use of a sensing agent will cause additional data to be written to the 
+<a class="xref" href="../api/Sensus.DataStores.Local.LocalDataStore.html">local data store</a>. These include:</p>
+<ul>
+<li><p>Datum-level tagging:  Each <a class="xref" href="../api/Sensus.Datum.html">Datum</a> collected by the app will be tagged with a description of the sensing 
+agent&#39;s state at the time when the <a class="xref" href="../api/Sensus.Datum.html">Datum</a> was collected. This is achieved by setting 
+<a class="xref" href="../api/Sensus.Datum.html#Sensus_Datum_SensingAgentStateDescription">SensingAgentStateDescription</a> to the value of <a class="xref" href="../api/Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_StateDescription">StateDescription</a>.</p>
+</li>
+<li><p>Sensing agent lifecycle:  Each time the sensing agent transitions from one state to another, a 
+<a class="xref" href="../api/Sensus.Adaptation.SensingAgentStateDatum.html">SensingAgentStateDatum</a> will be written to the 
+<a class="xref" href="../api/Sensus.DataStores.Local.LocalDataStore.html">local data store</a> to record the transition. This will be done regardless 
+of whether any other <a class="xref" href="../api/Sensus.Datum.html">Datum</a> readings are collected.</p>
+</li>
+</ul>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/aspl-agent/DocFX/articles/adaptive-sensing.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

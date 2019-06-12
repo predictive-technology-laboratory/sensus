@@ -65,8 +65,10 @@ namespace Sensus.iOS.Probes.Location
             }
         }
 
-        protected override Task StartListeningAsync()
+        protected override async Task StartListeningAsync()
         {
+            await base.StartListeningAsync();
+
             SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
             {
                 if (Beacons.Count > 0)
@@ -118,12 +120,12 @@ namespace Sensus.iOS.Probes.Location
                     });
                 }
             });
-
-            return Task.CompletedTask;
         }
 
-        protected override Task StopListeningAsync()
+        protected override async Task StopListeningAsync()
         {
+            await base.StopListeningAsync();
+
             if (Beacons.Count > 0)
             {
                 SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(_proximityObserver.StopObservingZones);
@@ -134,8 +136,6 @@ namespace Sensus.iOS.Probes.Location
                 _foregroundIndoorLocationManager.StopPositionUpdates();
                 _backgroundIndoorLocationManager.StopPositionUpdatesForLocation(_indoorLocation);
             }
-
-            return Task.CompletedTask;
         }
     }
 }

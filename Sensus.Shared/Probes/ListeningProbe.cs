@@ -26,25 +26,16 @@ namespace Sensus.Probes
 {
     /// <summary>
     /// Listening Probes are triggered by a change in state within the underlying device. For example, when an accelerometer reading is emitted, the 
-    /// <see cref="Movement.AccelerometerProbe"/> is provided with information about device movement in each direction. Listening Probes do not generate
-    /// data unless such state changes occur. Whether or not data streams are discontinued when the app is backgrounded depends on the operating
-    /// system (Android or iOS) as well as specific settings.
-    /// 
-    /// * Android:  If <see cref="KeepDeviceAwake"/> is enabled on Android, then the app will hold a wake lock thus keeping the device processor powered
-    /// on and delivering readings to the app. If <see cref="KeepDeviceAwake"/> is disabled on Android, then the CPU will be allowed to sleep typically
-    /// discontinuing the delivery of readings to the app.
-    /// 
-    /// * iOS:  The <see cref="KeepDeviceAwake"/> setting has no effect on iOS, and all readings will be discontinued when the app is put into the
-    /// background. See <see cref="PollingProbe"/> for more information about background considerations.
+    /// <see cref="Movement.AccelerometerProbe"/> is provided with information about device movement in each direction. <see cref="ListeningProbe"/>s
+    /// do not generate data unless such state changes occur (however, in the particular case of the <see cref="Movement.AccelerometerProbe"/>, the 
+    /// hardware accelerometer chip will continuously be registering movement). Whether or not data streams are discontinued when the app is backgrounded 
+    /// depends on the operating system (Android or iOS) as well as the setting of <see cref="KeepDeviceAwake"/>.
     /// </summary>
-    public abstract class ListeningProbe : Probe
+    public abstract class ListeningProbe : Probe, IListeningProbe
     {
         private double? _maxDataStoresPerSecond;
         private bool _keepDeviceAwake;
-
-#if __ANDROID__
         private bool _deviceAwake;
-#endif
 
         /// <summary>
         /// The maximum number of readings that may be stored in one second.
@@ -91,16 +82,35 @@ namespace Sensus.Probes
         }
 
         /// <summary>
-        /// Available on Android only. Whether or not to keep the device awake while listening for readings while Sensus is backgrounded. If enabled, readings 
-        /// will be delivered to Sensus in the backgrounded; however, more power will be consumed because the processor will not be allowed to sleep. If disabled,
-        /// readings will be paused when Sensus is backgrounded. This will conserve power because the processor will be allowed to sleep, but readings will be 
-        /// delayed and possibly dropped entirely. When the device wakes up, some readings that were cached while asleep may be delivered in bulk to Sensus. 
-        /// This bulk delivery may not include all readings, and the readings delivered in bulk will have their <see cref="Datum.Timestamp"/> fields set to the
-        /// time of bulk delivery rather than the time the reading originated. Even a single listening probe with this setting turned on will be sufficient to 
-        /// keep the processor awake and delivering readings to all listening probes in all protocols within Sensus.
+        /// Whether or not to keep the device awake and listening for readings, regardless of whether Sensus is backgrounded and the device
+        /// is locked and idle. If enabled, then readings will be delivered to Sensus regardless of these states; however, more power will 
+        /// be consumed because the processor will not be allowed to sleep. If disabled, then the effect depends on the operating system 
+        /// and state of the device:
+        /// 
+        /// Android:  If disabled, then readings will be paused when the device enters the sleeping state (i.e., when it is locked and
+        /// inactive). When the device wakes up (i.e., is unlocked or being actively used), then some readings that were cached while 
+        /// asleep may be delivered in bulk to Sensus. This bulk delivery may not include all readings, and the readings delivered in 
+        /// bulk will have their <see cref="Datum.Timestamp"/> fields set to the time of bulk delivery rather than the time the reading 
+        /// originated.
+        /// 
+        /// iOS:  If disabled, then readings will be paused when the app enters the background state (e.g., by hitting the home button), 
+        /// regardless of whether the phone is unlocked and actively being used. The only way to resume readings in this case is for the 
+        /// user to bring the app to the foreground.
+        /// 
+        /// In any case above, if readings are paused then power will be conserved. If readings are flowing, then the CPU will be active 
+        /// and will likely consume significant battery power. Furthermore, even a single <see cref="ListeningProbe"/> with this setting 
+        /// enabled will be sufficient to keep readings flowing for all <see cref="ListeningProbe"/>s in all <see cref="Protocol"/>s 
+        /// within Sensus. It is not possible to enable this setting for just one of many enabled <see cref="ListeningProbe"/>s.
+        /// 
+        /// Lastly, there are a few exceptions to the above as regards iOS. Certain <see cref="ListeningProbe"/>s will force the the CPU
+        /// to remain awake and all readings to remain flowing on iOS. Currently these are the iOS implementation of
+        /// <see cref="Probes.Location.CompassProbe"/> as well as <see cref="Probes.Location.ListeningLocationProbe"/>, 
+        /// <see cref="Probes.Location.ListeningPointsOfInterestProximityProbe"/>, and <see cref="Probes.Movement.ListeningSpeedProbe"/>.
+        /// If any one of these is enabled on iOS, then readings will continue to flow for all <see cref="ListeningProbe"/>s regardless
+        /// of the value for <see cref="KeepDeviceAwake"/>.
         /// </summary>
         /// <value><c>true</c> to keep device awake; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("(Android) Keep Device Awake:", true, int.MaxValue - 1)]
+        [OnOffUiProperty("Keep Device Awake:", true, int.MaxValue - 1)]
         public bool KeepDeviceAwake
         {
             get
@@ -140,6 +150,20 @@ namespace Sensus.Probes
 
         [JsonIgnore]
         protected abstract string DeviceAsleepWarning { get; }
+
+        /// <summary>
+        /// Gets a value indicating whether this <see cref="T:Sensus.Probes.ListeningProbe"/>, in its current
+        /// configuration, will have a significant negative impact on battery. This can be the case if, e.g., 
+        /// the probe has enabled <see cref="KeepDeviceAwake"/>, or if the probe depends on hardware/software 
+        /// that is inherently battery hungry (e.g., <see cref="Location.ListeningLocationProbe"/> and the iOS
+        /// version of the <see cref="Location.CompassProbe"/>, which depends on the GPS subsystem).
+        /// </summary>
+        /// <value><c>true</c> if has significant negative impact on battery; otherwise, <c>false</c>.</value>
+        [JsonIgnore]
+        protected virtual bool WillHaveSignificantNegativeImpactOnBattery
+        {
+            get { return _keepDeviceAwake; }
+        }
 
         protected override double RawParticipation
         {
@@ -249,7 +273,8 @@ namespace Sensus.Probes
         {
             get
             {
-                return DisplayName + ":  " + (_maxDataStoresPerSecond.HasValue ? _maxDataStoresPerSecond.Value + " / sec." : "When it changes.");
+                return DisplayName + ":  " + (_maxDataStoresPerSecond.HasValue ? _maxDataStoresPerSecond.Value + " / sec." : "When it changes.") +
+                                             (WillHaveSignificantNegativeImpactOnBattery ? " This sensor will have a significant negative impact on battery life." : "");
             }
         }
 
@@ -257,58 +282,51 @@ namespace Sensus.Probes
         {
             _maxDataStoresPerSecond = null;  // no data rate limit by default
             _keepDeviceAwake = DefaultKeepDeviceAwake;
-
-#if __ANDROID__
             _deviceAwake = false;
-#endif
-
         }
 
-        protected sealed override async Task ProtectedStartAsync()
+        protected override async Task ProtectedStartAsync()
         {
+            await base.ProtectedStartAsync();
 
-#if __ANDROID__
-            // only keep device awake if we're not already running. calls to LetDeviceSleep must match these exactly.
-            if (!Running && _keepDeviceAwake)
+            if (_keepDeviceAwake)
             {
-                (SensusServiceHelper.Get() as AndroidSensusServiceHelper).KeepDeviceAwake();
+                await SensusServiceHelper.Get().KeepDeviceAwakeAsync();
                 _deviceAwake = true;
             }
-#endif
-
-            await base.ProtectedStartAsync();
 
             await StartListeningAsync();
         }
 
-        protected abstract Task StartListeningAsync();
-
-        public sealed override async Task StopAsync()
+        protected virtual Task StartListeningAsync()
         {
-            await base.StopAsync();
+            SensusServiceHelper.Get().Logger.Log("Starting listening...", LoggingLevel.Normal, GetType());
+            return Task.CompletedTask;
+        }
+
+        protected override async Task ProtectedStopAsync()
+        {
+            await base.ProtectedStopAsync();
 
             await StopListeningAsync();
 
-#if __ANDROID__
             if (_deviceAwake)
             {
-                (SensusServiceHelper.Get() as AndroidSensusServiceHelper).LetDeviceSleep();
+                await SensusServiceHelper.Get().LetDeviceSleepAsync();
                 _deviceAwake = false;
             }
-#endif
-
         }
 
-        protected abstract Task StopListeningAsync();
+        protected virtual Task StopListeningAsync()
+        {
+            SensusServiceHelper.Get().Logger.Log("Stopping listening...", LoggingLevel.Normal, GetType());
+            return Task.CompletedTask;
+        }
 
         public override async Task ResetAsync()
         {
             await base.ResetAsync();
-
-#if __ANDROID__
             _deviceAwake = false;
-#endif
-
         }
     }
 }

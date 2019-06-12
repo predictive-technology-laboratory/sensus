@@ -28,12 +28,10 @@ using System.Linq;
 using System.Reflection;
 using Sensus.Probes.Location;
 using Sensus.UI.Inputs;
-using Sensus.Probes.Apps;
 using Sensus.Probes.Movement;
 using System.Text;
 using System.Threading.Tasks;
 using Sensus.Context;
-using Sensus.Probes.User.MicrosoftBand;
 using Sensus.Probes.User.Scripts;
 using Sensus.Callbacks;
 using Sensus.Encryption;
@@ -51,6 +49,8 @@ using Sensus.Exceptions;
 using Sensus.Extensions;
 using Plugin.Geolocator.Abstractions;
 using Newtonsoft.Json.Linq;
+using static Sensus.Adaptation.SensingAgent;
+using Sensus.Adaptation;
 
 #if __IOS__
 using HealthKit;
@@ -80,6 +80,7 @@ namespace Sensus
         public const int GPS_DEFAULT_DEFERRAL_DISTANCE_METERS = 500;
         public const int GPS_DEFAULT_DEFERRAL_TIME_MINUTES = 5;
         public const string MANAGED_URL_STRING = "managed";
+        private const string SENSING_AGENT_ACTION_COMPLETION_CHECK_CALLBACK_ID_SUFFIX = "sensing-agent-completion-callback";
         private readonly Regex NON_ALPHANUMERIC_REGEX = new Regex("[^a-zA-Z0-9]");
 
         public static async Task<Protocol> CreateAsync(string name)
@@ -445,12 +446,6 @@ namespace Sensus
                     {
                         // UI testing is problematic with probes that take us away from Sensus, since it's difficult to automate UI 
                         // interaction outside of Sensus. disable any probes that might take us away from Sensus.
-
-                        if (probe is FacebookProbe)
-                        {
-                            probe.Enabled = false;
-                        }
-
 #if __IOS__
                         if (probe is iOSHealthKitProbe)
                         {
@@ -485,7 +480,6 @@ namespace Sensus
                 throw new Exception(message);
             }
         }
-
         #endregion
 
         public event EventHandler<ProtocolState> StateChanged;
@@ -497,6 +491,7 @@ namespace Sensus
         private ProtocolState _state;
         private ScheduledCallback _scheduledStartCallback;
         private ScheduledCallback _scheduledStopCallback;
+		private ScheduledCallback _scheduledResumeCallback;
         private LocalDataStore _localDataStore;
         private RemoteDataStore _remoteDataStore;
         private string _storageDirectory;
@@ -535,6 +530,10 @@ namespace Sensus
         private Func<Task> _protocolStartInitiatedAsync;
         private Func<double, Task> _protocolStartAddProgressAsync;
         private Func<ProtocolState, Task> _protocolStartFinishedAsync;
+
+        // sensing agent
+        private SensingAgent _agent;
+        private ScheduledCallback _agentIntervalActionScheduledCallback;
 
         /// <summary>
         /// The study's identifier. All studies on the same device must have unique identifiers. Certain <see cref="Probe"/>s
@@ -1349,11 +1348,17 @@ namespace Sensus
         [OnOffUiProperty("Allow Pause:  ", true, 48)]
         public bool AllowPause { get; set; } = false;
 
-        /// <summary>
-        /// Whether or not to allow the user to request a test push notification.
-        /// </summary>
-        /// <value><c>true</c> if allow test push notification; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow Test Push:  ", true, 49)]
+		[OnOffUiProperty("Allow Snooze:", true, 49)]
+		public bool AllowSnooze { get; set; } = false;
+
+		[EntryFloatUiProperty("Max. Snooze (Mins.):  ", true, 50, false)]
+		public int MaxSnoozeTime { get; set; } = 1440;
+
+		/// <summary>
+		/// Whether or not to allow the user to request a test push notification.
+		/// </summary>
+		/// <value><c>true</c> if allow test push notification; otherwise, <c>false</c>.</value>
+		[OnOffUiProperty("Allow Test Push:  ", true, 51)]
         public bool AllowTestPushNotification { get; set; } = false;
 
         /// <summary>
@@ -1391,7 +1396,7 @@ namespace Sensus
         /// for more information.
         /// </summary>
         /// <value>The protocol start confirmation mode.</value>
-        [ListUiProperty("Start Confirmation Mode:", true, 50, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.ParticipantIdDigits, ProtocolStartConfirmationMode.ParticipantIdText, ProtocolStartConfirmationMode.ParticipantIdQrCode }, true)]
+        [ListUiProperty("Start Confirmation Mode:", true, 52, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.ParticipantIdDigits, ProtocolStartConfirmationMode.ParticipantIdText, ProtocolStartConfirmationMode.ParticipantIdQrCode }, true)]
         public ProtocolStartConfirmationMode StartConfirmationMode
         {
             get
@@ -1410,7 +1415,7 @@ namespace Sensus
         /// the <see cref="PushNotificationsSharedAccessSignature"/> for this hub.
         /// </summary>
         /// <value>The push notifications hub.</value>
-        [EntryStringUiProperty("Push Notification Hub:", true, 51, false)]
+        [EntryStringUiProperty("Push Notification Hub:", true, 53, false)]
         public string PushNotificationsHub
         {
             get { return _pushNotificationsHub; }
@@ -1423,7 +1428,7 @@ namespace Sensus
         /// the DefaultListenSharedAccessSignature policy and copy the entire value of the connection string into this field.
         /// </summary>
         /// <value>The push notifications shared access signature.</value>
-        [EntryStringUiProperty("Push Notifications Shared Access Signature:", true, 52, false)]
+        [EntryStringUiProperty("Push Notifications Shared Access Signature:", true, 54, false)]
         public string PushNotificationsSharedAccessSignature
         {
             get { return _pushNotificationsSharedAccessSignature; }
@@ -1442,7 +1447,7 @@ namespace Sensus
         /// Specifies whether the current <see cref="Protocol"/> should be compatible with Android only, iOS only, or both.
         /// </summary>
         /// <value>The protocol compatibility mode.</value>
-        [ListUiProperty("Compatibility:", true, 53, new object[] { ProtocolCompatibilityMode.CrossPlatform, ProtocolCompatibilityMode.AndroidOnly, ProtocolCompatibilityMode.iOSOnly }, true)]
+        [ListUiProperty("Compatibility:", true, 55, new object[] { ProtocolCompatibilityMode.CrossPlatform, ProtocolCompatibilityMode.AndroidOnly, ProtocolCompatibilityMode.iOSOnly }, true)]
         public ProtocolCompatibilityMode CompatibilityMode { get; set; } = ProtocolCompatibilityMode.CrossPlatform;
 
         /// <summary>
@@ -1451,7 +1456,7 @@ namespace Sensus
         /// be displayed.
         /// </summary>
         /// <value><c>true</c> if display participation percentage in foreground service notification; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("(Android) Display Participation:", true, 55)]
+        [OnOffUiProperty("(Android) Display Participation:", true, 56)]
         public bool DisplayParticipationPercentageInForegroundServiceNotification { get; set; } = true;
 
         /// <summary>
@@ -1555,6 +1560,80 @@ namespace Sensus
             }
         }
 
+		[JsonIgnore]
+		public bool IsSnoozed => _scheduledResumeCallback != null;
+
+        /// <summary>
+        /// Gets or sets the <see cref="SensingAgent"/> that controls this <see cref="Protocol"/>. See 
+        /// [here](xref:adaptive_sensing) for more information. This property is not serialized because,
+        /// on Android, the assembly containing its type is not necessarily in the app's executing 
+        /// assembly; rather, on Android, the type might be contained in an assembly (i.e., DLL) that 
+        /// has been provided by a third-party for run-time code injection (plug-in). Instead of 
+        /// storing the <see cref="SensingAgent"/> directly, we therefore store the assembly bytes and
+        /// the identifier of the agent within the assembly, so that we can load the agent at run time.
+        /// </summary>
+        /// <value>The agent.</value>
+        [JsonIgnore]
+        public SensingAgent Agent
+        {
+            get
+            {
+                // attempt to lazy-load the agent if there is none and we an agent id
+                if (_agent == null && !string.IsNullOrWhiteSpace(AgentId))
+                {
+                    try
+                    {
+#if __ANDROID__
+                        // pass in an existing agent assembly (might be null)
+                        _agent = GetAgent(AgentId, AgentAssemblyBytes);
+#elif __IOS__
+                        // there is no assembly in ios per apple restrictions on dynamically loaded code. agents are baked into the app instead.
+                        _agent = GetAgent(AgentId);
+#endif
+
+                        // set the agent's policy if we previously received one (e.g., via push notification)
+                        if (AgentPolicy != null)
+                        {
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                            _agent.SetPolicyAsync(AgentPolicy); // can't await the operation, as we're in a property.
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get()?.Logger.Log("Exception while loading agent:  " + ex.Message, LoggingLevel.Normal, GetType());
+                    }
+                }
+
+                return _agent;
+            }
+            set
+            {
+                _agent = value;
+                AgentId = _agent?.Id;
+            }
+        }
+
+        /// <summary>
+        /// Id of the <see cref="Agent"/> to use.
+        /// </summary>
+        /// <value>The agent identifier.</value>
+        public string AgentId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the agent policy.
+        /// </summary>
+        /// <value>The agent policy JSON.</value>
+        public JObject AgentPolicy { get; set; }
+
+#if __ANDROID__
+        /// <summary>
+        /// Bytes of the assembly in which the <see cref="Agent"/> is contained.
+        /// </summary>
+        /// <value>The agent assembly bytes.</value>
+        public byte[] AgentAssemblyBytes { get; set; }
+#endif
+
         /// <summary>
         /// For JSON deserialization
         /// </summary>
@@ -1608,18 +1687,201 @@ namespace Sensus
         {
             lock (this)
             {
+                InitTypeProbeMap();
+
+                return _typeProbe.TryGetValue(type, out probe);
+            }
+        }
+
+        public bool TryGetProbe<DatumInterface, ProbeType>(out ProbeType probe) where DatumInterface : IDatum
+                                                                                where ProbeType : class, IProbe
+        {
+            lock (this)
+            {
+                InitTypeProbeMap();
+
+                probe = null;
+
+                foreach (Type type in _typeProbe.Keys)
+                {
+                    ProbeType p = _typeProbe[type] as ProbeType;
+                    PropertyInfo datumTypeProperty = type.GetProperty(nameof(Probe.DatumType));
+                    Type datumType = datumTypeProperty.GetValue(p) as Type;
+
+                    if (datumType.ImplementsInterface<DatumInterface>())
+                    {
+                        probe = p;
+                        break;
+                    }
+                }
+
+                return probe != null;
+            }
+        }
+
+        private void InitTypeProbeMap()
+        {
+            lock (this)
+            {
                 if (_typeProbe == null)
                 {
                     _typeProbe = new Dictionary<Type, Probe>();
 
-                    foreach (Probe p in _probes)
+                    foreach (Probe probe in _probes)
                     {
-                        _typeProbe.Add(p.GetType(), p);
+                        _typeProbe.Add(probe.GetType(), probe);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Applies a list of <see cref="ProtocolSetting"/> to the current <see cref="Protocol"/> and its <see cref="Probe"/>s.
+        /// </summary>
+        /// <returns>True if either the current <see cref="Protocol"/> or any of its <see cref="Probe"/>s were restarted as a result of applying the passed <see cref="ProtocolSetting"/>s.</returns>
+        /// <param name="settings">Settings.</param>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public async Task<bool> ApplySettingsAsync(List<ProtocolSetting> settings, CancellationToken cancellationToken)
+        {
+            bool restartProtocol = false;
+            List<Probe> probesToRestart = new List<Probe>();
+
+            foreach (ProtocolSetting setting in settings)
+            {
+                // catch any exceptions so that we process all settings
+                try
+                {
+                    // get property type
+                    Type propertyType;
+                    try
+                    {
+                        propertyType = Assembly.GetExecutingAssembly().GetType(setting.PropertyTypeName, true);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("Exception while getting property type (" + setting.PropertyTypeName + "):  " + ex.Message, ex);
+                    }
+
+                    // get property
+                    PropertyInfo property = propertyType.GetProperty(setting.PropertyName);
+
+                    // get target type
+                    Type targetType;
+                    try
+                    {
+                        targetType = Assembly.GetExecutingAssembly().GetType(setting.TargetTypeName, true);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception("Exception while getting target type (" + setting.TargetTypeName + "):  " + ex.Message, ex);
+                    }
+
+                    // if the value itself is JSON, then try to deserialize it to a .net type.
+                    object newValueObject = null;
+                    if (setting.Value.ToString().IsValidJsonObject())
+                    {
+                        newValueObject = JsonConvert.DeserializeObject(setting.Value.ToString());
+                    }
+                    // otherwise, assume it is a value type.
+                    else
+                    {
+                        // watch out for nullable value types when converting the string to its value type
+                        Type baseType = Nullable.GetUnderlyingType(property.PropertyType) ?? property.PropertyType;
+                        newValueObject = Convert.ChangeType(setting.Value, baseType);
+                    }
+
+                    // update the protocol and request restart
+                    if (targetType == typeof(Protocol))
+                    {
+                        property.SetValue(this, newValueObject);
+
+                        // restart the protocol if it is starting, running, or paused (other than stopping or stopped)
+                        if (_state == ProtocolState.Starting ||
+                            _state == ProtocolState.Running ||
+                            _state == ProtocolState.Paused)
+                        {
+                            restartProtocol = true;
+                        }
+                    }
+                    else if (targetType.GetAncestorTypes(false).Last() == typeof(Probe))
+                    {
+                        // update each probe derived from the target type
+                        foreach (Probe probe in _probes)
+                        {
+                            if (probe.GetType().GetAncestorTypes(false).Any(ancestorType => ancestorType == targetType))
+                            {
+                                // don't set the new value if it matches the current value
+                                object currentValueObject = property.GetValue(probe);
+                                if (newValueObject.Equals(currentValueObject))
+                                {
+                                    SensusServiceHelper.Get().Logger.Log("Current and new values match. Not setting property on probe.", LoggingLevel.Normal, GetType());
+                                }
+                                else
+                                {
+                                    property.SetValue(probe, newValueObject);
+
+                                    if (probe.State == ProbeState.Running || probe.Enabled)
+                                    {
+                                        if (!probesToRestart.Contains(probe))
+                                        {
+                                            probesToRestart.Add(probe);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception("Unrecognized target type:  " + targetType.FullName);
+                    }
+
+                    // record the setting as a datum in the data store, so that we can analyze effects of updates retrospectively.
+                    _localDataStore.WriteDatum(new ProtocolSettingUpdateDatum(DateTimeOffset.UtcNow, setting.PropertyTypeName, setting.PropertyName, setting.TargetTypeName, setting.Value.ToString()), cancellationToken);
+
+                    SensusServiceHelper.Get().Logger.Log("Updated protocol:  " + setting.PropertyTypeName + "." + setting.PropertyName + " for each " + setting.TargetTypeName + " = " + setting.Value, LoggingLevel.Normal, GetType());
+                }
+                catch (Exception settingException)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception while applying setting:  " + settingException.Message, LoggingLevel.Normal, GetType());
+                }
+            }
+
+            bool restarted = false;
+
+            // restart the protocol if needed. this will have the side-effect of restarting all probes and saving the app state.
+            if (restartProtocol)
+            {
+                await StopAsync();
+                await StartAsync(CancellationToken.None);  // restarting the protocol takes significant time and will almost certainly overrun the ios background time limits. don't pass the cancellation token.
+                restarted = true;
+            }
+            else
+            {
+                // restart individual probes to take on updated settings
+                SensusServiceHelper.Get().Logger.Log("Restarting " + probesToRestart.Count + " updated probe(s) following setting application.", LoggingLevel.Normal, GetType());
+                bool probeRestarted = false;
+                foreach (Probe probeToRestart in probesToRestart)
+                {
+                    try
+                    {
+                        await probeToRestart.RestartAsync();
+                        probeRestarted = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Exception while restarting probe following setting application:  " + ex.Message, LoggingLevel.Normal, GetType());
                     }
                 }
 
-                return _typeProbe.TryGetValue(type, out probe);
+                if (probeRestarted)
+                {
+                    await SensusServiceHelper.Get().SaveAsync();
+                    restarted = true;
+                }
             }
+
+            return restarted;
         }
 
         /// <summary>
@@ -1663,7 +1925,7 @@ namespace Sensus
             {
                 await probe.ResetAsync();
 
-                // reset enabled status of probes to the original values. probes can be disabled when the protocol is started (e.g., if the user cancels out of facebook login.)
+                // reset enabled status of probes to the original values. probes can be disabled when the protocol is started (e.g., if the user denies health kit).
                 probe.Enabled = probe.OriginallyEnabled;
 
                 // if we reset the protocol id, assign new group and input ids to all scripts
@@ -1862,31 +2124,17 @@ namespace Sensus
 
                         SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal, GetType());
                         int probesEnabled = 0;
-                        bool startMicrosoftBandProbes = true;
                         int numProbesToStart = _probes.Count(p => p.Enabled);
                         double perProbeStartProgressPercent = perStepPercent / numProbesToStart;
                         foreach (Probe probe in _probes)
                         {
                             if (probe.Enabled)
                             {
-                                if (probe is MicrosoftBandProbeBase && !startMicrosoftBandProbes)
-                                {
-                                    await (_protocolStartAddProgressAsync?.Invoke(perProbeStartProgressPercent) ?? Task.CompletedTask);
-                                    continue;
-                                }
-
                                 cancellationToken.ThrowIfCancellationRequested();
 
                                 try
                                 {
                                     await probe.StartAsync();
-                                }
-                                catch (MicrosoftBandClientConnectException)
-                                {
-                                    // if we failed to start a microsoft band probe due to a client connect exception, don't attempt to start the other
-                                    // band probes. instead, rely on the band health check to periodically attempt to connect to the band. if and when this
-                                    // succeeds, all band probes will then be started.
-                                    startMicrosoftBandProbes = false;
                                 }
                                 catch (Exception probeStartException)
                                 {
@@ -1944,6 +2192,33 @@ namespace Sensus
                     }
                 }
 
+                // start sensing agent if there is one
+                await (Agent?.InitializeAsync() ?? Task.CompletedTask);
+
+                // if the sensing agent has requested actions at regular intervals, then schedule a repeating callback.
+                if (Agent?.ActionInterval != null)
+                {
+                    _agentIntervalActionScheduledCallback = new ScheduledCallback(async actionCancellationToken =>
+                    {
+                        // ask the sensing agent to act
+                        SensusServiceHelper.Get().Logger.Log("Asking the sensing agent to act.", LoggingLevel.Normal, GetType());
+                        ControlCompletionCheck controlCompletionCheck = await Agent.ActAsync(actionCancellationToken);
+                        await ScheduleAgentControlCompletionCheckAsync(controlCompletionCheck);
+
+                    }, Agent.ActionInterval.Value, Agent.ActionInterval.Value, Agent.Id, _id, this, null, Agent.ActionIntervalToleranceBefore.GetValueOrDefault(), Agent.ActionIntervalToleranceAfter.GetValueOrDefault())
+                    {
+#if __IOS__
+                        // we don't want the scheduled callback to be silent, as such callbacks are cancelled on ios when the app
+                        // is backgrounded. in any case, we want them to grab the user's attention. this is not needed on android,
+                        // as the scheduled callback will be run regardless of app/device state.
+                        UserNotificationMessage = "Sensus would like to measure your environment. Please open this notification.",
+                        NotificationUserResponseMessage = "Measuring environment. You may close this alert."
+#endif
+                    };
+
+                    await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_agentIntervalActionScheduledCallback);
+                }
+
                 // wrap up if there was no start-cancelling exception
                 if (cancelStartException == null)
                 {
@@ -1984,6 +2259,44 @@ namespace Sensus
             }
 
             await (_protocolStartFinishedAsync?.Invoke(_state) ?? Task.CompletedTask);
+        }
+
+        public async Task ScheduleAgentControlCompletionCheckAsync(ControlCompletionCheck controlCompletionCheck)
+        {
+            if (controlCompletionCheck != null)
+            {
+                ScheduledCallback controlCompletionCheckCallback = new ScheduledCallback(null,                                                                           // this is a repeating callback that is self-cancelling. see code below that self-unschedules using the callback id. if we included the callback action here (instead of null), then we wouldn't have access to the callback id within the action.
+                                                                                        controlCompletionCheck.CheckControlCompletionInterval,
+                                                                                        controlCompletionCheck.CheckControlCompletionInterval,
+                                                                                        Guid.NewGuid().ToString() + "." + SENSING_AGENT_ACTION_COMPLETION_CHECK_CALLBACK_ID_SUFFIX,  // add a distinguishing suffix so we can raise/unschedule all completion callbacks later
+                                                                                        _id,
+                                                                                        this,
+                                                                                        null,
+                                                                                        Agent.ActionIntervalToleranceBefore ?? TimeSpan.Zero,
+                                                                                        Agent.ActionIntervalToleranceAfter ?? TimeSpan.Zero)
+                {
+#if __IOS__
+                    // we don't want the scheduled callback to be silent, as such callbacks are cancelled on ios when the app
+                    // is backgrounded. in any case, we want them to grab the user's attention. this is not needed on android,
+                    // as the scheduled callback will be run regardless of app/device state.
+                    UserNotificationMessage = controlCompletionCheck.UserNotificationMessage,
+                    NotificationUserResponseMessage = controlCompletionCheck.NotificationUserResponseMessage
+#endif
+                };
+
+                // set check action, now that we have the callback id used to self-cancel.
+                controlCompletionCheckCallback.ActionAsync = async completionActionCancellationToken =>
+                {
+                    // if the sensing agent has returned to idle, then self-cancel the repeating callback as the control has ended.
+                    if (await controlCompletionCheck.CheckControlCompletionAsync(completionActionCancellationToken) == SensingAgentState.Idle)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Sensing agent has ended control and returned to idle. Self-cancelling repeating callback.", LoggingLevel.Normal, GetType());
+                        await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(controlCompletionCheckCallback.Id);
+                    }
+                };
+
+                await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(controlCompletionCheckCallback);
+            }
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -2028,6 +2341,7 @@ namespace Sensus
             await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(CancellationToken.None);
 
             FireCaptionChanged();
+			await CancelScheduledResumeAsync();
         }
 
         public async Task CancelScheduledStartAsync()
@@ -2467,9 +2781,48 @@ namespace Sensus
             }
 
             await FireStateChangedAsync();
-        }
+			await CancelScheduledResumeAsync();
+		}
 
-        public async Task StopAsync()
+		public async Task ScheduleResumeAsync(DateTime resumeTimestamp)
+		{
+			TimeSpan timeUntilResume = resumeTimestamp - DateTime.Now;
+
+			_scheduledResumeCallback = new ScheduledCallback(async cancellationToken =>
+			{
+				await ResumeAsync();
+				_scheduledResumeCallback = null;
+
+			}, timeUntilResume, "RESUME", _id, this, null, TimeSpan.Zero, TimeSpan.Zero);
+
+#if __ANDROID__
+            _scheduledResumeCallback.UserNotificationMessage = "Resumed study: " + Name;
+#elif __IOS__
+			_scheduledResumeCallback.UserNotificationMessage = "Please open to resume study: " + Name;
+#else
+#error "Unrecognized OS"
+#endif
+
+			await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_scheduledResumeCallback);
+
+			// add the token to the backend, as the push notification for the schedule start needs to be active.
+			await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(CancellationToken.None);
+
+			FireCaptionChanged();
+		}
+
+		public async Task CancelScheduledResumeAsync()
+		{
+			await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_scheduledResumeCallback);
+			_scheduledResumeCallback = null;
+
+			// remove the token to the backend, as the push notification for the schedule start needs to be deactivated.
+			await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(CancellationToken.None);
+
+			FireCaptionChanged();
+		}
+
+		public async Task StopAsync()
         {
             lock (this)
             {
@@ -2499,19 +2852,17 @@ namespace Sensus
 
                 // the user might have force-stopped the protocol before the scheduled stop fired. don't fire the scheduled stop.
                 await CancelScheduledStopAsync();
+				await CancelScheduledResumeAsync();
 
-                foreach (Probe probe in _probes)
+				foreach (Probe probe in _probes)
                 {
-                    if (probe.Running)
+                    try
                     {
-                        try
-                        {
-                            await probe.StopAsync();
-                        }
-                        catch (Exception ex)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Failed to stop " + probe.GetType().FullName + ":  " + ex.Message, LoggingLevel.Normal, GetType());
-                        }
+                        await probe.StopAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Failed to stop " + probe.GetType().FullName + ":  " + ex.Message, LoggingLevel.Normal, GetType());
                     }
                 }
 
@@ -2537,6 +2888,30 @@ namespace Sensus
                     {
                         SensusServiceHelper.Get().Logger.Log("Failed to stop remote data store:  " + ex.Message, LoggingLevel.Normal, GetType());
                     }
+                }
+
+                if (_agentIntervalActionScheduledCallback != null)
+                {
+                    // cancel interval action callback associated with the sensing agent, if there is one.
+                    await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_agentIntervalActionScheduledCallback);
+                    _agentIntervalActionScheduledCallback = null;
+
+                    // raise and unschedule any outstanding control completion checks. this needs to be done in order to 
+                    // properly conclude any ongoing sensing control (e.g., by letting the device sleep again, reverting 
+                    // sampling rates, etc.). the format of control completion check callback ids is as follows:  
+                    //
+                    //   [protocol id].[control completion check callback id].[suffix]
+                    //
+                    // of which the first and last components are known at all times. the middle component is unique to
+                    // each completion check callback and is random. thus, form a regex to account for the middle and 
+                    // cancel each callback whose id matches.
+                    Regex completionCallbackIdPattern = new Regex("^" + _id + ".+" + SENSING_AGENT_ACTION_COMPLETION_CHECK_CALLBACK_ID_SUFFIX + "$");
+                    await SensusContext.Current.CallbackScheduler.RaiseCallbacksAsync(completionCallbackIdPattern);
+
+                    // having raised the control completion check callbacks while the protocol is not in the running state
+                    // should, in principle, cause the callbacks to self-cancel. double-check that all have done so with
+                    // an explicit call to unschedule callbacks with ids matching the control completion pattern.
+                    await SensusContext.Current.CallbackScheduler.UnscheduleCallbacksAsync(completionCallbackIdPattern);
                 }
 
                 await SensusServiceHelper.Get().UpdatePushNotificationRegistrationsAsync(CancellationToken.None);
@@ -2593,12 +2968,10 @@ namespace Sensus
 
                 if (_state == ProtocolState.Running)
                 {
-                    // add running protocol, which starts the health test callback.
                     await SensusServiceHelper.Get().AddRunningProtocolIdAsync(_id);
                 }
                 else if (_state == ProtocolState.Stopped || _state == ProtocolState.Paused)
                 {
-                    // remove running protocol, which stops the health test callback if all protocols have stopped.
                     await SensusServiceHelper.Get().RemoveRunningProtocolIdAsync(_id);
                 }
 
@@ -2648,6 +3021,117 @@ namespace Sensus
                     await SensusServiceHelper.Get().SaveAsync();
                 }
             }
+        }
+
+#if __ANDROID__
+        /// <summary>
+        /// Gets a <see cref="SensingAgent"/> from those available.
+        /// </summary>
+        /// <returns>The agent.</returns>
+        /// <param name="agentId">Agent identifier.</param>
+        /// <param name="assemblyBytes">Assembly bytes. This is only permitted on Android, as
+        /// iOS does not permit dynamic code loading. Attempting to do this crashes the app.</param>
+        public SensingAgent GetAgent(string agentId, byte[] assemblyBytes)
+#elif __IOS__
+        /// <summary>
+        /// Gets a <see cref="SensingAgent"/> from those available.
+        /// </summary>
+        /// <returns>The agent.</returns>
+        /// <param name="agentId">Agent identifier.</param>
+        public SensingAgent GetAgent(string agentId)
+#endif
+        {
+            return GetAgents(
+
+#if __ANDROID__
+                assemblyBytes
+#endif
+
+                ).SingleOrDefault(agent => agent.Id == agentId);
+        }
+
+#if __ANDROID__
+        /// <summary>
+        /// Gets available <see cref="SensingAgent"/>s from the current executing assembly.
+        /// </summary>
+        /// <returns>The agents.</returns>
+        /// <param name="assemblyBytes">Additional assembly to scan for <see cref="SensingAgent"/>s. Pass <c>null</c> for no assembly, in
+        /// which case only agents present in the executing assembly (the app codebase) will be loaded.
+        /// Only permitted on Android</param>
+        public List<SensingAgent> GetAgents(byte[] assemblyBytes)
+#elif __IOS__
+        /// <summary>
+        /// Gets available <see cref="SensingAgent"/>s from the current executing assembly.
+        /// </summary>
+        /// <returns>The agents.</returns>
+        public List<SensingAgent> GetAgents()
+#endif
+        {
+            List<SensingAgent> agents = new List<SensingAgent>();
+
+            // add agents from the current assembly. they must be linked at compile time.
+            agents.AddRange(Assembly.GetExecutingAssembly()
+                                    .GetTypes()
+                                    .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(SensingAgent)))
+                                    .Select(Activator.CreateInstance)
+                                    .Cast<SensingAgent>()
+                                    .ToList());
+
+#if __ANDROID__
+            // add agents from the passed assembly, if any bytes were passed.
+            if (assemblyBytes != null)
+            {
+                // don't let an invalid assembly byte array prevent us from proceeding to return the agents.
+                try
+                {
+                    agents.AddRange(Assembly.Load(assemblyBytes)
+                                            .GetTypes()
+                                            .Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(SensingAgent)))
+                                            .Select(Activator.CreateInstance)
+                                            .Cast<SensingAgent>()
+                                            .ToList());
+                }
+                catch (Exception ex)
+                {
+                    SensusServiceHelper.Get().Logger.Log("Exception loading sensing agents from assembly bytes:  " + ex.Message, LoggingLevel.Normal, GetType());
+                }
+            }
+#endif
+
+            // set protocol and service helper on all agents
+            foreach (SensingAgent agent in agents)
+            {
+                agent.Protocol = this;
+                agent.SensusServiceHelper = SensusServiceHelper.Get();
+            }
+
+            return agents;
+        }
+
+        public async Task UpdateSensingAgentPolicyAsync(CancellationToken cancellationToken)
+        {
+            JObject policy = await RemoteDataStore.GetSensingAgentPolicyAsync(cancellationToken);
+
+            await UpdateSensingAgentPolicyAsync(policy);
+        }
+
+        public async Task UpdateSensingAgentPolicyAsync(JObject policy)
+        {
+            if (Agent != null)
+            {
+                await Agent.SetPolicyAsync(policy);
+            }
+        }
+
+        public void WriteSensingAgentStateDatum(SensingAgentState previousState, SensingAgentState currentState, string description, CancellationToken cancellationToken)
+        {
+            SensingAgentStateDatum datum = new SensingAgentStateDatum(DateTimeOffset.UtcNow, previousState, currentState, description)
+            {
+                ProtocolId = Id,
+                ParticipantId = ParticipantId
+            };
+
+            _localDataStore.WriteDatum(datum, cancellationToken);
         }
     }
 }

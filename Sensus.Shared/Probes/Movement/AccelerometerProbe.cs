@@ -24,13 +24,6 @@ namespace Sensus.Probes.Movement
     /// </summary>
     public abstract class AccelerometerProbe : ListeningProbe
     {
-        private bool _stabilizing;
-
-        protected bool Stabilizing
-        {
-            get { return _stabilizing; }
-        }
-
         [JsonIgnore]
         protected override bool DefaultKeepDeviceAwake
         {
@@ -45,7 +38,7 @@ namespace Sensus.Probes.Movement
         {
             get
             {
-                return "This setting does not affect iOS. Android devices will use additional power to report all updates.";
+                return "Devices will use additional power to report all updates.";
             }
         }
 
@@ -54,7 +47,7 @@ namespace Sensus.Probes.Movement
         {
             get
             {
-                return "This setting does not affect iOS. Android devices will sleep and pause updates.";
+                return "Devices will sleep and pause updates.";
             }
         }
 
@@ -66,33 +59,6 @@ namespace Sensus.Probes.Movement
         public sealed override Type DatumType
         {
             get { return typeof(AccelerometerDatum); }
-        }
-
-        protected override async Task InitializeAsync()
-        {
-            await base.InitializeAsync();
-
-            _stabilizing = true;
-        }
-
-        protected override async Task StartListeningAsync()
-        {
-            // allow the accelerometer to stabilize...the first few readings can be extremely erratic
-            await Task.Delay(2000);
-            _stabilizing = false;
-
-            // not sure if null is the problem:  https://insights.xamarin.com/app/Sensus-Production/issues/907
-            if (SensusServiceHelper.Get() != null)
-            {
-                SensusServiceHelper.Get().Logger.Log("Accelerometer has finished stabilization period.", LoggingLevel.Normal, GetType());
-            }
-        }
-
-        public override async Task ResetAsync()
-        {
-            await base.ResetAsync();
-
-            _stabilizing = false;
         }
 
         protected override ChartSeries GetChartSeries()

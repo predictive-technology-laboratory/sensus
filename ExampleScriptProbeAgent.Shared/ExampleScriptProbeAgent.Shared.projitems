@@ -6,7 +6,7 @@
     <SharedGUID>{40433736-3696-43E1-8AA2-1B954035AD9E}</SharedGUID>
   </PropertyGroup>
   <PropertyGroup Label="Configuration">
-    <Import_RootNamespace>ExampleScriptProbeAgent.Shared</Import_RootNamespace>
+    <Import_RootNamespace>ExampleScriptProbeAgent</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)ExampleAdaptiveScriptProbeAgent.cs" />

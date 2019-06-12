@@ -24,7 +24,6 @@ using Sensus.Exceptions;
 using Sensus.iOS.Context;
 using UIKit;
 using Foundation;
-using Facebook.CoreKit;
 using Syncfusion.SfChart.XForms.iOS.Renderers;
 using Sensus.iOS.Callbacks;
 using UserNotifications;
@@ -32,7 +31,6 @@ using Sensus.iOS.Notifications.UNUserNotifications;
 using Sensus.iOS.Concurrent;
 using Sensus.Encryption;
 using System.Threading;
-using System.Threading.Tasks;
 using Sensus.iOS.Notifications;
 using Sensus.Notifications;
 
@@ -46,6 +44,8 @@ namespace Sensus.iOS
     {
         public override bool FinishedLaunching(UIApplication uiApplication, NSDictionary launchOptions)
         {
+            DateTime finishLaunchStartTime = DateTime.Now;
+
             UIDevice.CurrentDevice.BatteryMonitoringEnabled = true;
 
             SensusContext.Current = new iOSSensusContext
@@ -65,10 +65,6 @@ namespace Sensus.iOS
             // would have triggered are about to be rescheduled when the app is actived.
             (SensusContext.Current.Notifier as iOSNotifier).RemoveAllNotifications();
 
-            // facebook settings
-            Settings.AppId = "873948892650954";
-            Settings.DisplayName = "Sensus";
-
             // initialize stuff prior to app load
             Forms.Init();
             FormsMaps.Init();
@@ -83,15 +79,30 @@ namespace Sensus.iOS
             // load the app, which starts crash reporting and analytics telemetry.
             LoadApplication(new App());
 
+            // we have observed that, if the  app is in the background and a push notification arrives, 
+            // then ios may attempt to launch the app and call this method but only provide a few (~5) 
+            // seconds for this method to return. exceeding this time results in a fored termination by 
+            // ios. as we're about to deserialize a large JSON object below when initializing the service
+            // helper, we need to be careful about taking up too much time. start a background task to 
+            // obtain as much background time as possible and report timeouts. needs to be after app load
+            // in case we need to report a timeout exception.
+            nint finishLaunchingTaskId = uiApplication.BeginBackgroundTask(() =>
+            {
+                string message = "Ran out of time while finishing app launch.";
+                SensusException.Report(message);
+                Console.Error.WriteLine(message);
+            });
+
             // initialize service helper. must come after context initialization. desirable to come
             // after app loading, in case we crash. crash reporting is initialized when the app 
             // object is created. nothing in the app creating and loading loop will depend on having
             // an initialized service helper, so we should be fine.
             SensusServiceHelper.Initialize(() => new iOSSensusServiceHelper());
 
-            // register for push notifications. must come after service helper initialization. if the 
-            // user subsequently denies authorization to display notifications, then all notifications will
-            // simply be delivered to the app silently, per the following:  
+            // register for push notifications. must come after service helper initialization as we use
+            // the serivce helper below to submit the remote notification token to the backends. if the 
+            // user subsequently denies authorization to display notifications, then all remote notifications 
+            // will simply be delivered to the app silently, per the following:
             //
             // https://developer.apple.com/documentation/uikit/uiapplication/1623078-registerforremotenotifications
             //
@@ -109,7 +120,32 @@ namespace Sensus.iOS
             Calabash.Start();
 #endif
 
-            return base.FinishedLaunching(uiApplication, launchOptions);
+            uiApplication.EndBackgroundTask(finishLaunchingTaskId);
+
+            // must come after app load
+            base.FinishedLaunching(uiApplication, launchOptions);
+
+            // record how long we took to launch. ios is eager to kill apps that don't start fast enough, so log information
+            // to help with debugging.
+            DateTime finishLaunchEndTime = DateTime.Now;
+            SensusServiceHelper.Get().Logger.Log("Took " + (finishLaunchEndTime - finishLaunchStartTime) + " to finish launching.", LoggingLevel.Normal, GetType());
+
+            return true;
+        }
+
+        public override async void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
+        {
+            // hang on to the token. we register for remote notifications after initializing the helper, 
+            // so this should be fine.
+            iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
+            serviceHelper.PushNotificationTokenData = deviceToken;
+
+            // update push notification registrations. this depends on internet connectivity to S3
+            // so it might hang if connectivity is poor. ensure we don't violate execution limits.
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+            nint updatePushNotificationRegistrationsTaskId = application.BeginBackgroundTask(cancellationTokenSource.Cancel);
+            await serviceHelper.UpdatePushNotificationRegistrationsAsync(cancellationTokenSource.Token);
+            application.EndBackgroundTask(updatePushNotificationRegistrationsTaskId);
         }
 
         public override bool OpenUrl(UIApplication app, NSUrl url, NSDictionary options)
@@ -229,52 +265,32 @@ namespace Sensus.iOS
             }
         }
 
-        public override async void RegisteredForRemoteNotifications(UIApplication application, NSData deviceToken)
-        {
-            // hang on to the token.
-            iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
-            serviceHelper.PushNotificationTokenData = deviceToken;
-
-            // update push notification registrations. this depends on internet connectivity to S3
-            // so it might hang if connectivity is poor. ensure we don't violate execution limits.
-            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-            nint updateTaskId = application.BeginBackgroundTask(cancellationTokenSource.Cancel);
-            await serviceHelper.UpdatePushNotificationRegistrationsAsync(cancellationTokenSource.Token);
-            application.EndBackgroundTask(updateTaskId);
-        }
-
         public override void FailedToRegisterForRemoteNotifications(UIApplication application, NSError error)
         {
             SensusException.Report("Failed to register for remote notifications.", error == null ? null : new Exception(error.ToString()));
         }
 
-        public override async void ReceivedRemoteNotification(UIApplication application, NSDictionary userInfo)
-        {
-            await ProcessRemoteNotificationAsync(userInfo);
-        }
-
         public override async void DidReceiveRemoteNotification(UIApplication application, NSDictionary userInfo, Action<UIBackgroundFetchResult> completionHandler)
         {
-            await ProcessRemoteNotificationAsync(userInfo);
+            UIBackgroundFetchResult remoteNotificationResult;
 
-            // once the remote notification has been processed, invoke the completion handler.
-            completionHandler?.Invoke(UIBackgroundFetchResult.NewData);
-        }
-
-        private async System.Threading.Tasks.Task ProcessRemoteNotificationAsync(NSDictionary userInfo)
-        {
             // set up a cancellation token for processing within limits. the token will be cancelled
-            // if we run out of time or an exception is thrown in this method
-            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+            // if we run out of time or an exception is thrown in this method.
+            CancellationTokenSource cancellationTokenSource = null;
+            nint? receiveRemoteNotificationTaskId = null;
             try
             {
-                // the api docs indicate that we have about 30 seconds to process push notifications:  https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/pushing_updates_to_your_app_silently
-                // be on the conservative side and only run for 25 seconds in the background.
-                TimeSpan processingTimeLimit = TimeSpan.FromSeconds(25);
-                cancellationTokenSource.CancelAfter(processingTimeLimit);
-                cancellationTokenSource.Token.Register(() =>
+                cancellationTokenSource = new CancellationTokenSource();
+
+                // we have limited time to process remote notifications:  https://developer.apple.com/documentation/usernotifications/setting_up_a_remote_notification_server/pushing_updates_to_your_app_silently
+                // start background task to (1) obtain any possible background processing time and (2) get
+                // notified when background time is about to expire. we used to hard code a fixed amount
+                // of time (~30 seconds per above link), but this might change without us knowing about it.
+                SensusServiceHelper.Get().Logger.Log("Starting background task for remote notification processing.", LoggingLevel.Normal, GetType());
+                receiveRemoteNotificationTaskId = application.BeginBackgroundTask(() =>
                 {
-                    SensusServiceHelper.Get().Logger.Log("Cancelled token for remote notification processing due to iOS background time limit:  " + processingTimeLimit, LoggingLevel.Normal, GetType());
+                    SensusServiceHelper.Get().Logger.Log("Cancelling token for remote notification processing due to iOS background processing limitations.", LoggingLevel.Normal, GetType());
+                    cancellationTokenSource.Cancel();
                 });
 
                 NSDictionary aps = userInfo[new NSString("aps")] as NSDictionary;
@@ -290,36 +306,64 @@ namespace Sensus.iOS
                     Sound = (aps[new NSString("sound")] as NSString).ToString()
                 };
 
-                // guid might be blank
-                string guidString = (userInfo[new NSString("backend-key")] as NSString).ToString();
-                if (!string.IsNullOrWhiteSpace(guidString))
+                // backend key might be blank
+                string backendKeyString = (userInfo[new NSString("backend-key")] as NSString).ToString();
+                if (!string.IsNullOrWhiteSpace(backendKeyString))
                 {
-                    pushNotification.BackendKey = new Guid(guidString);
+                    pushNotification.BackendKey = new Guid(backendKeyString);
                 }
 
                 await SensusContext.Current.Notifier.ProcessReceivedPushNotificationAsync(pushNotification, cancellationTokenSource.Token);
-            }
-            catch (Exception processingException)
-            {
-                SensusException.Report("Exception while processing remote notification:  " + processingException.Message + ". Push notification dictionary content:  " + userInfo, processingException);
 
+                // even if the cancellation token was cancelled, we were still successful at downloading the updates.
+                // any amount of update application we were able to do in addition to the download is bonus. updates
+                // will continue to be applied on subsequent push notifications and health tests.
+                remoteNotificationResult = UIBackgroundFetchResult.NewData;
+            }
+            catch (Exception ex)
+            {
+                SensusException.Report("Exception while processing remote notification:  " + ex.Message + ". Push notification dictionary content:  " + userInfo, ex);
+
+                // we might have already cancelled the token, but we might have also just hit a bug. in
+                // either case, cancel the token and set the result accordingly.
                 try
                 {
                     cancellationTokenSource.Cancel();
                 }
                 catch (Exception)
                 { }
+
+                remoteNotificationResult = UIBackgroundFetchResult.Failed;
             }
             finally
             {
-                try
+                // we're done. ensure that the cancellation token cannot be cancelled any 
+                // longer (e.g., due to background time expiring above) by disposing it.
+                if (cancellationTokenSource != null)
                 {
-                    // we're done. ensure that the time-based cancellation above does not trigger any registered listeners.
-                    cancellationTokenSource.Dispose();
+                    try
+                    {
+                        cancellationTokenSource.Dispose();
+                    }
+                    catch (Exception)
+                    { }
                 }
-                catch (Exception)
-                { }
+
+                // end the background task
+                if (receiveRemoteNotificationTaskId.HasValue)
+                {
+                    try
+                    {
+                        SensusServiceHelper.Get().Logger.Log("Ending background task for remote notification processing.", LoggingLevel.Normal, GetType());
+                        application.EndBackgroundTask(receiveRemoteNotificationTaskId.Value);
+                    }
+                    catch (Exception)
+                    { }
+                }
             }
+
+            // invoke the completion handler to let ios know that, and how, we have finished.
+            completionHandler?.Invoke(remoteNotificationResult);
         }
 
         // This method should be used to release shared resources and it should store the application state.
@@ -327,10 +371,10 @@ namespace Sensus.iOS
         // when the user quits.
         public async override void DidEnterBackground(UIApplication uiApplication)
         {
-            nint backgroundTaskId = uiApplication.BeginBackgroundTask(() =>
+            nint enterBackgroundTaskId = uiApplication.BeginBackgroundTask(() =>
             {
                 // not much to do if we run out of time. just report it.
-                string message = "Ran out of background time after entering background.";
+                string message = "Ran out of background time while entering background.";
                 SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
                 SensusException.Report(message);
             });
@@ -345,41 +389,31 @@ namespace Sensus.iOS
             // save app state
             await serviceHelper.SaveAsync();
 
-            uiApplication.EndBackgroundTask(backgroundTaskId);
-        }
-
-        // This method is called as part of the transiton from background to active state.
-        public override void WillEnterForeground(UIApplication uiApplication)
-        {
+            uiApplication.EndBackgroundTask(enterBackgroundTaskId);
         }
 
         // This method is called when the application is about to terminate. Save data, if needed.
-        public override async void WillTerminate(UIApplication uiApplication)
+        public override void WillTerminate(UIApplication uiApplication)
         {
-            // remove all notifications, which will just confuse the user since the app has terminated.
-            (SensusContext.Current.Notifier as iOSNotifier).RemoveAllNotifications();
-
             // this method won't be called when the user kills the app using multitasking; however,
             // it should be called if the system kills the app when it's running in the background.
             // it should also be called if the system shuts down due to loss of battery power.
             // there doesn't appear to be a way to gracefully stop the app when the user kills it
-            // via multitasking...we'll have to live with that. also some online resources indicate 
-            // that no background time can be requested from within this method. so, instead of 
-            // beginning a background task, just wait for the calls to finish.
+            // via multitasking...we'll have to live with that.
 
             SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
 
-            // we're going to save the service helper and its protocols/probes in the running state
-            // so that they will be restarted if/when the user restarts the app. in order to properly 
-            // track running time for listening probes, we need to add a stop time manually since
-            // we won't call stop until after the service helper has been saved.
+            // we're not going to stop the service helper before termination, so that -- if and when
+            // the app relaunches -- protocols that are currently running will be restarted. therefore,
+            // we need to manually add a stop time to each running probe to ensure participation 
+            // rates are calculated correctly.
             foreach (Protocol protocol in serviceHelper.RegisteredProtocols)
             {
                 if (protocol.State == ProtocolState.Running)
                 {
                     foreach (Probe probe in protocol.Probes)
                     {
-                        if (probe.Running)
+                        if (probe.State == ProbeState.Running)
                         {
                             lock (probe.StartStopTimes)
                             {
@@ -390,8 +424,9 @@ namespace Sensus.iOS
                 }
             }
 
-            await serviceHelper.SaveAsync();
-            await serviceHelper.StopAsync();
+            // some online resources indicate that no background time can be requested from within this 
+            // method. so, instead of beginning a background task, just wait for the call to finish.
+            serviceHelper.SaveAsync().Wait();
         }
     }
 }

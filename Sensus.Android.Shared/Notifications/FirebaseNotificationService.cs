@@ -56,7 +56,7 @@ namespace Sensus.Android.Notifications
 
                 // acquire wake lock before this method returns to ensure that the device does not sleep prematurely, 
                 // interrupting any execution requested by the push notification. the service 
-                serviceHelper.KeepDeviceAwake();
+                serviceHelper.KeepDeviceAwakeAsync().Wait();
 
                 PushNotification pushNotification = new PushNotification
                 {
@@ -68,11 +68,11 @@ namespace Sensus.Android.Notifications
                     Sound = message.Data["sound"]
                 };
 
-                // guid might be blank
-                string guidString = message.Data["backend-key"];
-                if (!string.IsNullOrWhiteSpace(guidString))
+                // backend key might be blank
+                string backendKeyString = message.Data["backend-key"];
+                if (!string.IsNullOrWhiteSpace(backendKeyString))
                 {
-                    pushNotification.BackendKey = new Guid(guidString);
+                    pushNotification.BackendKey = new Guid(backendKeyString);
                 }
 
                 await SensusContext.Current.Notifier.ProcessReceivedPushNotificationAsync(pushNotification, CancellationToken.None);
@@ -83,7 +83,7 @@ namespace Sensus.Android.Notifications
             }
             finally
             {
-                serviceHelper?.LetDeviceSleep();
+                serviceHelper?.LetDeviceSleepAsync().Wait();
             }
         }
     }

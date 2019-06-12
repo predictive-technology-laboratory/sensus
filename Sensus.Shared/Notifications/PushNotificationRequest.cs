@@ -23,7 +23,7 @@ namespace Sensus.Notifications
     /// See [here](xref:push_notifications) for an overview of push notifications within Sensus. The <see cref="PushNotificationRequest"/>
     /// class represents push notification requests submitted to the <see cref="DataStores.Remote.RemoteDataStore"/> for processing by the 
     /// push notification backend. See the 
-    /// [example](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS/example-notification-request.json)
+    /// [examples](https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS/ec2-push-notifications/example-requests.json)
     /// for the JSON format of such requests.
     /// </summary>
     public class PushNotificationRequest

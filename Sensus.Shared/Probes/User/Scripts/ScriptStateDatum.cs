@@ -149,6 +149,12 @@ namespace Sensus.Probes.User.Scripts
             _runId = script.Id;
             _scheduledTimestamp = script.ScheduledRunTime;
             _triggerDatumId = script.CurrentDatum?.Id ?? "";
+
+            // set properties that are usually set when a datum is stored by a probe. we don't
+            // store the script state datum in a probe, but rather write it directly to the local
+            // data store.
+            ProtocolId = script.Runner.Probe.Protocol.Id;
+            ParticipantId = script.Runner.Probe.Protocol.ParticipantId;
         }
     }
 }

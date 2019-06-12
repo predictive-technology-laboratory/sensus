@@ -55,10 +55,6 @@
 			<string>Viewer</string>
 		</dict>
 	</array>
-	<key>FacebookAppID</key>
-	<string>873948892650954</string>
-	<key>FacebookDisplayName</key>
-	<string>Sensus</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
@@ -169,7 +165,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Sensus uses the camera to scan participation barcodes. Sensus will not record images or video.</string>
 	<key>CFBundleShortVersionString</key>
-	<string>15.14.1</string>
+	<string>15.16.0</string>
 	<key>CFBundleVersion</key>
 	<string>1.1.1</string>
 </dict>

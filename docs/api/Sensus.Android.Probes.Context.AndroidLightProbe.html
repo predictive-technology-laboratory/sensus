@@ -96,6 +96,8 @@
   <div classs="implements">
     <h5>Implements</h5>
     <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
+    <div><a class="xref" href="Sensus.Probes.IListeningProbe.html">IListeningProbe</a></div>
+    <div><a class="xref" href="Sensus.Probes.IProbe.html">IProbe</a></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -130,7 +132,7 @@
       <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_ProtectedStartAsync">ListeningProbe.ProtectedStartAsync()</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_StopAsync">ListeningProbe.StopAsync()</a>
+      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_ProtectedStopAsync">ListeningProbe.ProtectedStopAsync()</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_ResetAsync">ListeningProbe.ResetAsync()</a>
@@ -143,6 +145,9 @@
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_KeepDeviceAwake">ListeningProbe.KeepDeviceAwake</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_WillHaveSignificantNegativeImpactOnBattery">ListeningProbe.WillHaveSignificantNegativeImpactOnBattery</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_RawParticipation">ListeningProbe.RawParticipation</a>
@@ -175,6 +180,9 @@
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetParticipation">Probe.GetParticipation()</a>
     </div>
     <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StopAsync">Probe.StopAsync()</a>
+    </div>
+    <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_RestartAsync">Probe.RestartAsync()</a>
     </div>
     <div>
@@ -190,7 +198,7 @@
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_OriginallyEnabled">Probe.OriginallyEnabled</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Running">Probe.Running</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_State">Probe.State</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MostRecentStoreTimestamp">Probe.MostRecentStoreTimestamp</a>
@@ -230,7 +238,7 @@
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Android_Probes_Context_AndroidLightProbe_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class AndroidLightProbe : LightProbe, INotifyPropertyChanged</code></pre>
+    <pre><code class="lang-csharp hljs">public class AndroidLightProbe : LightProbe, INotifyPropertyChanged, IListeningProbe, IProbe</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -330,6 +338,12 @@
   <h3 id="implements">Implements</h3>
   <div>
       <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
+  </div>
+  <div>
+      <a class="xref" href="Sensus.Probes.IListeningProbe.html">IListeningProbe</a>
+  </div>
+  <div>
+      <a class="xref" href="Sensus.Probes.IProbe.html">IProbe</a>
   </div>
 </article>
           </div>

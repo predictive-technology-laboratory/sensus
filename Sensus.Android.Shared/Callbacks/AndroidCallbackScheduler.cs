@@ -109,7 +109,7 @@ namespace Sensus.Android.Callbacks
             return intent.GetBooleanExtra(SENSUS_CALLBACK_KEY, false);
         }
 
-        public async Task ServiceCallbackAsync(Intent intent)
+        public async Task RaiseCallbackAsync(Intent intent)
         {
             ScheduledCallback callback = TryGetCallback(intent.Action);
 
@@ -119,8 +119,6 @@ namespace Sensus.Android.Callbacks
             }
 
             SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
-
-            serviceHelper.Logger.Log("Servicing callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
 
             // if the user removes the main activity from the switcher, the service's process will be killed and restarted without notice, and 
             // we'll have no opportunity to unschedule repeating callbacks. when the service is restarted we'll reinitialize the service
@@ -136,25 +134,6 @@ namespace Sensus.Android.Callbacks
             {
                 await UnscheduleCallbackAsync(callback);
             }
-        }
-
-        public override async Task ServiceCallbackAsync(ScheduledCallback callback, string invocationId)
-        {
-            // service an intent that targets the given callback and invocation. 
-            // 
-            // 1) if this intent arrives with a valid invocation ID before the alarm-triggered 
-            //    intent arrives, this intent will be serviced and a new pending intent will 
-            //    be issued with an updated invocation id. in this case, the alarm-triggered 
-            //    pending intent will be ignored (if it fires) or canceled (when the updated 
-            //    pending intent is issued).
-            //
-            // 2) if this intent arrives after the alarm-triggered intent, or if the invocation
-            //    id is not valid, then this intent will not be serviced. the alarm-triggered
-            //    intent will be serviced instead, and the next pending intent will be scheduled
-            //    thereafter along with a correspondingly new push notification request.
-            Intent intent = CreateCallbackIntent(callback);
-            intent.PutExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY, invocationId);
-            await ServiceCallbackAsync(intent);
         }
 
         protected override void CancelLocalInvocation(ScheduledCallback callback)

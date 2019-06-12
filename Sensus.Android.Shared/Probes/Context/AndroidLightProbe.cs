@@ -46,16 +46,18 @@ namespace Sensus.Android.Probes.Context
             _lightListener.Initialize(MinDataStoreDelay);
         }
 
-        protected override Task StartListeningAsync()
+        protected override async Task StartListeningAsync()
         {
+            await base.StartListeningAsync();
+
             _lightListener.Start();
-            return Task.CompletedTask;
         }
 
-        protected override Task StopListeningAsync()
+        protected override async Task StopListeningAsync()
         {
+            await base.StopListeningAsync();
+
             _lightListener.Stop();
-            return Task.CompletedTask;
         }
     }
 }

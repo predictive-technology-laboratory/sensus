@@ -74,7 +74,7 @@ namespace Sensus.Probes.User.Scripts
         public static List<IScriptProbeAgent> GetAgents()
         {
             // get agents from the current assembly. they must be linked at compile time.
-            return Assembly.GetAssembly(typeof(ExampleScriptProbeAgent.ExampleRandomScriptProbeAgent))
+            return Assembly.GetExecutingAssembly()
                            .GetTypes()
                            .Where(t => !t.IsAbstract && t.GetInterfaces().Contains(typeof(IScriptProbeAgent)))
                            .Select(Activator.CreateInstance)
@@ -315,9 +315,9 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
-        public override async Task StopAsync()
+        protected override async Task ProtectedStopAsync()
         {
-            await base.StopAsync();
+            await base.ProtectedStopAsync();
 
             foreach (ScriptRunner scriptRunner in _scriptRunners)
             {

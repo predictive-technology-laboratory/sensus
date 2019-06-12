@@ -51,11 +51,6 @@ namespace Sensus.Android.Probes
 
         public void Start()
         {
-            if (_sensor == null)
-            {
-                return;
-            }
-
             lock (_locker)
             {
                 if (_listening)
@@ -64,30 +59,29 @@ namespace Sensus.Android.Probes
                 }
                 else
                 {
+                    // use the largest delay that will provide samples at least as fast as the desired rate:  https://developer.android.com/guide/topics/sensors/sensors_overview.html#sensors-monitor
+                    SensorDelay androidSensorDelay = SensorDelay.Fastest;
+                    if (_sensorDelay.HasValue)
+                    {
+                        long sensorDelayMicroseconds = _sensorDelay.Value.Ticks / 10;
+                        if (sensorDelayMicroseconds >= 200000)
+                        {
+                            androidSensorDelay = SensorDelay.Normal;
+                        }
+                        else if (sensorDelayMicroseconds >= 60000)
+                        {
+                            androidSensorDelay = SensorDelay.Ui;
+                        }
+                        else if (sensorDelayMicroseconds >= 20000)
+                        {
+                            androidSensorDelay = SensorDelay.Game;
+                        }
+                    }
+
+                    _sensorManager.RegisterListener(this, _sensor, androidSensorDelay);
                     _listening = true;
                 }
             }
-
-            // use the largest delay that will provide samples at the desired rate:  https://developer.android.com/guide/topics/sensors/sensors_overview.html#sensors-monitor
-            SensorDelay sensorDelay = SensorDelay.Fastest;
-            if (_sensorDelay.HasValue)
-            {
-                long sensorDelayMicroseconds = _sensorDelay.Value.Ticks / 10;
-                if (sensorDelayMicroseconds >= 200000)
-                {
-                    sensorDelay = SensorDelay.Normal;
-                }
-                else if (sensorDelayMicroseconds >= 60000)
-                {
-                    sensorDelay = SensorDelay.Ui;
-                }
-                else if (sensorDelayMicroseconds >= 20000)
-                {
-                    sensorDelay = SensorDelay.Game;
-                }
-            }
-
-            _sensorManager.RegisterListener(this, _sensor, sensorDelay);
         }
 
         public void Stop()
@@ -101,6 +95,7 @@ namespace Sensus.Android.Probes
             {
                 if (_listening)
                 {
+                    _sensorManager.UnregisterListener(this);
                     _listening = false;
                 }
                 else
@@ -108,8 +103,6 @@ namespace Sensus.Android.Probes
                     return;
                 }
             }
-
-            _sensorManager.UnregisterListener(this);
         }
 
         public async void OnSensorChanged(SensorEvent e)

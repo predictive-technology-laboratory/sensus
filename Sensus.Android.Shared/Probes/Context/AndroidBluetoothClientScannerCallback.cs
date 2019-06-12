@@ -21,6 +21,7 @@ using System.Threading;
 using Sensus.Probes;
 using Android.OS;
 using Android.Bluetooth;
+using Sensus.Probes.Context;
 
 namespace Sensus.Android.Probes.Context
 {
@@ -60,9 +61,9 @@ namespace Sensus.Android.Probes.Context
             }
         }
 
-        public async Task<List<Tuple<string, DateTimeOffset>>> ReadPeripheralCharacteristicValuesAsync(CancellationToken cancellationToken)
+        public async Task<List<BluetoothDeviceProximityDatum>> ReadPeripheralCharacteristicValuesAsync(CancellationToken cancellationToken)
         {
-            List<Tuple<string, DateTimeOffset>> characteristicValueTimestamps = new List<Tuple<string, DateTimeOffset>>();
+            List<BluetoothDeviceProximityDatum> bluetoothDeviceProximityData = new List<BluetoothDeviceProximityDatum>();
 
             // copy list of peripherals to read. note that the same device may be reported more than once. read each once.
             List<ScanResult> scanResults;
@@ -71,7 +72,7 @@ namespace Sensus.Android.Probes.Context
                 scanResults = _scanResults.GroupBy(scanResult => scanResult.Device.Address).Select(group => group.First()).ToList();
             }
 
-            _probe.ReadAttemptCount += scanResults.Count;
+			_probe.ReadAttemptCount += scanResults.Count;
 
             // read characteristic from each peripheral
             foreach (ScanResult scanResult in scanResults)
@@ -86,15 +87,22 @@ namespace Sensus.Android.Probes.Context
                 try
                 {
                     readCallback = new AndroidBluetoothClientGattCallback(_service, _characteristic);
-                    scanResult.Device.ConnectGatt(global::Android.App.Application.Context, false, readCallback);
-                    string characteristicValue = await readCallback.ReadCharacteristicValueAsync(cancellationToken);
+					BluetoothGatt gatt = scanResult.Device.ConnectGatt(global::Android.App.Application.Context, false, readCallback);
+					BluetoothGattService service = gatt.GetService(_service.Uuid);
+					string characteristicValue = null;
+					bool runningSensus = service != null;
 
-                    if (characteristicValue != null)
+					if (runningSensus)
+					{
+						characteristicValue = await readCallback.ReadCharacteristicValueAsync(cancellationToken);
+					}
+
+                    if (_probe.DiscoverAll || runningSensus)
                     {
                         long msSinceEpoch = Java.Lang.JavaSystem.CurrentTimeMillis() - SystemClock.ElapsedRealtime() + scanResult.TimestampNanos / 1000000;
                         DateTimeOffset encounterTimestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(msSinceEpoch);
 
-                        characteristicValueTimestamps.Add(new Tuple<string, DateTimeOffset>(characteristicValue, encounterTimestamp));
+                        bluetoothDeviceProximityData.Add(new BluetoothDeviceProximityDatum(encounterTimestamp, characteristicValue, scanResult.Device.Address, scanResult.Device.Name, scanResult.Rssi, scanResult.Device.BondState != Bond.None, runningSensus));
                         _probe.ReadSuccessCount++;
                     }
                 }
@@ -108,7 +116,30 @@ namespace Sensus.Android.Probes.Context
                 }
             }
 
-            return characteristicValueTimestamps;
+            return bluetoothDeviceProximityData;
         }
-    }
+
+		public List<AndroidBluetoothDevice> GetDiscoveredDevices()
+		{
+			List<AndroidBluetoothDevice> scanResults = new List<AndroidBluetoothDevice>();
+
+			lock (_scanResults)
+			{
+				scanResults = _scanResults.Select(x =>
+				{
+					long msSinceEpoch = Java.Lang.JavaSystem.CurrentTimeMillis() - SystemClock.ElapsedRealtime() + x.TimestampNanos / 1000000;
+					DateTimeOffset encounterTimestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(msSinceEpoch);
+
+					return new AndroidBluetoothDevice
+					{
+						Device = x.Device,
+						Rssi = x.Rssi,
+						Timestamp = encounterTimestamp
+					};
+				}).ToList();
+			}
+
+			return scanResults;
+		}
+	}
 }

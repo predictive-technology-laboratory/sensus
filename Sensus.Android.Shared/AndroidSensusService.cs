@@ -178,7 +178,7 @@ namespace Sensus.Android
                 }
 
                 // acquire wake lock before this method returns to ensure that the device does not sleep prematurely, interrupting the execution of a callback.
-                serviceHelper.KeepDeviceAwake();
+                serviceHelper.KeepDeviceAwakeAsync().Wait();
 
                 Task.Run(async () =>
                 {
@@ -199,7 +199,7 @@ namespace Sensus.Android
 
                             if (callbackScheduler.IsCallback(intent))
                             {
-                                await callbackScheduler.ServiceCallbackAsync(intent);
+                                await callbackScheduler.RaiseCallbackAsync(intent);
                             }
                         }
                     }
@@ -209,7 +209,7 @@ namespace Sensus.Android
                     }
                     finally
                     {
-                        serviceHelper.LetDeviceSleep();
+                        serviceHelper.LetDeviceSleepAsync().Wait();
                     }
                 });
             }

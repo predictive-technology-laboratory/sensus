@@ -29,6 +29,10 @@ using Newtonsoft.Json;
 using Sensus.Encryption;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
+using System.Net;
+using Sensus.Adaptation;
+using Newtonsoft.Json.Linq;
 
 namespace Sensus.UI
 {
@@ -307,6 +311,105 @@ namespace Sensus.UI
             views.Add(changeEncryptionKeyButton);
             #endregion
 
+            #region sensing agent
+            Button setAgentButton = new Button
+            {
+                Text = "Set Agent" + (_protocol.Agent == null ? "" : ":  " + _protocol.Agent.Id),
+                FontSize = 20,
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
+
+            setAgentButton.Clicked += async (sender, e) =>
+            {
+                await SetAgentButton_Clicked(setAgentButton);
+            };
+
+            views.Add(setAgentButton);
+
+            Button clearAgentButton = new Button
+            {
+                Text = "Clear Agent",
+                FontSize = 20,
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
+
+            clearAgentButton.Clicked += async (sender, e) =>
+            {
+                if (_protocol.Agent != null)
+                {
+                    if (await DisplayAlert("Confirm", "Are you sure you wish to clear the sensing agent?", "Yes", "No"))
+                    {
+                        _protocol.Agent = null;
+                        setAgentButton.Text = "Set Agent";
+                    }
+                }
+
+                await SensusServiceHelper.Get().FlashNotificationAsync("Sensing agent cleared.");
+            };
+
+            Button viewAgentStateButton = new Button
+            {
+                Text = "View Agent State",
+                FontSize = 20,
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
+
+            viewAgentStateButton.Clicked += async (sender, e) =>
+            {
+                if (_protocol.Agent == null)
+                {
+                    await SensusServiceHelper.Get().FlashNotificationAsync("No agent set.");
+                }
+                else
+                {
+                    await Navigation.PushAsync(new SensingAgentPage(_protocol.Agent));
+                }
+            };
+
+            views.Add(viewAgentStateButton);
+
+            Button setAgentPolicyButton = new Button
+            {
+                Text = "Set Agent Policy",
+                FontSize = 20,
+                HorizontalOptions = LayoutOptions.FillAndExpand
+            };
+
+            setAgentPolicyButton.Clicked += async (sender, e) =>
+            {
+                if (_protocol.Agent == null)
+                {
+                    await SensusServiceHelper.Get().FlashNotificationAsync("No agent set.");
+                }
+                else
+                {
+                    string policyJSON = await SensusServiceHelper.Get().PromptForAndReadTextFileAsync();
+
+                    if (string.IsNullOrWhiteSpace(policyJSON))
+                    {
+                        await SensusServiceHelper.Get().FlashNotificationAsync("Empty policy selected. No changes made.");
+                    }
+                    else
+                    {
+                        try
+                        {
+                            JObject policyObject = JObject.Parse(policyJSON);
+                            await _protocol.Agent.SetPolicyAsync(policyObject);
+                            await SensusServiceHelper.Get().FlashNotificationAsync("Policy set.");
+                        }
+                        catch (Exception ex)
+                        {
+                            string message = "Error setting policy:  " + ex.Message;
+                            SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+                            await SensusServiceHelper.Get().FlashNotificationAsync(message);
+                        }
+                    }
+                }
+            };
+
+            views.Add(setAgentPolicyButton);
+            #endregion
+
             #region lock
             Button lockButton = new Button
             {
@@ -410,6 +513,136 @@ namespace Sensus.UI
             base.OnDisappearing();
 
             _protocol.StateChanged -= _protocolStateChangedAction;
+        }
+
+        private async Task SetAgentButton_Clicked(Button setAgentButton)
+        {
+            List<Input> agentSelectionInputs = new List<Input>();
+
+            // show any existing agents
+            List<SensingAgent> currentAgents = null;
+
+            // android allows us to dynamically load code assemblies, but iOS does not. so, the current approach
+            // is to only support dynamic loading on android and force compile-time assembly inclusion on ios.
+#if __ANDROID__
+            // try to extract agents from a previously loaded assembly
+            try
+            {
+              currentAgents = _protocol.GetAgents(_protocol.AgentAssemblyBytes);
+            }
+            catch (Exception)
+            { }
+#elif __IOS__
+            currentAgents = _protocol.GetAgents();
+
+            // display warning message, as there is no other option to load agents.
+            if (currentAgents.Count == 0)
+            {
+                await SensusServiceHelper.Get().FlashNotificationAsync("No agents available.");
+                return;
+            }
+#endif
+
+            // let the user pick from currently available agents
+            ItemPickerPageInput currentAgentsPicker = null;
+            if (currentAgents != null && currentAgents.Count > 0)
+            {
+                currentAgentsPicker = new ItemPickerPageInput("Available agent" + (currentAgents.Count > 1 ? "s" : "") + ":", currentAgents.Select(agent => agent.Id).Cast<object>().ToList())
+                {
+                    Required = false
+                };
+
+                agentSelectionInputs.Add(currentAgentsPicker);
+            }
+
+#if __ANDROID__
+            // add option to scan qr code to import a new assembly
+            QrCodeInput agentAssemblyUrlQrCodeInput = new QrCodeInput(QrCodePrefix.SENSING_AGENT, "URL:", false, "Agent URL:")
+            {
+                Required = false
+            };
+
+            agentSelectionInputs.Add(agentAssemblyUrlQrCodeInput);
+#endif
+
+            List<Input> completedInputs = await SensusServiceHelper.Get().PromptForInputsAsync("Sensing Agent", agentSelectionInputs, null, true, "Set", null, null, null, false);
+
+            if (completedInputs == null)
+            {
+                return;
+            }
+
+            // check for QR code on android. this doesn't exist on ios.
+            string agentURL = null;
+
+#if __ANDROID__
+            agentURL = agentAssemblyUrlQrCodeInput.Value?.ToString();
+#endif
+
+            // if there is no URL, check if the user has selected an agent.
+            if (string.IsNullOrWhiteSpace(agentURL))
+            {
+                if (currentAgentsPicker != null)
+                {
+                    string selectedAgentId = (currentAgentsPicker.Value as List<object>).FirstOrDefault() as string;
+
+                    SensingAgent selectedAgent = null;
+
+                    if (selectedAgentId != null)
+                    {
+                        selectedAgent = currentAgents.First(currentAgent => currentAgent.Id == selectedAgentId);
+                    }
+
+                    // set the selected agent, watching out for a null (clearing) selection that needs to be confirmed
+                    if (selectedAgentId != null || await DisplayAlert("Confirm", "Are you sure you wish to clear the sensing agent?", "Yes", "No"))
+                    {
+                        _protocol.Agent = selectedAgent;
+
+                        setAgentButton.Text = "Set Agent" + (_protocol.Agent == null ? "" : ":  " + _protocol.Agent.Id);
+
+                        if (_protocol.Agent == null)
+                        {
+                            await SensusServiceHelper.Get().FlashNotificationAsync("Sensing agent cleared.");
+                        }
+                    }
+                }
+            }
+#if __ANDROID__
+            else
+            {
+                // download agent assembly from scanned QR code
+                byte[] downloadedBytes = null;
+                string downloadErrorMessage = null;
+                try
+                {
+                    // download the assembly and extract agents
+                    downloadedBytes = _protocol.AgentAssemblyBytes = await new WebClient().DownloadDataTaskAsync(new Uri(agentURL));
+                    List<SensingAgent> qrCodeAgents = _protocol.GetAgents(downloadedBytes);
+
+                    if (qrCodeAgents.Count == 0)
+                    {
+                        throw new Exception("No agents were present in the specified file.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    downloadErrorMessage = ex.Message;
+                }
+
+                // if error message is null, then we have 1 or more agents in the downloaded assembly.
+                if (downloadErrorMessage == null)
+                {
+                    // redisplay the current input prompt including the agents we just downloaded
+                    _protocol.AgentAssemblyBytes = downloadedBytes;
+                    await SetAgentButton_Clicked(setAgentButton);
+                }
+                else
+                {
+                    SensusServiceHelper.Get().Logger.Log(downloadErrorMessage, LoggingLevel.Normal, GetType());
+                    await SensusServiceHelper.Get().FlashNotificationAsync(downloadErrorMessage);
+                }
+            }
+#endif
         }
     }
 }

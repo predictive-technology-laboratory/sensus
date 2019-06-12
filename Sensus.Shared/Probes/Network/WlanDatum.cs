@@ -22,6 +22,7 @@ namespace Sensus.Probes.Network
     public class WlanDatum : Datum, IWlanDatum
     {
         private string _accessPointBSSID;
+        private string _accessPointRssi = null;
 
         [StringProbeTriggerProperty("Wireless Access Point")]
         [Anonymizable("Wireless Access Point:", typeof(StringHashAnonymizer), false)]
@@ -58,6 +59,14 @@ namespace Sensus.Probes.Network
         {
             _accessPointBSSID = accessPointBSSID == null ? "" : accessPointBSSID;
         }
+
+        public WlanDatum(DateTimeOffset timestamp, string accessPointBSSID, string accessPointRssi)
+            : base(timestamp)
+        {
+            _accessPointBSSID = accessPointBSSID == null ? "" : accessPointBSSID;
+            _accessPointRssi = accessPointRssi == null ? "" : accessPointRssi;
+        }
+
 
         public override string ToString()
         {

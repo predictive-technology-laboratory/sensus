@@ -49,7 +49,7 @@ namespace Sensus.Probes.Location
         protected override async Task InitializeAsync()
         {
             await base.InitializeAsync();
-            
+
             if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable GPS in the future

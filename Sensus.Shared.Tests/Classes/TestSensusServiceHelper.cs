@@ -101,11 +101,6 @@ namespace Sensus.Tests.Classes
             throw new NotImplementedException();
         }
 
-        public override Task PromptForAndReadTextFileAsync(string promptTitle, Action<string> callback)
-        {
-            throw new NotImplementedException();
-        }
-
         public override Task<string> RunVoicePromptAsync(string prompt, Action postDisplayCallback)
         {
             throw new NotImplementedException();
@@ -122,6 +117,16 @@ namespace Sensus.Tests.Classes
         }
 
         public override Task TextToSpeechAsync(string text)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task KeepDeviceAwakeAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Task LetDeviceSleepAsync()
         {
             throw new NotImplementedException();
         }

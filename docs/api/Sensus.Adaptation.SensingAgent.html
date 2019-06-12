@@ -1,0 +1,1139 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Class SensingAgent
+   | Sensus Documentation </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="Class SensingAgent
+   | Sensus Documentation ">
+    <meta name="generator" content="docfx 2.38.1.0">
+    
+    <link rel="shortcut icon" href="../images/favicon.ico">
+    <link rel="stylesheet" href="../styles/docfx.vendor.css">
+    <link rel="stylesheet" href="../styles/docfx.css">
+    <link rel="stylesheet" href="../styles/main.css">
+    <meta property="docfx:navrel" content="../toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+    <meta property="docfx:rel" content="../">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix" data-offset="120">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="../index.html">
+                <img id="logo" class="svg" src="../images/group-of-members-users-icon.png" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div class="container body-content">
+        
+        <div id="search-results">
+          <div class="search-list"></div>
+          <div class="sr-items">
+            <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
+          </div>
+          <ul id="pagination"></ul>
+        </div>
+      </div>
+      <div role="main" class="container body-content hide-when-search">
+        
+        <div class="sidenav hide-when-search">
+          <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
+          <div class="sidetoggle collapse" id="sidetoggle">
+            <div id="sidetoc"></div>
+          </div>
+        </div>
+        <div class="article row grid-right">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="Sensus.Adaptation.SensingAgent">
+  
+  
+  <h1 id="Sensus_Adaptation_SensingAgent" data-uid="Sensus.Adaptation.SensingAgent" class="text-break">Class SensingAgent
+  </h1>
+  <div class="markdown level0 summary"><p>An agent that observes data collected by the app and controls sensing parameters. See the
+<a class="xref" href="../articles/adaptive-sensing.html">adaptive sensing</a> article for more information.</p>
+</div>
+  <div class="markdown level0 conceptual"></div>
+  <div class="inheritance">
+    <h5>Inheritance</h5>
+    <div class="level0"><span class="xref">System.Object</span></div>
+    <div class="level1"><span class="xref">SensingAgent</span></div>
+      <div class="level2"><a class="xref" href="ExampleSensingAgent.ExampleAccelerationSensingAgent.html">ExampleAccelerationSensingAgent</a></div>
+      <div class="level2"><a class="xref" href="Sensus.Adaptation.AsplSensingAgent.html">AsplSensingAgent</a></div>
+  </div>
+  <div classs="implements">
+    <h5>Implements</h5>
+    <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
+  </div>
+  <h6><strong>Namespace</strong>: <a class="xref" href="Sensus.Adaptation.html">Sensus.Adaptation</a></h6>
+  <h6><strong>Assembly</strong>: Sensus.Shared.NuGet.dll</h6>
+  <h5 id="Sensus_Adaptation_SensingAgent_syntax">Syntax</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract class SensingAgent : Object, INotifyPropertyChanged</code></pre>
+  </div>
+  <h3 id="constructors">Constructors
+  </h3>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent__ctor_" data-uid="Sensus.Adaptation.SensingAgent.#ctor*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent__ctor_System_String_System_String_System_TimeSpan_" data-uid="Sensus.Adaptation.SensingAgent.#ctor(System.String,System.String,System.TimeSpan)">SensingAgent(String, String, TimeSpan)</h4>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <span class="xref">Sensus.SensingAgent</span> class, without a repeating action call.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected SensingAgent(string id, string description, TimeSpan controlCompletionCheckInterval)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">id</span></td>
+        <td><p>Identifier.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">description</span></td>
+        <td><p>Description.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="parametername">controlCompletionCheckInterval</span></td>
+        <td><p>Control completion check interval.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent__ctor_" data-uid="Sensus.Adaptation.SensingAgent.#ctor*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent__ctor_System_String_System_String_System_TimeSpan_System_TimeSpan_System_TimeSpan_" data-uid="Sensus.Adaptation.SensingAgent.#ctor(System.String,System.String,System.TimeSpan,System.TimeSpan,System.TimeSpan)">SensingAgent(String, String, TimeSpan, TimeSpan, TimeSpan)</h4>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <span class="xref">Sensus.SensingAgent</span> class, with a repeating action call.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected SensingAgent(string id, string description, TimeSpan controlCompletionCheckInterval, TimeSpan actionInterval, TimeSpan observationDuration)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">id</span></td>
+        <td><p>Identifier.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><span class="parametername">description</span></td>
+        <td><p>Description.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="parametername">controlCompletionCheckInterval</span></td>
+        <td><p>Control completion check interval.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="parametername">actionInterval</span></td>
+        <td><p>Action interval.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><span class="parametername">observationDuration</span></td>
+        <td><p>Observation duration.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="properties">Properties
+  </h3>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_ActionInterval_" data-uid="Sensus.Adaptation.SensingAgent.ActionInterval*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_ActionInterval" data-uid="Sensus.Adaptation.SensingAgent.ActionInterval">ActionInterval</h4>
+  <div class="markdown level1 summary"><p>Interval of time between successive calls to <a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_ActAsync_System_Threading_CancellationToken_">ActAsync(CancellationToken)</a>. If <code>null</code>,
+then a repeating call to <a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_ActAsync_System_Threading_CancellationToken_">ActAsync(CancellationToken)</a> will not be made and only calls to 
+<a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_ObserveAsync_Sensus_IDatum_System_Threading_CancellationToken_">ObserveAsync(IDatum, CancellationToken)</a> will provide opportunities for the 
+<a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a> to control sensing parameters.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Nullable&lt;TimeSpan&gt; ActionInterval { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td><p>The action interval.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_ActionIntervalToleranceAfter_" data-uid="Sensus.Adaptation.SensingAgent.ActionIntervalToleranceAfter*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_ActionIntervalToleranceAfter" data-uid="Sensus.Adaptation.SensingAgent.ActionIntervalToleranceAfter">ActionIntervalToleranceAfter</h4>
+  <div class="markdown level1 summary"><p>Tolerance for <a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_ActionInterval">ActionInterval</a> after the scheduled time, if doing so 
+will increase the number of batched actions and thereby decrease battery consumption.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Nullable&lt;TimeSpan&gt; ActionIntervalToleranceAfter { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td><p>The delay tolerance before.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_ActionIntervalToleranceBefore_" data-uid="Sensus.Adaptation.SensingAgent.ActionIntervalToleranceBefore*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_ActionIntervalToleranceBefore" data-uid="Sensus.Adaptation.SensingAgent.ActionIntervalToleranceBefore">ActionIntervalToleranceBefore</h4>
+  <div class="markdown level1 summary"><p>Tolerance for <a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_ActionInterval">ActionInterval</a> before the scheduled time, if doing so 
+will increase the number of batched actions and thereby decrease battery consumption.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Nullable&lt;TimeSpan&gt; ActionIntervalToleranceBefore { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td><p>The delay tolerance before.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_ActiveObservationDuration_" data-uid="Sensus.Adaptation.SensingAgent.ActiveObservationDuration*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_ActiveObservationDuration" data-uid="Sensus.Adaptation.SensingAgent.ActiveObservationDuration">ActiveObservationDuration</h4>
+  <div class="markdown level1 summary"><p>How long to observe data before checking control criteria. If <a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_ActionInterval">ActionInterval</a>
+is not <code>null</code>, then this value may not be <code>null</code> either. If <a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_ActionInterval">ActionInterval</a>
+is <code>null</code>, then this value is ignored.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Nullable&lt;TimeSpan&gt; ActiveObservationDuration { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td><p>The observation interval.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_ControlCompletionCheckInterval_" data-uid="Sensus.Adaptation.SensingAgent.ControlCompletionCheckInterval*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_ControlCompletionCheckInterval" data-uid="Sensus.Adaptation.SensingAgent.ControlCompletionCheckInterval">ControlCompletionCheckInterval</h4>
+  <div class="markdown level1 summary"><p>How much time between checks for control completion.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TimeSpan ControlCompletionCheckInterval { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.TimeSpan</span></td>
+        <td><p>The control completion check interval.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_Description_" data-uid="Sensus.Adaptation.SensingAgent.Description*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_Description" data-uid="Sensus.Adaptation.SensingAgent.Description">Description</h4>
+  <div class="markdown level1 summary"><p>Readable description for the <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Description { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The description.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_Id_" data-uid="Sensus.Adaptation.SensingAgent.Id*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_Id" data-uid="Sensus.Adaptation.SensingAgent.Id">Id</h4>
+  <div class="markdown level1 summary"><p>Unique identifier for the <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string Id { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The identifier.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_MaxObservedDataAge_" data-uid="Sensus.Adaptation.SensingAgent.MaxObservedDataAge*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_MaxObservedDataAge" data-uid="Sensus.Adaptation.SensingAgent.MaxObservedDataAge">MaxObservedDataAge</h4>
+  <div class="markdown level1 summary"><p>Maximum age of observed <a class="xref" href="Sensus.IDatum.html">IDatum</a> readings to retain for state estimation. Can be
+<code>null</code> to place no limit on the age of retained readings; however, either
+<a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_MaxObservedDataCount">MaxObservedDataCount</a> or <a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_MaxObservedDataAge">MaxObservedDataAge</a> should be enabled, or
+readings will be retained indefinitely, likely exhausting memory over time. This setting applies
+to all <a class="xref" href="Sensus.IDatum.html">IDatum</a> regardless of type. As different types of <a class="xref" href="Sensus.IDatum.html">IDatum</a> have 
+dramatically different data rates (e.g., <a class="xref" href="Sensus.Probes.Movement.IAccelerometerDatum.html">IAccelerometerDatum</a> versus
+<a class="xref" href="Sensus.Probes.Movement.IActivityDatum.html">IActivityDatum</a>), this should be set sufficiently high to avoid
+data loss.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Nullable&lt;TimeSpan&gt; MaxObservedDataAge { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.TimeSpan</span>&gt;</td>
+        <td><p>The max observed data age.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_MaxObservedDataCount_" data-uid="Sensus.Adaptation.SensingAgent.MaxObservedDataCount*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_MaxObservedDataCount" data-uid="Sensus.Adaptation.SensingAgent.MaxObservedDataCount">MaxObservedDataCount</h4>
+  <div class="markdown level1 summary"><p>Maximum number of observed <a class="xref" href="Sensus.IDatum.html">IDatum</a> readings to retain for state estimation. Can be
+<code>null</code> to place no limit on the number of retained readings; however, either
+<a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_MaxObservedDataCount">MaxObservedDataCount</a> or <a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_MaxObservedDataAge">MaxObservedDataAge</a> should be enabled, or
+readings will be retained indefinitely, likely exhausting memory over time. This setting applies
+to all <a class="xref" href="Sensus.IDatum.html">IDatum</a> regardless of type. As different types of <a class="xref" href="Sensus.IDatum.html">IDatum</a> have 
+dramatically different data rates (e.g., <a class="xref" href="Sensus.Probes.Movement.IAccelerometerDatum.html">IAccelerometerDatum</a> versus
+<a class="xref" href="Sensus.Probes.Movement.IActivityDatum.html">IActivityDatum</a>), this should be set sufficiently high to avoid
+data loss.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Nullable&lt;int&gt; MaxObservedDataCount { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Nullable</span>&lt;<span class="xref">System.Int32</span>&gt;</td>
+        <td><p>The max observed data count.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_Protocol_" data-uid="Sensus.Adaptation.SensingAgent.Protocol*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_Protocol" data-uid="Sensus.Adaptation.SensingAgent.Protocol">Protocol</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Sensus.IProtocol.html">IProtocol</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IProtocol Protocol { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.IProtocol.html">IProtocol</a></td>
+        <td><p>The protocol.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_SensusServiceHelper_" data-uid="Sensus.Adaptation.SensingAgent.SensusServiceHelper*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_SensusServiceHelper" data-uid="Sensus.Adaptation.SensingAgent.SensusServiceHelper">SensusServiceHelper</h4>
+  <div class="markdown level1 summary"><p>Gets the <a class="xref" href="Sensus.ISensusServiceHelper.html">ISensusServiceHelper</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ISensusServiceHelper SensusServiceHelper { get; set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.ISensusServiceHelper.html">ISensusServiceHelper</a></td>
+        <td><p>The sensus service helper.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_State_" data-uid="Sensus.Adaptation.SensingAgent.State*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_State" data-uid="Sensus.Adaptation.SensingAgent.State">State</h4>
+  <div class="markdown level1 summary"><p>Current <a class="xref" href="Sensus.Adaptation.SensingAgentState.html">SensingAgentState</a> of the <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SensingAgentState State { get; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Adaptation.SensingAgentState.html">SensingAgentState</a></td>
+        <td><p>The state.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_StateDescription_" data-uid="Sensus.Adaptation.SensingAgent.StateDescription*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_StateDescription" data-uid="Sensus.Adaptation.SensingAgent.StateDescription">StateDescription</h4>
+  <div class="markdown level1 summary"><p>A human-readable description of the <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a>&apos;s current state. Used to track
+the state trajectory of the <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a> and to tag each <a class="xref" href="Sensus.IDatum.html">IDatum</a>
+produced while the <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a> is exerting sensing control.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string StateDescription { get; protected set; }</code></pre>
+  </div>
+  <h5 class="propertyValue">Property Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td><p>The state description.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="methods">Methods
+  </h3>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_ActAsync_" data-uid="Sensus.Adaptation.SensingAgent.ActAsync*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_ActAsync_System_Threading_CancellationToken_" data-uid="Sensus.Adaptation.SensingAgent.ActAsync(System.Threading.CancellationToken)">ActAsync(CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Requests that the <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a> consider beginning sensing control.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;SensingAgent.ControlCompletionCheck&gt; ActAsync(CancellationToken cancellationToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>Cancellation token.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Sensus.Adaptation.SensingAgent.ControlCompletionCheck.html">SensingAgent.ControlCompletionCheck</a>&gt;</td>
+        <td><p>A <a class="xref" href="Sensus.Adaptation.SensingAgent.ControlCompletionCheck.html">SensingAgent.ControlCompletionCheck</a> to be configured upon return, or <code>null</code> for no such check.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_AverageLinearAccelerationMagnitudeExceedsThreshold_" data-uid="Sensus.Adaptation.SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_AverageLinearAccelerationMagnitudeExceedsThreshold_System_Double_" data-uid="Sensus.Adaptation.SensingAgent.AverageLinearAccelerationMagnitudeExceedsThreshold(System.Double)">AverageLinearAccelerationMagnitudeExceedsThreshold(Double)</h4>
+  <div class="markdown level1 summary"><p>Checks whether the acceleration magnitude exceeds a threshold.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected bool AverageLinearAccelerationMagnitudeExceedsThreshold(double threshold)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Double</span></td>
+        <td><span class="parametername">threshold</span></td>
+        <td><p>Threshold.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code>, if average linear magnitude exceeds threshold, <code>false</code> otherwise.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_GetObservedData_" data-uid="Sensus.Adaptation.SensingAgent.GetObservedData*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_GetObservedData__1" data-uid="Sensus.Adaptation.SensingAgent.GetObservedData``1">GetObservedData&lt;DatumInterface&gt;()</h4>
+  <div class="markdown level1 summary"><p>Gets observed <a class="xref" href="Sensus.IDatum.html">IDatum</a> objects for a particular type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected List&lt;IDatum&gt; GetObservedData&lt;DatumInterface&gt;()
+    where DatumInterface : IDatum</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.IDatum.html">IDatum</a>&gt;</td>
+        <td><p>The observed data.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="typeParameters">Type Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="parametername">DatumInterface</span></td>
+        <td><p>The type of data to retrieve.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_InitializeAsync_" data-uid="Sensus.Adaptation.SensingAgent.InitializeAsync*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_InitializeAsync" data-uid="Sensus.Adaptation.SensingAgent.InitializeAsync">InitializeAsync()</h4>
+  <div class="markdown level1 summary"><p>Initializes the <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a>. This is called when the <a class="xref" href="Sensus.IProtocol.html">IProtocol</a> associated with this
+<a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a> is started.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public virtual Task InitializeAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_IsNearSurface_" data-uid="Sensus.Adaptation.SensingAgent.IsNearSurface*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_IsNearSurface" data-uid="Sensus.Adaptation.SensingAgent.IsNearSurface">IsNearSurface()</h4>
+  <div class="markdown level1 summary"><p>Checks whether device is near a surface, according to the most recent <a class="xref" href="Sensus.Probes.Location.IProximityDatum.html">IProximityDatum</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected bool IsNearSurface()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code>, if surface was neared, <code>false</code> otherwise.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_ObserveAsync_" data-uid="Sensus.Adaptation.SensingAgent.ObserveAsync*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_ObserveAsync_Sensus_IDatum_System_Threading_CancellationToken_" data-uid="Sensus.Adaptation.SensingAgent.ObserveAsync(Sensus.IDatum,System.Threading.CancellationToken)">ObserveAsync(IDatum, CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Asks the agent to observe an <a class="xref" href="Sensus.IDatum.html">IDatum</a> object that was generated by Sensus, either during
+<a class="xref" href="Sensus.Adaptation.SensingAgentState.html#Sensus_Adaptation_SensingAgentState_OpportunisticObservation">OpportunisticObservation</a> or during <a class="xref" href="Sensus.Adaptation.SensingAgentState.html#Sensus_Adaptation_SensingAgentState_ActiveObservation">ActiveObservation</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task&lt;SensingAgent.ControlCompletionCheck&gt; ObserveAsync(IDatum datum, CancellationToken cancellationToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.IDatum.html">IDatum</a></td>
+        <td><span class="parametername">datum</span></td>
+        <td><p>Datum.</p>
+</td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>Cancellation token.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<a class="xref" href="Sensus.Adaptation.SensingAgent.ControlCompletionCheck.html">SensingAgent.ControlCompletionCheck</a>&gt;</td>
+        <td><p>A <a class="xref" href="Sensus.Adaptation.SensingAgent.ControlCompletionCheck.html">SensingAgent.ControlCompletionCheck</a> to be configured upon return, or <code>null</code> for no such check.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_ObservedDataMeetControlCriterion_" data-uid="Sensus.Adaptation.SensingAgent.ObservedDataMeetControlCriterion*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_ObservedDataMeetControlCriterion_System_Collections_Generic_Dictionary_System_Type_System_Collections_Generic_List_Sensus_IDatum___" data-uid="Sensus.Adaptation.SensingAgent.ObservedDataMeetControlCriterion(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}})">ObservedDataMeetControlCriterion(Dictionary&lt;Type, List&lt;IDatum&gt;&gt;)</h4>
+  <div class="markdown level1 summary"><p>Checks whether the observed data meet a control criterion. Will be called during <a class="xref" href="Sensus.Adaptation.SensingAgentState.html#Sensus_Adaptation_SensingAgentState_OpportunisticObservation">OpportunisticObservation</a> 
+and <a class="xref" href="Sensus.Adaptation.SensingAgentState.html#Sensus_Adaptation_SensingAgentState_ActiveObservation">ActiveObservation</a> to check whether the observed data meet the control criterion, as well as during
+<a class="xref" href="Sensus.Adaptation.SensingAgentState.html#Sensus_Adaptation_SensingAgentState_OpportunisticControl">OpportunisticControl</a> and <a class="xref" href="Sensus.Adaptation.SensingAgentState.html#Sensus_Adaptation_SensingAgentState_ActiveControl">ActiveControl</a> to check whether the observed
+data continue to meet a control criterion and thus require control to continue.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract bool ObservedDataMeetControlCriterion(Dictionary&lt;Type, List&lt;IDatum&gt;&gt; typeData)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.Dictionary</span>&lt;<span class="xref">System.Type</span>, <span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.IDatum.html">IDatum</a>&gt;&gt;</td>
+        <td><span class="parametername">typeData</span></td>
+        <td><p>All data by type. This collection will be locked prior to calling the concrete implementation.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Boolean</span></td>
+        <td><p><code>true</code>, if data meet control criterion, <code>false</code> otherwise.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_OnStateChangedAsync_" data-uid="Sensus.Adaptation.SensingAgent.OnStateChangedAsync*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_OnStateChangedAsync_Sensus_Adaptation_SensingAgentState_Sensus_Adaptation_SensingAgentState_System_Threading_CancellationToken_" data-uid="Sensus.Adaptation.SensingAgent.OnStateChangedAsync(Sensus.Adaptation.SensingAgentState,Sensus.Adaptation.SensingAgentState,System.Threading.CancellationToken)">OnStateChangedAsync(SensingAgentState, SensingAgentState, CancellationToken)</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual Task OnStateChangedAsync(SensingAgentState previousState, SensingAgentState currentState, CancellationToken cancellationToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Adaptation.SensingAgentState.html">SensingAgentState</a></td>
+        <td><span class="parametername">previousState</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><a class="xref" href="Sensus.Adaptation.SensingAgentState.html">SensingAgentState</a></td>
+        <td><span class="parametername">currentState</span></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_ProtectedSetPolicyAsync_" data-uid="Sensus.Adaptation.SensingAgent.ProtectedSetPolicyAsync*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_ProtectedSetPolicyAsync_Newtonsoft_Json_Linq_JObject_" data-uid="Sensus.Adaptation.SensingAgent.ProtectedSetPolicyAsync(Newtonsoft.Json.Linq.JObject)">ProtectedSetPolicyAsync(JObject)</h4>
+  <div class="markdown level1 summary"><p>Implemented by the concrete class to set the <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a>&apos;s policy.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract Task ProtectedSetPolicyAsync(JObject policy)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Newtonsoft.Json.Linq.JObject</span></td>
+        <td><span class="parametername">policy</span></td>
+        <td><p>Policy.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><p>The set policy async.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_SetPolicyAsync_" data-uid="Sensus.Adaptation.SensingAgent.SetPolicyAsync*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_SetPolicyAsync_Newtonsoft_Json_Linq_JObject_" data-uid="Sensus.Adaptation.SensingAgent.SetPolicyAsync(Newtonsoft.Json.Linq.JObject)">SetPolicyAsync(JObject)</h4>
+  <div class="markdown level1 summary"><p>Sets the control policy of the current <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a>. This method will be called in the following
+situations:</p>
+<ul>
+<li>When a push notification arrives with a new policy.</li>
+<li>When the <a class="xref" href="Sensus.Adaptation.SensingAgent.html">SensingAgent</a> itself instructs the app to update the policy, through a call to
+<a class="xref" href="Sensus.IProtocol.html#Sensus_IProtocol_UpdateSensingAgentPolicyAsync_System_Threading_CancellationToken_">UpdateSensingAgentPolicyAsync(CancellationToken)</a>.</li>
+<li>When the user manually sets the policy from with the <a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_Protocol">Protocol</a> settings.</li>
+</ul>
+<p>In any case, the new policy will be passed to this method as a <span class="xref">Newtonsoft.Json.Linq.JObject</span>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Task SetPolicyAsync(JObject policy)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">Newtonsoft.Json.Linq.JObject</span></td>
+        <td><span class="parametername">policy</span></td>
+        <td><p>Policy.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_ToString_" data-uid="Sensus.Adaptation.SensingAgent.ToString*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_ToString" data-uid="Sensus.Adaptation.SensingAgent.ToString">ToString()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_Adaptation_SensingAgent_UpdateObservedData_" data-uid="Sensus.Adaptation.SensingAgent.UpdateObservedData*"></a>
+  <h4 id="Sensus_Adaptation_SensingAgent_UpdateObservedData_System_Collections_Generic_Dictionary_System_Type_System_Collections_Generic_List_Sensus_IDatum___" data-uid="Sensus.Adaptation.SensingAgent.UpdateObservedData(System.Collections.Generic.Dictionary{System.Type,System.Collections.Generic.List{Sensus.IDatum}})">UpdateObservedData(Dictionary&lt;Type, List&lt;IDatum&gt;&gt;)</h4>
+  <div class="markdown level1 summary"><p>Updates the observed data (e.g., by trimming observed data to a particular size and/or time range). When overriding
+this method, be sure to call the base class implementation if you wish to apply the size and age restrictions 
+provided here.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected virtual void UpdateObservedData(Dictionary&lt;Type, List&lt;IDatum&gt;&gt; typeData)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Collections.Generic.Dictionary</span>&lt;<span class="xref">System.Type</span>, <span class="xref">System.Collections.Generic.List</span>&lt;<a class="xref" href="Sensus.IDatum.html">IDatum</a>&gt;&gt;</td>
+        <td><span class="parametername">typeData</span></td>
+        <td><p>Observed data, by type. This collection will be locked prior to calling the method.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="events">Events
+  </h3>
+  
+  
+  <h4 id="Sensus_Adaptation_SensingAgent_PropertyChanged" data-uid="Sensus.Adaptation.SensingAgent.PropertyChanged">PropertyChanged</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event PropertyChangedEventHandler PropertyChanged</code></pre>
+  </div>
+  <h5 class="eventType">Event Type</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.ComponentModel.PropertyChangedEventHandler</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h3 id="implements">Implements</h3>
+  <div>
+      <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
+  </div>
+</article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
+            
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="../styles/docfx.js"></script>
+    <script type="text/javascript" src="../styles/main.js"></script>
+  </body>
+</html>

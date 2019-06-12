@@ -28,14 +28,7 @@ namespace Sensus.iOS.Probes.Location
         /// <summary>
         /// This <see cref="Sensus.Probes.Probe"/> uses continuous GPS listening and will have a significant negative impact on battery life.
         /// </summary>
-        /// <value>The collection description.</value>
-        public override string CollectionDescription
-        {
-            get
-            {
-                return base.CollectionDescription + " Please note that this sensor will have a significant negative impact on battery life.";
-            }
-        }
+        protected override bool WillHaveSignificantNegativeImpactOnBattery => true;
 
         public iOSCompassProbe()
         {
@@ -60,13 +53,17 @@ namespace Sensus.iOS.Probes.Location
             }
         }
 
-        protected sealed override async Task StartListeningAsync()
+        protected override async Task StartListeningAsync()
         {
+            await base.StartListeningAsync();
+
             await GpsReceiver.Get().AddListenerAsync(_positionChangedHandler, true);
         }
 
-        protected sealed override async Task StopListeningAsync()
+        protected override async Task StopListeningAsync()
         {
+            await base.StopListeningAsync();
+
             await GpsReceiver.Get().RemoveListenerAsync(_positionChangedHandler);
         }
 

@@ -75,7 +75,6 @@ namespace Sensus.DataStores.Remote
     ///      aws s3 cp --recursive s3://BUCKET/FOLDER ~/data
     ///      ```
     /// 
-    ///   1. You can run [`dowload-from-s3.sh`](https://raw.githubusercontent.com/predictive-technology-laboratory/sensus/master/Scripts/ConfigureAWS/dowload-from-s3.sh).
     ///   1. You can use a third-party application like [Bucket Explorer](http://www.bucketexplorer.com) to browse and download data from Amazon S3.
     /// 
     /// # Deconfiguration
@@ -122,6 +121,11 @@ namespace Sensus.DataStores.Remote
         /// </summary>
         public const string ADAPTIVE_EMA_POLICIES_DIRECTORY = "adaptive-ema-policies";
 
+        /// <summary>
+        /// The sensing policies directory.
+        /// </summary>
+        public const string SENSING_POLICIES_DIRECTORY = "sensing-policies";
+
         private string _region;
         private string _bucket;
         private string _folder;
@@ -139,7 +143,7 @@ namespace Sensus.DataStores.Remote
         /// The AWS region in which <see cref="Bucket"/> resides (e.g., us-east-2).
         /// </summary>
         /// <value>The region.</value>
-        [ListUiProperty(null, true, 1, new object[] { "us-east-2", "us-east-1", "us-west-1", "us-west-2", "ca-central-1", "ap-south-1", "ap-northeast-2", "ap-southeast-1", "ap-southeast-2", "ap-northeast-1", "eu-central-1", "eu-west-1", "eu-west-2", "sa-east-1", "us-gov-west-1" }, true)]
+        [ListUiProperty(null, true, 1, new object[] { "us-east-1", "us-east-2", "us-west-1", "us-west-2", "ca-central-1", "ap-south-1", "ap-northeast-2", "ap-southeast-1", "ap-southeast-2", "ap-northeast-1", "eu-central-1", "eu-west-1", "eu-west-2", "sa-east-1", "us-gov-west-1" }, true)]
         public string Region
         {
             get
@@ -557,7 +561,7 @@ namespace Sensus.DataStores.Remote
             }
         }
 
-        private async Task<List<string>> ListKeysAsync(AmazonS3Client s3, string prefix, bool mostRecentlyModifiedFirst)
+        private async Task<List<string>> ListKeysAsync(AmazonS3Client s3, string prefix, bool mostRecentlyModifiedFirst, CancellationToken cancellationToken)
         {
             try
             {
@@ -574,7 +578,7 @@ namespace Sensus.DataStores.Remote
 
                 do
                 {
-                    listResponse = await s3.ListObjectsV2Async(listRequest);
+                    listResponse = await s3.ListObjectsV2Async(listRequest, cancellationToken);
 
                     if (listResponse.HttpStatusCode != HttpStatusCode.OK)
                     {
@@ -685,7 +689,9 @@ namespace Sensus.DataStores.Remote
             {
                 s3 = await CreateS3ClientAsync();
 
-                foreach (string updateKey in await ListKeysAsync(s3, PUSH_NOTIFICATIONS_UPDATES_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId, true))
+                // retrieve updates sorted with most recently modified first. this will let us keep only the most recent version
+                // of each update with the same id (note use of TryAdd below, which will only retain the first update per id).
+                foreach (string updateKey in await ListKeysAsync(s3, PUSH_NOTIFICATIONS_UPDATES_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId, true, cancellationToken))
                 {
                     try
                     {
@@ -693,7 +699,15 @@ namespace Sensus.DataStores.Remote
 
                         if (getResponse.HttpStatusCode == HttpStatusCode.OK)
                         {
-                            await DeleteAsync(s3, updateKey, cancellationToken);
+                            // catch any exceptions when trying to delete the update. we already retrieved it, and 
+                            // we might just be lacking connectivity or might have been cancelled. the update will
+                            // be pushed again in the future and we'll try deleting it again then.
+                            try
+                            {
+                                await DeleteAsync(s3, updateKey, cancellationToken);
+                            }
+                            catch (Exception)
+                            { }
 
                             string updatesJSON;
                             using (StreamReader reader = new StreamReader(getResponse.ResponseStream))
@@ -759,6 +773,47 @@ namespace Sensus.DataStores.Remote
                 s3 = await CreateS3ClientAsync();
 
                 Stream responseStream = (await s3.GetObjectAsync(_bucket, ADAPTIVE_EMA_POLICIES_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId, cancellationToken)).ResponseStream;
+
+                JObject policy;
+                using (StreamReader reader = new StreamReader(responseStream))
+                {
+                    policy = JObject.Parse(reader.ReadToEnd().Trim());
+                }
+
+                return policy;
+            }
+            finally
+            {
+                DisposeS3(s3);
+            }
+        }
+
+        /// <summary>
+        /// Gets the policy for the <see cref="Protocol.Agent"/> from the current <see cref="AmazonS3RemoteDataStore"/>. 
+        /// This method will download the policy JSON object from the following location:
+        ///  
+        /// ```
+        /// BUCKET/DIRECTORY/DEVICE
+        /// ```
+        /// 
+        /// where `BUCKET` is <see cref="Bucket"/>, `DIRECTORY` is the value of <see cref="SENSING_POLICIES_DIRECTORY"/>, and
+        /// `DEVICE` is the identifier of the current device as returned by <see cref="SensusServiceHelper.DeviceId"/>. This is the same device 
+        /// identifier used within all <see cref="Datum"/> objects generated by the current device. This is also the same device identifier 
+        /// stored in all JSON objects written to the <see cref="AmazonS3RemoteDataStore"/>. To provide a policy JSON object, write the policy 
+        /// JSON object to the above S3 location. The content of this S3 location will be read, parsed as <see cref="JObject"/>, and delivered to the 
+        /// <see cref="Protocol.Agent"/> via <see cref="Adaptation.SensingAgent.SetPolicyAsync(JObject)"/>.
+        /// </summary>
+        /// <returns>The sensing agent policy.</returns>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public override async Task<JObject> GetSensingAgentPolicyAsync(CancellationToken cancellationToken)
+        {
+            AmazonS3Client s3 = null;
+
+            try
+            {
+                s3 = await CreateS3ClientAsync();
+
+                Stream responseStream = (await s3.GetObjectAsync(_bucket, SENSING_POLICIES_DIRECTORY + "/" + SensusServiceHelper.Get().DeviceId, cancellationToken)).ResponseStream;
 
                 JObject policy;
                 using (StreamReader reader = new StreamReader(responseStream))

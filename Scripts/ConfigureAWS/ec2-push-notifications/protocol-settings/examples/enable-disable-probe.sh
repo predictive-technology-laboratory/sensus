@@ -1,0 +1,31 @@
+#!/bin/sh
+
+if [[ $# -ne 2 ]]
+then
+    echo ""
+    echo "Purpose:  Enables or disables a probe type. Reads devices from standard input."
+    echo ""
+    echo "Usage:  ./enable-disable-probe.sh [PROBE] [ENABLE]"
+    echo ""
+    echo "   [PROBE]:  Type of probe to enable/disable. Can be a base class type."
+    echo "  [ENABLE]:  true/false"
+    echo ""
+    echo "Example:  Disable all polling probes:"
+    echo ""
+    echo "  ./list-devices.sh BUCKET | ./enable-disable-probe.sh Sensus.Probes.PollingProbe false"
+    echo ""
+    exit 1
+fi
+
+# create updates file
+updates_file=$(mktemp)
+echo -e "$(./format-setting.sh Sensus.Probes.Probe Enabled $1 $2)"\
+        | ./format-settings.sh "$1 enabled:  ${2}." > $updates_file
+
+# push updates file to devices
+cat - | ./request-update.sh "Protocol" $updates_file "$1-enable-disable"
+
+# clean up file
+rm $updates_file
+
+

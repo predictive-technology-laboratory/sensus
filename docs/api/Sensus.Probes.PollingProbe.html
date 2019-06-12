@@ -118,7 +118,6 @@ the user might not see the notification or might choose not to open it. The poll
     <div class="level2"><span class="xref">PollingProbe</span></div>
       <div class="level3"><a class="xref" href="Sensus.iOS.Probes.Movement.iOSActivityProbe.html">iOSActivityProbe</a></div>
       <div class="level3"><a class="xref" href="Sensus.iOS.Probes.User.Health.iOSHealthKitProbe.html">iOSHealthKitProbe</a></div>
-      <div class="level3"><a class="xref" href="Sensus.Probes.Apps.FacebookProbe.html">FacebookProbe</a></div>
       <div class="level3"><a class="xref" href="Sensus.Probes.Communication.PollingTelephonyProbe.html">PollingTelephonyProbe</a></div>
       <div class="level3"><a class="xref" href="Sensus.Probes.Context.BluetoothDeviceProximityProbe.html">BluetoothDeviceProximityProbe</a></div>
       <div class="level3"><a class="xref" href="Sensus.Probes.Context.SoundProbe.html">SoundProbe</a></div>
@@ -132,6 +131,8 @@ the user might not see the notification or might choose not to open it. The poll
   <div classs="implements">
     <h5>Implements</h5>
     <div><span class="xref">System.ComponentModel.INotifyPropertyChanged</span></div>
+    <div><a class="xref" href="Sensus.Probes.IPollingProbe.html">IPollingProbe</a></div>
+    <div><a class="xref" href="Sensus.Probes.IProbe.html">IProbe</a></div>
   </div>
   <div class="inheritedMembers">
     <h5>Inherited Members</h5>
@@ -158,6 +159,9 @@ the user might not see the notification or might choose not to open it. The poll
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_GetParticipation">Probe.GetParticipation()</a>
+    </div>
+    <div>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StopAsync">Probe.StopAsync()</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_RestartAsync">Probe.RestartAsync()</a>
@@ -187,7 +191,7 @@ the user might not see the notification or might choose not to open it. The poll
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_OriginallyEnabled">Probe.OriginallyEnabled</a>
     </div>
     <div>
-      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_Running">Probe.Running</a>
+      <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_State">Probe.State</a>
     </div>
     <div>
       <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MostRecentStoreTimestamp">Probe.MostRecentStoreTimestamp</a>
@@ -230,7 +234,7 @@ the user might not see the notification or might choose not to open it. The poll
   <h6><strong>Assembly</strong>: SensusAndroid.dll</h6>
   <h5 id="Sensus_Probes_PollingProbe_syntax">Syntax</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract class PollingProbe : Probe, INotifyPropertyChanged</code></pre>
+    <pre><code class="lang-csharp hljs">public abstract class PollingProbe : Probe, INotifyPropertyChanged, IPollingProbe, IProbe</code></pre>
   </div>
   <h3 id="constructors">Constructors
   </h3>
@@ -741,6 +745,33 @@ public bool SignificantChangePollOverridesScheduledPolls { get; set; }</code></p
   <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_ProtectedStartAsync">Probe.ProtectedStartAsync()</a></div>
   
   
+  <a id="Sensus_Probes_PollingProbe_ProtectedStopAsync_" data-uid="Sensus.Probes.PollingProbe.ProtectedStopAsync*"></a>
+  <h4 id="Sensus_Probes_PollingProbe_ProtectedStopAsync" data-uid="Sensus.Probes.PollingProbe.ProtectedStopAsync">ProtectedStopAsync()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override Task ProtectedStopAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_ProtectedStopAsync">Probe.ProtectedStopAsync()</a></div>
+  
+  
   <a id="Sensus_Probes_PollingProbe_ResetAsync_" data-uid="Sensus.Probes.PollingProbe.ResetAsync*"></a>
   <h4 id="Sensus_Probes_PollingProbe_ResetAsync" data-uid="Sensus.Probes.PollingProbe.ResetAsync">ResetAsync()</h4>
   <div class="markdown level1 summary"></div>
@@ -766,33 +797,6 @@ public bool SignificantChangePollOverridesScheduledPolls { get; set; }</code></p
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_ResetAsync">Probe.ResetAsync()</a></div>
-  
-  
-  <a id="Sensus_Probes_PollingProbe_StopAsync_" data-uid="Sensus.Probes.PollingProbe.StopAsync*"></a>
-  <h4 id="Sensus_Probes_PollingProbe_StopAsync" data-uid="Sensus.Probes.PollingProbe.StopAsync">StopAsync()</h4>
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-  <h5 class="decalaration">Declaration</h5>
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override Task StopAsync()</code></pre>
-  </div>
-  <h5 class="returns">Returns</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
-  <h5 class="overrides">Overrides</h5>
-  <div><a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_StopAsync">Probe.StopAsync()</a></div>
   
   
   <a id="Sensus_Probes_PollingProbe_TestHealthAsync_" data-uid="Sensus.Probes.PollingProbe.TestHealthAsync*"></a>
@@ -840,6 +844,12 @@ public bool SignificantChangePollOverridesScheduledPolls { get; set; }</code></p
   <h3 id="implements">Implements</h3>
   <div>
       <span class="xref">System.ComponentModel.INotifyPropertyChanged</span>
+  </div>
+  <div>
+      <a class="xref" href="Sensus.Probes.IPollingProbe.html">IPollingProbe</a>
+  </div>
+  <div>
+      <a class="xref" href="Sensus.Probes.IProbe.html">IProbe</a>
   </div>
 </article>
           </div>

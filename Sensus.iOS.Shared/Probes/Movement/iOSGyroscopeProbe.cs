@@ -43,8 +43,10 @@ namespace Sensus.iOS.Probes.Movement
             }
         }
 
-        protected override Task StartListeningAsync()
-        {          
+        protected override async Task StartListeningAsync()
+        {
+            await base.StartListeningAsync();
+
             _motionManager?.StartGyroUpdates(new NSOperationQueue(), async (data, error) =>
             {
                 if (data != null && error == null)
@@ -52,15 +54,13 @@ namespace Sensus.iOS.Probes.Movement
                     await StoreDatumAsync(new GyroscopeDatum(DateTimeOffset.UtcNow, data.RotationRate.x, data.RotationRate.y, data.RotationRate.z));
                 }
             });
-
-            return Task.CompletedTask;
         }
 
-        protected override Task StopListeningAsync()
+        protected override async Task StopListeningAsync()
         {
-            _motionManager?.StopGyroUpdates();
+            await base.StopListeningAsync();
 
-            return Task.CompletedTask;
+            _motionManager?.StopGyroUpdates();
         }
     }
 }

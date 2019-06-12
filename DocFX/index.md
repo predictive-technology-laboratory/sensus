@@ -15,11 +15,13 @@ Sensus's key features include the following:
   of smartphone users. Sensus runs on Android and iOS and emphasizes a uniform user experience.
 * **Comprehensive sensing** A complete list of internal hardware and software sensors, as well as external wearable 
   and beacon-based sensors, can be found [here](xref:Sensus.Probes.Probe).
-* **Device-initiated custom surveys** Sensus can prompt users to complete custom surveys that are scheduled or triggered 
+* **Device-initiated surveys** Sensus can prompt users to complete surveys that are scheduled or triggered 
   by sensed data. For example, surveys can be triggered on the basis of GPS location, proximity to points of interest, 
   speed, acceleration, light levels, sound levels, after phone calls or text messages, and so on. Virtually 
   any [probed data](xref:Sensus.Probes.Probe) can be used to trigger surveys, or you can schedule surveys to run during 
   particular time blocks.
+* **Adaptive sensing** Sensus is designed to support research into adaptive data collection, both
+  for [passive sensing](xref:adaptive_sensing) and [survey sensing](xref:adaptive_surveys).
 * **Fine-grained anonymization controls** Each type of sensed data has several fine-grained facets that can be individually anonymized.
 * **Minimal infrastructure requirements** Sensus is entirely self-contained. No external servers are required unless you 
   would like to push data to the cloud (e.g., Amazon) for centralized storage, which is supported with minimal effort through 

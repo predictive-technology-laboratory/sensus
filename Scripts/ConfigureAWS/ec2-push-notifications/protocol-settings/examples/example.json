@@ -1,0 +1,32 @@
+Below is the structure of an example JSON object for use as the content value
+within an update push notification. It lists the protocol settings to be updated
+as well as an optional user notification to display after applying the update.
+
+{
+  "settings" : 
+  [
+    {
+      "property-type" : "Sensus.Probes.ListeningProbe",
+      "property-name" : "MaxDataStoresPerSecond",
+      "target-type" : "Sensus.Probes.ListeningProbe",
+      "value" : 10
+    },
+    {
+      "property-type" : "Sensus.Probes.PollingProbe",
+      "property-name" : "PollingSleepDurationMS",
+      "target-type" : "Sensus.Probes.Location.PollingLocationProbe",
+      "value" : 10000
+    },
+    {
+      "property-type" : "Sensus.Protocol",
+      "property-name" : "AllowSubmitData",
+      "target-type" : "Sensus.Protocol",
+      "value" : true
+    }
+  ],
+
+  "user-notification" : 
+  {
+    "message" : "Your study will sample at 10Hz and collect GPS location every 10 seconds. You may submit data yourself."
+  }
+}

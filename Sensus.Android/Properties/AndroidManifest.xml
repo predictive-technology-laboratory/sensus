@@ -1,11 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="edu.virginia.sie.ptl.sensus" android:versionName="15.14.1" android:versionCode="1520803134">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="edu.virginia.sie.ptl.sensus" android:versionName="15.17.0" android:versionCode="1520803134">
 	<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="28" />
 	<application android:label="SensusMobile" android:icon="@drawable/ic_launcher" android:theme="@style/SensusTheme">
 		<provider android:name="android.support.v4.content.FileProvider" android:authorities="edu.virginia.sie.ptl.sensus.fileprovider" android:grantUriPermissions="true" android:exported="false">
 			<meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/filepaths" />
 		</provider>
-		<activity android:name="com.facebook.FacebookActivity" android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation" android:theme="@android:style/Theme.Translucent.NoTitleBar" android:label="@string/app_name" />
 		<!-- Google Maps V2 API Key. -->
 		<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyDQxDh05AoGtHNAwTRKvg6zWnBNTGmmu7Y" />
 		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
@@ -13,7 +12,7 @@
 		<meta-data android:name="com.google.android.awareness.API_KEY" android:value="AIzaSyDQxDh05AoGtHNAwTRKvg6zWnBNTGmmu7Y" />
 		<!-- Declare the Estimote scanning service. -->
 		<service android:name="com.estimote.scanning_plugin.packet_provider.service.PacketProviderWrapperService" android:enabled="true" android:exported="false" />
-		<!-- Google Firebase Cloud Messaging -->
+     <!-- Google Firebase Cloud Messaging -->
 		<receiver android:name="com.google.firebase.iid.FirebaseInstanceIdInternalReceiver" android:exported="false" />
 		<receiver android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver" android:exported="true" android:permission="com.google.android.c2dm.permission.SEND">
 			<intent-filter>
@@ -51,5 +50,7 @@
 	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 	<uses-permission android:name="android.permission.FLASHLIGHT" />
 	<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+  <uses-permission android:name="android.permission.READ_CONTACTS"/>
+  <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
 	<uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
 </manifest>

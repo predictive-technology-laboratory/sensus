@@ -126,6 +126,39 @@
   </table>
   
   
+  <h4 id="Sensus_Notifications_PushNotificationUpdateType_ClearPushNotificationRequestBacklog" data-uid="Sensus.Notifications.PushNotificationUpdateType.ClearPushNotificationRequestBacklog">ClearPushNotificationRequestBacklog</h4>
+  <div class="markdown level1 summary"><p>The <a class="xref" href="Sensus.Notifications.PushNotificationUpdate.html#Sensus_Notifications_PushNotificationUpdate_Content">Content</a> value will be empty. This type of <a class="xref" href="Sensus.Notifications.PushNotificationUpdate.html">PushNotificationUpdate</a> indicates that
+the app should attempt to clear its backlog of pending push notification requests. This is important due to background termination and 
+resumption dynamics on iOS. iOS will typically terminate the app overnight and during other periods of prolonged phone inactivity. At
+some point, iOS will then let a push notification through, which will relaunch the app into the background. Because the relaunch 
+occurs in the background, limited time is provided to the app. In response, we avoid performing certain long-running operations like
+the submission of push notification requests. We hold on to these requests and let the app relaunch as quickly as possible. However, 
+because the push notification requests are held back, subsequent push notifications will be discontinued thus cutting off most periodic
+operations of the app. The push notification backend is therefore configured to periodically send an update with this type. Upon receipt,
+the app will attempt to clear the backlog of push notifications that have been held back and thereby resume normal operation.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const PushNotificationUpdateType ClearPushNotificationRequestBacklog</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Notifications.PushNotificationUpdateType.html">PushNotificationUpdateType</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <h4 id="Sensus_Notifications_PushNotificationUpdateType_Protocol" data-uid="Sensus.Notifications.PushNotificationUpdateType.Protocol">Protocol</h4>
   <div class="markdown level1 summary"><p>The <a class="xref" href="Sensus.Notifications.PushNotificationUpdate.html#Sensus_Notifications_PushNotificationUpdate_Content">Content</a> value contains new settings for the <a class="xref" href="Sensus.Notifications.PushNotificationUpdateType.html#Sensus_Notifications_PushNotificationUpdateType_Protocol">Protocol</a>. These new settings have the following fields:</p>
 <ul>
@@ -157,6 +190,31 @@ with the previous fields for just the <a class="xref" href="Sensus.Probes.Locati
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">public const PushNotificationUpdateType Protocol</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a class="xref" href="Sensus.Notifications.PushNotificationUpdateType.html">PushNotificationUpdateType</a></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <h4 id="Sensus_Notifications_PushNotificationUpdateType_SensingAgentPolicy" data-uid="Sensus.Notifications.PushNotificationUpdateType.SensingAgentPolicy">SensingAgentPolicy</h4>
+  <div class="markdown level1 summary"><p>The <a class="xref" href="Sensus.Notifications.PushNotificationUpdate.html#Sensus_Notifications_PushNotificationUpdate_Content">Content</a> value contains a new policy for the <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_Agent">Agent</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const PushNotificationUpdateType SensingAgentPolicy</code></pre>
   </div>
   <h5 class="fieldValue">Field Value</h5>
   <table class="table table-bordered table-striped table-condensed">

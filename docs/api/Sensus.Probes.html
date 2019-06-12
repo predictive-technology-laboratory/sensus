@@ -95,18 +95,10 @@
 </section>
       <h4><a class="xref" href="Sensus.Probes.ListeningProbe.html">ListeningProbe</a></h4>
       <section><p>Listening Probes are triggered by a change in state within the underlying device. For example, when an accelerometer reading is emitted, the 
-<a class="xref" href="Sensus.Probes.Movement.AccelerometerProbe.html">AccelerometerProbe</a> is provided with information about device movement in each direction. Listening Probes do not generate
-data unless such state changes occur. Whether or not data streams are discontinued when the app is backgrounded depends on the operating
-system (Android or iOS) as well as specific settings.</p>
-<ul>
-<li><p>Android:  If <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_KeepDeviceAwake">KeepDeviceAwake</a> is enabled on Android, then the app will hold a wake lock thus keeping the device processor powered
-on and delivering readings to the app. If <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_KeepDeviceAwake">KeepDeviceAwake</a> is disabled on Android, then the CPU will be allowed to sleep typically
-discontinuing the delivery of readings to the app.</p>
-</li>
-<li><p>iOS:  The <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_KeepDeviceAwake">KeepDeviceAwake</a> setting has no effect on iOS, and all readings will be discontinued when the app is put into the
-background. See <a class="xref" href="Sensus.Probes.PollingProbe.html">PollingProbe</a> for more information about background considerations.</p>
-</li>
-</ul>
+<a class="xref" href="Sensus.Probes.Movement.AccelerometerProbe.html">AccelerometerProbe</a> is provided with information about device movement in each direction. <a class="xref" href="Sensus.Probes.ListeningProbe.html">ListeningProbe</a>s
+do not generate data unless such state changes occur (however, in the particular case of the <a class="xref" href="Sensus.Probes.Movement.AccelerometerProbe.html">AccelerometerProbe</a>, the 
+hardware accelerometer chip will continuously be registering movement). Whether or not data streams are discontinued when the app is backgrounded 
+depends on the operating system (Android or iOS) as well as the setting of <a class="xref" href="Sensus.Probes.ListeningProbe.html#Sensus_Probes_ListeningProbe_KeepDeviceAwake">KeepDeviceAwake</a>.</p>
 </section>
       <h4><a class="xref" href="Sensus.Probes.PollingProbe.html">PollingProbe</a></h4>
       <section><p>Polling Probes are triggered at regular intervals. When triggered, the <a class="xref" href="Sensus.Probes.PollingProbe.html">PollingProbe</a> asks the device (and perhaps the user) 
@@ -146,6 +138,16 @@ on the device being used.</p>
       <h4><a class="xref" href="Sensus.Probes.Probe.MostRecentDatumChangedDelegateAsync.html">Probe.MostRecentDatumChangedDelegateAsync</a></h4>
       <section><p>Delegate for methods that handle <a class="xref" href="Sensus.Probes.Probe.html#Sensus_Probes_Probe_MostRecentDatumChanged">MostRecentDatumChanged</a> events from <a class="xref" href="Sensus.Probes.Probe.html">Probe</a>s.</p>
 </section>
+      <h4><a class="xref" href="Sensus.Probes.ProbeState.html">ProbeState</a></h4>
+      <section></section>
+    <h3 id="interfaces">Interfaces
+  </h3>
+      <h4><a class="xref" href="Sensus.Probes.IListeningProbe.html">IListeningProbe</a></h4>
+      <section></section>
+      <h4><a class="xref" href="Sensus.Probes.IPollingProbe.html">IPollingProbe</a></h4>
+      <section></section>
+      <h4><a class="xref" href="Sensus.Probes.IProbe.html">IProbe</a></h4>
+      <section></section>
 </article>
           </div>
           

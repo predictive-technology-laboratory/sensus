@@ -311,9 +311,9 @@ namespace Sensus.DataStores.Remote
             return result;
         }
 
-        public async Task<bool> WriteLocalDataStoreAsync(CancellationToken cancellationToken)
+		public async Task<bool> WriteLocalDataStoreAsync(CancellationToken cancellationToken, bool ignoreRequirements = false)
         {
-            bool write = false;
+            bool write = ignoreRequirements;
 
             if (cancellationToken.IsCancellationRequested)
             {
@@ -362,6 +362,13 @@ namespace Sensus.DataStores.Remote
         /// <returns>The script agent policy.</returns>
         /// <param name="cancellationToken">Cancellation token.</param>
         public abstract Task<JObject> GetScriptAgentPolicyAsync(CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Gets the sensing agent policy from the <see cref="RemoteDataStore"/>. See concrete class implementation for details.
+        /// </summary>
+        /// <returns>The sensing agent policy.</returns>
+        /// <param name="cancellationToken">Cancellation token.</param>
+        public abstract Task<JObject> GetSensingAgentPolicyAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets <see cref="PushNotificationUpdate"/>s for the current device.

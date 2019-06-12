@@ -1,0 +1,164 @@
+{
+  "id": "Example",
+  "description": "An ASPL policy focused on movement and proximity.",
+  "action-interval": "00:00:10",
+  "active-observation-duration": "00:00:05",
+  "control-completion-check-interval": "00:00:20",
+  "observed-data": {
+    "max-count": 1000,
+    "max-age": null
+  },
+  "begin-active-observation-settings": [
+    {
+      "property-type": "Sensus.Probes.Probe",
+      "property-name": "Enabled",
+      "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+      "value": true
+    },
+    {
+      "property-type": "Sensus.Probes.ListeningProbe",
+      "property-name": "KeepDeviceAwake",
+      "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+      "value": true
+    },
+    {
+      "property-type": "Sensus.Probes.ListeningProbe",
+      "property-name": "MaxDataStoresPerSecond",
+      "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+      "value": 50
+    }
+  ],
+  "end-active-observation-settings": [
+    {
+      "property-type": "Sensus.Probes.Probe",
+      "property-name": "Enabled",
+      "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+      "value": false
+    }
+  ],
+  "statements": [
+    {
+      "id": "Acceleration",
+      "description": "If any x-axis acceleration reading within the past 5 seconds is either greater than 2 or less than -2, then enable continuous, high-rate accelerometry. Uses continuous, high-rate accelerometry during active observation.",
+      "criterion": {
+        "logic": "Disjunction",
+        "elements": [
+          {
+            "property-type": "Sensus.Probes.Movement.AccelerometerDatum",
+            "property-name": "X",
+            "aggregation": {
+              "type": "Any",
+              "max-age": "00:00:05"
+            },
+            "relation": "GreaterThan",
+            "target": 2
+          },
+          {
+            "property-type": "Sensus.Probes.Movement.AccelerometerDatum",
+            "property-name": "X",
+            "aggregation": {
+              "type": "Any",
+              "max-age": "00:00:05"
+            },
+            "relation": "LessThan",
+            "target": -2
+          }
+        ]
+      },
+      "begin-control-settings": [
+        {
+          "property-type": "Sensus.Probes.Probe",
+          "property-name": "Enabled",
+          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+          "value": true
+        },
+        {
+          "property-type": "Sensus.Probes.ListeningProbe",
+          "property-name": "KeepDeviceAwake",
+          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+          "value": true
+        },
+        {
+          "property-type": "Sensus.Probes.ListeningProbe",
+          "property-name": "MaxDataStoresPerSecond",
+          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+          "value": 50
+        }
+      ],
+      "end-control-settings": [
+        {
+          "property-type": "Sensus.Probes.Probe",
+          "property-name": "Enabled",
+          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+          "value": false
+        }
+      ]
+    },
+    {
+      "id": "Proximity and Walking",
+      "description": "If the most recent proximity reading equals 0 (the device is covered by a surface), or if the user was estimated to be walking any time in the past 2 minutes, then enable the accelerometer probe with a high sampling rate.",
+      "criterion": {
+        "logic": "Disjunction",
+        "elements": [
+          {
+            "property-type": "Sensus.Probes.Location.ProximityDatum",
+            "property-name": "Distance",
+            "aggregation": {
+              "type": "MostRecent"
+            },
+            "relation": "EqualTo",
+            "target": 0
+          },
+          {
+            "property-type": "Sensus.Probes.Movement.ActivityDatum",
+            "property-name": "ActivityStarting",
+            "aggregation": {
+              "type": "Any",
+              "max-age": "00:02:00"
+            },
+            "relation": "EqualTo",
+            "target": "Walking"
+          },
+          {
+            "property-type": "Sensus.Probes.Movement.ActivityDatum",
+            "property-name": "ActivityContinuing",
+            "aggregation": {
+              "type": "Any",
+              "max-age": "00:02:00"
+            },
+            "relation": "EqualTo",
+            "target": "Walking"
+          }
+        ]
+      },
+      "begin-control-settings": [
+        {
+          "property-type": "Sensus.Probes.Probe",
+          "property-name": "Enabled",
+          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+          "value": true
+        },
+        {
+          "property-type": "Sensus.Probes.ListeningProbe",
+          "property-name": "KeepDeviceAwake",
+          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+          "value": true
+        },
+        {
+          "property-type": "Sensus.Probes.ListeningProbe",
+          "property-name": "MaxDataStoresPerSecond",
+          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+          "value": 50
+        }
+      ],
+      "end-control-settings": [
+        {
+          "property-type": "Sensus.Probes.Probe",
+          "property-name": "Enabled",
+          "target-type": "Sensus.Probes.Movement.AccelerometerProbe",
+          "value": false
+        }
+      ]
+    }
+  ]
+}

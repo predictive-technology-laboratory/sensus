@@ -1585,6 +1585,56 @@ decide which probes to enable when enabling all probes.</p>
   </table>
   
   
+  <a id="Sensus_SensusServiceHelper_KeepDeviceAwakeAsync_" data-uid="Sensus.SensusServiceHelper.KeepDeviceAwakeAsync*"></a>
+  <h4 id="Sensus_SensusServiceHelper_KeepDeviceAwakeAsync" data-uid="Sensus.SensusServiceHelper.KeepDeviceAwakeAsync">KeepDeviceAwakeAsync()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract Task KeepDeviceAwakeAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
+  <a id="Sensus_SensusServiceHelper_LetDeviceSleepAsync_" data-uid="Sensus.SensusServiceHelper.LetDeviceSleepAsync*"></a>
+  <h4 id="Sensus_SensusServiceHelper_LetDeviceSleepAsync" data-uid="Sensus.SensusServiceHelper.LetDeviceSleepAsync">LetDeviceSleepAsync()</h4>
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract Task LetDeviceSleepAsync()</code></pre>
+  </div>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  
   <a id="Sensus_SensusServiceHelper_ObtainPermissionAsync_" data-uid="Sensus.SensusServiceHelper.ObtainPermissionAsync*"></a>
   <h4 id="Sensus_SensusServiceHelper_ObtainPermissionAsync_Plugin_Permissions_Abstractions_Permission_" data-uid="Sensus.SensusServiceHelper.ObtainPermissionAsync(Plugin.Permissions.Abstractions.Permission)">ObtainPermissionAsync(Permission)</h4>
   <div class="markdown level1 summary"></div>
@@ -1628,35 +1678,13 @@ decide which probes to enable when enabling all probes.</p>
   
   
   <a id="Sensus_SensusServiceHelper_PromptForAndReadTextFileAsync_" data-uid="Sensus.SensusServiceHelper.PromptForAndReadTextFileAsync*"></a>
-  <h4 id="Sensus_SensusServiceHelper_PromptForAndReadTextFileAsync_System_String_System_Action_System_String__" data-uid="Sensus.SensusServiceHelper.PromptForAndReadTextFileAsync(System.String,System.Action{System.String})">PromptForAndReadTextFileAsync(String, Action&lt;String&gt;)</h4>
+  <h4 id="Sensus_SensusServiceHelper_PromptForAndReadTextFileAsync" data-uid="Sensus.SensusServiceHelper.PromptForAndReadTextFileAsync">PromptForAndReadTextFileAsync()</h4>
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public abstract Task PromptForAndReadTextFileAsync(string promptTitle, Action&lt;string&gt; callback)</code></pre>
+    <pre><code class="lang-csharp hljs">public Task&lt;string&gt; PromptForAndReadTextFileAsync()</code></pre>
   </div>
-  <h5 class="parameters">Parameters</h5>
-  <table class="table table-bordered table-striped table-condensed">
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><span class="xref">System.String</span></td>
-        <td><span class="parametername">promptTitle</span></td>
-        <td></td>
-      </tr>
-      <tr>
-        <td><span class="xref">System.Action</span>&lt;<span class="xref">System.String</span>&gt;</td>
-        <td><span class="parametername">callback</span></td>
-        <td></td>
-      </tr>
-    </tbody>
-  </table>
   <h5 class="returns">Returns</h5>
   <table class="table table-bordered table-striped table-condensed">
     <thead>
@@ -1667,7 +1695,7 @@ decide which probes to enable when enabling all probes.</p>
     </thead>
     <tbody>
       <tr>
-        <td><span class="xref">System.Threading.Tasks.Task</span></td>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">System.String</span>&gt;</td>
         <td></td>
       </tr>
     </tbody>

@@ -113,9 +113,8 @@ a folder named <code>FOLDER</code>, you can download all of your Sensus data in 
 <li><p>You can execute the following command to download everything to a directory named <code>data</code> on your desktop:</p>
 <pre><code>aws s3 cp --recursive s3://BUCKET/FOLDER ~/data
 </code></pre></li>
-<li><p>You can run <a href="https://raw.githubusercontent.com/predictive-technology-laboratory/sensus/master/Scripts/ConfigureAWS/dowload-from-s3.sh"><code>dowload-from-s3.sh</code></a>.</p>
+<li><p>You can use a third-party application like <a href="http://www.bucketexplorer.com">Bucket Explorer</a> to browse and download data from Amazon S3.</p>
 </li>
-<li>You can use a third-party application like <a href="http://www.bucketexplorer.com">Bucket Explorer</a> to browse and download data from Amazon S3.</li>
 </ol>
 <h1 id="deconfiguration">Deconfiguration</h1>
 <p>If you are finished collecting data and you would like to prevent any future data submission, you can deconfigure the IAM group and user
@@ -355,6 +354,31 @@ with the following command, where <code>BUCKET</code> corresponds to the Sensus 
       </tr>
     </tbody>
   </table>
+  
+  
+  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_SENSING_POLICIES_DIRECTORY" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.SENSING_POLICIES_DIRECTORY">SENSING_POLICIES_DIRECTORY</h4>
+  <div class="markdown level1 summary"><p>The sensing policies directory.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string SENSING_POLICIES_DIRECTORY = &quot;sensing-policies&quot;</code></pre>
+  </div>
+  <h5 class="fieldValue">Field Value</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.String</span></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
   <h3 id="properties">Properties
   </h3>
   
@@ -560,7 +584,7 @@ public string PinnedServiceURL { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
   <h5 class="decalaration">Declaration</h5>
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[ListUiProperty(null, true, 1, new object[]{&quot;us-east-2&quot;, &quot;us-east-1&quot;, &quot;us-west-1&quot;, &quot;us-west-2&quot;, &quot;ca-central-1&quot;, &quot;ap-south-1&quot;, &quot;ap-northeast-2&quot;, &quot;ap-southeast-1&quot;, &quot;ap-southeast-2&quot;, &quot;ap-northeast-1&quot;, &quot;eu-central-1&quot;, &quot;eu-west-1&quot;, &quot;eu-west-2&quot;, &quot;sa-east-1&quot;, &quot;us-gov-west-1&quot;}, true)]
+    <pre><code class="lang-csharp hljs">[ListUiProperty(null, true, 1, new object[]{&quot;us-east-1&quot;, &quot;us-east-2&quot;, &quot;us-west-1&quot;, &quot;us-west-2&quot;, &quot;ca-central-1&quot;, &quot;ap-south-1&quot;, &quot;ap-northeast-2&quot;, &quot;ap-southeast-1&quot;, &quot;ap-southeast-2&quot;, &quot;ap-northeast-1&quot;, &quot;eu-central-1&quot;, &quot;eu-west-1&quot;, &quot;eu-west-2&quot;, &quot;sa-east-1&quot;, &quot;us-gov-west-1&quot;}, true)]
 public string Region { get; set; }</code></pre>
   </div>
   <h5 class="propertyValue">Property Value</h5>
@@ -909,6 +933,61 @@ JSON object to the above S3 location. The content of this S3 location will be re
   </table>
   <h5 class="overrides">Overrides</h5>
   <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetScriptAgentPolicyAsync_System_Threading_CancellationToken_">RemoteDataStore.GetScriptAgentPolicyAsync(CancellationToken)</a></div>
+  
+  
+  <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_GetSensingAgentPolicyAsync_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetSensingAgentPolicyAsync*"></a>
+  <h4 id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_GetSensingAgentPolicyAsync_System_Threading_CancellationToken_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.GetSensingAgentPolicyAsync(System.Threading.CancellationToken)">GetSensingAgentPolicyAsync(CancellationToken)</h4>
+  <div class="markdown level1 summary"><p>Gets the policy for the <a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_Agent">Agent</a> from the current <a class="xref" href="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">AmazonS3RemoteDataStore</a>. 
+This method will download the policy JSON object from the following location:</p>
+<pre><code>BUCKET/DIRECTORY/DEVICE
+</code></pre><p>where <code>BUCKET</code> is <a class="xref" href="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Bucket">Bucket</a>, <code>DIRECTORY</code> is the value of <a class="xref" href="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html#Sensus_DataStores_Remote_AmazonS3RemoteDataStore_SENSING_POLICIES_DIRECTORY">SENSING_POLICIES_DIRECTORY</a>, and
+<code>DEVICE</code> is the identifier of the current device as returned by <a class="xref" href="Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_DeviceId">DeviceId</a>. This is the same device 
+identifier used within all <a class="xref" href="Sensus.Datum.html">Datum</a> objects generated by the current device. This is also the same device identifier 
+stored in all JSON objects written to the <a class="xref" href="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">AmazonS3RemoteDataStore</a>. To provide a policy JSON object, write the policy 
+JSON object to the above S3 location. The content of this S3 location will be read, parsed as <span class="xref">Newtonsoft.Json.Linq.JObject</span>, and delivered to the 
+<a class="xref" href="Sensus.Protocol.html#Sensus_Protocol_Agent">Agent</a> via <a class="xref" href="Sensus.Adaptation.SensingAgent.html#Sensus_Adaptation_SensingAgent_SetPolicyAsync_Newtonsoft_Json_Linq_JObject_">SetPolicyAsync(JObject)</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+  <h5 class="decalaration">Declaration</h5>
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override Task&lt;JObject&gt; GetSensingAgentPolicyAsync(CancellationToken cancellationToken)</code></pre>
+  </div>
+  <h5 class="parameters">Parameters</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.CancellationToken</span></td>
+        <td><span class="parametername">cancellationToken</span></td>
+        <td><p>Cancellation token.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="returns">Returns</h5>
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="xref">System.Threading.Tasks.Task</span>&lt;<span class="xref">Newtonsoft.Json.Linq.JObject</span>&gt;</td>
+        <td><p>The sensing agent policy.</p>
+</td>
+      </tr>
+    </tbody>
+  </table>
+  <h5 class="overrides">Overrides</h5>
+  <div><a class="xref" href="Sensus.DataStores.Remote.RemoteDataStore.html#Sensus_DataStores_Remote_RemoteDataStore_GetSensingAgentPolicyAsync_System_Threading_CancellationToken_">RemoteDataStore.GetSensingAgentPolicyAsync(CancellationToken)</a></div>
   
   
   <a id="Sensus_DataStores_Remote_AmazonS3RemoteDataStore_Reset_" data-uid="Sensus.DataStores.Remote.AmazonS3RemoteDataStore.Reset*"></a>
