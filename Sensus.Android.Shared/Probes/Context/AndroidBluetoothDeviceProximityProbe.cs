@@ -25,6 +25,8 @@ using System.Threading;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using Sensus.Probes;
+using Android.App;
+using Android.Content;
 
 
 namespace Sensus.Android.Probes.Context
@@ -72,6 +74,7 @@ namespace Sensus.Android.Probes.Context
         private AndroidBluetoothServerAdvertisingCallback _bluetoothAdvertiserCallback;
         private BluetoothGattService _deviceIdService;
         private BluetoothGattCharacteristic _deviceIdCharacteristic;
+		private AndroidBluetoothDeviceReceiver _bluetoothBroadcastReceiver;
 
         [JsonIgnore]
         public override int DefaultPollingSleepDurationMS => (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
@@ -99,43 +102,80 @@ namespace Sensus.Android.Probes.Context
             _deviceIdService.AddCharacteristic(_deviceIdCharacteristic);
 
             _bluetoothAdvertiserCallback = new AndroidBluetoothServerAdvertisingCallback(_deviceIdService, _deviceIdCharacteristic);
-        }
 
-        #region central -- scan
-        protected override async Task ScanAsync(CancellationToken cancellationToken)
+			if (ScanMode.HasFlag(BluetoothScanModes.Classic))
+			{
+				_bluetoothBroadcastReceiver = new AndroidBluetoothDeviceReceiver(this);
+
+				IntentFilter intentFilter = new IntentFilter();
+				intentFilter.AddAction(BluetoothDevice.ActionFound);
+
+				Application.Context.RegisterReceiver(_bluetoothBroadcastReceiver, intentFilter);
+			}
+		}
+
+		protected override Task ProtectedStopAsync()
+		{
+			Application.Context.UnregisterReceiver(_bluetoothBroadcastReceiver);
+
+			return base.ProtectedStopAsync();
+		}
+
+		#region central -- scan
+		protected override async Task ScanAsync(CancellationToken cancellationToken)
         {
             // start a scan if bluetooth is present and enabled
             if (BluetoothAdapter.DefaultAdapter?.IsEnabled ?? false)
             {
                 try
                 {
-                    ScanFilter scanFilter = new ScanFilter.Builder()
-                                                          .SetServiceUuid(new ParcelUuid(_deviceIdService.Uuid))
-                                                          .Build();
+					if (ScanMode.HasFlag(BluetoothScanModes.LE))
+					{
+						List<ScanFilter> scanFilters = new List<ScanFilter>();
 
-                    List<ScanFilter> scanFilters = new List<ScanFilter>(new[] { scanFilter });
+						if (DiscoverAll == false)
+						{
+							ScanFilter scanFilter = new ScanFilter.Builder()
+															  .SetServiceUuid(new ParcelUuid(_deviceIdService.Uuid))
+															  .Build();
 
-                    ScanSettings.Builder scanSettingsBuilder = new ScanSettings.Builder()
-                                                                               .SetScanMode(global::Android.Bluetooth.LE.ScanMode.Balanced);
+							scanFilters.Add(scanFilter);
+						}
 
-                    // return batched scan results periodically if supported on the BLE chip
-                    if (BluetoothAdapter.DefaultAdapter.IsOffloadedScanBatchingSupported)
-                    {
-                        scanSettingsBuilder.SetReportDelay((long)(ScanDurationMS / 2.0));
-                    }
+						ScanSettings.Builder scanSettingsBuilder = new ScanSettings.Builder()
+																				   .SetScanMode(global::Android.Bluetooth.LE.ScanMode.Balanced);
 
-                    // start a fresh manager delegate to collect/read results
-                    _bluetoothScannerCallback = new AndroidBluetoothClientScannerCallback(_deviceIdService, _deviceIdCharacteristic, this);
+						// return batched scan results periodically if supported on the BLE chip
+						if (BluetoothAdapter.DefaultAdapter.IsOffloadedScanBatchingSupported)
+						{
+							scanSettingsBuilder.SetReportDelay((long)(ScanDurationMS / 2.0));
+						}
 
-                    BluetoothAdapter.DefaultAdapter.BluetoothLeScanner.StartScan(scanFilters, scanSettingsBuilder.Build(), _bluetoothScannerCallback);
+						// start a fresh manager delegate to collect/read results
+						_bluetoothScannerCallback = new AndroidBluetoothClientScannerCallback(_deviceIdService, _deviceIdCharacteristic, this);
 
-                    TaskCompletionSource<bool> scanCompletionSource = new TaskCompletionSource<bool>();
+						BluetoothAdapter.DefaultAdapter.BluetoothLeScanner.StartScan(scanFilters, scanSettingsBuilder.Build(), _bluetoothScannerCallback);
+					}
+
+					if (ScanMode.HasFlag(BluetoothScanModes.Classic))
+					{
+						BluetoothAdapter.DefaultAdapter.StartDiscovery();
+					}
+
+					TaskCompletionSource<bool> scanCompletionSource = new TaskCompletionSource<bool>();
 
                     cancellationToken.Register(() =>
                     {
                         try
                         {
-                            BluetoothAdapter.DefaultAdapter.BluetoothLeScanner.StopScan(_bluetoothScannerCallback);
+							if (ScanMode.HasFlag(BluetoothScanModes.LE))
+							{
+								BluetoothAdapter.DefaultAdapter.BluetoothLeScanner.StopScan(_bluetoothScannerCallback);
+							}
+							else if (ScanMode.HasFlag(BluetoothScanModes.Classic) && BluetoothAdapter.DefaultAdapter.IsDiscovering)
+							{
+								BluetoothAdapter.DefaultAdapter.CancelDiscovery();
+							}
                         }
                         catch (Exception ex)
                         {
@@ -156,10 +196,79 @@ namespace Sensus.Android.Probes.Context
             }
         }
 
-        protected override Task<List<Tuple<string, DateTimeOffset>>> ReadPeripheralCharacteristicValuesAsync(CancellationToken cancellationToken)
+        protected async override Task<List<BluetoothDeviceProximityDatum>> ReadPeripheralCharacteristicValuesAsync(CancellationToken cancellationToken)
         {
-            return _bluetoothScannerCallback.ReadPeripheralCharacteristicValuesAsync(cancellationToken);
-        }
+			if (ScanMode == BluetoothScanModes.LE)
+			{
+				return await _bluetoothScannerCallback.ReadPeripheralCharacteristicValuesAsync(cancellationToken);
+			}
+			else
+			{
+				return await CreateBluetoothData(cancellationToken);
+			}
+		}
+
+		private async Task<List<BluetoothDeviceProximityDatum>> CreateBluetoothData(CancellationToken cancellationToken)
+		{
+			List<BluetoothDeviceProximityDatum> bluetoothDeviceProximityData = new List<BluetoothDeviceProximityDatum>();
+
+			// copy list of peripherals to read. note that the same device may be reported more than once. read each once.
+			List<AndroidBluetoothDevice> le = _bluetoothScannerCallback.GetDiscoveredDevices();
+			List<AndroidBluetoothDevice> classic = _bluetoothBroadcastReceiver.GetDiscoveredDevices();
+			List<IGrouping<string, AndroidBluetoothDevice>> scanResults = le.Union(classic)
+				.GroupBy(scanResult => scanResult.Device.Address)
+				.ToList();
+
+			ReadAttemptCount += scanResults.Count;
+
+			// read characteristic from each peripheral
+			foreach (IGrouping<string, AndroidBluetoothDevice> deviceGroup in scanResults)
+			{
+				if (cancellationToken.IsCancellationRequested)
+				{
+					break;
+				}
+
+				AndroidBluetoothClientGattCallback readCallback = null;
+
+				try
+				{
+					readCallback = new AndroidBluetoothClientGattCallback(_deviceIdService, _deviceIdCharacteristic);
+					BluetoothGatt gatt = deviceGroup.First().Device.ConnectGatt(Application.Context, false, readCallback);
+					BluetoothGattService service = gatt.GetService(_deviceIdService.Uuid);
+					string deviceId = null;
+					bool runningSensus = service != null;
+
+					if (runningSensus)
+					{
+						deviceId = await readCallback.ReadCharacteristicValueAsync(cancellationToken);
+					}
+
+					if (DiscoverAll || runningSensus)
+					{
+						DateTimeOffset timestamp = deviceGroup.Min(x => x.Timestamp);
+
+						string address = deviceGroup.Key;
+						string name = deviceGroup.FirstOrDefault(x => x.Device.Name != null)?.Device.Name;
+						int rssi = deviceGroup.Min(x => x.Rssi);
+						bool paired = deviceGroup.Any(x => x.Device.BondState != Bond.None);
+
+						bluetoothDeviceProximityData.Add(new BluetoothDeviceProximityDatum(timestamp, deviceId, address, name, rssi, paired, runningSensus));
+						ReadSuccessCount++;
+					}
+				}
+				catch (Exception ex)
+				{
+					SensusServiceHelper.Get().Logger.Log("Exception while reading peripheral:  " + ex, LoggingLevel.Normal, GetType());
+				}
+				finally
+				{
+					readCallback?.DisconnectPeripheral();
+				}
+			}
+
+			return bluetoothDeviceProximityData;
+		}
         #endregion
 
         #region peripheral -- advertise
