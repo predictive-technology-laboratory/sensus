@@ -9,7 +9,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>Sensus</string>
 	<key>CFBundleIdentifier</key>
-	<string>sensus.dev</string>
+	<string>edu.virginia.sie.ptl.sensus</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MinimumOSVersion</key>
@@ -131,6 +131,8 @@
 			</array>
 		</dict>
 	</array>
+	<key>XSAppIconAssets</key>
+	<string>Resources/Images.xcassets/AppIcons.appiconset</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>

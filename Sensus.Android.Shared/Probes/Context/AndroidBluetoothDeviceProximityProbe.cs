@@ -21,11 +21,12 @@ using Android.OS;
 using Java.Util;
 using System.Collections.Generic;
 using System.Text;
+using Sensus.Context;
 using System.Threading;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
+using System.Linq;
 using Sensus.Probes;
-
 
 namespace Sensus.Android.Probes.Context
 {
@@ -89,8 +90,6 @@ namespace Sensus.Android.Probes.Context
                 await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
-
-        
 
             _deviceIdCharacteristic = new BluetoothGattCharacteristic(UUID.FromString(DEVICE_ID_CHARACTERISTIC_UUID), GattProperty.Read, GattPermission.Read);
             _deviceIdCharacteristic.SetValue(Encoding.UTF8.GetBytes(SensusServiceHelper.Get().DeviceId));

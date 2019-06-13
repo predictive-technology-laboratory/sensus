@@ -48,9 +48,8 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
-    <CodesignEntitlements>
-    </CodesignEntitlements>
-    <CodesignKey>iPhone Developer: Ryan Dagostino (GVSQ4BSSN6)</CodesignKey>
+    <CodesignEntitlements>EntitlementsDevelopment.plist</CodesignEntitlements>
+    <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
     <IpaPackageName>
     </IpaPackageName>
@@ -61,7 +60,6 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <MtouchNoSymbolStrip>true</MtouchNoSymbolStrip>
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchFastDev>false</MtouchFastDev>
-    <CodesignProvision>CACS_Sensus_Dev</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <Optimize>true</Optimize>
@@ -99,9 +97,6 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <CodesignKey>iPhone Developer</CodesignKey>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
-    <AppExtensionDebugBundleId />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Band.iOS">
