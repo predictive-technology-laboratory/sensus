@@ -26,6 +26,9 @@ namespace Sensus.Probes.Communication
         private string _toNumber;
         private string _message;
         private bool _participantIsSender;
+        private bool? _isContact;
+        private string _name;
+        private string _email;
 
         [StringProbeTriggerProperty("From #")]
         [Anonymizable("From #:", typeof(StringHashAnonymizer), false)]
@@ -66,6 +69,25 @@ namespace Sensus.Probes.Communication
             }
         }
 
+        public bool? IsContact
+        {
+            get { return _isContact; }
+            set { _isContact = value; }
+        }
+
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; }
+        }
+
+        public string Email
+        {
+            get { return _email; }
+            set { _email = value; }
+        }
+
+
         public override string DisplayDetail
         {
             get { return _message; }
@@ -90,13 +112,16 @@ namespace Sensus.Probes.Communication
         {
         }
 
-        public SmsDatum(DateTimeOffset timestamp, string fromNumber, string toNumber, string message, bool participantIsSender)
+        public SmsDatum(DateTimeOffset timestamp, string fromNumber, string toNumber, string message, bool participantIsSender, bool? isContact, string name, string email)
             : base(timestamp)
         {
             FromNumber = fromNumber == null ? "" : fromNumber;
             ToNumber = toNumber == null ? "" : toNumber;
             _message = message == null ? "" : message;
             _participantIsSender = participantIsSender;
+            _isContact = isContact;
+            _name = name;
+            _email = email;
         }
 
         public override string ToString()

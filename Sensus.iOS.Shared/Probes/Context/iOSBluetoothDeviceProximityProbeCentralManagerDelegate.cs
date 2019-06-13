@@ -34,14 +34,14 @@ namespace Sensus.iOS.Probes.Context
         private CBMutableService _service;
         private CBMutableCharacteristic _characteristic;
         private iOSBluetoothDeviceProximityProbe _probe;
-        private List<Tuple<CBPeripheral, CBCentralManager, DateTimeOffset>> _peripheralCentralTimestamps;
+        private List<Tuple<CBPeripheral, CBCentralManager, DateTimeOffset, NSNumber>> _peripheralCentralTimestamps;
 
         public iOSBluetoothDeviceProximityProbeCentralManagerDelegate(CBMutableService service, CBMutableCharacteristic characteristic, iOSBluetoothDeviceProximityProbe probe)
         {
             _service = service;
             _characteristic = characteristic;
             _probe = probe;
-            _peripheralCentralTimestamps = new List<Tuple<CBPeripheral, CBCentralManager, DateTimeOffset>>();
+            _peripheralCentralTimestamps = new List<Tuple<CBPeripheral, CBCentralManager, DateTimeOffset, NSNumber>>();
         }
 
         public override void UpdatedState(CBCentralManager central)
@@ -66,16 +66,16 @@ namespace Sensus.iOS.Probes.Context
             lock (_peripheralCentralTimestamps)
             {
                 SensusServiceHelper.Get().Logger.Log("Discovered peripheral:  " + peripheral.Identifier, LoggingLevel.Normal, GetType());
-                _peripheralCentralTimestamps.Add(new Tuple<CBPeripheral, CBCentralManager, DateTimeOffset>(peripheral, central, DateTimeOffset.UtcNow));
+                _peripheralCentralTimestamps.Add(new Tuple<CBPeripheral, CBCentralManager, DateTimeOffset, NSNumber>(peripheral, central, DateTimeOffset.UtcNow, RSSI));
             }
         }
 
-        public async Task<List<Tuple<string, DateTimeOffset>>> ReadPeripheralCharacteristicValuesAsync(CancellationToken cancellationToken)
+        public async Task<List<BluetoothDeviceProximityDatum>> ReadPeripheralCharacteristicValuesAsync(CancellationToken cancellationToken)
         {
-            List<Tuple<string, DateTimeOffset>> characteristicValueTimestamps = new List<Tuple<string, DateTimeOffset>>();
+            List<BluetoothDeviceProximityDatum> characteristicValueTimestamps = new List<BluetoothDeviceProximityDatum>();
 
             // copy list of peripherals to read. note that the same device may be reported more than once. read each once.
-            List<Tuple<CBPeripheral, CBCentralManager, DateTimeOffset>> peripheralCentralTimestamps;
+            List<Tuple<CBPeripheral, CBCentralManager, DateTimeOffset, NSNumber>> peripheralCentralTimestamps;
             lock (_peripheralCentralTimestamps)
             {
                 peripheralCentralTimestamps = _peripheralCentralTimestamps.GroupBy(peripheralCentralTimestamp => peripheralCentralTimestamp.Item1.Identifier).Select(group => group.First()).ToList();
@@ -84,7 +84,7 @@ namespace Sensus.iOS.Probes.Context
             _probe.ReadAttemptCount += peripheralCentralTimestamps.Count;
 
             // read characteristic from each peripheral
-            foreach (Tuple<CBPeripheral, CBCentralManager, DateTimeOffset> peripheralCentralTimestamp in peripheralCentralTimestamps)
+            foreach (Tuple<CBPeripheral, CBCentralManager, DateTimeOffset, NSNumber> peripheralCentralTimestamp in peripheralCentralTimestamps)
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
@@ -93,9 +93,10 @@ namespace Sensus.iOS.Probes.Context
 
                 TaskCompletionSource<string> readCompletionSource = new TaskCompletionSource<string>();
 
-                CBPeripheral peripheral = peripheralCentralTimestamp.Item1;
-                CBCentralManager central = peripheralCentralTimestamp.Item2;
+				CBPeripheral peripheral = peripheralCentralTimestamp.Item1;
+				CBCentralManager central = peripheralCentralTimestamp.Item2;
                 DateTimeOffset timestamp = peripheralCentralTimestamp.Item3;
+				NSNumber rssi = peripheralCentralTimestamp.Item4;
 
                 #region discover services
                 peripheral.DiscoveredService += (sender, e) =>
@@ -197,7 +198,7 @@ namespace Sensus.iOS.Probes.Context
 
                     if (characteristicValue != null)
                     {
-                        characteristicValueTimestamps.Add(new Tuple<string, DateTimeOffset>(characteristicValue, timestamp));
+                        characteristicValueTimestamps.Add(new BluetoothDeviceProximityDatum(timestamp, characteristicValue, peripheral.Name, null, rssi.Int32Value, peripheral.State != CBPeripheralState.Disconnected, true));
                         _probe.ReadSuccessCount++;
                     }
                 }
