@@ -11,6 +11,9 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\MainConcurrent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Context\AndroidSensusContext.cs" />
+
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidCalendarProbe.cs" />
+
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidImageFileObserver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidImageMetadataProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\AndroidBluetoothDevice.cs" />

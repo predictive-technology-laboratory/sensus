@@ -11,6 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\MainConcurrent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Context\iOSSensusContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\iOSCalendarProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\iOSPhotoLibraryChangeObserver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\iOSImageMetadataProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\iOSSoundProbe.cs" />

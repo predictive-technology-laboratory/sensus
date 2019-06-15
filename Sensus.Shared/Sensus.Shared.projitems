@@ -28,6 +28,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\SymmetricEncryption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\SensusException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImpreciseDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\CalendarDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\CalendarProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\ImageMetadataDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\ImageMetadataProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\KeystrokeDatum.cs" />
