@@ -16,7 +16,7 @@ namespace Sensus.Probes.Device
         {
             _powerConnectionChanged = async (sender, connected) =>
             {
-                await StoreDatumAsync(new PowerConnectDatum(DateTimeOffset.UtcNow,connected));
+                await StoreDatumAsync(new PowerConnectDatum(DateTimeOffset.UtcNow,connected, SensusServiceHelper.Get().BatteryChargePercent));
             };
 
         }
