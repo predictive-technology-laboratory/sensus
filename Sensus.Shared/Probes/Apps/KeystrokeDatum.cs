@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Sensus.Anonymization;
+using Sensus.Anonymization.Anonymizers;
+using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -24,7 +27,12 @@ namespace Sensus.Probes.Apps
             }
         }
 
+        [StringProbeTriggerProperty]
+        [Anonymizable(null, typeof(StringHashAnonymizer), false)]
         public string Key { get => _key; set => _key = value; }
+
+        [StringProbeTriggerProperty]
+        [Anonymizable(null, typeof(StringHashAnonymizer), false)]
         public string App { get => _app; set => _app = value; }
 
         public override object StringPlaceholderValue => throw new NotImplementedException();
