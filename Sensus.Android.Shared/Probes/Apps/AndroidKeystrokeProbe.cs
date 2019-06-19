@@ -10,7 +10,7 @@ using Android.Views.Accessibility;
 using Android.Content;
 using Android.App;
 using Xamarin.Android;
-
+using Android.Provider;
 
 namespace Sensus.Android.Probes.Apps
 {
@@ -52,24 +52,24 @@ namespace Sensus.Android.Probes.Apps
             throw new NotImplementedException();
         }
 
-        protected override  Task StartListeningAsync()
+        protected override async Task StartListeningAsync()
         {
-
-            if (!isAccessibilityServiceEnabled()) {
+            
+            if (! isAccessibilityServiceEnabled()) {
 
                 //This temporary, code should be added to automatically open settings page.
-                 //Xamarin.Forms.Application.Current.MainPage.DisplayAlert("Permission Request", "Please navigate to settings->Accessibility and enable the accessbility service permission for Sensus", "ok", "cancel");
+                //Xamarin.Forms.Application.Current.MainPage.DisplayAlert("Permission Request", "Please navigate to settings->Accessibility and enable the accessbility service permission for Sensus", "ok", "cancel");
 
-                //var response = await Xamarin.Forms.Application.Current.MainPage.DisplayAlert("Permission Request", "On the next screen, please enable the accessbility service permission for Sensus", "ok", "cancel");
+                var response = await Xamarin.Forms.Application.Current.MainPage.DisplayAlert("Permission Request", "On the next screen, please enable the accessbility service permission for Sensus", "ok", "cancel");
 
-                //if (response)
-                //{
-                //    //user click ok 
-                //    //await SensusServiceHelper.Get().FlashNotificationAsync("starttttttttttttttttt");
-                //    //Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                //    //Application.Context.StartActivity(intent);
+                if (response)
+                {
+                    //user click ok 
+                    await SensusServiceHelper.Get().FlashNotificationAsync("starttttttttttttttttt");
+                    Intent intent = new Intent(Settings.ActionAccessibilitySettings);
+                    Application.Context.StartActivity(intent);
 
-                //}
+                }
 
             }
 
@@ -77,7 +77,7 @@ namespace Sensus.Android.Probes.Apps
             //This doesn't work because the accessibility service can be started and stopped only by system apps
             //Intent serviceIntent = new Intent(Application.Context, typeof(AndroidKeystrokeService));
             //Application.Context.StartService(serviceIntent);
-            return Task.CompletedTask;
+            //return Task.CompletedTask;
         }
 
         protected override Task StopListeningAsync()
@@ -88,19 +88,22 @@ namespace Sensus.Android.Probes.Apps
             //Application.Context.StopService(serviceIntent);
             return Task.CompletedTask;
         }
-
-        public Boolean  isAccessibilityServiceEnabled()
+        public Boolean isAccessibilityServiceEnabled()
         {
             AccessibilityManager accessibilityManager = (AccessibilityManager)Application.Context.GetSystemService(AccessibilityService.AccessibilityService);
             IList<AccessibilityServiceInfo> enabledServices = accessibilityManager.GetEnabledAccessibilityServiceList(FeedbackFlags.AllMask);
             bool check = false;
-            for (int i = 0; i < enabledServices.Count; i++) {
+            for (int i = 0; i < enabledServices.Count; i++)
+            {
                 AccessibilityServiceInfo e = enabledServices[i];
-                if (e.ResolveInfo.ServiceInfo.PackageName == Application.Context.ApplicationInfo.PackageName) { 
-                check = true;
+                if (e.ResolveInfo.ServiceInfo.PackageName == Application.Context.ApplicationInfo.PackageName)
+                {
+                    check = true;
                 }
             }
             return check;
         }
+
+
     }
 }

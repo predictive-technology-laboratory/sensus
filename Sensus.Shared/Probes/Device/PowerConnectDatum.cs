@@ -7,11 +7,13 @@ namespace Sensus.Probes.Device
     class PowerConnectDatum : Datum
     {
         private bool _connection;
+        private double _level;
 
         
-        public PowerConnectDatum(DateTimeOffset timestamp, bool connection) : base(timestamp)
+        public PowerConnectDatum(DateTimeOffset timestamp, bool connection, double level) : base(timestamp)
         {
             _connection = connection;
+            _level = level;
         }
 
 
@@ -24,6 +26,8 @@ namespace Sensus.Probes.Device
         }
 
         public bool Connection { get => _connection; set => _connection = value; }
+
+        public double Level { get => _level; set => _level = value; }
 
         public override object StringPlaceholderValue => throw new NotImplementedException();
 
