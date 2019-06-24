@@ -62,6 +62,8 @@ namespace Sensus.Android
 
             _activityResultWait = new ManualResetEvent(false);
             _serviceBindWait = new ManualResetEvent(false);
+            
+  
 
             Window.AddFlags(global::Android.Views.WindowManagerFlags.DismissKeyguard);
             Window.AddFlags(global::Android.Views.WindowManagerFlags.ShowWhenLocked);
@@ -374,7 +376,7 @@ namespace Sensus.Android
                     _activityResultWait.Reset();
 
                     try
-                    {
+                    { 
                         StartActivityForResult(intent, (int)requestCode);
                     }
                     catch (Exception ex)

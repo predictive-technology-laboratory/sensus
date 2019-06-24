@@ -1,54 +1,57 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="edu.virginia.sie.ptl.sensus" android:versionName="15.16.0" android:versionCode="1520803134">
-	<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="28" />
-	<application android:label="SensusMobile" android:icon="@drawable/ic_launcher" android:theme="@style/SensusTheme">
-		<provider android:name="android.support.v4.content.FileProvider" android:authorities="edu.virginia.sie.ptl.sensus.fileprovider" android:grantUriPermissions="true" android:exported="false">
-			<meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/filepaths" />
-		</provider>
-		<!-- Google Maps V2 API Key. -->
-		<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyDQxDh05AoGtHNAwTRKvg6zWnBNTGmmu7Y" />
-		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
-		<!-- Google Awareness API Key. -->
-		<meta-data android:name="com.google.android.awareness.API_KEY" android:value="AIzaSyDQxDh05AoGtHNAwTRKvg6zWnBNTGmmu7Y" />
-		<!-- Declare the Estimote scanning service. -->
-		<service android:name="com.estimote.scanning_plugin.packet_provider.service.PacketProviderWrapperService" android:enabled="true" android:exported="false" />
-		<!-- Google Firebase Cloud Messaging -->
-		<receiver android:name="com.google.firebase.iid.FirebaseInstanceIdInternalReceiver" android:exported="false" />
-		<receiver android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver" android:exported="true" android:permission="com.google.android.c2dm.permission.SEND">
-			<intent-filter>
-				<action android:name="com.google.android.c2dm.intent.RECEIVE" />
-				<action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-				<category android:name="${applicationId}" />
-			</intent-filter>
-		</receiver>
-	</application>
-	<!-- Google Maps for Android v2 requires OpenGL ES v2 -->
-	<uses-feature android:glEsVersion="0x00020000" android:required="true" />
-	<!-- Allow the application to access Google web-based services. -->
-	<uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-	<!-- Permission to receive remote notifications from Google Play Services -->
-	<uses-permission android:name="edu.virginia.sie.ptl.sensus.permission.MAPS_RECEIVE" />
-	<permission android:name="edu.virginia.sie.ptl.sensus.permission.MAPS_RECEIVE" android:protectionLevel="signature" />
-	<uses-feature android:name="android.hardware.bluetooth_le" android:required="false" />
-	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-	<uses-permission android:name="android.permission.INTERNET" />
-	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-	<uses-permission android:name="android.permission.READ_PHONE_STATE" />
-	<uses-permission android:name="android.permission.GET_TASKS" />
-	<uses-permission android:name="android.permission.BLUETOOTH" />
-	<uses-permission android:name="android.permission.RECORD_AUDIO" />
-	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-	<uses-permission android:name="android.permission.WAKE_LOCK" />
-	<uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
-	<uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
-	<uses-permission android:name="android.permission.CAMERA" />
-	<uses-permission android:name="android.permission.VIBRATE" />
-	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-	<uses-permission android:name="android.permission.FLASHLIGHT" />
-	<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-	<uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="edu.virginia.sie.ptl.sensus" android:versionName="15.17.1" android:versionCode="1520803134">
+  <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="28" />
+  <application android:label="SensusMobile" android:icon="@drawable/ic_launcher" android:theme="@style/SensusTheme">
+	<provider android:name="android.support.v4.content.FileProvider" android:authorities="edu.virginia.sie.ptl.sensus.fileprovider" android:grantUriPermissions="true" android:exported="false">
+	  <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/filepaths" />
+	</provider>
+	<!-- Google Maps V2 API Key. -->
+	<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyDQxDh05AoGtHNAwTRKvg6zWnBNTGmmu7Y" />
+	<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+	<!-- Google Awareness API Key. -->
+	<meta-data android:name="com.google.android.awareness.API_KEY" android:value="AIzaSyDQxDh05AoGtHNAwTRKvg6zWnBNTGmmu7Y" />
+	<!-- Declare the Estimote scanning service. -->
+	<service android:name="com.estimote.scanning_plugin.packet_provider.service.PacketProviderWrapperService" android:enabled="true" android:exported="false" />
+	<!-- Google Firebase Cloud Messaging -->
+	<receiver android:name="com.google.firebase.iid.FirebaseInstanceIdInternalReceiver" android:exported="false" />
+	<receiver android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver" android:exported="true" android:permission="com.google.android.c2dm.permission.SEND">
+	  <intent-filter>
+		<action android:name="com.google.android.c2dm.intent.RECEIVE" />
+		<action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+		<category android:name="${applicationId}" />
+	  </intent-filter>
+	</receiver>
+  </application>
+  <!-- Google Maps for Android v2 requires OpenGL ES v2 -->
+  <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+  <!-- Allow the application to access Google web-based services. -->
+  <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+  <!-- Permission to receive remote notifications from Google Play Services -->
+  <uses-permission android:name="edu.virginia.sie.ptl.sensus.permission.MAPS_RECEIVE" />
+  <permission android:name="edu.virginia.sie.ptl.sensus.permission.MAPS_RECEIVE" android:protectionLevel="signature" />
+  <uses-feature android:name="android.hardware.bluetooth_le" android:required="false" />
+  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+  <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+  <uses-permission android:name="android.permission.GET_TASKS" />
+  <uses-permission android:name="android.permission.BLUETOOTH" />
+  <uses-permission android:name="android.permission.RECORD_AUDIO" />
+  <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+  <uses-permission android:name="android.permission.WAKE_LOCK" />
+  <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+  <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
+  <uses-permission android:name="android.permission.CAMERA" />
+  <uses-permission android:name="android.permission.VIBRATE" />
+  <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+  <uses-permission android:name="android.permission.FLASHLIGHT" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+  <uses-permission android:name="android.permission.READ_CALENDAR"/>
+  <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
+  <uses-permission android:name="android.permission.READ_CONTACTS"/>
+  <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
 </manifest>

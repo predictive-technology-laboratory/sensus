@@ -42,9 +42,13 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <JavaMaximumHeapSize>2G</JavaMaximumHeapSize>
     <Debugger>Xamarin</Debugger>
     <NoWarn>1591</NoWarn>
+    <AotAssemblies>false</AotAssemblies>
+    <EnableLLVM>false</EnableLLVM>
+    <BundleAssemblies>false</BundleAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType></DebugType>
+    <DebugType>
+    </DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE;RELEASE</DefineConstants>
@@ -57,6 +61,9 @@ Store. It is possible to run and debug this project on physical and virtual Andr
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Android" />
+    <Reference Include="Plugin.ContactService, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xamarin.Forms.Contacts.1.0.5\lib\MonoAndroid10\Plugin.ContactService.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -330,10 +337,13 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Resources\AboutResources.txt" />
     <None Include="Sensus.licenseheader" />
-    <None Include="Properties\AndroidManifest.xml" />
+    <None Include="Properties\AndroidManifest.xml">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\xml\filepaths.xml">
@@ -367,10 +377,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
   <ItemGroup>
     <AndroidAsset Include="Assets\README.txt" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\values-v21\" />
-    <Folder Include="Resources\layout\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <GoogleServicesJson Include="google-services.json" />
   </ItemGroup>
