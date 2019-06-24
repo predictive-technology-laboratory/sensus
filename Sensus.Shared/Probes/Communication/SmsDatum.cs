@@ -69,18 +69,24 @@ namespace Sensus.Probes.Communication
             }
         }
 
+        [BooleanProbeTriggerProperty]
+        [Anonymizable("Sender/receipient is in contacts:", null, false)]
         public bool? IsContact
         {
             get { return _isContact; }
             set { _isContact = value; }
         }
 
+        [StringProbeTriggerProperty]
+        [Anonymizable("Sender/receipient's name:", null, false)]
         public string Name
         {
             get { return _name; }
             set { _name = value; }
         }
 
+        [StringProbeTriggerProperty]
+        [Anonymizable("Sender/receipient's email:", null, false)]
         public string Email
         {
             get { return _email; }

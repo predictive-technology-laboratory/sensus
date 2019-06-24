@@ -16,18 +16,13 @@ namespace Sensus.Android.Probes.Apps
 {
     public class AndroidKeystrokeProbe : KeystrokeProbe
     {
-        private AndroidKeystrokeService _accessibilityListener;
-        private DateTime? _accessibilityEventTime;
         private EventHandler<KeystrokeDatum> _accessibilityCallback;
 
         public AndroidKeystrokeProbe()
         {
             _accessibilityCallback = async (sender, incomingKeystrokedatum) =>
             {
-                
-                //Console.WriteLine("***** OnAccessibilityEvent Probeeeeeeeeeeeeeeeeeee***** " + incomingKeystrokedatum.Key + " " + incomingKeystrokedatum.App);
-
-                await StoreDatumAsync(incomingKeystrokedatum);
+              await StoreDatumAsync(incomingKeystrokedatum);
             };
 
         }
@@ -57,15 +52,11 @@ namespace Sensus.Android.Probes.Apps
             
             if (! isAccessibilityServiceEnabled()) {
 
-                //This temporary, code should be added to automatically open settings page.
-                //Xamarin.Forms.Application.Current.MainPage.DisplayAlert("Permission Request", "Please navigate to settings->Accessibility and enable the accessbility service permission for Sensus", "ok", "cancel");
-
-                var response = await Xamarin.Forms.Application.Current.MainPage.DisplayAlert("Permission Request", "On the next screen, please enable the accessbility service permission for Sensus", "ok", "cancel");
+                var response = await Xamarin.Forms.Application.Current.MainPage.DisplayAlert("Permission Request", "On the next screen, please enable the accessbility service permission to Sensus", "ok", "cancel");
 
                 if (response)
                 {
                     //user click ok 
-                    await SensusServiceHelper.Get().FlashNotificationAsync("starttttttttttttttttt");
                     Intent intent = new Intent(Settings.ActionAccessibilitySettings);
                     Application.Context.StartActivity(intent);
 
