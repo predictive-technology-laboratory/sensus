@@ -51,9 +51,14 @@ namespace Sensus.iOS.Callbacks
         /// <returns>Async task.</returns>
         public async Task UpdateCallbacksOnActivationAsync()
         {
-            foreach (string callbackId in CallbackIds)
+			IEnumerable<ScheduledCallback> callbacks = CallbackIds
+				.Select(x => TryGetCallback(x))
+				.Where(x => x != null)
+				.OrderBy(x => x.Priority);
+
+            foreach (ScheduledCallback callback in callbacks)
             {
-                ScheduledCallback callback = TryGetCallback(callbackId);
+                //ScheduledCallback callback = TryGetCallback(callbackId);
 
                 if (callback == null)
                 {
@@ -62,7 +67,7 @@ namespace Sensus.iOS.Callbacks
 
                 // service any callback that should have already been serviced or will soon be serviced
                 if (callback.NextExecution.Value < DateTime.Now + CALLBACK_NOTIFICATION_HORIZON_THRESHOLD)
-                {
+				{
                     iOSNotifier notifier = SensusContext.Current.Notifier as iOSNotifier;
                     notifier.CancelNotification(callback.Id);
                     await RaiseCallbackAsync(callback, callback.InvocationId);

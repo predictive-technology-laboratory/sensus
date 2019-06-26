@@ -11,6 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\LongitudeStudyOffsetGpsAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\LongitudeParticipantOffsetGpsAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\ScheduledCallbackPriorities.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\ConcurrentObservableCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\IConcurrent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\LockConcurrent.cs" />
