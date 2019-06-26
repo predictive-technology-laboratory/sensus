@@ -2205,7 +2205,7 @@ namespace Sensus
                         ControlCompletionCheck controlCompletionCheck = await Agent.ActAsync(actionCancellationToken);
                         await ScheduleAgentControlCompletionCheckAsync(controlCompletionCheck);
 
-                    }, Agent.ActionInterval.Value, Agent.ActionInterval.Value, Agent.Id, _id, this, null, Agent.ActionIntervalToleranceBefore.GetValueOrDefault(), Agent.ActionIntervalToleranceAfter.GetValueOrDefault())
+                    }, Agent.ActionInterval.Value, Agent.ActionInterval.Value, Agent.Id, _id, this, null, Agent.ActionIntervalToleranceBefore.GetValueOrDefault(), Agent.ActionIntervalToleranceAfter.GetValueOrDefault(), ScheduledCallbackPriority.Normal)
                     {
 #if __IOS__
                         // we don't want the scheduled callback to be silent, as such callbacks are cancelled on ios when the app
@@ -2273,7 +2273,8 @@ namespace Sensus
                                                                                         this,
                                                                                         null,
                                                                                         Agent.ActionIntervalToleranceBefore ?? TimeSpan.Zero,
-                                                                                        Agent.ActionIntervalToleranceAfter ?? TimeSpan.Zero)
+                                                                                        Agent.ActionIntervalToleranceAfter ?? TimeSpan.Zero,
+																						ScheduledCallbackPriority.Normal)
                 {
 #if __IOS__
                     // we don't want the scheduled callback to be silent, as such callbacks are cancelled on ios when the app
@@ -2325,7 +2326,7 @@ namespace Sensus
                 await PrivateStartAsync(cancellationToken);
                 _scheduledStartCallback = null;
 
-            }, timeUntilStart, "START", _id, this, null, TimeSpan.Zero, TimeSpan.Zero);
+            }, timeUntilStart, "START", _id, this, null, TimeSpan.Zero, TimeSpan.Zero, ScheduledCallbackPriority.Normal);
 
 #if __ANDROID__
             _scheduledStartCallback.UserNotificationMessage = "Started study: " + Name;
@@ -2367,7 +2368,7 @@ namespace Sensus
                 await StopAsync();
                 _scheduledStopCallback = null;
 
-            }, timeUntilStop, "STOP", _id, this, null, TimeSpan.Zero, TimeSpan.Zero);
+            }, timeUntilStop, "STOP", _id, this, null, TimeSpan.Zero, TimeSpan.Zero, ScheduledCallbackPriority.Normal);
 
 #if __ANDROID__
             _scheduledStopCallback.UserNotificationMessage = "Stopped study: " + Name;
@@ -2793,7 +2794,7 @@ namespace Sensus
 				await ResumeAsync();
 				_scheduledResumeCallback = null;
 
-			}, timeUntilResume, "RESUME", _id, this, null, TimeSpan.Zero, TimeSpan.Zero);
+			}, timeUntilResume, "RESUME", _id, this, null, TimeSpan.Zero, TimeSpan.Zero, ScheduledCallbackPriority.Normal);
 
 #if __ANDROID__
             _scheduledResumeCallback.UserNotificationMessage = "Resumed study: " + Name;

@@ -239,7 +239,7 @@ namespace Sensus.DataStores.Remote
 
             _mostRecentSuccessfulWriteTime = DateTime.Now;
 
-            _writeCallback = new ScheduledCallback(cancellationToken => WriteLocalDataStoreAsync(cancellationToken), TimeSpan.FromMilliseconds(_writeDelayMS), TimeSpan.FromMilliseconds(_writeDelayMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_writeTimeoutMinutes), TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS));
+            _writeCallback = new ScheduledCallback(cancellationToken => WriteLocalDataStoreAsync(cancellationToken), TimeSpan.FromMilliseconds(_writeDelayMS), TimeSpan.FromMilliseconds(_writeDelayMS), GetType().FullName, Protocol.Id, Protocol, TimeSpan.FromMinutes(_writeTimeoutMinutes), TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS), ScheduledCallbackPriority.Low);
 
 #if __IOS__
             // we can't wake up the app on ios. this is problematic since data need to be stored locally and remotely
