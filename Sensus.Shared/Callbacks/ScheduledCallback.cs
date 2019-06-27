@@ -150,7 +150,6 @@ namespace Sensus.Callbacks
         /// </summary>
         /// <value><c>true</c> if silent; otherwise, <c>false</c>.</value>
         public bool Silent { get { return UserNotificationMessage == null; } }
-
         /// <summary>
         /// Gets or sets the push notification backend key. Only used in iOS, which uses push notifications to run
         /// each <see cref="T:Sensus.Callbacks.ScheduledCallback"/>.
@@ -159,10 +158,16 @@ namespace Sensus.Callbacks
         public Guid PushNotificationBackendKey { get; set; } = Guid.NewGuid();
 #endif
 
-        /// <summary>
-        /// For JSON deserialization.
-        /// </summary>
-        private ScheduledCallback()
+		/// <summary>
+		/// Gets a value indicating the priority of this <see cref="T:Sensus.Callbacks.ScheduledCallback"/>. This is ignored in Android.
+		/// </summary>
+		/// <value>Defaults to <c>ScheduledCallbackPriority.Normal</c>.</value>
+		public ScheduledCallbackPriority Priority { get; set; } = ScheduledCallbackPriority.Normal;
+
+		/// <summary>
+		/// For JSON deserialization.
+		/// </summary>
+		private ScheduledCallback()
         {
             Canceller = new CancellationTokenSource();
             NotificationUserResponseAction = NotificationUserResponseAction.None;
@@ -187,7 +192,8 @@ namespace Sensus.Callbacks
                                  Protocol protocol,
                                  TimeSpan? timeout,
                                  TimeSpan delayToleranceBefore,
-                                 TimeSpan delayToleranceAfter)
+                                 TimeSpan delayToleranceAfter,
+								 ScheduledCallbackPriority priority)
             : this()
         {
             ActionAsync = actionAsync;
@@ -197,6 +203,7 @@ namespace Sensus.Callbacks
             Timeout = timeout;
             DelayToleranceBefore = delayToleranceBefore;
             DelayToleranceAfter = delayToleranceAfter;
+			Priority = priority;
         }
 
         /// <summary>
@@ -219,7 +226,8 @@ namespace Sensus.Callbacks
                                  Protocol protocol,
                                  TimeSpan? timeout,
                                  TimeSpan delayToleranceBefore,
-                                 TimeSpan delayToleranceAfter)
+                                 TimeSpan delayToleranceAfter,
+								 ScheduledCallbackPriority priority)
             : this(actionAsync,
                    initialDelay,
                    id,
@@ -227,7 +235,8 @@ namespace Sensus.Callbacks
                    protocol,
                    timeout,
                    delayToleranceBefore,
-                   delayToleranceAfter)
+                   delayToleranceAfter,
+				   priority)
         {
             RepeatDelay = repeatDelay;
         }

@@ -40,7 +40,7 @@ namespace Sensus.Android.Probes.Communication
                 Contact contact = await SensusServiceHelper.GetContactAsync(outgoingNumber);
                 bool isContact = contact != null;
 
-                await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.OutgoingCall, outgoingNumber, null, isContact, contact?.Name));
+                await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.OutgoingCall, outgoingNumber, null, isContact, contact?.Name, contact?.Email));
             };
 
             _idleIncomingCallListener = new AndroidTelephonyIdleIncomingListener();
@@ -52,7 +52,7 @@ namespace Sensus.Android.Probes.Communication
                 bool isContact = contact != null;
                 
 
-                await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber, null, isContact, contact?.Name));
+                await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber, null, isContact, contact?.Name, contact?.Email));
             };
 
             _idleIncomingCallListener.Idle += async (o, phoneNumber) =>
@@ -67,7 +67,7 @@ namespace Sensus.Android.Probes.Communication
                 Contact contact = await SensusServiceHelper.GetContactAsync(phoneNumber);
                 bool isContact = contact != null;
 
-                await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.Idle, phoneNumber, callDurationSeconds, isContact, contact?.Name));
+                await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.Idle, phoneNumber, callDurationSeconds, isContact, contact?.Name, contact?.Email));
             };
         }
 

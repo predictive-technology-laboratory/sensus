@@ -146,7 +146,7 @@ namespace Sensus.Android.Probes.Communication
                                         Contact contact = SensusServiceHelper.GetContactAsync(toNumber).Result;
                                         bool isContact = contact != null;
 
-                                        mmsDatum = new SmsDatum(timestamp, null, toNumber, body, true, isContact, contact?.Name);
+                                        mmsDatum = new SmsDatum(timestamp, null, toNumber, body, true, isContact, contact?.Name, contact?.Email);
                                     }
 
                                     break;
@@ -245,7 +245,7 @@ namespace Sensus.Android.Probes.Communication
                         Contact contact = SensusServiceHelper.GetContactAsync(toNumber).Result;
                         bool isContact = contact != null;
 
-                        smsDatum = new SmsDatum(timestamp, null, toNumber, body, true, isContact, contact?.Name);
+                        smsDatum = new SmsDatum(timestamp, null, toNumber, body, true, isContact, contact?.Name, contact?.Email);
                     }
                 }
             }
