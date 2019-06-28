@@ -11,6 +11,8 @@ namespace Sensus.UI
 	{
 		private const int DEFAULT_SNOOZE = 60;
 		private TaskCompletionSource<bool> _responseTaskCompletionSource;
+		private bool _synchronize = true;
+
 		public Task<bool> Result => _responseTaskCompletionSource.Task;
 
 		private async Task PauseProtocolsAsync(IEnumerable<Protocol> protocols, DateTime? resumeTimestamp)
@@ -38,7 +40,7 @@ namespace Sensus.UI
 			int maxSnoozeTimeAmount = protocols.Min(x => x.MaxSnoozeTime);
 			StringBuilder protocolNames = new StringBuilder();
 
-			if(maxSnoozeTimeAmount <= 0)
+			if (maxSnoozeTimeAmount <= 0)
 			{
 				maxSnoozeTimeAmount = int.MaxValue;
 			}
@@ -79,6 +81,8 @@ namespace Sensus.UI
 
 			Func<int, (double, int, string)> calculateTimeAmount = t =>
 			{
+				//t = Math.Max(t, 1);
+
 				KeyValuePair<string, int> defaultItem = resumeUnits.OrderBy(x => x.Value).TakeWhile(x => x.Value <= t).Last();
 				double timeAmount = Math.Round((double)t / defaultItem.Value, 2);
 				int selectedUnit = resumeUnits.ToList().IndexOf(defaultItem);
@@ -119,6 +123,7 @@ namespace Sensus.UI
 			DatePicker datePicker = new DatePicker()
 			{
 				Date = DateTime.Now.Date,
+				MinimumDate = DateTime.Now.Date,
 				HorizontalOptions = LayoutOptions.FillAndExpand,
 				IsEnabled = false
 			};
@@ -132,36 +137,49 @@ namespace Sensus.UI
 			Func<(DateTime, TimeSpan)> getResumeTime = () =>
 			{
 				DateTime resumeTime = datePicker.Date.Date.AddMinutes((int)timePicker.Time.TotalMinutes);
+				DateTime now = DateTime.Now;
+				TimeSpan difference = resumeTime - new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0);
 
-				return (resumeTime, resumeTime - DateTime.Now);
+				if (difference.TotalMinutes < 1)
+				{
+					difference = TimeSpan.FromMinutes(1);
+				}
+
+				return (resumeTime, difference);
 			};
 
 			Action syncronize = () =>
 			{
+				_synchronize = false;
 				if (untilSwitch.IsToggled)
 				{
 					(DateTime resumeTime, TimeSpan difference) = getResumeTime();
 
-					(double Amount, int UnitIndex, string UnitDescription) amountInUnits = calculateTimeAmount((int)difference.TotalMinutes);
+					(double amount, int unitIndex, string unitDescription) = calculateTimeAmount((int)difference.TotalMinutes);
 
-					timeAmountEntry.Text = amountInUnits.Amount.ToString();
-					timeAmountPicker.SelectedIndex = amountInUnits.UnitIndex;
+					timeAmountEntry.Text = amount.ToString();
+					timeAmountPicker.SelectedIndex = unitIndex;
+
+					datePicker.Date = resumeTime.Date;
+					timePicker.Time = resumeTime.TimeOfDay;
 				}
 				else
 				{
 					if (double.TryParse(timeAmountEntry.Text, out double amount))
 					{
-						DateTime resumeTime = DateTime.Now.AddMinutes(resumeUnits[timeAmountPicker.SelectedItem as string] * amount);
+						double resumeMinutes = Math.Max(resumeUnits[timeAmountPicker.SelectedItem as string] * amount, 1);
+						DateTime resumeTime = DateTime.Now.AddMinutes(resumeMinutes);
 
 						datePicker.Date = resumeTime.Date;
 						timePicker.Time = resumeTime.TimeOfDay;
 					}
 				}
+				_synchronize = true;
 			};
 
 			timeAmountEntry.TextChanged += (s, e) =>
 			{
-				if (untilSwitch.IsToggled == false)
+				if (untilSwitch.IsToggled == false && _synchronize)
 				{
 					syncronize();
 				}
@@ -169,7 +187,7 @@ namespace Sensus.UI
 
 			timeAmountPicker.SelectedIndexChanged += (s, e) =>
 			{
-				if (untilSwitch.IsToggled == false)
+				if (untilSwitch.IsToggled == false && _synchronize)
 				{
 					syncronize();
 				}
@@ -177,7 +195,7 @@ namespace Sensus.UI
 
 			datePicker.DateSelected += (s, e) =>
 			{
-				if (untilSwitch.IsToggled)
+				if (untilSwitch.IsToggled && _synchronize)
 				{
 					syncronize();
 				}
@@ -185,7 +203,7 @@ namespace Sensus.UI
 
 			timePicker.PropertyChanged += (s, e) =>
 			{
-				if (untilSwitch.IsToggled && e.PropertyName == TimePicker.TimeProperty.PropertyName)
+				if (untilSwitch.IsToggled && e.PropertyName == TimePicker.TimeProperty.PropertyName && _synchronize)
 				{
 					syncronize();
 				}
@@ -214,7 +232,7 @@ namespace Sensus.UI
 				Text = $"(Max Snooze: {maxSnoozeTime.Amount} {maxSnoozeTime.UnitText.ToLower()})"
 			};
 
-			if(maxSnoozeTimeAmount == int.MaxValue)
+			if (maxSnoozeTimeAmount == int.MaxValue)
 			{
 				maxSnoozeLabel.IsVisible = false;
 			}
