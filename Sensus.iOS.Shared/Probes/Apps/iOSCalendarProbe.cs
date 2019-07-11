@@ -13,8 +13,6 @@ namespace Sensus.iOS.Probes.Apps
 	{
 		public override int DefaultPollingSleepDurationMS => 10800000;
 
-		public DateTime LastPollTime { get; set; } = DateTime.Now.AddHours(-24);
-
 		protected override async Task InitializeAsync()
 		{
 			await base.InitializeAsync();
@@ -55,8 +53,6 @@ namespace Sensus.iOS.Probes.Apps
 
 				datums.Add(datum);
 			}
-
-			LastPollTime = DateTime.UtcNow;
 
 			return datums;
 		}

@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Sensus.UI.UiProperties;
 using Syncfusion.SfChart.XForms;
 
 namespace Sensus.Probes.Apps
@@ -13,7 +11,9 @@ namespace Sensus.Probes.Apps
         public override string DisplayName => "Calendar Events";
         public sealed override Type DatumType => typeof(CalendarDatum);
 
-        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
+		public DateTime LastPollTime { get; set; } = DateTime.Now.AddHours(-24);
+
+		protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
             throw new NotImplementedException();
         }
@@ -42,8 +42,9 @@ namespace Sensus.Probes.Apps
                 calendarMetaData.Add(calendarDatum);
             }
 
-            return calendarMetaData;
+			LastPollTime = DateTime.UtcNow;
 
+			return calendarMetaData;
         }
 
         protected abstract Task<List<CalendarDatum>> GetCalendarEventsAsync();

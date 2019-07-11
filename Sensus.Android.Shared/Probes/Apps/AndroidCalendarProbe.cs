@@ -20,8 +20,6 @@ namespace Sensus.Android.Probes.Apps
 		[JsonIgnore]
 		public override int DefaultPollingSleepDurationMS => 10800000;
 
-		public DateTime LastPollTime { get; set; } = DateTime.Now.AddHours(-24);
-
 		protected override async Task InitializeAsync()
 		{
 			await base.InitializeAsync();
