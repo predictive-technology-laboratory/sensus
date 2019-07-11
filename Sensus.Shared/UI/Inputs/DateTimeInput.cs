@@ -73,7 +73,7 @@ namespace Sensus.UI.Inputs
         {
             get
             {
-                return "Number Entry";
+                return "Picker (DateTime)";
             }
         }
 
