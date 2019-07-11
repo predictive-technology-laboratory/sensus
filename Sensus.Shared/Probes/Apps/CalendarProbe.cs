@@ -10,30 +10,8 @@ namespace Sensus.Probes.Apps
 {
     public abstract class CalendarProbe : PollingProbe
     {
-        private int _readDurationMS;
         public override string DisplayName => "Calendar Events";
         public sealed override Type DatumType => typeof(CalendarDatum);
-
-        [EntryIntegerUiProperty("Read Duration (MS):", true, 5, true)]
-
-        public int ReadDurationMS
-        {
-            get
-            {
-                return _readDurationMS;
-
-            }
-            set
-            {
-                if (value < 5000)
-                {
-                    value = 5000;
-                }
-
-                _readDurationMS = value;
-            }
-
-        }
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
