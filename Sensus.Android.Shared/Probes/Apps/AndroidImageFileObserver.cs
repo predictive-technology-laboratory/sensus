@@ -4,6 +4,7 @@ using Android.OS;
 using Android.Provider;
 using Android.Runtime;
 using Android.Webkit;
+using Sensus.Probes.Apps;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,9 +17,6 @@ namespace Sensus.Android.Probes.Apps
 {
 	public class AndroidImageFileObserver : FileObserver
 	{
-		private const string IMAGE_DISCRETE_TYPE = "image/";
-		private const string VIDEO_DISCRETE_TYPE = "video/";
-
 		private string _path;
 		private List<AndroidImageFileObserver> _fileObservers;
 		private AndroidImageMetadataProbe _probe;
@@ -79,7 +77,7 @@ namespace Sensus.Android.Probes.Apps
 						if (mimeType != null)
 						{
 							// check if the file is an image or a video and then query the appropriate content uri
-							if (mimeType.StartsWith(IMAGE_DISCRETE_TYPE))
+							if (mimeType.StartsWith(ImageMetadataProbe.IMAGE_DISCRETE_TYPE))
 							{
 								cursor = Application.Context.ContentResolver.Query(MediaStore.Images.Media.ExternalContentUri, new string[] { MediaStore.Images.Media.InterfaceConsts.DateTaken }, MediaStore.Images.Media.InterfaceConsts.Data + $" = ?", new string[] { fullPath }, MediaStore.Images.Media.InterfaceConsts.DateTaken + " DESC LIMIT 1");
 
@@ -90,7 +88,7 @@ namespace Sensus.Android.Probes.Apps
 									timestamp = DateTimeOffset.FromUnixTimeMilliseconds(cursor.GetLong(cursor.GetColumnIndex(MediaStore.Images.Media.InterfaceConsts.DateTaken))).DateTime;
 								}
 							}
-							else if (mimeType.StartsWith(VIDEO_DISCRETE_TYPE))
+							else if (mimeType.StartsWith(ImageMetadataProbe.VIDEO_DISCRETE_TYPE))
 							{
 								cursor = Application.Context.ContentResolver.Query(MediaStore.Video.Media.ExternalContentUri, new string[] { MediaStore.Video.Media.InterfaceConsts.DateTaken }, MediaStore.Video.Media.InterfaceConsts.Data + $" = ?", new string[] { fullPath }, MediaStore.Video.Media.InterfaceConsts.DateTaken + " DESC LIMIT 1");
 

@@ -15,8 +15,6 @@
 using Sensus.Anonymization;
 using Sensus.Anonymization.Anonymizers;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Sensus.Probes.Apps
 {

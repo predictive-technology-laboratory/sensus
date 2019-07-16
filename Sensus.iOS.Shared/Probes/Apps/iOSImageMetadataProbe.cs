@@ -1,15 +1,14 @@
 ﻿using Sensus.Probes.Apps;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Photos;
+using CoreFoundation;
 
 namespace Sensus.iOS.Probes.Apps
 {
 	public class iOSImageMetadataProbe : ImageMetadataProbe
 	{
 		private iOSPhotoLibraryChangeObserver _changeObserver;
+		private DispatchQueue _dispatchQueue;
 
 		public iOSImageMetadataProbe()
 		{
@@ -19,8 +18,8 @@ namespace Sensus.iOS.Probes.Apps
 		protected override async Task InitializeAsync()
 		{
 			await base.InitializeAsync();
-
-			_changeObserver = new iOSPhotoLibraryChangeObserver(this);
+			_dispatchQueue = new DispatchQueue("com.sensus.imagemetadataprobe");
+			_changeObserver = new iOSPhotoLibraryChangeObserver(this, _dispatchQueue);
 		}
 
 		protected override async Task StartListeningAsync()
