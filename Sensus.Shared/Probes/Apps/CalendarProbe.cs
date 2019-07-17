@@ -1,41 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Sensus.UI.UiProperties;
 using Syncfusion.SfChart.XForms;
 
 namespace Sensus.Probes.Apps
 {
     public abstract class CalendarProbe : PollingProbe
     {
-        private int _readDurationMS;
         public override string DisplayName => "Calendar Events";
         public sealed override Type DatumType => typeof(CalendarDatum);
 
-        [EntryIntegerUiProperty("Read Duration (MS):", true, 5, true)]
+		public DateTime LastPollTime { get; set; } = DateTime.Now.AddHours(-24);
 
-        public int ReadDurationMS
-        {
-            get
-            {
-                return _readDurationMS;
-
-            }
-            set
-            {
-                if (value < 5000)
-                {
-                    value = 5000;
-                }
-
-                _readDurationMS = value;
-            }
-
-        }
-
-        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
+		protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {
             throw new NotImplementedException();
         }
@@ -64,8 +42,9 @@ namespace Sensus.Probes.Apps
                 calendarMetaData.Add(calendarDatum);
             }
 
-            return calendarMetaData;
+			LastPollTime = DateTime.UtcNow;
 
+			return calendarMetaData;
         }
 
         protected abstract Task<List<CalendarDatum>> GetCalendarEventsAsync();
