@@ -1,7 +1,6 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.539
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.202
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.Android", "Sensus.Android\Sensus.Android.csproj", "{D33B6CDB-795C-4826-B131-47C526ACE07F}"
 EndProject
@@ -157,6 +156,7 @@ Global
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|Android.Build.0 = Release|Any CPU
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|iPhone.ActiveCfg = Release|Any CPU
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{D33B6CDB-795C-4826-B131-47C526ACE07F}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
@@ -214,6 +214,7 @@ Global
 		{970A8722-C237-42D3-8F1D-4096355CA144}.Release|Android.Build.0 = Release|Any CPU
 		{970A8722-C237-42D3-8F1D-4096355CA144}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{970A8722-C237-42D3-8F1D-4096355CA144}.Release|Any CPU.Build.0 = Release|Any CPU
+		{970A8722-C237-42D3-8F1D-4096355CA144}.Release|Any CPU.Deploy.0 = Release|Any CPU
 		{970A8722-C237-42D3-8F1D-4096355CA144}.Release|iPhone.ActiveCfg = Release|Any CPU
 		{970A8722-C237-42D3-8F1D-4096355CA144}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{970A8722-C237-42D3-8F1D-4096355CA144}.Release|iPhoneSimulator.Build.0 = Release|Any CPU

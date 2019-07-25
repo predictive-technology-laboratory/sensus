@@ -222,6 +222,7 @@ namespace Sensus.UI
                                                                                               input.GroupId,
                                                                                               input.Id,
                                                                                               selectedScript.Id,
+                                                                                              input.LabelText,
                                                                                               input.Value,
                                                                                               selectedScript.CurrentDatum?.Id,
                                                                                               input.Latitude,
