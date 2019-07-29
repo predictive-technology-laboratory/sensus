@@ -15,7 +15,6 @@
 using Android.App;
 using Android.Database;
 using Android.Provider;
-using ExifLib;
 using Plugin.Permissions.Abstractions;
 using Sensus.Probes.Apps;
 using System;
@@ -33,7 +32,6 @@ namespace Sensus.Android.Probes.Apps
 	{
 		List<AndroidImageFileObserver> _fileObservers;
 		private const int QUERY_LAST_IMAGE_COUNT = 100;
-		private const string JPEG_MIME_TYPE = "image/jpeg";
 
 		protected override async Task InitializeAsync()
 		{
@@ -66,69 +64,6 @@ namespace Sensus.Android.Probes.Apps
 			}
 		}
 
-		private async Task<byte[]> ReadFile(FileStream fileStream)
-		{
-			const int BUFFER_SIZE = 1024;
-			byte[] fileBuffer = new byte[fileStream.Length];
-			byte[] buffer = new byte[BUFFER_SIZE];
-			int bytesRead = 0;
-			int totalBytesRead = 0;
-
-			while ((bytesRead = await fileStream.ReadAsync(buffer, totalBytesRead, BUFFER_SIZE)) > 0)
-			{
-				Array.Copy(buffer, 0, fileBuffer, totalBytesRead, bytesRead);
-
-				totalBytesRead += bytesRead;
-			}
-
-			return fileBuffer;
-		}
-
-		public async Task CreateAndStoreDatumAsync(string path, string mimeType, DateTime timestamp)
-		{
-			if (new File(path).Exists())
-			{
-				using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
-				{
-					string imageBase64 = null;
-
-					if (mimeType == JPEG_MIME_TYPE)
-					{
-						JpegInfo info = ExifReader.ReadJpeg(fs);
-
-						double latitude = 0;
-						double longitude = 0;
-
-						if (info.GpsLatitude != null && info.GpsLongitude != null)
-						{
-							latitude = (Math.Truncate(info.GpsLatitude[0]) + (info.GpsLatitude[1] / 60) + (info.GpsLatitude[2] / 3600)) * (info.GpsLatitudeRef == ExifGpsLatitudeRef.North ? 1 : -1);
-							longitude = (Math.Truncate(info.GpsLongitude[0]) + (info.GpsLongitude[1] / 60) + (info.GpsLongitude[2] / 3600)) * (info.GpsLongitudeRef == ExifGpsLongitudeRef.East ? 1 : -1);
-						}
-
-						if (StoreImages)
-						{
-							fs.Position = 0;
-
-							imageBase64 = Convert.ToBase64String(await ReadFile(fs));
-						}
-
-						await StoreDatumAsync(new ImageMetadataDatum(info.FileSize, info.Width, info.Height, (int)info.Orientation, info.XResolution, info.YResolution, (int)info.ResolutionUnit, info.IsColor, (int)info.Flash, info.FNumber, info.ExposureTime, info.Software, latitude, longitude, mimeType, imageBase64, timestamp));
-					}
-					else // the file is something else...
-					{
-						if (StoreVideos)
-						{
-							fs.Position = 0;
-
-							imageBase64 = Convert.ToBase64String(await ReadFile(fs));
-						}
-
-						await StoreDatumAsync(new ImageMetadataDatum((int)fs.Length, null, null, null, null, null, null, null, null, null, null, null, null, null, mimeType, imageBase64, timestamp));
-					}
-				}
-			}
-		}
-
 		protected override async Task StartListeningAsync()
 		{
 			await base.StartListeningAsync();
@@ -142,7 +77,5 @@ namespace Sensus.Android.Probes.Apps
 
 			_fileObservers.ForEach(x => x.StopWatching());
 		}
-
-
 	}
 }
