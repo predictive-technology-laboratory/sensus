@@ -84,7 +84,9 @@ namespace Sensus.UI
         {
             Title = "Pending Surveys";
 
+
 			SetUpScriptList();
+
 
             // display an informative message when there are no surveys
             Label noSurveysLabel = new Label

@@ -38,6 +38,7 @@ namespace Sensus.Probes.User.Scripts
         private string _groupId;
         private string _inputId;
         private string _runId;
+        private string _inputLabel;
         private object _response;
         private string _triggerDatumId;
         private double? _latitude;
@@ -252,9 +253,30 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
+
 		public bool ManualRun { get; set; }
 
-		public override string DisplayDetail
+		
+
+        /// <summary>
+        /// Label of the <see cref="Input"/> that generated this <see cref="ScriptDatum"/>. This 
+        /// label does not change across invocations of the <see cref="Script"/>.
+        /// </summary>
+        /// <value>The input label.</value>
+
+        public string InputLabel
+        {
+            get
+            {
+                return _inputLabel;
+            }
+            set
+            {
+                _runId = value;
+            }
+        }
+
+        public override string DisplayDetail
         {
             get
             {
@@ -297,7 +319,8 @@ namespace Sensus.Probes.User.Scripts
             _completionRecords = new List<InputCompletionRecord>();
         }
 
-        public ScriptDatum(DateTimeOffset timestamp, string scriptId, string scriptName, string groupId, string inputId, string runId, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset? locationTimestamp, DateTimeOffset runTimestamp, List<InputCompletionRecord> completionRecords, DateTimeOffset submissionTimestamp, bool manualRun)
+
+        public ScriptDatum(DateTimeOffset timestamp, string scriptId, string scriptName, string groupId, string inputId, string runId,string inputLabel, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset? locationTimestamp, DateTimeOffset runTimestamp, List<InputCompletionRecord> completionRecords, DateTimeOffset submissionTimestamp, bool manualRun)
             : base(timestamp)
         {
             _scriptId = scriptId;
@@ -305,6 +328,7 @@ namespace Sensus.Probes.User.Scripts
             _groupId = groupId;
             _inputId = inputId;
             _runId = runId;
+            _inputLabel = inputLabel;
             _response = response;
             _triggerDatumId = triggerDatumId == null ? "" : triggerDatumId;
             _latitude = latitude;
