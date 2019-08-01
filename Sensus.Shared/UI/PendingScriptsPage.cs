@@ -80,7 +80,7 @@ namespace Sensus.UI
 			_scriptList.ItemsSource = _scripts;
 		}
 
-		public PendingScriptsPage() : base(SensusServiceHelper.Get().ScriptsToRun)
+		public PendingScriptsPage() : base(SensusServiceHelper.Get().ScriptsToRun, false)
         {
             Title = "Pending Surveys";
 

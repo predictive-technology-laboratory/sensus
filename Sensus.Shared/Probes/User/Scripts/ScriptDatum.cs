@@ -47,13 +47,13 @@ namespace Sensus.Probes.User.Scripts
         private List<InputCompletionRecord> _completionRecords;
         private DateTimeOffset _submissionTimestamp;
 
-        /// <summary>
-        /// Identifier for the <see cref="Script"/> within the <see cref="Protocol"/> that produced this <see cref="ScriptDatum"/>. 
-        /// This identifier does not change across invocations of the <see cref="Script"/>. Compare this with <see cref="RunId"/>, 
-        /// which identifies a particular invocation of a <see cref="Script"/>.
-        /// </summary>
-        /// <value>The script identifier.</value>
-        public string ScriptId
+		/// <summary>
+		/// Identifier for the <see cref="Script"/> within the <see cref="Protocol"/> that produced this <see cref="ScriptDatum"/>. 
+		/// This identifier does not change across invocations of the <see cref="Script"/>. Compare this with <see cref="RunId"/>, 
+		/// which identifies a particular invocation of a <see cref="Script"/>.
+		/// </summary>
+		/// <value>The script identifier.</value>
+		public string ScriptId
         {
             get
             {
@@ -252,7 +252,9 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
-        public override string DisplayDetail
+		public bool ManualRun { get; set; }
+
+		public override string DisplayDetail
         {
             get
             {
@@ -295,7 +297,7 @@ namespace Sensus.Probes.User.Scripts
             _completionRecords = new List<InputCompletionRecord>();
         }
 
-        public ScriptDatum(DateTimeOffset timestamp, string scriptId, string scriptName, string groupId, string inputId, string runId, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset? locationTimestamp, DateTimeOffset runTimestamp, List<InputCompletionRecord> completionRecords, DateTimeOffset submissionTimestamp)
+        public ScriptDatum(DateTimeOffset timestamp, string scriptId, string scriptName, string groupId, string inputId, string runId, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset? locationTimestamp, DateTimeOffset runTimestamp, List<InputCompletionRecord> completionRecords, DateTimeOffset submissionTimestamp, bool manualRun)
             : base(timestamp)
         {
             _scriptId = scriptId;
@@ -311,6 +313,7 @@ namespace Sensus.Probes.User.Scripts
             _runTimestamp = runTimestamp;
             _completionRecords = completionRecords;
             _submissionTimestamp = submissionTimestamp;
+			ManualRun = manualRun;
         }
 
         public override string ToString()

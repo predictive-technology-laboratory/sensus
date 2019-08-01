@@ -42,7 +42,7 @@ namespace Sensus.UI
 				.Select(x => x.Script);
 		}
 
-		public UserInitiatedScriptsPage(Protocol protocol) : base(GetProtocolScripts(protocol))
+		public UserInitiatedScriptsPage(Protocol protocol) : base(GetProtocolScripts(protocol), true)
 		{
 			Title = $"{protocol.Name} Surveys";
 

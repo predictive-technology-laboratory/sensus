@@ -17,11 +17,13 @@ namespace Sensus.UI
 		protected IEnumerable<Script> _scripts;
 		protected Grid _contentGrid;
 		protected ListView _scriptList;
+		protected bool _manualRun;
 
-		public RunScriptsPage(IEnumerable<Script> scripts)
+		public RunScriptsPage(IEnumerable<Script> scripts, bool manualRun)
 		{
 			_scripts = scripts;
 			_scriptList = new ListView(ListViewCachingStrategy.RecycleElement);
+			_manualRun = manualRun;
 
 			SetUpScriptList();
 
@@ -190,7 +192,8 @@ namespace Sensus.UI
 																						  input.LocationUpdateTimestamp,
 																						  script.RunTime.Value,
 																						  input.CompletionRecords,
-																						  input.SubmissionTimestamp.Value), CancellationToken.None);
+																						  input.SubmissionTimestamp.Value,
+																						  _manualRun), CancellationToken.None);
 
 						inputStored = true;
 					}
