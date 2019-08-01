@@ -350,6 +350,9 @@ namespace Sensus.Probes.User.Scripts
         [EntryIntegerUiProperty("Delay Tolerance After (MS):", true, 20, true)]
         public int DelayToleranceAfterMS { get; set; }
 
+		[OnOffUiProperty("Allow User Initiation:", true, 21)]
+		public bool AllowUserInitiation { get; set; }
+
         [JsonIgnore]
         public string Caption
         {

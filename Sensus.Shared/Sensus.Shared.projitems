@@ -173,6 +173,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProximityTriggersPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\RunScriptsPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\UserInitiatedScriptsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ScriptInputGroupPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ScriptInputGroupsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ScriptInputPage.cs" />
