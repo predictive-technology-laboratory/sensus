@@ -105,14 +105,10 @@ namespace Sensus.UI
 						actions.Add("Snooze");
 					}
 
-					bool hasScripts = selectedProtocol.Probes.OfType<ScriptProbe>().SelectMany(x => x.ScriptRunners).Any(x => x.Enabled && x.AllowUserInitiation);
-
-					if (hasScripts)
+					if (UserInitiatedScriptsPage.GetProtocolScripts(selectedProtocol).Any())
 					{
-						actions.Add("Take a Survey");
+						actions.Add("Take Surveys");
 					}
-
-					//if(selectedProtocol.)
                 }
                 else if (selectedProtocol.State == ProtocolState.Stopped)
                 {
@@ -256,7 +252,7 @@ namespace Sensus.UI
 				{
 					await selectedProtocol.CancelScheduledResumeAsync();
 				}
-				else if (selectedAction == "Take a Survey")
+				else if (selectedAction == "Take Surveys")
 				{
 					await Navigation.PushAsync(new UserInitiatedScriptsPage(selectedProtocol));
 				}
