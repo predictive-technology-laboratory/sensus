@@ -185,6 +185,7 @@ namespace Sensus.UI
 																						  input.GroupId,
 																						  input.Id,
 																						  script.Id,
+                                                                                          input.LabelText,
 																						  input.Value,
 																						  script.CurrentDatum?.Id,
 																						  input.Latitude,
