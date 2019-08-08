@@ -64,6 +64,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\LocationDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AccelerometerDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AccelerometerProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AttitudeDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AttitudeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\GyroscopeDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\GyroscopeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\LinearAccelerationDatum.cs" />

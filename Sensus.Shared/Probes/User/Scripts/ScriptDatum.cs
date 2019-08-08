@@ -347,6 +347,7 @@ namespace Sensus.Probes.User.Scripts
             "Group:  " + _groupId + Environment.NewLine +
             "Input:  " + _inputId + Environment.NewLine +
             "Run:  " + _runId + Environment.NewLine +
+            "Input label" + _inputLabel + Environment.NewLine +
             "Response:  " + _response + Environment.NewLine +
             "Latitude:  " + _latitude + Environment.NewLine +
             "Longitude:  " + _longitude + Environment.NewLine +
