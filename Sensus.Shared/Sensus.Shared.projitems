@@ -64,8 +64,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\LocationDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AccelerometerDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AccelerometerProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AttitudeDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AttitudeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\GyroscopeDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\GyroscopeProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\LinearAccelerationDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\LinearAccelerationProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\SpeedDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\CellTowerDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\CellTowerProbe.cs" />
@@ -173,6 +177,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProximityTriggersPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\RunScriptsPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\UserInitiatedScriptsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ScriptInputGroupPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ScriptInputGroupsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ScriptInputPage.cs" />
