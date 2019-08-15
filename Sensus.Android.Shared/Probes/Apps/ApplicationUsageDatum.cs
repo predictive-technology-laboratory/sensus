@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Sensus.Anonymization;
+using Sensus.Anonymization.Anonymizers;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -17,7 +19,9 @@ namespace Sensus.Android.Probes.Apps
 			EventType = eventType;
 		}
 
+		[Anonymizable("Package Name:", typeof(StringHashAnonymizer), false)]
 		public string PackageName { get; set; }
+		[Anonymizable("Application Name:", typeof(StringHashAnonymizer), false)]
 		public string ApplicationName { get; set; }
 		public string EventType { get; set; }
 	}
