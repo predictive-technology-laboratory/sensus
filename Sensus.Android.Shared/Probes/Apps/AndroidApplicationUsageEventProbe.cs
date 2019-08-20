@@ -14,15 +14,15 @@ using XamarinApplication = Xamarin.Forms.Application;
 
 namespace Sensus.Android.Probes.Apps
 {
-	public class AndroidApplicationUsageProbe : PollingProbe
+	public class AndroidApplicationUsageEventProbe : PollingProbe
 	{
 		protected UsageStatsManager _manager;
 
 		public override int DefaultPollingSleepDurationMS => (int)TimeSpan.FromHours(1).TotalMilliseconds;
 
-		public override string DisplayName => "Application Usage";
+		public override string DisplayName => "Application Events";
 
-		public override Type DatumType => typeof(ApplicationUsageDatum);
+		public override Type DatumType => typeof(ApplicationUsageEventDatum);
 
 		protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
 		{
@@ -39,7 +39,7 @@ namespace Sensus.Android.Probes.Apps
 
 				string applicationName = Application.Context.PackageManager.GetApplicationLabel(Application.Context.PackageManager.GetApplicationInfo(usageEvent.PackageName, PackageInfoFlags.MatchDefaultOnly));
 
-				data.Add(new ApplicationUsageDatum(usageEvent.PackageName, applicationName, usageEvent.EventType.ToString(), DateTimeOffset.FromUnixTimeMilliseconds(usageEvent.TimeStamp)));
+				data.Add(new ApplicationUsageEventDatum(usageEvent.PackageName, applicationName, usageEvent.EventType.ToString(), DateTimeOffset.FromUnixTimeMilliseconds(usageEvent.TimeStamp)));
 			}
 
 			return Task.FromResult(data);
