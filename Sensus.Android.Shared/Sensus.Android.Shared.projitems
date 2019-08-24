@@ -12,10 +12,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\MainConcurrent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Context\AndroidSensusContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidApplicationUsageProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidApplicationUsageStatsProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidApplicationUsageEventProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidCalendarProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidImageFileObserver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidImageMetadataProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\ApplicationUsageDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\ApplicationUsageEventDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\ApplicationUsageStatsDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\AndroidBluetoothDevice.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\AndroidBluetoothDeviceReceiver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidKeystrokeProbe.cs" />

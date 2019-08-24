@@ -6,13 +6,13 @@ using System.Text;
 
 namespace Sensus.Android.Probes.Apps
 {
-	public class ApplicationUsageDatum : Datum
+	public class ApplicationUsageEventDatum : Datum
 	{
 		public override string DisplayDetail => throw new NotImplementedException();
 
 		public override object StringPlaceholderValue => throw new NotImplementedException();
 
-		public ApplicationUsageDatum(string packageName, string applicationName, string eventType, DateTimeOffset timestamp) : base(timestamp)
+		public ApplicationUsageEventDatum(string packageName, string applicationName, string eventType, DateTimeOffset timestamp) : base(timestamp)
 		{
 			PackageName = packageName;
 			ApplicationName = applicationName;
