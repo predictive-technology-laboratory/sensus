@@ -185,6 +185,7 @@ namespace Sensus.Callbacks
         /// <param name="timeout">How long to allow callback to execute before cancelling it.</param>
         /// <param name="delayToleranceBefore">Delay tolerance before.</param>
         /// <param name="delayToleranceAfter">Delay tolerance after.</param>
+        /// <param name="priority">The priority of the callback.</param>
         public ScheduledCallback(ActionAsyncDelegate actionAsync,
                                  TimeSpan delay,
                                  string id,
@@ -218,6 +219,7 @@ namespace Sensus.Callbacks
         /// <param name="timeout">How long to allow callback to execute before cancelling it.</param>
         /// <param name="delayToleranceBefore">Delay tolerance before.</param>
         /// <param name="delayToleranceAfter">Delay tolerance after.</param>
+        /// <param name="priority">The priority of the callback.</param>
         public ScheduledCallback(ActionAsyncDelegate actionAsync,
                                  TimeSpan initialDelay,
                                  TimeSpan repeatDelay,
