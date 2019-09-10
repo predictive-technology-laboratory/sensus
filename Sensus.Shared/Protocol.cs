@@ -1459,13 +1459,16 @@ namespace Sensus
         [OnOffUiProperty("(Android) Display Participation:", true, 56)]
         public bool DisplayParticipationPercentageInForegroundServiceNotification { get; set; } = true;
 
-        /// <summary>
-        /// We regenerate the offset every time a protocol starts, so there's 
-        /// no need to serialize it. Furthermore, we never want the offset
-        /// to be shared.
-        /// </summary>
-        /// <value>The gps longitude anonymization participant offset.</value>
-        [JsonIgnore]
+		[OnOffUiProperty("(Android) Continue listening on AC power:", true, 57)]
+		public bool ListenOnAcPower { get; set; }
+
+		/// <summary>
+		/// We regenerate the offset every time a protocol starts, so there's 
+		/// no need to serialize it. Furthermore, we never want the offset
+		/// to be shared.
+		/// </summary>
+		/// <value>The gps longitude anonymization participant offset.</value>
+		[JsonIgnore]
         public double GpsLongitudeAnonymizationParticipantOffset
         {
             get
