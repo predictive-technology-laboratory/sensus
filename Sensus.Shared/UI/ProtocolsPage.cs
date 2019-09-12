@@ -24,6 +24,7 @@ using Sensus.Authentication;
 using System.Net;
 using Sensus.Notifications;
 using System.Text;
+using Sensus.Probes.User.Scripts;
 
 #if __ANDROID__
 using Sensus.Android;
@@ -102,6 +103,11 @@ namespace Sensus.UI
 					if (selectedProtocol.AllowSnooze)
 					{
 						actions.Add("Snooze");
+					}
+
+					if (UserInitiatedScriptsPage.GetProtocolScripts(selectedProtocol).Any())
+					{
+						actions.Add("Take Surveys");
 					}
                 }
                 else if (selectedProtocol.State == ProtocolState.Stopped)
@@ -245,6 +251,10 @@ namespace Sensus.UI
 				else if (selectedAction == "Cancel Snooze")
 				{
 					await selectedProtocol.CancelScheduledResumeAsync();
+				}
+				else if (selectedAction == "Take Surveys")
+				{
+					await Navigation.PushAsync(new UserInitiatedScriptsPage(selectedProtocol));
 				}
                 else if (selectedAction == "Tag Data")
                 {

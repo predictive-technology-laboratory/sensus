@@ -38,6 +38,7 @@ namespace Sensus.Probes.User.Scripts
         private string _groupId;
         private string _inputId;
         private string _runId;
+        private string _inputLabel;
         private object _response;
         private string _triggerDatumId;
         private double? _latitude;
@@ -47,13 +48,13 @@ namespace Sensus.Probes.User.Scripts
         private List<InputCompletionRecord> _completionRecords;
         private DateTimeOffset _submissionTimestamp;
 
-        /// <summary>
-        /// Identifier for the <see cref="Script"/> within the <see cref="Protocol"/> that produced this <see cref="ScriptDatum"/>. 
-        /// This identifier does not change across invocations of the <see cref="Script"/>. Compare this with <see cref="RunId"/>, 
-        /// which identifies a particular invocation of a <see cref="Script"/>.
-        /// </summary>
-        /// <value>The script identifier.</value>
-        public string ScriptId
+		/// <summary>
+		/// Identifier for the <see cref="Script"/> within the <see cref="Protocol"/> that produced this <see cref="ScriptDatum"/>. 
+		/// This identifier does not change across invocations of the <see cref="Script"/>. Compare this with <see cref="RunId"/>, 
+		/// which identifies a particular invocation of a <see cref="Script"/>.
+		/// </summary>
+		/// <value>The script identifier.</value>
+		public string ScriptId
         {
             get
             {
@@ -252,6 +253,29 @@ namespace Sensus.Probes.User.Scripts
             }
         }
 
+
+		public bool ManualRun { get; set; }
+
+		
+
+        /// <summary>
+        /// Label of the <see cref="Input"/> that generated this <see cref="ScriptDatum"/>. This 
+        /// label does not change across invocations of the <see cref="Script"/>.
+        /// </summary>
+        /// <value>The input label.</value>
+
+        public string InputLabel
+        {
+            get
+            {
+                return _inputLabel;
+            }
+            set
+            {
+                _runId = value;
+            }
+        }
+
         public override string DisplayDetail
         {
             get
@@ -295,7 +319,8 @@ namespace Sensus.Probes.User.Scripts
             _completionRecords = new List<InputCompletionRecord>();
         }
 
-        public ScriptDatum(DateTimeOffset timestamp, string scriptId, string scriptName, string groupId, string inputId, string runId, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset? locationTimestamp, DateTimeOffset runTimestamp, List<InputCompletionRecord> completionRecords, DateTimeOffset submissionTimestamp)
+
+        public ScriptDatum(DateTimeOffset timestamp, string scriptId, string scriptName, string groupId, string inputId, string runId,string inputLabel, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset? locationTimestamp, DateTimeOffset runTimestamp, List<InputCompletionRecord> completionRecords, DateTimeOffset submissionTimestamp, bool manualRun)
             : base(timestamp)
         {
             _scriptId = scriptId;
@@ -303,6 +328,7 @@ namespace Sensus.Probes.User.Scripts
             _groupId = groupId;
             _inputId = inputId;
             _runId = runId;
+            _inputLabel = inputLabel;
             _response = response;
             _triggerDatumId = triggerDatumId == null ? "" : triggerDatumId;
             _latitude = latitude;
@@ -311,6 +337,7 @@ namespace Sensus.Probes.User.Scripts
             _runTimestamp = runTimestamp;
             _completionRecords = completionRecords;
             _submissionTimestamp = submissionTimestamp;
+			ManualRun = manualRun;
         }
 
         public override string ToString()
@@ -320,6 +347,7 @@ namespace Sensus.Probes.User.Scripts
             "Group:  " + _groupId + Environment.NewLine +
             "Input:  " + _inputId + Environment.NewLine +
             "Run:  " + _runId + Environment.NewLine +
+            "Input label" + _inputLabel + Environment.NewLine +
             "Response:  " + _response + Environment.NewLine +
             "Latitude:  " + _latitude + Environment.NewLine +
             "Longitude:  " + _longitude + Environment.NewLine +

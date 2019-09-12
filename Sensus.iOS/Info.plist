@@ -9,7 +9,7 @@
 	<key>CFBundleDisplayName</key>
 	<string>Sensus</string>
 	<key>CFBundleIdentifier</key>
-	<string>edu.virginia.sie.ptl.sensus</string>
+	<string>sensus.dev</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MinimumOSVersion</key>

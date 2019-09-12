@@ -16,6 +16,7 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace Sensus
 {
@@ -25,8 +26,8 @@ namespace Sensus
 
         private string _path;
         private LoggingLevel _level;
-        private TextWriter[] _otherOutputs;
         private List<string> _messageBuffer;
+		private List<TextWriter> _otherOutputs;
         private Regex _extraWhiteSpace;
 
         public LoggingLevel Level
@@ -39,9 +40,10 @@ namespace Sensus
         {
             _path = path;
             _level = level;
-            _otherOutputs = otherOutputs;
             _messageBuffer = new List<string>();
             _extraWhiteSpace = new Regex(@"\s\s+");
+
+			_otherOutputs = otherOutputs?.ToList() ?? new List<TextWriter>();
         }
 
         public void Log(string message, LoggingLevel level, Type callingType, bool throwException = false)
@@ -147,7 +149,7 @@ namespace Sensus
         }
 
         public List<string> Read(int maxLines, bool mostRecentFirst)
-        {            
+        {
             lock (_messageBuffer)
             {
                 CommitMessageBuffer();
@@ -157,26 +159,26 @@ namespace Sensus
                 try
                 {
                     using (StreamReader file = new StreamReader(_path))
-                    {       
-                        if (maxLines > 0)
-                        {
-                            int numLines = 0;
-                            while (file.ReadLine() != null)
-                            {
-                                ++numLines;
-                            }
-                        
-                            file.BaseStream.Position = 0;
-                            file.DiscardBufferedData();
+                    {
+						if (maxLines > 0)
+						{
+							int numLines = 0;
+							while (file.ReadLine() != null)
+							{
+								++numLines;
+							}
 
-                            int linesToSkip = Math.Max(numLines - maxLines, 0);
-                            for (int i = 1; i <= linesToSkip; ++i)
-                            {
-                                file.ReadLine();
-                            }
-                        }
+							file.BaseStream.Position = 0;
+							file.DiscardBufferedData();
 
-                        string line;
+							int linesToSkip = Math.Max(numLines - maxLines, 0);
+							for (int i = 1; i <= linesToSkip; ++i)
+							{
+								file.ReadLine();
+							}
+						}
+
+						string line;
                         while ((line = file.ReadLine()) != null)
                         {
                             lines.Add(line);
@@ -205,7 +207,7 @@ namespace Sensus
                 CommitMessageBuffer();
 
                 try
-                {                    
+                {
                     File.Copy(_path, path);
                 }
                 catch (Exception ex)
@@ -225,10 +227,27 @@ namespace Sensus
                 }
                 catch (Exception)
                 {
+
                 }
 
                 _messageBuffer.Clear();
             }
         }
-    }
+
+		public void AddOtherOutput(TextWriter writer)
+		{
+			lock(_otherOutputs)
+			{
+				_otherOutputs.Add(writer);
+			}
+		}
+
+		public void RemoveOtherOutput(TextWriter writer)
+		{
+			lock (_otherOutputs)
+			{
+				_otherOutputs.Remove(writer);
+			}
+		}
+	}
 }
