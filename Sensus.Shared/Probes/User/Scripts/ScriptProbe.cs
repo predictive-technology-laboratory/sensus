@@ -204,24 +204,39 @@ namespace Sensus.Probes.User.Scripts
                 {
                     if (scriptRunner.Enabled)
                     {
-                        foreach (Trigger trigger in scriptRunner.Triggers)
-                        {
-                            collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  When " + trigger.Probe.DisplayName + " is " + uppercaseSplitter.Replace(trigger.Condition.ToString(), " ").ToLower() + " " + trigger.ConditionValue + ".");
-                        }
+						//foreach (Trigger trigger in scriptRunner.Triggers)
+						//                  {
+						//                      collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  When " + trigger.Probe.DisplayName + " is " + uppercaseSplitter.Replace(trigger.Condition.ToString(), " ").ToLower() + " " + trigger.ConditionValue + ".");
+						//                  }
 
-                        if (scriptRunner.RunOnStart)
-                        {
-                            collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  Once when the study is started.");
-                        }
+						//                  if (scriptRunner.RunOnStart)
+						//                  {
+						//                      collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  Once when the study is started.");
+						//                  }
 
-                        if (scriptRunner.TriggerWindowsString != "")
-                        {
-                            collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  " + scriptRunner.ScheduleTriggerReadableDescription + ".");
-                        }
-                    }
-                }
+						//                  if (scriptRunner.TriggerWindowsString != "")
+						//                  {
+						//                      collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  " + scriptRunner.ScheduleTriggerReadableDescription + ".");
+						//                  }
 
-                return collectionDescription.ToString();
+						foreach (Trigger trigger in scriptRunner.Triggers)
+						{
+							collectionDescription.AppendLine((collectionDescription.Length == 0 ? "" : "-") + scriptRunner.Name + ":  When " + trigger.Probe.DisplayName + " is " + uppercaseSplitter.Replace(trigger.Condition.ToString(), " ").ToLower() + " " + trigger.ConditionValue + ".");
+						}
+
+						if (scriptRunner.RunOnStart)
+						{
+							collectionDescription.AppendLine((collectionDescription.Length == 0 ? "" : "-") + scriptRunner.Name + ":  Once when the study is started.");
+						}
+
+						if (scriptRunner.TriggerWindowsString != "")
+						{
+							collectionDescription.AppendLine((collectionDescription.Length == 0 ? "" : "-") + scriptRunner.Name + ":  " + scriptRunner.ScheduleTriggerReadableDescription + ".");
+						}
+					}
+				}
+
+				return collectionDescription.ToString();
             }
         }
 
