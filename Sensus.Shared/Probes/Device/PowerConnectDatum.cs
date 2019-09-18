@@ -21,7 +21,7 @@ namespace Sensus.Probes.Device
         {
             get
             {
-                return "(Power connect Data)";
+                return "(Power connection Data)";
             }
         }
 
