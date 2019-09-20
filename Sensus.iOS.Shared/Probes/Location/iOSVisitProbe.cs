@@ -1,4 +1,5 @@
 ﻿using CoreLocation;
+using Foundation;
 using Sensus.Probes.Location;
 using System;
 using System.Threading.Tasks;
@@ -27,26 +28,27 @@ namespace Sensus.iOS.Probes.Location
 
 		private void OnVisit(object sender, CLVisitedEventArgs args)
 		{
-			//CLGeocoder geocoder = new CLGeocoder();
-
 			double latitude = args.Visit.Coordinate.Latitude;
 			double longitude = args.Visit.Coordinate.Longitude;
 
-			//geocoder.ReverseGeocodeLocation(new CLLocation(latitude, longitude), async (p, e) =>
-			//{
-			//	if (e != null)
-			//	{
-			//		SensusServiceHelper.Get().Logger.Log($"Failed to get visit location: {e.LocalizedDescription}", LoggingLevel.Normal, GetType());
-			//	}
-			//	else
-			//	{
+			DateTimeOffset timestamp = DateTimeOffset.UtcNow;
+			DateTimeOffset? arrivalDate = (DateTime)args.Visit.ArrivalDate;
+			DateTimeOffset? departureDate = (DateTime)args.Visit.DepartureDate;
 
-			//	}
+			if (args.Visit.ArrivalDate == NSDate.DistantPast)
+			{
+				timestamp = (DateTime)args.Visit.DepartureDate;
 
-			//	await StoreDatumAsync(new VisitDatum((DateTime)args.Visit.ArrivalDate, (DateTime)args.Visit.DepartureDate, latitude, longitude, args.Visit.HorizontalAccuracy, DateTimeOffset.UtcNow));
-			//});
+				arrivalDate = null;
+			}
+			else if(args.Visit.DepartureDate == NSDate.DistantFuture)
+			{
+				timestamp = (DateTime)args.Visit.ArrivalDate;
 
-			Task.WaitAny(StoreDatumAsync(new VisitDatum((DateTime)args.Visit.ArrivalDate, (DateTime)args.Visit.DepartureDate, latitude, longitude, args.Visit.HorizontalAccuracy, DateTimeOffset.UtcNow)));
+				departureDate = null;
+			}
+
+			Task.WaitAny(StoreDatumAsync(new VisitDatum(arrivalDate, departureDate, latitude, longitude, args.Visit.HorizontalAccuracy, timestamp)));
 		}
 
 		protected override async Task StartListeningAsync()

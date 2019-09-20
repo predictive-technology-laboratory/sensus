@@ -10,13 +10,13 @@ namespace Sensus.Probes.Location
 
 		public override object StringPlaceholderValue => DisplayDetail;
 
-		public DateTimeOffset ArrivalDate { get; set; }
-		public DateTimeOffset DepartureDate { get; set; }
+		public DateTimeOffset? ArrivalDate { get; set; }
+		public DateTimeOffset? DepartureDate { get; set; }
 		public double Latitude { get; set; }
 		public double Longitude { get; set; }
 		public double HorizontalAccuracy { get; set; }
 
-		public VisitDatum(DateTimeOffset arrivalDate, DateTimeOffset departureDate, double latitude, double longitude, double horizontalAccuracy, DateTimeOffset timestamp) : base(timestamp)
+		public VisitDatum(DateTimeOffset? arrivalDate, DateTimeOffset? departureDate, double latitude, double longitude, double horizontalAccuracy, DateTimeOffset timestamp) : base(timestamp)
 		{
 			ArrivalDate = arrivalDate;
 			DepartureDate = departureDate;
