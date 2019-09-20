@@ -6,7 +6,7 @@ namespace Sensus.Probes.Location
 {
 	public class VisitDatum : Datum
 	{
-		public override string DisplayDetail => $"{ArrivalDate}-{DepartureDate} ({Latitude}, {Longitude})";
+		public override string DisplayDetail => Math.Round(Latitude, 2) + " (lat), " + Math.Round(Longitude, 2) + " (lon)";
 
 		public override object StringPlaceholderValue => DisplayDetail;
 
