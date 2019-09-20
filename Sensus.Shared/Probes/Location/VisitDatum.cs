@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Sensus.iOS.Probes.Location
+namespace Sensus.Probes.Location
 {
 	public class VisitDatum : Datum
 	{
-		public override string DisplayDetail => throw new NotImplementedException();
+		public override string DisplayDetail => $"{ArrivalDate}-{DepartureDate} ({Latitude}, {Longitude})";
 
-		public override object StringPlaceholderValue => throw new NotImplementedException();
+		public override object StringPlaceholderValue => DisplayDetail;
 
 		public DateTimeOffset ArrivalDate { get; set; }
 		public DateTimeOffset DepartureDate { get; set; }

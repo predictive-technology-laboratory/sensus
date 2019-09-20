@@ -1,47 +1,14 @@
 ﻿using CoreLocation;
-using Sensus.Probes;
-using Syncfusion.SfChart.XForms;
+using Sensus.Probes.Location;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using UIKit;
 
 namespace Sensus.iOS.Probes.Location
 {
-	public class iOSVisitProbe : ListeningProbe
+	public class iOSVisitProbe : VisitProbe
 	{
 		private CLLocationManager _locationManager;
-
-		protected override bool DefaultKeepDeviceAwake => false;
-
-		public override Type DatumType => typeof(VisitDatum);
-
-		public override string DisplayName => "Visits";
-
-		protected override string DeviceAwakeWarning => "";
-
-		protected override string DeviceAsleepWarning => "";
-
-		protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override ChartAxis GetChartPrimaryAxis()
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override RangeAxisBase GetChartSecondaryAxis()
-		{
-			throw new NotImplementedException();
-		}
-
-		protected override ChartSeries GetChartSeries()
-		{
-			throw new NotImplementedException();
-		}
 
 		public iOSVisitProbe()
 		{

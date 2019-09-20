@@ -19,7 +19,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\iOSCompassProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\iOSProximityProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\iOSVisitProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\VisitDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\iOSAccelerometerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\iOSGyroscopeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\iOSPollingWlanProbe.cs" />
