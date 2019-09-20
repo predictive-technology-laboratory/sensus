@@ -25,89 +25,96 @@ using System.Collections.Generic;
 using Sensus.Extensions;
 using Sensus.Notifications;
 using Newtonsoft.Json.Linq;
+using Plugin.Connectivity;
+using Plugin.Connectivity.Abstractions;
 
 namespace Sensus.DataStores.Remote
 {
-    /// <summary>
-    /// 
-    /// A Remote Data Store periodically transfers data from the device's <see cref="Local.LocalDataStore"/> to a remote storage system 
-    /// (e.g., Amazon's Simple Storage Service). The job of the Remote Data Store is to ensure that data accumulated locally on the device 
-    /// are safely transferred off of the device before their accumulated size grows too large or they are corrupted, deleted, lost, etc. 
-    /// 
-    /// </summary>
-    public abstract class RemoteDataStore : DataStore
-    {
-        private int _writeDelayMS;
-        private int _writeTimeoutMinutes;
-        private DateTime? _mostRecentSuccessfulWriteTime;
-        private ScheduledCallback _writeCallback;
-        private bool _writeOnPowerConnect;
-        private bool _requireWiFi;
-        private bool _requireCharging;
-        private float _requiredBatteryChargeLevelPercent;
-        private string _userNotificationMessage;
-        private EventHandler<bool> _powerConnectionChanged;
-        private CancellationTokenSource _powerConnectWriteCancellationToken;
+	/// <summary>
+	/// 
+	/// A Remote Data Store periodically transfers data from the device's <see cref="Local.LocalDataStore"/> to a remote storage system 
+	/// (e.g., Amazon's Simple Storage Service). The job of the Remote Data Store is to ensure that data accumulated locally on the device 
+	/// are safely transferred off of the device before their accumulated size grows too large or they are corrupted, deleted, lost, etc. 
+	/// 
+	/// </summary>
+	public abstract class RemoteDataStore : DataStore
+	{
+		private int _writeDelayMS;
+		private int _writeTimeoutMinutes;
+		private DateTime? _mostRecentSuccessfulWriteTime;
+		private ScheduledCallback _writeCallback;
+		private bool _writeOnPowerConnect;
+		private bool _requireWiFi;
+		private bool _requireCharging;
+		private float _requiredBatteryChargeLevelPercent;
+		private string _userNotificationMessage;
+		private EventHandler<bool> _powerConnectionChanged;
+		private ConnectivityChangedEventHandler _wifiConnectionChanged;
+		private CancellationTokenSource _powerConnectWriteCancellationToken;
+		private CancellationTokenSource _wifiConnectWriteCancellationToken;
 
-        /// <summary>
-        /// How many milliseconds to pause between each data write cycle.
-        /// </summary>
-        /// <value>The write delay in milliseconds.</value>
-        [EntryIntegerUiProperty("Write Delay (MS):", true, 50, true)]
-        public int WriteDelayMS
-        {
-            get { return _writeDelayMS; }
-            set
-            {
-                if (value <= 1000)
-                {
-                    value = 1000;
-                }
+		/// <summary>
+		/// How many milliseconds to pause between each data write cycle.
+		/// </summary>
+		/// <value>The write delay in milliseconds.</value>
+		[EntryIntegerUiProperty("Write Delay (MS):", true, 50, true)]
+		public int WriteDelayMS
+		{
+			get { return _writeDelayMS; }
+			set
+			{
+				if (value <= 1000)
+				{
+					value = 1000;
+				}
 
-                _writeDelayMS = value;
-            }
-        }
+				_writeDelayMS = value;
+			}
+		}
 
-        /// <summary>
-        /// How many minutes the data store has to complete a write before being cancelled.
-        /// </summary>
-        /// <value>The write timeout in minutes.</value>
-        [EntryIntegerUiProperty("Write Timeout (Mins.):", true, 51, true)]
-        public int WriteTimeoutMinutes
-        {
-            get
-            {
-                return _writeTimeoutMinutes;
-            }
-            set
-            {
-                if (value <= 0)
-                {
-                    value = 1;
-                }
+		/// <summary>
+		/// How many minutes the data store has to complete a write before being cancelled.
+		/// </summary>
+		/// <value>The write timeout in minutes.</value>
+		[EntryIntegerUiProperty("Write Timeout (Mins.):", true, 51, true)]
+		public int WriteTimeoutMinutes
+		{
+			get
+			{
+				return _writeTimeoutMinutes;
+			}
+			set
+			{
+				if (value <= 0)
+				{
+					value = 1;
+				}
 
-                _writeTimeoutMinutes = value;
-            }
-        }
+				_writeTimeoutMinutes = value;
+			}
+		}
 
-        /// <summary>
-        /// Whether to initiate an additional data upload each time the device is plugged in to external 
-        /// power. These additional uploads will respect the other settings (e.g., <see cref="RequireWiFi"/>).
-        /// </summary>
-        /// <value><c>true</c> to upload when plugged in, otherwise <c>false</c>.</value>
-        [OnOffUiProperty("Write on Power Connect:", true, 52)]
-        public bool WriteOnPowerConnect
-        {
-            get { return _writeOnPowerConnect; }
-            set { _writeOnPowerConnect = value; }
-        }
+		/// <summary>
+		/// Whether to initiate an additional data upload each time the device is plugged in to external 
+		/// power. These additional uploads will respect the other settings (e.g., <see cref="RequireWiFi"/>).
+		/// </summary>
+		/// <value><c>true</c> to upload when plugged in, otherwise <c>false</c>.</value>
+		[OnOffUiProperty("Write on Power Connect:", true, 52)]
+		public bool WriteOnPowerConnect
+		{
+			get { return _writeOnPowerConnect; }
+			set { _writeOnPowerConnect = value; }
+		}
+
+		[OnOffUiProperty("Write on Wifi Connect:", true, 53)]
+		public bool WriteOnWifiConnect { get; set; }
 
         /// <summary>
         /// Whether to require a WiFi connection when uploading data. If this is turned off, substantial data charges might result since 
         /// data will be transferred over the cellular network if WiFi is not available.
         /// </summary>
         /// <value><c>true</c> if WiFi is required; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Require WiFi:", true, 53)]
+        [OnOffUiProperty("Require WiFi:", true, 54)]
         public bool RequireWiFi
         {
             get { return _requireWiFi; }
@@ -118,7 +125,7 @@ namespace Sensus.DataStores.Remote
         /// Whether to require external power when uploading data.
         /// </summary>
         /// <value><c>true</c> to require charging; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Require Charging:", true, 54)]
+        [OnOffUiProperty("Require Charging:", true, 55)]
         public bool RequireCharging
         {
             get { return _requireCharging; }
@@ -134,7 +141,7 @@ namespace Sensus.DataStores.Remote
         /// power source only when the battery is almost fully charged. This will minimize user irritation.
         /// </summary>
         /// <value>The required battery charge level percent.</value>
-        [EntryFloatUiProperty("Required Battery Charge (Percent):", true, 55, false)]
+        [EntryFloatUiProperty("Required Battery Charge (Percent):", true, 56, false)]
         public float RequiredBatteryChargeLevelPercent
         {
             get { return _requiredBatteryChargeLevelPercent; }
@@ -156,7 +163,7 @@ namespace Sensus.DataStores.Remote
         /// does not open Sensus.
         /// </summary>
         /// <value>The user notification message.</value>
-        [EntryStringUiProperty("(iOS) User Notification Message:", true, 56, true)]
+        [EntryStringUiProperty("(iOS) User Notification Message:", true, 57, true)]
         public string UserNotificationMessage
         {
             get { return _userNotificationMessage; }
@@ -231,7 +238,24 @@ namespace Sensus.DataStores.Remote
                     _powerConnectWriteCancellationToken?.Cancel();
                 }
             };
-        }
+			_wifiConnectionChanged = async (sender, args) =>
+			{
+				if (args.IsConnected)
+				{
+					if (WriteOnWifiConnect)
+					{
+						SensusServiceHelper.Get().Logger.Log("Writing to remote on Wifi connect signal.", LoggingLevel.Normal, GetType());
+						_wifiConnectWriteCancellationToken = new CancellationTokenSource();
+						await WriteLocalDataStoreAsync(_wifiConnectWriteCancellationToken.Token);
+					}
+				}
+				else
+				{
+					// cancel any prior write attempts resulting from Wifi connection
+					_wifiConnectWriteCancellationToken?.Cancel();
+				}
+			};
+		}
 
         public override async Task StartAsync()
         {
@@ -252,9 +276,10 @@ namespace Sensus.DataStores.Remote
 
             // hook into the AC charge event signal -- add handler to AC broadcast receiver
             SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;
+			CrossConnectivity.Current.ConnectivityChanged += _wifiConnectionChanged;
         }
 
-        public override async Task StopAsync()
+		public override async Task StopAsync()
         {
             await base.StopAsync();
 
@@ -262,7 +287,8 @@ namespace Sensus.DataStores.Remote
 
             // unhook from the AC charge event signal -- remove handler to AC broadcast receiver
             SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged -= _powerConnectionChanged;
-        }
+			CrossConnectivity.Current.ConnectivityChanged -= _wifiConnectionChanged;
+		}
 
         public override void Reset()
         {
