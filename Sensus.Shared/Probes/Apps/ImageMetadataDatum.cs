@@ -20,11 +20,17 @@ namespace Sensus.Probes.Apps
 {
 	public class ImageMetadataDatum : Datum
 	{
-		public override string DisplayDetail => throw new NotImplementedException();
+		public override string DisplayDetail
+        {
+            get
+            {
+                return "(Image Metadata)";
+            }
+        }
 
-		public override object StringPlaceholderValue => throw new NotImplementedException();
+        public override object StringPlaceholderValue => throw new NotImplementedException();
 
-		public ImageMetadataDatum(int fileSize, int? width, int? height, int? orientation, double? xResolution, double? yResolution, int? resolutionUnit, bool? isColor, int? flash, double? fNumber, double? exposureTime, string software, double? latitude, double? longitude, string mimeType, string imageBase64, DateTimeOffset timestamp)
+		public ImageMetadataDatum(int fileSize, int? width, int? height, int? orientation, double? xResolution, double? yResolution, int? resolutionUnit, bool? isColor, int? flash, double? fNumber, double? exposureTime, string software, double? latitude, double? longitude, string mimeType, string imageBase64, DateTimeOffset timestamp) : base(timestamp)
 		{
 			FileSize = fileSize;
 			Width = width;
@@ -42,7 +48,6 @@ namespace Sensus.Probes.Apps
 			Longitude = longitude;
 			MimeType = mimeType;
 			ImageBase64 = imageBase64;
-			Timestamp = timestamp;
 		}
 
 		public int FileSize { get; set; }
