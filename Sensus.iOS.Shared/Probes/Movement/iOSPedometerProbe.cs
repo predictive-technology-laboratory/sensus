@@ -9,38 +9,38 @@ using Sensus.Probes.Movement;
 
 namespace Sensus.iOS.Probes.Movement
 {
-    class iOSAttitudeProbe : AttitudeProbe
+    class iOSPedometerProbe : PedometerProbe
     {
-        private CMMotionManager _motionManager;
+        private CMPedometer _motionManager;
+
         protected override async Task InitializeAsync()
         {
             await base.InitializeAsync();
 
             if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Sensors) == PermissionStatus.Granted)
             {
-                _motionManager = new CMMotionManager();
+                _motionManager = new CMPedometer();
             }
             else
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable sensors in the future
                 // and we'd like the probe to be restarted at that time.
-                string error = "This device does not contain an attitude, or the user has denied access to it. Cannot start attitude probe.";
+                string error = "This device does not contain a Pedometer, or the user has denied access to it. Cannot start pedometer probe.";
                 await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
-
         }
 
         protected override async Task StartListeningAsync()
         {
             await base.StartListeningAsync();
 
-            _motionManager?.StartDeviceMotionUpdates(new NSOperationQueue(), async (data, error) =>
+            _motionManager?.StartPedometerUpdates (new NSDate(), async (data, error) =>
             {
                 if (data != null && error == null)
                 {
-                    
-                    await StoreDatumAsync(new AttitudeDatum(DateTimeOffset.UtcNow, data.Attitude.Quaternion.x, data.Attitude.Quaternion.y, data.Attitude.Quaternion.z, data.Attitude.Quaternion.w));
+
+                    await StoreDatumAsync(new PedometerDatum(DateTimeOffset.UtcNow, (double) data.NumberOfSteps));
                 }
             });
         }
@@ -48,7 +48,7 @@ namespace Sensus.iOS.Probes.Movement
         protected override async Task StopListeningAsync()
         {
             await base.StopListeningAsync();
-            _motionManager?.StopDeviceMotionUpdates();
+            _motionManager?.StopPedometerUpdates();
         }
     }
 }
