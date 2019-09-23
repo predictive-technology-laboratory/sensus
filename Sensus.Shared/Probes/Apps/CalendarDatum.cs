@@ -19,8 +19,6 @@ namespace Sensus.Probes.Apps
         {
 
         }
-
-        public string Id { get; set; }
         public string Title { get; set; }
         public string Start { get; set; }
         public string End { get; set; }
@@ -34,7 +32,13 @@ namespace Sensus.Probes.Apps
         public string Organizer { get; set; }
         public bool IsOrganizer { get; set; }
 
-        public override string DisplayDetail => throw new NotImplementedException();
+        public override string DisplayDetail
+        {
+            get
+            {
+                return "(Calendar data)";
+            }
+        }
 
         public override object StringPlaceholderValue => throw new NotImplementedException();
     }

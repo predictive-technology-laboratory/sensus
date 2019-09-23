@@ -1,30 +1,17 @@
-﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-using System;
-using Sensus.Probes.Movement;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
 using CoreMotion;
 using Foundation;
 using Plugin.Permissions.Abstractions;
-using System.Threading.Tasks;
+using Sensus.Probes.Movement;
 
 namespace Sensus.iOS.Probes.Movement
 {
-    public class iOSAccelerometerProbe : AccelerometerProbe
+    class iOSAttitudeProbe : AttitudeProbe
     {
         private CMMotionManager _motionManager;
-
         protected override async Task InitializeAsync()
         {
             await base.InitializeAsync();
@@ -37,21 +24,23 @@ namespace Sensus.iOS.Probes.Movement
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable sensors in the future
                 // and we'd like the probe to be restarted at that time.
-                string error = "This device does not contain an accelerometer, or the user has denied access to it. Cannot start accelerometer probe.";
+                string error = "This device does not contain an attitude, or the user has denied access to it. Cannot start attitude probe.";
                 await SensusServiceHelper.Get().FlashNotificationAsync(error);
                 throw new Exception(error);
             }
+
         }
 
         protected override async Task StartListeningAsync()
         {
             await base.StartListeningAsync();
 
-            _motionManager?.StartAccelerometerUpdates(new NSOperationQueue(), async (data, error) =>
+            _motionManager?.StartDeviceMotionUpdates(new NSOperationQueue(), async (data, error) =>
             {
                 if (data != null && error == null)
                 {
-                    await StoreDatumAsync(new LinearAccelerationDatum(DateTimeOffset.UtcNow, data.Acceleration.X, data.Acceleration.Y, data.Acceleration.Z));
+                    
+                    await StoreDatumAsync(new AttitudeDatum(DateTimeOffset.UtcNow, data.Attitude.Quaternion.x, data.Attitude.Quaternion.y, data.Attitude.Quaternion.z, data.Attitude.Quaternion.w));
                 }
             });
         }
@@ -59,8 +48,7 @@ namespace Sensus.iOS.Probes.Movement
         protected override async Task StopListeningAsync()
         {
             await base.StopListeningAsync();
-
-            _motionManager?.StopAccelerometerUpdates();
+            _motionManager?.StopDeviceMotionUpdates();
         }
     }
 }
