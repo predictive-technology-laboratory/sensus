@@ -64,6 +64,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\CompassDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\GpsReceiver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\LocationDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\VisitDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\VisitProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AccelerometerDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AccelerometerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AttitudeDatum.cs" />
@@ -72,6 +74,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\GyroscopeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\LinearAccelerationDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\LinearAccelerationProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\PedometerDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\PedometerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\SpeedDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\CellTowerDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\CellTowerProbe.cs" />

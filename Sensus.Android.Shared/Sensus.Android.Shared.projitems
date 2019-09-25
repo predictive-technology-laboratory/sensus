@@ -25,6 +25,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidKeystrokeService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AndroidAttitudeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AndroidGyroscopeProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AndroidPedometerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SliderInputEffect.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\AndroidCallbackScheduler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\AndroidNotifier.cs" />
