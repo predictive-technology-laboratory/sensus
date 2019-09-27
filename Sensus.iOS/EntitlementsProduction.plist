@@ -19,5 +19,7 @@
 		<string>CloudDocuments</string>
 		<string>CloudKit</string>
 	</array>
+	<key>com.apple.developer.icloud-container-environment</key>
+	<string>Production</string>
 </dict>
 </plist>
