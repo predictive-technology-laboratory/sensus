@@ -567,18 +567,18 @@ namespace Sensus.Probes.User.Scripts
                 }
             }
 
-			// run or reschedule scripts as needed
+			// if there are any trigger times in the past, then make sure the script has been run
+			if(callbackTimesToReschedule.Any(x => x.Trigger <= DateTime.Now))
+			{
+				await RunAsync(Script);
+			}
+
+			callbackTimesToReschedule.RemoveAll(x => x.Trigger <= DateTime.Now);
+
+			// reschedule script runs as needed
 			foreach (ScriptTriggerTime callbackTimeToReschedule in callbackTimesToReschedule)
 			{
-				// the trigger time is in the past and there is no longer a callback for that time, so run the script now
-				if (callbackTimeToReschedule.Trigger <= DateTime.Now)
-				{
-					await RunAsync(Script);
-				}
-				else // the trigger time is in the future, so reschedule it.
-				{
-					await ScheduleScriptRunAsync(callbackTimeToReschedule);
-				}
+				await ScheduleScriptRunAsync(callbackTimeToReschedule);
 			}
 
 			// abort if we already have enough runs scheduled in the future. only allow a maximum of 32 script-run callbacks 
