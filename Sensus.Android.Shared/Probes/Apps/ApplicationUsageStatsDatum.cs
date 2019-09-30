@@ -8,9 +8,12 @@ namespace Sensus.Android.Probes.Apps
 {
 	public class ApplicationUsageStatsDatum : Datum
 	{
-		public override string DisplayDetail => throw new NotImplementedException();
+		public override string DisplayDetail
+        {
+            get { return "Application Usage Stats"; }
+        }
 
-		public override object StringPlaceholderValue => throw new NotImplementedException();
+        public override object StringPlaceholderValue => throw new NotImplementedException();
 
 		public ApplicationUsageStatsDatum(string packageName, string applicationName, DateTimeOffset intervalStart, DateTimeOffset intervalEnd, DateTimeOffset lastUsed, TimeSpan timeInForeground, DateTimeOffset timestamp) : base(timestamp)
 		{
