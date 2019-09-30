@@ -11,13 +11,14 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\MainConcurrent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Context\AndroidSensusContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidAccessibilityProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidAccessibilityService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidKeystrokeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidCalendarProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidImageFileObserver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidImageMetadataProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\AndroidBluetoothDevice.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\AndroidBluetoothDeviceReceiver.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidKeystrokeProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidKeystrokeService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AndroidAttitudeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AndroidGyroscopeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SliderInputEffect.cs" />

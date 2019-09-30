@@ -30,6 +30,7 @@ using System.Threading.Tasks;
 using Sensus.Exceptions;
 using Sensus.Notifications;
 using Sensus.Android.Notifications;
+//using Sensus.Android.Probes.Apps.Accessibility;
 
 #if __ANDROID_23__
 using Plugin.Permissions;
@@ -259,6 +260,11 @@ namespace Sensus.Android
             {
                 if (hasFocus)
                 {
+					//if (serviceHelper.AccessibilityService != null)
+					//{
+					//	AndroidAccessibilityService.ContinueAfterAccessibilitySettings();
+					//}
+
                     serviceHelper.SetFocusedMainActivity(this);
                 }
                 else
