@@ -11,7 +11,7 @@ namespace Sensus.Probes.Movement
     {
         public override string DisplayName
         {
-            get { return "Acceleration"; }
+            get { return "Linear Acceleration"; }
         }
 
         public override Type DatumType

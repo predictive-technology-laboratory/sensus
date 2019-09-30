@@ -546,7 +546,7 @@ namespace Sensus.Probes.User.Scripts
                 // remove any callbacks whose times have passed. be sure to use the callback's next execution time, as this may differ
                 // from the script trigger time when callback batching is enabled. for example, if the callback permit delay tolerance
                 // prior to the trigger time, then the scheduled callback next execution time may precede the trigger time. 
-                _scheduledCallbackTimes.RemoveAll(scriptRunCallback => scriptRunCallback.Item1.NextExecution.GetValueOrDefault(DateTime.MinValue) < DateTime.Now);
+                //_scheduledCallbackTimes.RemoveAll(scriptRunCallback => scriptRunCallback.Item1.NextExecution.GetValueOrDefault(DateTime.MinValue) < DateTime.Now);
 
                 // get future callbacks that need to be rescheduled. it can happen that the app crashes or is killed 
                 // and then resumes (e.g., on ios push notification), and it's important for the times of the scheduled 
@@ -567,16 +567,24 @@ namespace Sensus.Probes.User.Scripts
                 }
             }
 
-            // reschedule script runs as needed
-            foreach (ScriptTriggerTime callbackTimeToReschedule in callbackTimesToReschedule)
-            {
-                await ScheduleScriptRunAsync(callbackTimeToReschedule);
-            }
+			// if there are any trigger times in the past, then make sure the script has been run
+			if(callbackTimesToReschedule.Any(x => x.Trigger <= DateTime.Now))
+			{
+				await RunAsync(Script);
+			}
 
-            // abort if we already have enough runs scheduled in the future. only allow a maximum of 32 script-run callbacks 
-            // to be scheduled app-wide leaving room for other callbacks (e.g., the storage and polling systems). android's 
-            // app-level limit is 500, and ios 9 has a limit of 64. not sure about ios 10+. 
-            int scriptRunCallbacksForThisRunner = (32 / Probe.ScriptRunners.Count);
+			callbackTimesToReschedule.RemoveAll(x => x.Trigger <= DateTime.Now);
+
+			// reschedule script runs as needed
+			foreach (ScriptTriggerTime callbackTimeToReschedule in callbackTimesToReschedule)
+			{
+				await ScheduleScriptRunAsync(callbackTimeToReschedule);
+			}
+
+			// abort if we already have enough runs scheduled in the future. only allow a maximum of 32 script-run callbacks 
+			// to be scheduled app-wide leaving room for other callbacks (e.g., the storage and polling systems). android's 
+			// app-level limit is 500, and ios 9 has a limit of 64. not sure about ios 10+. 
+			int scriptRunCallbacksForThisRunner = (32 / Probe.ScriptRunners.Count);
             scriptRunCallbacksForThisRunner = Math.Max(scriptRunCallbacksForThisRunner, 1);  // schedule at least 1 run, regardless of the os cap.
             scriptRunCallbacksForThisRunner = Math.Min(scriptRunCallbacksForThisRunner, 3);  // cap the runs, as each one takes some time to schedule.
             lock (_scheduledCallbackTimes)

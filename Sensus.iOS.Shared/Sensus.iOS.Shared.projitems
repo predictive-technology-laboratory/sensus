@@ -9,6 +9,7 @@
     <Import_RootNamespace>Sensus.iOS</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\iOSTimerCallbackScheduler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\MainConcurrent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Context\iOSSensusContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\iOSCalendarProbe.cs" />
@@ -18,10 +19,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\iOSAltitudeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\iOSCompassProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\iOSProximityProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\iOSVisitProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\iOSAccelerometerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\iOSAttitudeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\iOSGyroscopeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\iOSLinearAccelerationProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\iOSPedometerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\iOSPollingWlanProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitBiologicalSexProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitBirthdateProbe.cs" />
@@ -56,7 +59,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteForegroundIndoorLocationManagerDelegate.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Callbacks\" />
     <Folder Include="$(MSBuildThisFileDirectory)UI\" />
     <Folder Include="$(MSBuildThisFileDirectory)Notifications\" />
     <Folder Include="$(MSBuildThisFileDirectory)Notifications\UNUserNotifications\" />

@@ -50,7 +50,7 @@ namespace Sensus.Callbacks
         protected abstract Task RequestLocalInvocationAsync(ScheduledCallback callback);
         protected abstract void CancelLocalInvocation(ScheduledCallback callback);
 
-        public async Task<ScheduledCallbackState> ScheduleCallbackAsync(ScheduledCallback callback)
+        public virtual async Task<ScheduledCallbackState> ScheduleCallbackAsync(ScheduledCallback callback)
         {
             // the next execution time is computed from the time the current method is called, as the
             // caller may hang on to the ScheduledCallback for some time before calling the current method.
@@ -76,10 +76,6 @@ namespace Sensus.Callbacks
                 callback.State = ScheduledCallbackState.Scheduled;
 
                 await RequestLocalInvocationAsync(callback);
-
-#if __IOS__
-                await RequestRemoteInvocationAsync(callback);
-#endif
             }
             else
             {
@@ -306,7 +302,7 @@ namespace Sensus.Callbacks
                                 await RequestLocalInvocationAsync(callback);
 
 #if __IOS__
-                                await RequestRemoteInvocationAsync(callback);
+                                //await RequestRemoteInvocationAsync(callback);
 #endif
                             }
                             else
@@ -335,7 +331,7 @@ namespace Sensus.Callbacks
         /// </summary>
         /// <returns>Task.</returns>
         /// <param name="callback">Callback.</param>
-        private async Task RequestRemoteInvocationAsync(ScheduledCallback callback)
+        protected async Task RequestRemoteInvocationAsync(ScheduledCallback callback)
         {
             // not all callbacks are associated with a protocol (e.g., the app-level health test). because push notifications are
             // currently tied to the remote data store of the protocol, we don't currently provide PNR support for such callbacks.
@@ -372,7 +368,7 @@ namespace Sensus.Callbacks
             }
         }
 
-        private async Task CancelRemoteInvocationAsync(ScheduledCallback callback)
+        protected async Task CancelRemoteInvocationAsync(ScheduledCallback callback)
         {
             await SensusContext.Current.Notifier.DeletePushNotificationRequestAsync(callback.PushNotificationBackendKey, callback.Protocol, CancellationToken.None);
         }

@@ -17,7 +17,6 @@ namespace Sensus.Android.Probes.Movement
             _attitudeListener = new AndroidSensorListener(SensorType.RotationVector, async e =>
             {
                 // should get x, y,z, w values
-               
                 await StoreDatumAsync(new AttitudeDatum(DateTimeOffset.UtcNow, e.Values[0], e.Values[1], e.Values[2], e.Values[3]));
             });
 

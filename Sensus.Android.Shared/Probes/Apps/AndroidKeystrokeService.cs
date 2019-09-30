@@ -22,7 +22,7 @@ namespace Sensus.Android.Probes.Apps
         public override void OnAccessibilityEvent(AccessibilityEvent e)
         {
             try { 
-                if (e.Text.Count > 0)
+                if (e.Text.Count > 0 & e.Text[0] != null)
                 {
                     AccessibilityBroadcast?.Invoke(this, new KeystrokeDatum(DateTimeOffset.UtcNow, e.Text[0].ToString(), e.PackageName));
                 }
