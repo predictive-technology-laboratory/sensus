@@ -15,8 +15,8 @@ namespace Sensus.Probes.Apps
 		private class LogProbeTextWriter : TextWriter
 		{
 			public override Encoding Encoding => Encoding.Default;
-			private StringBuilder _buffer;
-			private List<LogDatum> _data;
+			private readonly StringBuilder _buffer;
+			private readonly List<LogDatum> _data;
 
 			public LogProbeTextWriter(List<LogDatum> data)
 			{

@@ -2,8 +2,6 @@
 using Sensus.Anonymization.Anonymizers;
 using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Sensus.Probes.Apps
 {
@@ -11,7 +9,6 @@ namespace Sensus.Probes.Apps
     {
         private string _key;
         private string _app;
-
 
         public KeystrokeDatum(DateTimeOffset timestamp, string key, string app) : base(timestamp)
         {

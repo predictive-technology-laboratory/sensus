@@ -5,15 +5,45 @@ namespace Sensus.Probes.Location
 {
 	public abstract class VisitProbe : ListeningProbe
 	{
-		protected override bool DefaultKeepDeviceAwake => false;
+		protected override bool DefaultKeepDeviceAwake
+		{
+			get
+			{
+				return false;
+			}
+		}
 
-		public override Type DatumType => typeof(VisitDatum);
+		public override Type DatumType
+		{
+			get
+			{
+				return typeof(VisitDatum);
+			}
+		}
 
-		public override string DisplayName => "Visits";
+		public override string DisplayName
+		{
+			get
+			{
+				return "Visits";
+			}
+		}
 
-		protected override string DeviceAwakeWarning => "";
+		protected override string DeviceAwakeWarning
+		{
+			get
+			{
+				return "";
+			}
+		}
 
-		protected override string DeviceAsleepWarning => "";
+		protected override string DeviceAsleepWarning
+		{
+			get
+			{
+				return "";
+			}
+		}
 
 		protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
 		{

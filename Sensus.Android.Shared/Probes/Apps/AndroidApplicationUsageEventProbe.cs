@@ -1,6 +1,7 @@
 ﻿using Android.App;
 using Android.App.Usage;
 using Android.Content.PM;
+using Sensus.Probes.Apps;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -9,19 +10,31 @@ using System.Threading.Tasks;
 
 namespace Sensus.Android.Probes.Apps
 {
-	public class AndroidApplicationUsageEventProbe : AndroidApplicationUsageProbe
+	public class AndroidApplicationUsageEventProbe : ApplicationUsageEventProbe
 	{
-		public override int DefaultPollingSleepDurationMS => (int)TimeSpan.FromHours(1).TotalMilliseconds;
+		AndroidApplicationUsageManager _manager = null;
 
-		public override string DisplayName => "Application Events";
+		protected async override Task InitializeAsync()
+		{
+			await base.InitializeAsync();
 
-		public override Type DatumType => typeof(ApplicationUsageEventDatum);
+			_manager = new AndroidApplicationUsageManager();
+
+			await _manager.CheckPermission();
+		}
+
+		protected async override Task ProtectedStopAsync()
+		{
+			await base.ProtectedStopAsync();
+
+			_manager.DecrementPermission();
+		}
 
 		protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
 		{
 			long now = Java.Lang.JavaSystem.CurrentTimeMillis();
 			long startTime = now - PollingSleepDurationMS;
-			UsageEvents events = _manager.QueryEvents(startTime, now);
+			UsageEvents events = _manager.Manager.QueryEvents(startTime, now);
 			List<Datum> data = new List<Datum>();
 
 			while (events.HasNextEvent)

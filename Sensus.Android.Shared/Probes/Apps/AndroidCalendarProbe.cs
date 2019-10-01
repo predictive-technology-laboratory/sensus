@@ -18,7 +18,13 @@ namespace Sensus.Android.Probes.Apps
 		}
 
 		[JsonIgnore]
-		public override int DefaultPollingSleepDurationMS => 10800000;
+		public override int DefaultPollingSleepDurationMS
+		{
+			get
+			{
+				return 10800000;
+			}
+		}
 
 		protected override async Task InitializeAsync()
 		{
@@ -58,18 +64,7 @@ namespace Sensus.Android.Probes.Apps
 
 			while (cursor.MoveToNext())
 			{
-				CalendarDatum calendarDatum = new CalendarDatum(DateTimeOffset.UtcNow)
-				{
-					Id = cursor.GetString(0),
-					Title = cursor.GetString(1),
-					Start = cursor.GetString(2),
-					End = cursor.GetString(3),
-					Duration = cursor.GetDouble(4),
-					Description = cursor.GetString(5),
-					EventLocation = cursor.GetString(6),
-					Organizer = cursor.GetString(7),
-					IsOrganizer = cursor.GetString(8) == "1" ? true : false
-				};
+				CalendarDatum calendarDatum = new CalendarDatum(cursor.GetString(0), cursor.GetString(1), cursor.GetString(2), cursor.GetDouble(4), cursor.GetString(3), cursor.GetString(5), cursor.GetString(6), cursor.GetString(8) == "1" ? true : false, cursor.GetString(7), DateTimeOffset.UtcNow);
 
 				calendarDatums.Add(calendarDatum);
 			}
