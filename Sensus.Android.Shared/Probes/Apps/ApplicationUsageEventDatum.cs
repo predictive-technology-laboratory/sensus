@@ -8,9 +8,12 @@ namespace Sensus.Android.Probes.Apps
 {
 	public class ApplicationUsageEventDatum : Datum
 	{
-		public override string DisplayDetail => throw new NotImplementedException();
+		public override string DisplayDetail
+        {
+            get { return "Application Usage Events"; }
+        }
 
-		public override object StringPlaceholderValue => throw new NotImplementedException();
+        public override object StringPlaceholderValue => throw new NotImplementedException();
 
 		public ApplicationUsageEventDatum(string packageName, string applicationName, string eventType, DateTimeOffset timestamp) : base(timestamp)
 		{
