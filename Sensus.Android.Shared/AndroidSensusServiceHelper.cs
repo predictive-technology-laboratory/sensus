@@ -41,6 +41,7 @@ using Firebase.Iid;
 using Sensus.Exceptions;
 using WindowsAzure.Messaging;
 using Sensus.UI;
+//using Sensus.Android.Probes.Apps.Accessibility;
 
 namespace Sensus.Android
 {
@@ -768,5 +769,7 @@ namespace Sensus.Android
         {
             return Application.Context.GetSystemService(global::Android.Content.Context.SensorService) as SensorManager;
         }
+
+		//public AndroidAccessibilityService AccessibilityService { get; set; }
     }
 }
