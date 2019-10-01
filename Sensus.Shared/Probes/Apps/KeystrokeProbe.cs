@@ -54,7 +54,6 @@ namespace Sensus.Probes.Apps
 
         public override string CollectionDescription => base.CollectionDescription;
 
-        protected override bool WillHaveSignificantNegativeImpactOnBattery => base.WillHaveSignificantNegativeImpactOnBattery;
 
         protected override double RawParticipation => base.RawParticipation;
 
