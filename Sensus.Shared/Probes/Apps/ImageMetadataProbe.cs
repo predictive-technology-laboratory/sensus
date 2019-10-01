@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +12,8 @@ using System.Text;
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.IO;
 using System.Threading.Tasks;
 using ExifLib;
 using Sensus.UI.UiProperties;
@@ -23,6 +21,9 @@ using Syncfusion.SfChart.XForms;
 
 namespace Sensus.Probes.Apps
 {
+	/// <summary>
+	/// Collects application usage stats as <see cref="ImageMetadataDatum"/>
+	/// </summary>
 	public abstract class ImageMetadataProbe : ListeningProbe
 	{
 		public const string IMAGE_DISCRETE_TYPE = "image/";
