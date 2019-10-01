@@ -48,6 +48,9 @@ namespace Sensus.Probes.Apps
 		}
 
 		[Anonymizable("Package Name:", typeof(StringHashAnonymizer), false)]
+		/// <summary>
+		/// The name of the package that created the event.
+		/// </summary>
 		public string PackageName
 		{
 			get
@@ -60,6 +63,9 @@ namespace Sensus.Probes.Apps
 			}
 		}
 		[Anonymizable("Application Name:", typeof(StringHashAnonymizer), false)]
+		/// <summary>
+		/// The name of the application that created the event.
+		/// </summary>
 		public string ApplicationName
 		{
 			get
@@ -71,6 +77,9 @@ namespace Sensus.Probes.Apps
 				_applicationName = value;
 			}
 		}
+		/// <summary>
+		/// The type of event.
+		/// </summary>
 		public string EventType
 		{
 			get

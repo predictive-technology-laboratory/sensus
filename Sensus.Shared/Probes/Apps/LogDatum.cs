@@ -28,13 +28,22 @@ namespace Sensus.Probes.Apps
 			}
 		}
 
-		public override object StringPlaceholderValue => "(Log data)";
+		public override object StringPlaceholderValue
+		{
+			get
+			{
+				return "(Log data)";
+			}
+		}
 
 		public LogDatum(string logMessage, DateTimeOffset timestamp) : base(timestamp)
 		{
 			_logMessage = logMessage;
 		}
 
+		/// <summary>
+		/// The message that was logged.
+		/// </summary>
 		public string LogMessage
 		{
 			get
@@ -46,5 +55,11 @@ namespace Sensus.Probes.Apps
 				_logMessage = value;
 			}
 		}
+
+		public override string ToString()
+		{
+			return base.ToString() + Environment.NewLine + _logMessage;
+		}
+
 	}
 }

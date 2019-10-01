@@ -104,6 +104,9 @@ namespace Sensus.Probes.Apps
 			_windowId = windowId;
 		}
 
+		/// <summary>
+		/// The view is enabled.
+		/// </summary>
 		public bool Enabled
 		{
 			get
@@ -115,6 +118,9 @@ namespace Sensus.Probes.Apps
 				_enabled = value;
 			}
 		}
+		/// <summary>
+		/// The index of the current item.
+		/// </summary>
 		public int CurrentItemIndex
 		{
 			get
@@ -126,6 +132,9 @@ namespace Sensus.Probes.Apps
 				_currentItemIndex = value;
 			}
 		}
+		/// <summary>
+		/// The view is checked.
+		/// </summary>
 		public bool Checked
 		{
 			get
@@ -137,6 +146,9 @@ namespace Sensus.Probes.Apps
 				_checked = value;
 			}
 		}
+		/// <summary>
+		/// The type of content change.
+		/// </summary>
 		public string ContentChangeTypes
 		{
 			get
@@ -148,6 +160,9 @@ namespace Sensus.Probes.Apps
 				_contentChangeTypes = value;
 			}
 		}
+		/// <summary>
+		/// The event time.
+		/// </summary>
 		public long EventTime
 		{
 			get
@@ -159,6 +174,8 @@ namespace Sensus.Probes.Apps
 				_eventTime = value;
 			}
 		}
+		/// <summary>
+		/// The accessibility event type.
 		public string EventType
 		{
 			get
@@ -170,6 +187,9 @@ namespace Sensus.Probes.Apps
 				_eventType = value;
 			}
 		}
+		/// <summary>
+		/// The movement granularity.
+		/// </summary>
 		public string MovementGranularity
 		{
 			get
@@ -181,6 +201,9 @@ namespace Sensus.Probes.Apps
 				_movementGranularity = value;
 			}
 		}
+		/// <summary>
+		/// The view is full screen.
+		/// </summary>
 		public bool FullScreen
 		{
 			get
@@ -192,6 +215,9 @@ namespace Sensus.Probes.Apps
 				_fullScreen = value;
 			}
 		}
+		/// <summary>
+		/// The item count.
+		/// </summary>
 		public int ItemCount
 		{
 			get
@@ -203,6 +229,9 @@ namespace Sensus.Probes.Apps
 				_itemCount = value;
 			}
 		}
+		/// <summary>
+		/// The name of the app package that created the event.
+		/// </summary>
 		public string PackageName
 		{
 			get
@@ -214,6 +243,9 @@ namespace Sensus.Probes.Apps
 				_packageName = value;
 			}
 		}
+		/// <summary>
+		/// The name of the app that created the event.
+		/// </summary>
 		public string ApplicationName
 		{
 			get
@@ -225,6 +257,9 @@ namespace Sensus.Probes.Apps
 				_applicationName = value;
 			}
 		}
+		/// <summary>
+		/// The extra data attached to the event.
+		/// </summary>
 		public object ParcelableData
 		{
 			get
@@ -236,6 +271,9 @@ namespace Sensus.Probes.Apps
 				_parcelableData = value;
 			}
 		}
+		/// <summary>
+		/// The view contains a password.
+		/// </summary>
 		public bool Password
 		{
 			get
@@ -247,6 +285,9 @@ namespace Sensus.Probes.Apps
 				_password = value;
 			}
 		}
+		/// <summary>
+		/// The record count.
+		/// </summary>
 		public int RecordCount
 		{
 			get
@@ -258,6 +299,9 @@ namespace Sensus.Probes.Apps
 				_recordCount = value;
 			}
 		}
+		/// <summary>
+		/// The starting index.
+		/// </summary>
 		public int FromIndex
 		{
 			get
@@ -269,6 +313,9 @@ namespace Sensus.Probes.Apps
 				_fromIndex = value;
 			}
 		}
+		/// <summary>
+		/// The the number of items added.
+		/// </summary>
 		public int AddedCount
 		{
 			get
@@ -280,6 +327,9 @@ namespace Sensus.Probes.Apps
 				_addedCount = value;
 			}
 		}
+		/// <summary>
+		/// The view text.
+		/// </summary>
 		public string Text
 		{
 			get
@@ -291,6 +341,9 @@ namespace Sensus.Probes.Apps
 				_text = value;
 			}
 		}
+		/// <summary>
+		/// The description of content.
+		/// </summary>
 		public string ContentDescription
 		{
 			get
@@ -302,6 +355,9 @@ namespace Sensus.Probes.Apps
 				_contentDescription = value;
 			}
 		}
+		/// <summary>
+		/// The name of the class that created the event.
+		/// </summary>
 		public string ClassName
 		{
 			get
@@ -313,6 +369,9 @@ namespace Sensus.Probes.Apps
 				_className = value;
 			}
 		}
+		/// <summary>
+		/// The previous view text.
+		/// </summary>
 		public string BeforeText
 		{
 			get
@@ -324,6 +383,9 @@ namespace Sensus.Probes.Apps
 				_beforeText = value;
 			}
 		}
+		/// <summary>
+		/// The action described by the event.
+		/// </summary>
 		public string Action
 		{
 			get
@@ -335,6 +397,9 @@ namespace Sensus.Probes.Apps
 				_action = value;
 			}
 		}
+		/// <summary>
+		/// The window changes described by the event.
+		/// </summary>
 		public string WindowChanges
 		{
 			get
@@ -346,6 +411,9 @@ namespace Sensus.Probes.Apps
 				_windowChanges = value;
 			}
 		}
+		/// <summary>
+		/// The number of items removed.
+		/// </summary>
 		public int RemovedCount
 		{
 			get
@@ -357,6 +425,9 @@ namespace Sensus.Probes.Apps
 				_removedCount = value;
 			}
 		}
+		/// <summary>
+		/// The maximum horizontal scroll value.
+		/// </summary>
 		public int MaxScrollX
 		{
 			get
@@ -368,6 +439,9 @@ namespace Sensus.Probes.Apps
 				_maxScrollX = value;
 			}
 		}
+		/// <summary>
+		/// The maximum vertical scroll value.
+		/// </summary>
 		public int MaxScrollY
 		{
 			get
@@ -379,6 +453,9 @@ namespace Sensus.Probes.Apps
 				_maxScrollY = value;
 			}
 		}
+		/// <summary>
+		/// The scroll vertical change.
+		/// </summary>
 		public int ScrollDeltaY
 		{
 			get
@@ -390,6 +467,9 @@ namespace Sensus.Probes.Apps
 				_scrollDeltaY = value;
 			}
 		}
+		/// <summary>
+		/// The horizontal scroll.
+		/// </summary>
 		public int ScrollX
 		{
 			get
@@ -401,6 +481,9 @@ namespace Sensus.Probes.Apps
 				_scrollX = value;
 			}
 		}
+		/// <summary>
+		/// The vertical scroll.
+		/// </summary>
 		public int ScrollY
 		{
 			get
@@ -412,6 +495,9 @@ namespace Sensus.Probes.Apps
 				_scrollY = value;
 			}
 		}
+		/// <summary>
+		/// The view is scrollable.
+		/// </summary>
 		public bool Scrollable
 		{
 			get
@@ -423,6 +509,9 @@ namespace Sensus.Probes.Apps
 				_scrollable = value;
 			}
 		}
+		/// <summary>
+		/// Additional event information.
+		/// </summary>
 		public object Source
 		{
 			get
@@ -434,6 +523,9 @@ namespace Sensus.Probes.Apps
 				_source = value;
 			}
 		}
+		/// <summary>
+		/// The horizontal scroll change.
+		/// </summary>
 		public int ScrollDeltaX
 		{
 			get
@@ -445,6 +537,9 @@ namespace Sensus.Probes.Apps
 				_scrollDeltaX = value;
 			}
 		}
+		/// <summary>
+		/// The end index.
+		/// </summary>
 		public int ToIndex
 		{
 			get
@@ -456,6 +551,9 @@ namespace Sensus.Probes.Apps
 				_toIndex = value;
 			}
 		}
+		/// <summary>
+		/// The id of the window that created the event.
+		/// </summary>
 		public int WindowId
 		{
 			get

@@ -38,17 +38,29 @@ namespace Sensus.Probes.Apps
             }
         }
 
-        [StringProbeTriggerProperty]
+		/// <summary>
+		/// The key pressed.
+		/// </summary>
+		[StringProbeTriggerProperty]
         [Anonymizable(null, typeof(StringHashAnonymizer), false)]
         public string Key { get => _key; set => _key = value; }
 
-        [StringProbeTriggerProperty]
+		/// <summary>
+		/// The app that received the keystroke.
+		/// </summary>
+		[StringProbeTriggerProperty]
         [Anonymizable(null, typeof(StringHashAnonymizer), false)]
         public string App { get => _app; set => _app = value; }
 
-        public override object StringPlaceholderValue => throw new NotImplementedException();
+		public override object StringPlaceholderValue
+		{
+			get
+			{
+				throw new NotImplementedException();
+			}
+		}
 
-        public override bool Equals(object obj)
+		public override bool Equals(object obj)
         {
             return base.Equals(obj);
         }

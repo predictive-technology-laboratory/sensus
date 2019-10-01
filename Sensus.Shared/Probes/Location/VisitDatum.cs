@@ -49,6 +49,9 @@ namespace Sensus.Probes.Location
 			_horizontalAccuracy = horizontalAccuracy;
 		}
 
+		/// <summary>
+		/// The date the visit started.
+		/// </summary>
 		public DateTimeOffset? ArrivalDate
 		{
 			get
@@ -60,6 +63,9 @@ namespace Sensus.Probes.Location
 				_arrivalDate = value;
 			}
 		}
+		/// <summary>
+		/// The date the visit ended.
+		/// </summary>
 		public DateTimeOffset? DepartureDate
 		{
 			get
@@ -71,6 +77,9 @@ namespace Sensus.Probes.Location
 				_departureDate = value;
 			}
 		}
+		/// <summary>
+		/// The latitude of the location visited.
+		/// </summary>
 		public double Latitude
 		{
 			get
@@ -82,6 +91,9 @@ namespace Sensus.Probes.Location
 				_latitude = value;
 			}
 		}
+		/// <summary>
+		/// The longitude of the location visited.
+		/// </summary>
 		public double Longitude
 		{
 			get
@@ -93,6 +105,9 @@ namespace Sensus.Probes.Location
 				_longitude = value;
 			}
 		}
+		/// <summary>
+		/// The accuracy of the visit detection.
+		/// </summary>
 		public double HorizontalAccuracy
 		{
 			get

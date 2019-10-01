@@ -41,7 +41,7 @@ namespace Sensus.Probes.Apps
 		{
 			get
 			{
-				return "(Image Metadata)";
+				return $"{_fileSize}B, {_mimeType}";
 			}
 		}
 
@@ -73,6 +73,9 @@ namespace Sensus.Probes.Apps
 			_imageBase64 = imageBase64;
 		}
 
+		/// <summary>
+		/// The size of the image taken in bytes.
+		/// </summary>
 		public int FileSize
 		{
 			get
@@ -84,6 +87,9 @@ namespace Sensus.Probes.Apps
 				_fileSize = value;
 			}
 		}
+		/// <summary>
+		/// The width in pixels of the image.
+		/// </summary>
 		public int? Width
 		{
 			get
@@ -95,6 +101,9 @@ namespace Sensus.Probes.Apps
 				_width = value;
 			}
 		}
+		/// <summary>
+		/// The height in pixels of the image.
+		/// </summary>
 		public int? Height
 		{
 			get
@@ -106,6 +115,9 @@ namespace Sensus.Probes.Apps
 				_height = value;
 			}
 		}
+		/// <summary>
+		/// The orientation of the image.
+		/// </summary>
 		public int? Orientation
 		{
 			get
@@ -117,6 +129,9 @@ namespace Sensus.Probes.Apps
 				_orientation = value;
 			}
 		}
+		/// <summary>
+		/// The horizontal resolution of the image.
+		/// </summary>
 		public double? XResolution
 		{
 			get
@@ -128,6 +143,9 @@ namespace Sensus.Probes.Apps
 				_xResolution = value;
 			}
 		}
+		/// <summary>
+		/// The vertical resolution of the image.
+		/// </summary>
 		public double? YResolution
 		{
 			get
@@ -139,6 +157,9 @@ namespace Sensus.Probes.Apps
 				_yResolution = value;
 			}
 		}
+		/// <summary>
+		/// The resolution unit of the image.
+		/// </summary>
 		public int? ResolutionUnit
 		{
 			get
@@ -150,6 +171,9 @@ namespace Sensus.Probes.Apps
 				_resolutionUnit = value;
 			}
 		}
+		/// <summary>
+		/// Indicates whether the image is in color.
+		/// </summary>
 		public bool? IsColor
 		{
 			get
@@ -161,6 +185,9 @@ namespace Sensus.Probes.Apps
 				_isColor = value;
 			}
 		}
+		/// <summary>
+		/// Indicates whether the flash was used.
+		/// </summary>
 		public int? Flash
 		{
 			get
@@ -172,6 +199,9 @@ namespace Sensus.Probes.Apps
 				_flash = value;
 			}
 		}
+		/// <summary>
+		/// The f number of the image.
+		/// </summary>
 		public double? FNumber
 		{
 			get
@@ -183,6 +213,9 @@ namespace Sensus.Probes.Apps
 				_fNumber = value;
 			}
 		}
+		/// <summary>
+		/// The exposure time of the image.
+		/// </summary>
 		public double? ExposureTime
 		{
 			get
@@ -194,6 +227,9 @@ namespace Sensus.Probes.Apps
 				_exposureTime = value;
 			}
 		}
+		/// <summary>
+		/// The software that created the image.
+		/// </summary>
 		[Anonymizable("Software:", typeof(StringHashAnonymizer), false)]
 		public string Software
 		{
@@ -206,6 +242,9 @@ namespace Sensus.Probes.Apps
 				_software = value;
 			}
 		}
+		/// <summary>
+		/// The latitude of the location where the image was taken.
+		/// </summary>
 		[Anonymizable(null, new Type[] { typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, -1)]
 		public double? Latitude
 		{
@@ -218,6 +257,9 @@ namespace Sensus.Probes.Apps
 				_latitude = value;
 			}
 		}
+		/// <summary>
+		/// The longitude of the location where the image was taken.
+		/// </summary>
 		[Anonymizable(null, new Type[] { typeof(LongitudeParticipantOffsetGpsAnonymizer), typeof(LongitudeStudyOffsetGpsAnonymizer), typeof(DoubleRoundingTenthsAnonymizer), typeof(DoubleRoundingHundredthsAnonymizer), typeof(DoubleRoundingThousandthsAnonymizer) }, -1)]
 		public double? Longitude
 		{
@@ -230,6 +272,9 @@ namespace Sensus.Probes.Apps
 				_longitude = value;
 			}
 		}
+		/// <summary>
+		/// The MIME type of the image.
+		/// </summary>
 		public string MimeType
 		{
 			get
@@ -241,6 +286,9 @@ namespace Sensus.Probes.Apps
 				_mimeType = value;
 			}
 		}
+		/// <summary>
+		/// A base64 encoding of the image.
+		/// </summary>
 		[Anonymizable("Image:", typeof(StringHashAnonymizer), false)]
 		public string ImageBase64
 		{
@@ -252,6 +300,11 @@ namespace Sensus.Probes.Apps
 			{
 				_imageBase64 = value;
 			}
+		}
+
+		public override string ToString()
+		{
+			return base.ToString() + Environment.NewLine + $"{_fileSize}B, {_mimeType}";
 		}
 	}
 }

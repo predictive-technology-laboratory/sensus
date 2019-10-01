@@ -41,6 +41,9 @@ namespace Sensus.Probes.Apps
 			_timeInForeground = timeInForeground;
 		}
 
+		/// <summary>
+		/// The name of the app package.
+		/// </summary>
 		[Anonymizable("Package Name:", typeof(StringHashAnonymizer), false)]
 		public string PackageName
 		{
@@ -53,6 +56,9 @@ namespace Sensus.Probes.Apps
 				_packageName = value;
 			}
 		}
+		/// <summary>
+		/// The name of the app.
+		/// </summary>
 		[Anonymizable("Application Name:", typeof(StringHashAnonymizer), false)]
 		public string ApplicationName
 		{
@@ -65,6 +71,9 @@ namespace Sensus.Probes.Apps
 				_applicationName = value;
 			}
 		}
+		/// <summary>
+		/// The start time of the interval of the stats.
+		/// </summary>
 		public DateTimeOffset IntervalStart
 		{
 			get
@@ -76,6 +85,9 @@ namespace Sensus.Probes.Apps
 				_intervalStart = value;
 			}
 		}
+		/// <summary>
+		/// The end time of the interval of the stats.
+		/// </summary>
 		public DateTimeOffset IntervalEnd
 		{
 			get
@@ -87,6 +99,9 @@ namespace Sensus.Probes.Apps
 				_intervalEnd = value;
 			}
 		}
+		/// <summary>
+		/// The date the app was last used.
+		/// </summary>
 		public DateTimeOffset LastUsed
 		{
 			get
@@ -98,6 +113,9 @@ namespace Sensus.Probes.Apps
 				_lastUsed = value;
 			}
 		}
+		/// <summary>
+		/// The amount of time the app spent in the foreground over the interval.
+		/// </summary>
 		public TimeSpan TimeInForeground
 		{
 			get
