@@ -9,8 +9,8 @@ namespace Sensus.Probes.Apps
 	{
 		private string _eventId;
 		private string _title;
-		private string _start;
-		private string _end;
+		private DateTimeOffset _start;
+		private DateTimeOffset _end;
 		private double _duration;
 		private string _description;
 		private string _eventLocation;
@@ -25,7 +25,7 @@ namespace Sensus.Probes.Apps
 
 		}
 
-		public CalendarDatum(string eventId, string start, string end, double duration, string description, string eventLocation, string organizer, bool isOrganizer, string title, DateTimeOffset timestamp) : base(timestamp)
+		public CalendarDatum(string eventId, string title, DateTimeOffset start, DateTimeOffset end, double duration, string description, string eventLocation, string organizer, bool isOrganizer, DateTimeOffset timestamp) : base(timestamp)
 		{
 			_eventId = eventId;
 			_title = title;
@@ -60,7 +60,7 @@ namespace Sensus.Probes.Apps
 				_title = value;
 			}
 		}
-		public string Start
+		public DateTimeOffset Start
 		{
 			get
 			{
@@ -71,7 +71,7 @@ namespace Sensus.Probes.Apps
 				_start = value;
 			}
 		}
-		public string End
+		public DateTimeOffset End
 		{
 			get
 			{

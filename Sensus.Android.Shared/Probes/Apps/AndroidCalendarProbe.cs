@@ -1,12 +1,10 @@
-﻿using Newtonsoft.Json;
-using Sensus.Probes.Apps;
+﻿using Sensus.Probes.Apps;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Plugin.Permissions.Abstractions;
 using Android.Provider;
 using Android.Database;
 using Android.App;
+using System.Linq;
 
 namespace Sensus.Android.Probes.Apps
 {
@@ -17,31 +15,8 @@ namespace Sensus.Android.Probes.Apps
 
 		}
 
-		[JsonIgnore]
-		public override int DefaultPollingSleepDurationMS
+		protected override List<CalendarDatum> GetCalendarEventsAsync()
 		{
-			get
-			{
-				return 10800000;
-			}
-		}
-
-		protected override async Task InitializeAsync()
-		{
-			await base.InitializeAsync();
-		}
-
-		protected async override Task<List<CalendarDatum>> GetCalendarEventsAsync()
-		{
-			if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Calendar) != PermissionStatus.Granted)
-			{
-				// throw standard exception instead of NotSupportedException, since the user might decide to enable location in the future
-				// and we'd like the probe to be restarted at that time.
-				string error = "Calendar permission is not permitted on this device. Cannot start Calendar probe.";
-				await SensusServiceHelper.Get().FlashNotificationAsync(error);
-				throw new Exception(error);
-			}
-
 			List<CalendarDatum> calendarDatums = new List<CalendarDatum>();
 
 			string[] eventProperties = {
@@ -56,20 +31,20 @@ namespace Sensus.Android.Probes.Apps
 				CalendarContract.Events.InterfaceConsts.IsOrganizer,
 			};
 
+			DateTimeOffset epoch = DateTimeOffset.FromUnixTimeMilliseconds(0);
+			
+			long last = ((DateTimeOffset)LastPollTime.AddDays(-1)).ToUnixTimeMilliseconds();
 			long now = Java.Lang.JavaSystem.CurrentTimeMillis();
 
-			global::Android.Net.Uri eventsUri = CalendarContract.Events.ContentUri;
-
-			ICursor cursor = Application.Context.ContentResolver.Query(eventsUri, eventProperties, $"{CalendarContract.Events.InterfaceConsts.Dtstart} > ? AND {CalendarContract.Events.InterfaceConsts.Dtstart} <= ?", new string[] { LastPollTime.ToString(), now.ToString() }, CalendarContract.Events.InterfaceConsts.Dtstart + " DESC");
+			ICursor cursor = Application.Context.ContentResolver.Query(CalendarContract.Events.ContentUri, eventProperties, $"{CalendarContract.Events.InterfaceConsts.Dtstart} > ? AND {CalendarContract.Events.InterfaceConsts.Dtstart} <= ?", new string[] { last.ToString(), now.ToString() }, CalendarContract.Events.InterfaceConsts.Dtstart + " DESC");
+			Dictionary<string, int> columns = eventProperties.ToDictionary(x => x, x => cursor.GetColumnIndex(x));
 
 			while (cursor.MoveToNext())
 			{
-				CalendarDatum calendarDatum = new CalendarDatum(cursor.GetString(0), cursor.GetString(1), cursor.GetString(2), cursor.GetDouble(4), cursor.GetString(3), cursor.GetString(5), cursor.GetString(6), cursor.GetString(8) == "1" ? true : false, cursor.GetString(7), DateTimeOffset.UtcNow);
+				CalendarDatum calendarDatum = new CalendarDatum(cursor.GetString(columns[CalendarContract.Events.InterfaceConsts.Id]), cursor.GetString(columns[CalendarContract.Events.InterfaceConsts.Title]), epoch.AddMilliseconds(cursor.GetLong(columns[CalendarContract.Events.InterfaceConsts.Dtstart])), epoch.AddMilliseconds(cursor.GetLong(columns[CalendarContract.Events.InterfaceConsts.Dtend])), cursor.GetDouble(columns[CalendarContract.Events.InterfaceConsts.Duration]), cursor.GetString(columns[CalendarContract.Events.InterfaceConsts.Description]), cursor.GetString(columns[CalendarContract.Events.InterfaceConsts.EventLocation]), cursor.GetString(columns[CalendarContract.Events.InterfaceConsts.Organizer]), cursor.GetInt(columns[CalendarContract.Events.InterfaceConsts.IsOrganizer]) == 1, DateTimeOffset.UtcNow);
 
 				calendarDatums.Add(calendarDatum);
 			}
-
-			LastPollTime = DateTime.UtcNow;
 
 			return calendarDatums;
 		}

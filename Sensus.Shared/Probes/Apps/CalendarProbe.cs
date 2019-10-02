@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Plugin.Permissions.Abstractions;
 using Syncfusion.SfChart.XForms;
 
 namespace Sensus.Probes.Apps
 {
+	/// <summary>
+	/// Collects calendar events as <see cref="CalendarDatum"/>
+	/// </summary>
 	public abstract class CalendarProbe : PollingProbe
 	{
-		private DateTime _lastPollTime = DateTime.Now.AddHours(-24);
+		private DateTime _lastPollTime;
 
 		public override string DisplayName
 		{
@@ -23,6 +28,15 @@ namespace Sensus.Probes.Apps
 			get
 			{
 				return typeof(CalendarDatum);
+			}
+		}
+
+		[JsonIgnore]
+		public override int DefaultPollingSleepDurationMS
+		{
+			get
+			{
+				return (int)TimeSpan.FromDays(1).TotalMilliseconds;
 			}
 		}
 
@@ -57,20 +71,36 @@ namespace Sensus.Probes.Apps
 			throw new NotImplementedException();
 		}
 
-		protected async override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
+		protected async override Task InitializeAsync()
+		{
+			await base.InitializeAsync();
+
+			_lastPollTime = DateTime.Now;
+
+			if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Calendar) != PermissionStatus.Granted)
+			{
+				// throw standard exception instead of NotSupportedException, since the user might decide to enable location in the future
+				// and we'd like the probe to be restarted at that time.
+				string error = "Calendar permission is not permitted on this device. Cannot start Calendar probe.";
+				await SensusServiceHelper.Get().FlashNotificationAsync(error);
+				throw new Exception(error);
+			}
+		}
+
+		protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
 		{
 			List<Datum> calendarMetaData = new List<Datum>();
 
-			foreach (Datum calendarDatum in await GetCalendarEventsAsync())
+			foreach (Datum calendarDatum in GetCalendarEventsAsync())
 			{
 				calendarMetaData.Add(calendarDatum);
 			}
 
-			LastPollTime = DateTime.UtcNow;
+			_lastPollTime = DateTime.Now;
 
-			return calendarMetaData;
+			return Task.FromResult(calendarMetaData);
 		}
 
-		protected abstract Task<List<CalendarDatum>> GetCalendarEventsAsync();
+		protected abstract List<CalendarDatum> GetCalendarEventsAsync();
 	}
 }
