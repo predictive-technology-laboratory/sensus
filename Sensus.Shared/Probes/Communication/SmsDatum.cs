@@ -20,123 +20,143 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.Communication
 {
-    public class SmsDatum : Datum, ISmsDatum
-    {
-        private string _fromNumber;
-        private string _toNumber;
-        private string _message;
-        private bool _participantIsSender;
-        private bool? _isContact;
-        private string _name;
-        private string _email;
+	public class SmsDatum : Datum, ISmsDatum
+	{
+		private string _fromNumber;
+		private string _toNumber;
+		private string _message;
+		private bool _participantIsSender;
+		private bool? _isContact;
+		private string _name;
+		private string _email;
 
-        [StringProbeTriggerProperty("From #")]
-        [Anonymizable("From #:", typeof(StringHashAnonymizer), false)]
-        public string FromNumber
-        {
-            get { return _fromNumber; }
-            set { _fromNumber = value == null ? "" : new Regex(@"[^0-9]").Replace(value, ""); }
-        }
+		/// <summary>
+		/// The number the text message was sent from.
+		/// </summary>
+		[StringProbeTriggerProperty("From #")]
+		[Anonymizable("From #:", typeof(StringHashAnonymizer), false)]
+		public string FromNumber
+		{
+			get { return _fromNumber; }
+			set { _fromNumber = value == null ? "" : new Regex(@"[^0-9]").Replace(value, ""); }
+		}
 
-        [StringProbeTriggerProperty("To #")]
-        [Anonymizable("To #:", typeof(StringHashAnonymizer), false)]
-        public string ToNumber
-        {
-            get { return _toNumber; }
-            set { _toNumber = value == null ? "" : new Regex(@"[^0-9]").Replace(value, ""); }
-        }
+		/// <summary>
+		/// The number the text message was sent to.
+		/// </summary>
+		[StringProbeTriggerProperty("To #")]
+		[Anonymizable("To #:", typeof(StringHashAnonymizer), false)]
+		public string ToNumber
+		{
+			get { return _toNumber; }
+			set { _toNumber = value == null ? "" : new Regex(@"[^0-9]").Replace(value, ""); }
+		}
 
-        [StringProbeTriggerProperty]
-        [Anonymizable(null, typeof(StringHashAnonymizer), false)]
-        public string Message
-        {
-            get { return _message; }
-            set { _message = value; }
-        }
+		/// <summary>
+		/// The message contents.
+		/// </summary>
+		[StringProbeTriggerProperty]
+		[Anonymizable(null, typeof(StringHashAnonymizer), false)]
+		public string Message
+		{
+			get { return _message; }
+			set { _message = value; }
+		}
 
-        [BooleanProbeTriggerProperty]
-        [Anonymizable("Participant Is Sender:", null, false)]
-        public bool ParticipantIsSender
-        {
-            get
-            {
-                return _participantIsSender;
-            }
+		/// <summary>
+		/// Indicates whether the other participant sent the text message.
+		/// </summary>
+		[BooleanProbeTriggerProperty]
+		[Anonymizable("Participant Is Sender:", null, false)]
+		public bool ParticipantIsSender
+		{
+			get
+			{
+				return _participantIsSender;
+			}
 
-            set
-            {
-                _participantIsSender = value;
-            }
-        }
+			set
+			{
+				_participantIsSender = value;
+			}
+		}
 
-        [BooleanProbeTriggerProperty]
-        [Anonymizable("Sender/receipient is in contacts:", null, false)]
-        public bool? IsContact
-        {
-            get { return _isContact; }
-            set { _isContact = value; }
-        }
+		/// <summary>
+		/// Indicates whether the other participant is a contact.
+		/// </summary>
+		[BooleanProbeTriggerProperty]
+		[Anonymizable("Sender/recipient is in contacts:", null, false)]
+		public bool? IsContact
+		{
+			get { return _isContact; }
+			set { _isContact = value; }
+		}
 
-        [StringProbeTriggerProperty]
-        [Anonymizable("Sender/receipient's name:", null, false)]
-        public string Name
-        {
-            get { return _name; }
-            set { _name = value; }
-        }
+		/// <summary>
+		/// The name of the other participant.
+		/// </summary>
+		[StringProbeTriggerProperty]
+		[Anonymizable("Sender/receipient's name:", null, false)]
+		public string Name
+		{
+			get { return _name; }
+			set { _name = value; }
+		}
 
-        [StringProbeTriggerProperty]
-        [Anonymizable("Sender/receipient's email:", null, false)]
-        public string Email
-        {
-            get { return _email; }
-            set { _email = value; }
-        }
+		/// <summary>
+		/// The email address of the other participant.
+		/// </summary>
+		[StringProbeTriggerProperty]
+		[Anonymizable("Sender/receipient's email:", null, false)]
+		public string Email
+		{
+			get { return _email; }
+			set { _email = value; }
+		}
 
+		public override string DisplayDetail
+		{
+			get { return _message; }
+		}
 
-        public override string DisplayDetail
-        {
-            get { return _message; }
-        }
+		/// <summary>
+		/// Gets the string placeholder value, which is the SMS message.
+		/// </summary>
+		/// <value>The string placeholder value.</value>
+		public override object StringPlaceholderValue
+		{
+			get
+			{
+				return _message;
+			}
+		}
 
-        /// <summary>
-        /// Gets the string placeholder value, which is the SMS message.
-        /// </summary>
-        /// <value>The string placeholder value.</value>
-        public override object StringPlaceholderValue
-        {
-            get
-            {
-                return _message;
-            }
-        }
+		/// <summary>
+		/// For JSON deserialization.
+		/// </summary>
+		private SmsDatum()
+		{
+		}
 
-        /// <summary>
-        /// For JSON deserialization.
-        /// </summary>
-        private SmsDatum()
-        {
-        }
+		public SmsDatum(DateTimeOffset timestamp, string fromNumber, string toNumber, string message, bool participantIsSender, bool? isContact, string name, string email)
+			: base(timestamp)
+		{
+			_fromNumber = fromNumber == null ? "" : fromNumber;
+			_toNumber = toNumber == null ? "" : toNumber;
+			_message = message == null ? "" : message;
+			_participantIsSender = participantIsSender;
+			_isContact = isContact;
+			_name = name;
+			_email = email;
+		}
 
-        public SmsDatum(DateTimeOffset timestamp, string fromNumber, string toNumber, string message, bool participantIsSender, bool? isContact, string name, string email)
-            : base(timestamp)
-        {
-            FromNumber = fromNumber == null ? "" : fromNumber;
-            ToNumber = toNumber == null ? "" : toNumber;
-            _message = message == null ? "" : message;
-            _participantIsSender = participantIsSender;
-            _isContact = isContact;
-            _name = name;
-            _email = email;
-        }
-
-        public override string ToString()
-        {
-            return base.ToString() + Environment.NewLine +
-                       "From:  " + _fromNumber + Environment.NewLine +
-                       "To:  " + _toNumber + Environment.NewLine +
-                       "Message:  " + _message + Environment.NewLine +
-                       "Participant is Sender:  " + _participantIsSender;
-        }
-    }
+		public override string ToString()
+		{
+			return base.ToString() + Environment.NewLine +
+					   "From:  " + _fromNumber + Environment.NewLine +
+					   "To:  " + _toNumber + Environment.NewLine +
+					   "Message:  " + _message + Environment.NewLine +
+					   "Participant is Sender:  " + _participantIsSender;
+		}
+	}
 }

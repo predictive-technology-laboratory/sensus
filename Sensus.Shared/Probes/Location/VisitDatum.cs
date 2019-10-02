@@ -40,6 +40,14 @@ namespace Sensus.Probes.Location
 			}
 		}
 
+		/// <summary>
+		/// For JSON deserialization.
+		/// </summary>
+		public VisitDatum()
+		{
+
+		}
+
 		public VisitDatum(DateTimeOffset? arrivalDate, DateTimeOffset? departureDate, double latitude, double longitude, double horizontalAccuracy, DateTimeOffset timestamp) : base(timestamp)
 		{
 			_arrivalDate = arrivalDate;

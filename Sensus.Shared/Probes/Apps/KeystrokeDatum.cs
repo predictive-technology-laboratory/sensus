@@ -24,6 +24,14 @@ namespace Sensus.Probes.Apps
         private string _key;
         private string _app;
 
+		/// <summary>
+		/// For JSON deserialization.
+		/// </summary>
+		public KeystrokeDatum()
+		{
+
+		}
+
         public KeystrokeDatum(DateTimeOffset timestamp, string key, string app) : base(timestamp)
         {
             _key = key == null ? "" : key;

@@ -17,6 +17,14 @@ namespace Sensus.Probes.Apps
 		private string _organizer;
 		private bool _isOrganizer;
 
+		/// <summary>
+		/// For JSON deserialization.
+		/// </summary>
+		public CalendarDatum()
+		{
+
+		}
+
 		public CalendarDatum(string eventId, string start, string end, double duration, string description, string eventLocation, string organizer, bool isOrganizer, string title, DateTimeOffset timestamp) : base(timestamp)
 		{
 			_eventId = eventId;

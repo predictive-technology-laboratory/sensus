@@ -53,6 +53,14 @@ namespace Sensus.Probes.Apps
 			}
 		}
 
+		/// <summary>
+		/// For JSON deserialization.
+		/// </summary>
+		public ImageMetadataDatum()
+		{
+
+		}
+
 		public ImageMetadataDatum(int fileSize, int? width, int? height, int? orientation, double? xResolution, double? yResolution, int? resolutionUnit, bool? isColor, int? flash, double? fNumber, double? exposureTime, string software, double? latitude, double? longitude, string mimeType, string imageBase64, DateTimeOffset timestamp) : base(timestamp)
 		{
 			_fileSize = fileSize;

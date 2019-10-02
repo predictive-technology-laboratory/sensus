@@ -36,6 +36,14 @@ namespace Sensus.Probes.Apps
 			}
 		}
 
+		/// <summary>
+		/// For JSON deserialization.
+		/// </summary>
+		public LogDatum()
+		{
+
+		}
+
 		public LogDatum(string logMessage, DateTimeOffset timestamp) : base(timestamp)
 		{
 			_logMessage = logMessage;

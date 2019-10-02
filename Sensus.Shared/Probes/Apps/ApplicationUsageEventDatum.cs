@@ -40,6 +40,14 @@ namespace Sensus.Probes.Apps
 			}
 		}
 
+		/// <summary>
+		/// For JSON deserialization.
+		/// </summary>
+		public ApplicationUsageEventDatum()
+		{
+
+		}
+
 		public ApplicationUsageEventDatum(string packageName, string applicationName, string eventType, DateTimeOffset timestamp) : base(timestamp)
 		{
 			_packageName = packageName;
@@ -47,10 +55,10 @@ namespace Sensus.Probes.Apps
 			_eventType = eventType;
 		}
 
-		[Anonymizable("Package Name:", typeof(StringHashAnonymizer), false)]
 		/// <summary>
 		/// The name of the package that created the event.
 		/// </summary>
+		[Anonymizable("Package Name:", typeof(StringHashAnonymizer), false)]
 		public string PackageName
 		{
 			get
@@ -62,10 +70,10 @@ namespace Sensus.Probes.Apps
 				_packageName = value;
 			}
 		}
-		[Anonymizable("Application Name:", typeof(StringHashAnonymizer), false)]
 		/// <summary>
 		/// The name of the application that created the event.
 		/// </summary>
+		[Anonymizable("Application Name:", typeof(StringHashAnonymizer), false)]
 		public string ApplicationName
 		{
 			get

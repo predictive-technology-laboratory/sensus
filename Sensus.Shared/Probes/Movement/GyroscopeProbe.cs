@@ -13,8 +13,6 @@
 // limitations under the License.
 
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Syncfusion.SfChart.XForms;
 

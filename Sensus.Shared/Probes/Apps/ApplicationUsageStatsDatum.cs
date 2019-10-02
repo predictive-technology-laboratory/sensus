@@ -31,6 +31,14 @@ namespace Sensus.Probes.Apps
 
 		public override object StringPlaceholderValue => ApplicationName;
 
+		/// <summary>
+		/// For JSON deserialization.
+		/// </summary>
+		public ApplicationUsageStatsDatum()
+		{
+
+		}
+
 		public ApplicationUsageStatsDatum(string packageName, string applicationName, DateTimeOffset intervalStart, DateTimeOffset intervalEnd, DateTimeOffset lastUsed, TimeSpan timeInForeground, DateTimeOffset timestamp) : base(timestamp)
 		{
 			_packageName = packageName;

@@ -68,6 +68,14 @@ namespace Sensus.Probes.Apps
 			}
 		}
 
+		/// <summary>
+		/// For JSON deserialization.
+		/// </summary>
+		public AccessibilityDatum()
+		{
+
+		}
+
 		public AccessibilityDatum(bool enabled, int currentItemIndex, bool @checked, string contentChangeTypes, long eventTime, string eventType, string movementGranularity, bool fullScreen, int itemCount, string packageName, string applicationName, object parcelableData, bool password, int recordCount, int fromIndex, int addedCount, string text, string contentDescription, string className, string beforeText, string action, string windowChanges, int removedCount, int maxScrollX, int maxScrollY, int scrollDeltaY, int scrollX, int scrollY, bool scrollable, object source, int scrollDeltaX, int toIndex, int windowId, DateTimeOffset timestamp) : base(timestamp)
 		{
 			_enabled = enabled;
@@ -175,7 +183,8 @@ namespace Sensus.Probes.Apps
 			}
 		}
 		/// <summary>
-		/// The accessibility event type.
+		/// The accessibility event type
+		/// </summary>
 		public string EventType
 		{
 			get
