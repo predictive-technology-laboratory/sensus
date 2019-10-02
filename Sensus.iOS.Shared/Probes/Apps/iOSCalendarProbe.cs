@@ -38,18 +38,7 @@ namespace Sensus.iOS.Probes.Apps
 
 			foreach (EKEvent item in items)
 			{
-				CalendarDatum datum = new CalendarDatum(DateTimeOffset.UtcNow)
-				{
-					Id = item.EventIdentifier,
-					Title = item.Title,
-					Description = item.Notes,
-					EventLocation = item.Location,
-					Start = item.StartDate?.ToString(),
-					End = item.EndDate?.ToString(),
-					Organizer = item.Organizer?.Name,
-					IsOrganizer = item.Organizer == null || item.Organizer?.IsCurrentUser == true,
-					Duration = ((DateTime)item.StartDate - (DateTime)item.EndDate).TotalMilliseconds
-				};
+				CalendarDatum datum = new CalendarDatum(item.EventIdentifier, item.StartDate?.ToString(), item.EndDate?.ToString(), ((DateTime)item.StartDate - (DateTime)item.EndDate).TotalMilliseconds, item.Notes, item.Location, item.Organizer?.Name, item.Organizer == null || item.Organizer?.IsCurrentUser == true, item.Title, DateTimeOffset.UtcNow);
 
 				datums.Add(datum);
 			}
