@@ -28,6 +28,9 @@ namespace Sensus.Probes.Context
 		private bool _paired;
 		private bool _runningSensus;
 
+		/// <summary>
+		/// The device's id.
+		/// </summary>
 		[StringProbeTriggerProperty]
 		[Anonymizable("Encountered Device ID:", typeof(StringHashAnonymizer), false)]
 		public string EncounteredDeviceId
@@ -35,7 +38,9 @@ namespace Sensus.Probes.Context
 			get { return _encounteredDeviceId; }
 			set { _encounteredDeviceId = value; }
 		}
-
+		/// <summary>
+		/// The address of the device.
+		/// </summary>
 		[Anonymizable("Encountered Device Address:", typeof(StringHashAnonymizer), false)]
 		public string Address
 		{
@@ -48,6 +53,9 @@ namespace Sensus.Probes.Context
 				_address = value;
 			}
 		}
+		/// <summary>
+		/// The name of the device.
+		/// </summary>
 		[Anonymizable("Encountered Device Name:", typeof(StringHashAnonymizer), false)]
 		public string Name
 		{
@@ -60,6 +68,9 @@ namespace Sensus.Probes.Context
 				_name = value;
 			}
 		}
+		/// <summary>
+		/// Indicates the signal strength of the device.
+		/// </summary>
 		public int Rssi
 		{
 			get
@@ -71,6 +82,9 @@ namespace Sensus.Probes.Context
 				_rssi = value;
 			}
 		}
+		/// <summary>
+		/// Indicates whether the device was running Sensus.
+		/// </summary>
 		public bool Paired
 		{
 			get
@@ -82,6 +96,9 @@ namespace Sensus.Probes.Context
 				_paired = value;
 			}
 		}
+		/// <summary>
+		/// Indicates whether the device was running Sensus.
+		/// </summary>
 		public bool RunningSensus
 		{
 			get
