@@ -38,6 +38,9 @@ namespace Sensus.Probes.Apps
 			_isOrganizer = isOrganizer;
 		}
 
+		/// <summary>
+		/// The event id.
+		/// </summary>
 		public string EventId
 		{
 			get
@@ -49,6 +52,9 @@ namespace Sensus.Probes.Apps
 				_eventId = value;
 			}
 		}
+		/// <summary>
+		/// The title of the event.
+		/// </summary>
 		public string Title
 		{
 			get
@@ -60,6 +66,9 @@ namespace Sensus.Probes.Apps
 				_title = value;
 			}
 		}
+		/// <summary>
+		/// The date and time the event starts.
+		/// </summary>
 		public DateTimeOffset Start
 		{
 			get
@@ -71,6 +80,9 @@ namespace Sensus.Probes.Apps
 				_start = value;
 			}
 		}
+		/// <summary>
+		/// The date and time the event ends.
+		/// </summary>
 		public DateTimeOffset End
 		{
 			get
@@ -82,6 +94,9 @@ namespace Sensus.Probes.Apps
 				_end = value;
 			}
 		}
+		/// <summary>
+		/// The duration of the event.
+		/// </summary>
 		public double Duration
 		{
 			get
@@ -93,6 +108,9 @@ namespace Sensus.Probes.Apps
 				_duration = value;
 			}
 		}
+		/// <summary>
+		/// The description of the event.
+		/// </summary>
 		[StringProbeTriggerProperty]
 		[Anonymizable(null, typeof(StringHashAnonymizer), false)]
 		public string Description
@@ -106,6 +124,9 @@ namespace Sensus.Probes.Apps
 				_description = value;
 			}
 		}
+		/// <summary>
+		/// The location of the event.
+		/// </summary>
 		public string EventLocation
 		{
 			get
@@ -117,6 +138,9 @@ namespace Sensus.Probes.Apps
 				_eventLocation = value;
 			}
 		}
+		/// <summary>
+		/// The organizer of the event.
+		/// </summary>
 		[StringProbeTriggerProperty]
 		[Anonymizable(null, typeof(StringHashAnonymizer), false)]
 		public string Organizer
@@ -130,6 +154,9 @@ namespace Sensus.Probes.Apps
 				_organizer = value;
 			}
 		}
+		/// <summary>
+		/// Indicates if the Sensus user is the organizer.
+		/// </summary>
 		public bool IsOrganizer
 		{
 			get
@@ -156,6 +183,11 @@ namespace Sensus.Probes.Apps
 			{
 				return "(Calendar data)";
 			}
+		}
+
+		public override string ToString()
+		{
+			return base.ToString() + Environment.NewLine + $"{_title} from {_start} to {_end}";
 		}
 	}
 }
