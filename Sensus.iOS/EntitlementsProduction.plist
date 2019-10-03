@@ -21,5 +21,7 @@
 	</array>
 	<key>com.apple.developer.icloud-container-environment</key>
 	<string>Production</string>
+	<key>Application-identifier</key>
+	<string>$(AppIdentifierPrefix)$(CFBundleIdentifier)</string>
 </dict>
 </plist>
