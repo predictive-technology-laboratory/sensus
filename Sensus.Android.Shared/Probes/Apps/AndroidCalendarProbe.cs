@@ -33,7 +33,7 @@ namespace Sensus.Android.Probes.Apps
 
 			DateTimeOffset epoch = DateTimeOffset.FromUnixTimeMilliseconds(0);
 			
-			long last = ((DateTimeOffset)LastPollTime.AddDays(-1)).ToUnixTimeMilliseconds();
+			long last = ((DateTimeOffset)LastPollTime).ToUnixTimeMilliseconds();
 			long now = Java.Lang.JavaSystem.CurrentTimeMillis();
 
 			ICursor cursor = Application.Context.ContentResolver.Query(CalendarContract.Events.ContentUri, eventProperties, $"{CalendarContract.Events.InterfaceConsts.Dtstart} > ? AND {CalendarContract.Events.InterfaceConsts.Dtstart} <= ?", new string[] { last.ToString(), now.ToString() }, CalendarContract.Events.InterfaceConsts.Dtstart + " DESC");
