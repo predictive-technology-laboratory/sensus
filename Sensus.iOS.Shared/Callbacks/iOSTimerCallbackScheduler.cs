@@ -7,6 +7,7 @@ using Foundation;
 using Sensus.Callbacks;
 using Sensus.Context;
 using Sensus.iOS.Notifications.UNUserNotifications;
+using Sensus.Probes.User.Scripts;
 using UserNotifications;
 
 namespace Sensus.iOS.Callbacks
@@ -58,25 +59,24 @@ namespace Sensus.iOS.Callbacks
 
 		protected override Task ReissueSilentNotificationAsync(string id)
 		{
-			throw new NotImplementedException();
+			// we don't need to reissue silent notifications when timers are used for callbacks on iOS
+			return Task.CompletedTask;
 		}
 
 		protected override async Task RequestLocalInvocationAsync(ScheduledCallback callback)
 		{
-			if (callback.RepeatDelay != null && callback.NextExecution != null)
+			if (callback.NextExecution != null)
 			{
 				if (_timers.TryGetValue(callback.Id, out NSTimer existingTimer) == false || existingTimer.TimeInterval != callback.RepeatDelay?.TotalSeconds)
 				{
 					CancelLocalInvocation(callback);
 
-					await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+					SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
 					{
-						NSTimer timer = new NSTimer((NSDate)callback.NextExecution.Value, callback.RepeatDelay.Value, async t =>
+						NSTimer timer = new NSTimer((NSDate)callback.NextExecution.Value, callback.RepeatDelay ?? TimeSpan.Zero, async t =>
 						{
-
 							await RaiseCallbackAsync(callback, callback.InvocationId);
-
-						}, true);
+						}, callback.RepeatDelay.HasValue);
 						/*{
 							Tolerance = callback.RepeatDelay.Value.TotalMilliseconds * .10
 						};*/
@@ -95,7 +95,7 @@ namespace Sensus.iOS.Callbacks
 			await Task.CompletedTask;
 		}
 
-		public async Task RequestNotificationsAsync()
+		public async Task RequestNotificationsAsync(bool gpsIsRunning)
 		{
 			UNUserNotificationNotifier notifier = SensusContext.Current.Notifier as UNUserNotificationNotifier;
 
@@ -109,7 +109,10 @@ namespace Sensus.iOS.Callbacks
 						{
 							if (callback.Silent)
 							{
-								await notifier.IssueSilentNotificationAsync(callback.Id, callback.NextExecution.Value, callbackInfo);
+								if (gpsIsRunning == false)
+								{
+									await notifier.IssueSilentNotificationAsync(callback.Id, callback.NextExecution.Value, callbackInfo);
+								}
 							}
 							else
 							{
