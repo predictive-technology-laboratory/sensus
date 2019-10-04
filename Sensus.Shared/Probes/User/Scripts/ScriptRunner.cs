@@ -686,7 +686,7 @@ namespace Sensus.Probes.User.Scripts
                 // time to update the scheduled callbacks to run this script.
                 await ScheduleScriptRunsAsync();
 
-            }, triggerTime.TimeTillTrigger, Script.Id + "." + GetType().FullName + "." + (triggerTime.Trigger - DateTime.MinValue).Days + "." + triggerTime.Window, Probe.Protocol.Id, Probe.Protocol, null, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS), ScheduledCallbackPriority.High);  // use Script.Id rather than script.Id for the callback identifier. using the former means that callbacks are unique to the script runner and not the script copies (the latter) that we will be running. the latter would always be unique.
+            }, triggerTime.TimeTillTrigger, Script.Id + "." + GetType().FullName + "." + (triggerTime.Trigger - DateTime.MinValue).Days + "." + triggerTime.Window, Probe.Protocol.Id, Probe.Protocol, null, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS), ScheduledCallbackPriority.High, GetType());  // use Script.Id rather than script.Id for the callback identifier. using the former means that callbacks are unique to the script runner and not the script copies (the latter) that we will be running. the latter would always be unique.
 
 #if __IOS__
             // all scheduled scripts with an expiration should show an expiration date to the user. on iOS this will be the only notification for 
