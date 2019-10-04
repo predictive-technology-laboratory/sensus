@@ -16,7 +16,7 @@ namespace Sensus.iOS.Probes.Apps
 			EKEventStore store = new EKEventStore();
 			EKCalendar[] calendars = store.GetCalendars(EKEntityType.Event);
 
-			NSDate last = (NSDate)LastPollTime.AddDays(-1);
+			NSDate last = (NSDate)LastPollTime;
 			NSDate now = (NSDate)DateTime.Now;
 
 			NSPredicate predicate = store.PredicateForEvents(last, now, calendars);
