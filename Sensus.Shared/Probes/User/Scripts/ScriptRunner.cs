@@ -568,7 +568,7 @@ namespace Sensus.Probes.User.Scripts
             }
 
 			// if there are any trigger times in the past, then make sure the script has been run
-			if(callbackTimesToReschedule.Any(x => x.Trigger <= DateTime.Now))
+			if (callbackTimesToReschedule.Any(x => x.Trigger <= DateTime.Now && x.Expiration > DateTime.Now))
 			{
 				await RunAsync(Script);
 			}
