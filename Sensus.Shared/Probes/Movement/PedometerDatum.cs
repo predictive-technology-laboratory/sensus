@@ -18,7 +18,10 @@ namespace Sensus.Probes.Movement
             get { return "Steps:  " + Math.Round(_steps, 2); }
         }
 
-        public override object StringPlaceholderValue => throw new NotImplementedException();
+        public override object StringPlaceholderValue
+        {
+            get { return "Steps:  " + Math.Round(_steps, 2); }
+        }
 
         public double Steps { get => _steps; set => _steps = value; }
 
