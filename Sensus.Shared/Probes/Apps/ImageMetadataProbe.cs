@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +12,8 @@ using System.Text;
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.IO;
 using System.Threading.Tasks;
 using ExifLib;
 using Sensus.UI.UiProperties;
@@ -23,27 +21,82 @@ using Syncfusion.SfChart.XForms;
 
 namespace Sensus.Probes.Apps
 {
+	/// <summary>
+	/// Collects application usage stats as <see cref="ImageMetadataDatum"/>
+	/// </summary>
 	public abstract class ImageMetadataProbe : ListeningProbe
 	{
 		public const string IMAGE_DISCRETE_TYPE = "image/";
 		public const string VIDEO_DISCRETE_TYPE = "video/";
-
 		public const string JPEG_MIME_TYPE = "image/jpeg";
 
-		protected override bool DefaultKeepDeviceAwake => false;
+		private bool _storeImages;
+		private bool _storeVideos;
 
-		public override Type DatumType => typeof(ImageMetadataDatum);
+		protected override bool DefaultKeepDeviceAwake
+		{
+			get
+			{
+				return false;
+			}
+		}
 
-		public override string DisplayName => "Gallery Image Metadata";
+		public override Type DatumType
+		{
+			get
+			{
+				return typeof(ImageMetadataDatum);
+			}
+		}
 
-		protected override string DeviceAwakeWarning => "";
+		public override string DisplayName
+		{
+			get
+			{
+				return "Gallery Image Metadata";
+			}
+		}
 
-		protected override string DeviceAsleepWarning => "";
+		protected override string DeviceAwakeWarning
+		{
+			get
+			{
+				return "";
+			}
+		}
+
+		protected override string DeviceAsleepWarning
+		{
+			get
+			{
+				return "";
+			}
+		}
 
 		[OnOffUiProperty("Store images:", true, 4)]
-		public bool StoreImages { get; set; }
+		public bool StoreImages
+		{
+			get
+			{
+				return _storeImages;
+			}
+			set
+			{
+				_storeImages = value;
+			}
+		}
 		[OnOffUiProperty("Store videos:", true, 5)]
-		public bool StoreVideos { get; set; }
+		public bool StoreVideos
+		{
+			get
+			{
+				return _storeVideos;
+			}
+			set
+			{
+				_storeVideos = value;
+			}
+		}
 
 		protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
 		{
@@ -70,8 +123,8 @@ namespace Sensus.Probes.Apps
 			const int BUFFER_SIZE = 1024;
 			byte[] fileBuffer = new byte[fileStream.Length];
 			byte[] buffer = new byte[BUFFER_SIZE];
-			int bytesRead = 0;
 			int totalBytesRead = 0;
+			int bytesRead = 0;
 
 			while ((bytesRead = await fileStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
 			{
