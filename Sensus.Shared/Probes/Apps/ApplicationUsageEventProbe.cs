@@ -18,15 +18,23 @@ using Syncfusion.SfChart.XForms;
 namespace Sensus.Probes.Apps
 {
 	/// <summary>
-	/// Collects accessibility events as <see cref="AccessibilityDatum"/>
+	/// Collects application usage events as <see cref="ApplicationUsageEventDatum"/>
 	/// </summary>
-	public abstract class AccessibilityProbe : ListeningProbe
+	public abstract class ApplicationUsageEventProbe : PollingProbe
 	{
+		public override int DefaultPollingSleepDurationMS
+		{
+			get
+			{
+				return (int)TimeSpan.FromHours(1).TotalMilliseconds;
+			}
+		}
+
 		public override string DisplayName
 		{
 			get
 			{
-				return "Accessibility";
+				return "Application Events";
 			}
 		}
 
@@ -34,31 +42,7 @@ namespace Sensus.Probes.Apps
 		{
 			get
 			{
-				return typeof(AccessibilityDatum);
-			}
-		}
-
-		protected override bool DefaultKeepDeviceAwake
-		{
-			get
-			{
-				return false;
-			}
-		}
-
-		protected override string DeviceAwakeWarning
-		{
-			get
-			{
-				return "";
-			}
-		}
-
-		protected override string DeviceAsleepWarning
-		{
-			get
-			{
-				return "";
+				return typeof(ApplicationUsageEventDatum);
 			}
 		}
 

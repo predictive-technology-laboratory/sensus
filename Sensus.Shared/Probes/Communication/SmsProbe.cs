@@ -18,10 +18,10 @@ using Syncfusion.SfChart.XForms;
 
 namespace Sensus.Probes.Communication
 {
-    /// <summary>
-    /// Probes information about SMS messages sent and received.
-    /// </summary>
-    public abstract class SmsProbe : ListeningProbe
+	/// <summary>
+	/// Collects information about SMS messages as <see cref="SmsDatum"/>
+	/// </summary>
+	public abstract class SmsProbe : ListeningProbe
     {
         [JsonIgnore]
         protected override bool DefaultKeepDeviceAwake

@@ -17,7 +17,10 @@ using Syncfusion.SfChart.XForms;
 
 namespace Sensus.Probes.Communication
 {
-    public abstract class PollingTelephonyProbe : PollingProbe
+	/// <summary>
+	/// Collects information about phone calls as <see cref="TelephonyDatum"/>
+	/// </summary>
+	public abstract class PollingTelephonyProbe : PollingProbe
     {
         public sealed override string DisplayName
         {
@@ -36,7 +39,7 @@ namespace Sensus.Probes.Communication
         {
             get
             {
-                return 60000 * 60; // once per hour
+                return (int)TimeSpan.FromHours(1).TotalMilliseconds; // once per hour
             }
         }
 
