@@ -36,6 +36,7 @@ namespace Sensus.Probes.Apps
 			get { return typeof(KeystrokeDatum); }
 		}
 
+
 		[JsonIgnore]
 		protected override bool DefaultKeepDeviceAwake
 		{

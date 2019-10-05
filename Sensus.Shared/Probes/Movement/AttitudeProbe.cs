@@ -44,7 +44,7 @@ namespace Sensus.Probes.Movement
             }
         }
 
-        protected override bool WillHaveSignificantNegativeImpactOnBattery => base.WillHaveSignificantNegativeImpactOnBattery;
+
 
         protected override double RawParticipation => base.RawParticipation;
 

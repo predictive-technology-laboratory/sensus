@@ -393,10 +393,9 @@ namespace Sensus.iOS
             // if the callback scheduler is timer-based and gps is not running then we need to request remote notifications
             if (SensusContext.Current.CallbackScheduler is iOSTimerCallbackScheduler scheduler)
             {
-                if (SensusServiceHelper.Get().GetRunningProtocols().SelectMany(x => x.Probes).OfType<ListeningLocationProbe>().Any(x => x.Enabled) == false)
-                {
-                    await scheduler.RequestNotificationsAsync();
-                }
+				bool gpsIsRunning = SensusServiceHelper.Get().GetRunningProtocols().SelectMany(x => x.Probes).OfType<ListeningLocationProbe>().Any(x => x.Enabled);
+
+				await scheduler.RequestNotificationsAsync(gpsIsRunning);
             }
             else // otherwise do what the callback scheduler used to do
             {
