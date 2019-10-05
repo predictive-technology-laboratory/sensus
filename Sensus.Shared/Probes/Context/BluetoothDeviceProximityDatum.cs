@@ -19,64 +19,134 @@ using Sensus.Probes.User.Scripts.ProbeTriggerProperties;
 
 namespace Sensus.Probes.Context
 {
-    public class BluetoothDeviceProximityDatum : Datum, IBluetoothDeviceProximityDatum
-    {
-        private string _encounteredDeviceId;
+	public class BluetoothDeviceProximityDatum : Datum, IBluetoothDeviceProximityDatum
+	{
+		private string _encounteredDeviceId;
+		private string _address;
+		private string _name;
+		private int _rssi;
+		private bool _paired;
+		private bool _runningSensus;
 
-        [StringProbeTriggerProperty]
-        [Anonymizable("Encountered Device ID:", typeof(StringHashAnonymizer), false)]
-        public string EncounteredDeviceId
-        {
-            get { return _encounteredDeviceId; }
-            set { _encounteredDeviceId = value; }
-        }
-
+		/// <summary>
+		/// The device's id.
+		/// </summary>
+		[StringProbeTriggerProperty]
+		[Anonymizable("Encountered Device ID:", typeof(StringHashAnonymizer), false)]
+		public string EncounteredDeviceId
+		{
+			get { return _encounteredDeviceId; }
+			set { _encounteredDeviceId = value; }
+		}
+		/// <summary>
+		/// The address of the device.
+		/// </summary>
 		[Anonymizable("Encountered Device Address:", typeof(StringHashAnonymizer), false)]
-		public string Address { get; set; }
+		public string Address
+		{
+			get
+			{
+				return _address;
+			}
+			set
+			{
+				_address = value;
+			}
+		}
+		/// <summary>
+		/// The name of the device.
+		/// </summary>
 		[Anonymizable("Encountered Device Name:", typeof(StringHashAnonymizer), false)]
-		public string Name { get; set; }
-		public int Rssi { get; set; }
-		public bool Paired { get; set; }
-		public bool RunningSensus { get; set; }
+		public string Name
+		{
+			get
+			{
+				return _name;
+			}
+			set
+			{
+				_name = value;
+			}
+		}
+		/// <summary>
+		/// Indicates the signal strength of the device.
+		/// </summary>
+		public int Rssi
+		{
+			get
+			{
+				return _rssi;
+			}
+			set
+			{
+				_rssi = value;
+			}
+		}
+		/// <summary>
+		/// Indicates whether the device was running Sensus.
+		/// </summary>
+		public bool Paired
+		{
+			get
+			{
+				return _paired;
+			}
+			set
+			{
+				_paired = value;
+			}
+		}
+		/// <summary>
+		/// Indicates whether the device was running Sensus.
+		/// </summary>
+		public bool RunningSensus
+		{
+			get
+			{
+				return _runningSensus;
+			}
+			set
+			{
+				_runningSensus = value;
+			}
+		}
 
-        public override string DisplayDetail
-        {
-            get { return _encounteredDeviceId; }
-        }
+		public override string DisplayDetail
+		{
+			get { return _encounteredDeviceId; }
+		}
 
-        /// <summary>
-        /// Gets the string placeholder value, which is the encountered device ID.
-        /// </summary>
-        /// <value>The string placeholder value.</value>
-        public override object StringPlaceholderValue
-        {
-            get
-            {
-                return _encounteredDeviceId;
-            }
-        }
+		/// <summary>
+		/// Gets the string placeholder value, which is the encountered device ID.
+		/// </summary>
+		/// <value>The string placeholder value.</value>
+		public override object StringPlaceholderValue
+		{
+			get
+			{
+				return _encounteredDeviceId;
+			}
+		}
 
-        /// <summary>
-        /// For JSON deserialization.
-        /// </summary>
-        private BluetoothDeviceProximityDatum() { }
+		/// <summary>
+		/// For JSON deserialization.
+		/// </summary>
+		private BluetoothDeviceProximityDatum() { }
 
-        public BluetoothDeviceProximityDatum(DateTimeOffset timestamp, string encounteredDeviceId, string address, string name, int rssi, bool paired, bool runningSensus)
-            : base(timestamp)
-        {
-            _encounteredDeviceId = encounteredDeviceId;
+		public BluetoothDeviceProximityDatum(DateTimeOffset timestamp, string encounteredDeviceId, string address, string name, int rssi, bool paired, bool runningSensus) : base(timestamp)
+		{
+			_encounteredDeviceId = encounteredDeviceId;
+			_address = address;
+			_name = name;
+			_rssi = rssi;
+			_paired = paired;
+			_runningSensus = runningSensus;
+		}
 
-			Address = address;
-			Name = name;
-			Rssi = rssi;
-			Paired = paired;
-			RunningSensus = RunningSensus;
-        }
-
-        public override string ToString()
-        {
-            return base.ToString() + Environment.NewLine +
-                   "Encountered device ID:  " + _encounteredDeviceId;
-        }
-    }
+		public override string ToString()
+		{
+			return base.ToString() + Environment.NewLine +
+				   "Encountered device ID:  " + _encounteredDeviceId;
+		}
+	}
 }
