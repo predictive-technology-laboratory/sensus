@@ -1,28 +1,40 @@
 ﻿using Android.App;
 using Android.App.Usage;
 using Android.Content.PM;
+using Sensus.Probes.Apps;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using XamarinApplication = Xamarin.Forms.Application;
 
 namespace Sensus.Android.Probes.Apps
 {
-	public class AndroidApplicationUsageStatsProbe : AndroidApplicationUsageProbe
+	public class AndroidApplicationUsageStatsProbe : ApplicationUsageStatsProbe
 	{
-		public override int DefaultPollingSleepDurationMS => (int)TimeSpan.FromHours(1).TotalMilliseconds;
+		AndroidApplicationUsageManager _manager = null;
 
-		public override string DisplayName => "Application Stats";
+		protected async override Task InitializeAsync()
+		{
+			await base.InitializeAsync();
 
-		public override Type DatumType => typeof(ApplicationUsageEventDatum);
+			_manager = new AndroidApplicationUsageManager();
+
+			await _manager.CheckPermission();
+		}
+
+		protected async override Task ProtectedStopAsync()
+		{
+			await base.ProtectedStopAsync();
+
+			_manager.DecrementPermission();
+		}
 
 		protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
 		{
 			long now = Java.Lang.JavaSystem.CurrentTimeMillis();
 			long startTime = now - PollingSleepDurationMS;
-			List<UsageStats> usageStats = _manager.QueryAndAggregateUsageStats(startTime, now).Select(x => x.Value).ToList();
+			List<UsageStats> usageStats = _manager.Manager.QueryAndAggregateUsageStats(startTime, now).Select(x => x.Value).ToList();
 			List<Datum> data = new List<Datum>();
 
 			foreach(UsageStats appStats in usageStats)
