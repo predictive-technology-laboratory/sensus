@@ -47,6 +47,7 @@ namespace Sensus.DataStores.Remote
 		private bool _requireWiFi;
 		private bool _requireCharging;
 		private float _requiredBatteryChargeLevelPercent;
+        private bool _alertUserWhenBackgrounded;
 		private string _userNotificationMessage;
 		private EventHandler<bool> _powerConnectionChanged;
 		private ConnectivityChangedEventHandler _wifiConnectionChanged;
@@ -132,6 +133,8 @@ namespace Sensus.DataStores.Remote
             set { _requireCharging = value; }
         }
 
+        
+
         /// <summary>
         /// The battery charge percent required to write data to the <see cref="RemoteDataStore"/>. This value is 
         /// only considered when <see cref="RequireCharging"/> is <c>false</c>. Since remote data storage relies on wireless
@@ -157,13 +160,26 @@ namespace Sensus.DataStores.Remote
         }
 
         /// <summary>
+        /// Available on iOS only. Whether or not to alert the user with a notification when polling should occur and the
+        /// app is in the background. See the <see cref="PollingProbe"/> overview for information about background considerations. 
+        /// The notifications issued when this setting is enabled encourage the user to bring the app to the foreground so that 
+        /// data polling may occur. Depending on how many <see cref="PollingProbe"/>s are enabled, these notifications can
+        /// become excessive for the user.
+        /// </summary>
+        /// <value><c>true</c> to alert user when backgrounded; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("(iOS) Alert User When Backgrounded:", true, 57)]
+        public bool AlertUserWhenBackgrounded {
+            ge { return _alertUserWhenBackgrounded} ; set { _alertUserWhenBackgrounded=value};
+        }
+
+        /// <summary>
         /// Available on iOS only. The message displayed to the user when Sensus is in the background and data are 
         /// scheduled to be transferred to the <see cref="RemoteDataStore"/>. This message is delivered via a notification 
         /// in the hope that the user will open Sensus to transmit the data. Data will not be transferred if the user
         /// does not open Sensus.
         /// </summary>
         /// <value>The user notification message.</value>
-        [EntryStringUiProperty("(iOS) User Notification Message:", true, 57, true)]
+        [EntryStringUiProperty("(iOS) User Notification Message:", true, 58, true)]
         public string UserNotificationMessage
         {
             get { return _userNotificationMessage; }
@@ -213,6 +229,7 @@ namespace Sensus.DataStores.Remote
             _requireWiFi = true;
             _requireCharging = true;
             _requiredBatteryChargeLevelPercent = 20;
+            _alertUserWhenBackgrounded = true;
             _userNotificationMessage = "Please open this notification to submit your data.";
 
 #if DEBUG || UI_TESTING
@@ -269,7 +286,10 @@ namespace Sensus.DataStores.Remote
             // we can't wake up the app on ios. this is problematic since data need to be stored locally and remotely
             // in something of a reliable schedule; otherwise, we risk data loss (e.g., from device restarts, app kills, etc.).
             // so, do the best possible thing and bug the user with a notification indicating that data need to be stored.
-            _writeCallback.UserNotificationMessage = _userNotificationMessage;
+            if (_alertUserWhenBackgrounded) {
+                _writeCallback.UserNotificationMessage = _userNotificationMessage;
+            }
+            
 #endif
 
             await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_writeCallback);
