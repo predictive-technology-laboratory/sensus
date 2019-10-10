@@ -168,5 +168,7 @@
 	<string>15.17.5</string>
 	<key>CFBundleVersion</key>
 	<string>1.1.1</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Sensus uses Bluetooth to collect information for studies you enroll in.</string>
 </dict>
 </plist>
