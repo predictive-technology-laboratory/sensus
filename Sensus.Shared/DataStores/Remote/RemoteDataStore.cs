@@ -169,7 +169,7 @@ namespace Sensus.DataStores.Remote
         /// <value><c>true</c> to alert user when backgrounded; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("(iOS) Alert User When Backgrounded:", true, 57)]
         public bool AlertUserWhenBackgrounded {
-            ge { return _alertUserWhenBackgrounded} ; set { _alertUserWhenBackgrounded=value};
+            get { return _alertUserWhenBackgrounded; } set { _alertUserWhenBackgrounded = value; }
         }
 
         /// <summary>
