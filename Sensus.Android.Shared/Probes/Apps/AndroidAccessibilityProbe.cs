@@ -27,7 +27,7 @@ namespace Sensus.Android.Probes.Apps
 		{
 			string applicationName = Application.Context.PackageManager.GetApplicationLabel(Application.Context.PackageManager.GetApplicationInfo(e.PackageName, PackageInfoFlags.MatchDefaultOnly));
 
-			AccessibilityDatum datum = new AccessibilityDatum(e.Enabled, e.CurrentItemIndex, e.Checked, e.ContentChangeTypes.ToString(), e.EventTime, e.EventType.ToString(), e.MovementGranularity.ToString(), e.FullScreen, e.ItemCount, e.PackageName, applicationName, e.ParcelableData, e.Password, e.RecordCount, e.FromIndex, e.AddedCount, e.Text.ToString(), e.ContentDescription, e.ClassName, e.BeforeText, e.GetAction().ToString(), e.WindowChanges.ToString(), e.RemovedCount, e.MaxScrollX, e.MaxScrollY, e.ScrollDeltaY, e.ScrollX, e.ScrollY, e.Scrollable, e.Source, e.ScrollDeltaX, e.ToIndex, e.WindowId, DateTimeOffset.FromUnixTimeMilliseconds(e.EventTime));
+			AccessibilityDatum datum = new AccessibilityDatum(e.Enabled, e.CurrentItemIndex, e.Checked, e.ContentChangeTypes.ToString(), e.EventTime, e.EventType.ToString(), e.MovementGranularity.ToString(), e.FullScreen, e.ItemCount, e.PackageName, applicationName, e.ParcelableData, e.Password, e.RecordCount, e.FromIndex, e.AddedCount, e.Text.ToString(), e.ContentDescription, e.ClassName, e.BeforeText, e.GetAction().ToString(), e.RemovedCount, e.MaxScrollX, e.MaxScrollY, e.ScrollX, e.ScrollY, e.Scrollable, e.Source, e.ToIndex, e.WindowId, DateTimeOffset.UtcNow);
 
 			await StoreDatumAsync(datum);
 		}

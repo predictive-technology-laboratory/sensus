@@ -524,6 +524,7 @@ namespace Sensus
         private double _gpsLongitudeAnonymizationParticipantOffset;
         private double _gpsLongitudeAnonymizationStudyOffset;
         private Dictionary<Type, Probe> _typeProbe;
+		private CancellationTokenSource _startCancellationTokenSource;
 
         // members for displaying protocol start-up
         private ProgressPage _protocolStartPage;
@@ -2388,6 +2389,11 @@ namespace Sensus
             _scheduledStopCallback = null;
         }
 
+		public void CancelStart()
+		{
+			_startCancellationTokenSource?.Cancel();
+		}
+
         /// <summary>
         /// Starts the current <see cref="Protocol"/> after displaying a message to the user indicating what is about to happen. This is
         /// also the place where the user's agreement to the <see cref="Protocol"/> is obtained through the various 
@@ -2614,8 +2620,8 @@ namespace Sensus
             if (start)
             {
                 // create startup page, passing cancellation token that will be used for the startup.
-                CancellationTokenSource startCancellationTokenSource = new CancellationTokenSource();
-                _protocolStartPage = new ProgressPage("Starting study. Please wait...", startCancellationTokenSource);
+                _startCancellationTokenSource = new CancellationTokenSource();
+                _protocolStartPage = new ProgressPage("Starting study. Please wait...", _startCancellationTokenSource);
 
                 // wire up startup progress events
 
@@ -2645,7 +2651,9 @@ namespace Sensus
 
                 try
                 {
-                    await StartAsync(startCancellationTokenSource.Token);
+                    await StartAsync(_startCancellationTokenSource.Token);
+
+					_startCancellationTokenSource.Dispose();
                 }
                 finally
                 {
