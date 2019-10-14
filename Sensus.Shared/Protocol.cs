@@ -2198,6 +2198,7 @@ namespace Sensus
                 // if the sensing agent has requested actions at regular intervals, then schedule a repeating callback.
                 if (Agent?.ActionInterval != null)
                 {
+
                     _agentIntervalActionScheduledCallback = new ScheduledCallback(async actionCancellationToken =>
                     {
                         // ask the sensing agent to act
@@ -2211,8 +2212,12 @@ namespace Sensus
                         // we don't want the scheduled callback to be silent, as such callbacks are cancelled on ios when the app
                         // is backgrounded. in any case, we want them to grab the user's attention. this is not needed on android,
                         // as the scheduled callback will be run regardless of app/device state.
-                        UserNotificationMessage = "Sensus would like to measure your environment. Please open this notification.",
-                        NotificationUserResponseMessage = "Measuring environment. You may close this alert."
+                        //update: With GPs listening on and Timer callbacks this is possible to run silently in the background.
+
+                        //UserNotificationMessage = "Sensus would like to measure your environment. Please open this notification.",
+                        //NotificationUserResponseMessage = "Measuring environment. You may close this alert."
+                        UserNotificationMessage = null,
+                        NotificationUserResponseMessage = null
 #endif
                     };
 

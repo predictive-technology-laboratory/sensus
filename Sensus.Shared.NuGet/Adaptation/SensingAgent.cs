@@ -484,8 +484,8 @@ namespace Sensus.Adaptation
                     }
 
                     return State;
-
-                }, ControlCompletionCheckInterval, "Sensus would like to measure your environment. Please open this notification.", "Measuring environment. You may close this alert.");
+            }, ControlCompletionCheckInterval, null, null);
+            //}, ControlCompletionCheckInterval, "Sensus would like to measure your environment. Please open this notification.", "Measuring environment. You may close this alert.");
 
                 SensusServiceHelper.Logger.Log("Established sensing control in state:  " + StateDescription, LoggingLevel.Normal, GetType());
             }
