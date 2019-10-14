@@ -1776,7 +1776,7 @@ namespace Sensus
         /// Called when the system or user wishes to stop the app entirely. Will stop all protocols and clean up.
         /// </summary>
         /// <returns>Task</returns>
-        public async Task StopAsync()
+        public virtual async Task StopAsync()
         {
             Logger.Log("Stopping protocols.", LoggingLevel.Normal, GetType());
 

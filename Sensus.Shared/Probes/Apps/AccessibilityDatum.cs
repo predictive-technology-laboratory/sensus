@@ -76,7 +76,7 @@ namespace Sensus.Probes.Apps
 
 		}
 
-		public AccessibilityDatum(bool enabled, int currentItemIndex, bool @checked, string contentChangeTypes, long eventTime, string eventType, string movementGranularity, bool fullScreen, int itemCount, string packageName, string applicationName, object parcelableData, bool password, int recordCount, int fromIndex, int addedCount, string text, string contentDescription, string className, string beforeText, string action, string windowChanges, int removedCount, int maxScrollX, int maxScrollY, int scrollDeltaY, int scrollX, int scrollY, bool scrollable, object source, int scrollDeltaX, int toIndex, int windowId, DateTimeOffset timestamp) : base(timestamp)
+		public AccessibilityDatum(bool enabled, int currentItemIndex, bool @checked, string contentChangeTypes, long eventTime, string eventType, string movementGranularity, bool fullScreen, int itemCount, string packageName, string applicationName, object parcelableData, bool password, int recordCount, int fromIndex, int addedCount, string text, string contentDescription, string className, string beforeText, string action, int removedCount, int maxScrollX, int maxScrollY, int scrollX, int scrollY, bool scrollable, object source, int toIndex, int windowId, DateTimeOffset timestamp) : base(timestamp)
 		{
 			_enabled = enabled;
 			_currentItemIndex = currentItemIndex;
@@ -88,6 +88,7 @@ namespace Sensus.Probes.Apps
 			_fullScreen = fullScreen;
 			_itemCount = itemCount;
 			_packageName = packageName;
+			_applicationName = applicationName;
 			_parcelableData = parcelableData;
 			_password = password;
 			_recordCount = recordCount;
@@ -98,16 +99,13 @@ namespace Sensus.Probes.Apps
 			_className = className;
 			_beforeText = beforeText;
 			_action = action;
-			_windowChanges = windowChanges;
 			_removedCount = removedCount;
 			_maxScrollX = maxScrollX;
 			_maxScrollY = maxScrollY;
-			_scrollDeltaY = scrollDeltaY;
 			_scrollX = scrollX;
 			_scrollY = scrollY;
 			_scrollable = scrollable;
 			_source = source;
-			_scrollDeltaX = scrollDeltaX;
 			_toIndex = toIndex;
 			_windowId = windowId;
 		}
@@ -407,20 +405,6 @@ namespace Sensus.Probes.Apps
 			}
 		}
 		/// <summary>
-		/// The window changes described by the event.
-		/// </summary>
-		public string WindowChanges
-		{
-			get
-			{
-				return _windowChanges;
-			}
-			set
-			{
-				_windowChanges = value;
-			}
-		}
-		/// <summary>
 		/// The number of items removed.
 		/// </summary>
 		public int RemovedCount
@@ -460,20 +444,6 @@ namespace Sensus.Probes.Apps
 			set
 			{
 				_maxScrollY = value;
-			}
-		}
-		/// <summary>
-		/// The scroll vertical change.
-		/// </summary>
-		public int ScrollDeltaY
-		{
-			get
-			{
-				return _scrollDeltaY;
-			}
-			set
-			{
-				_scrollDeltaY = value;
 			}
 		}
 		/// <summary>
@@ -530,20 +500,6 @@ namespace Sensus.Probes.Apps
 			set
 			{
 				_source = value;
-			}
-		}
-		/// <summary>
-		/// The horizontal scroll change.
-		/// </summary>
-		public int ScrollDeltaX
-		{
-			get
-			{
-				return _scrollDeltaX;
-			}
-			set
-			{
-				_scrollDeltaX = value;
 			}
 		}
 		/// <summary>
