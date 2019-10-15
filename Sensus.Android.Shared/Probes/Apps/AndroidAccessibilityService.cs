@@ -19,7 +19,7 @@ namespace Sensus.Android.Probes.Apps
 	public class AndroidAccessibilityService : AccessibilityService
 	{
 		private static readonly List<AndroidAccessibilityProbe> _probes;
-		private static CancellationTokenSource _cancellationTokenSource;
+		//private static CancellationTokenSource _cancellationTokenSource;
 
 		static AndroidAccessibilityService()
 		{
@@ -43,7 +43,8 @@ namespace Sensus.Android.Probes.Apps
 				}
 			}
 
-			while (IsServiceEnabled() == false)
+			if (IsServiceEnabled() == false)
+			//while (IsServiceEnabled() == false)
 			{
 				bool continueStarting = await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
 				{
@@ -56,14 +57,14 @@ namespace Sensus.Android.Probes.Apps
 					accessibilitySettings.AddFlags(ActivityFlags.NewTask);
 					Application.Context.StartActivity(accessibilitySettings);
 
-					AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+					//AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
 
-					_cancellationTokenSource = new CancellationTokenSource();
+					//_cancellationTokenSource = new CancellationTokenSource();
 
-					serviceHelper.WaitForFocus(_cancellationTokenSource.Token);
+					//serviceHelper.WaitForFocus(_cancellationTokenSource.Token);
 
-					_cancellationTokenSource.Dispose();
-					_cancellationTokenSource = null;
+					//_cancellationTokenSource.Dispose();
+					//_cancellationTokenSource = null;
 				}
 				else
 				{
@@ -111,10 +112,10 @@ namespace Sensus.Android.Probes.Apps
 
 			SetServiceInfo(info);
 
-			if (_cancellationTokenSource != null)
-			{
-				_cancellationTokenSource.Cancel();
-			}
+			//if (_cancellationTokenSource != null)
+			//{
+			//	_cancellationTokenSource.Cancel();
+			//}
 		}
 	}
 }
