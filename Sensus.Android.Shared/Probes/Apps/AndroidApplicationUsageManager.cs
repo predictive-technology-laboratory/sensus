@@ -2,8 +2,10 @@
 using Android.App.Usage;
 using Android.Content;
 using Android.OS;
+using Android.Provider;
 using Sensus.Context;
-using System;
+using Sensus.Probes;
+using System.Threading;
 using System.Threading.Tasks;
 using XamarinApplication = Xamarin.Forms.Application;
 
@@ -11,37 +13,66 @@ namespace Sensus.Android.Probes.Apps
 {
 	public class AndroidApplicationUsageManager
 	{
-		public UsageStatsManager Manager { get; }
-		private static int _permissionChecked = 0;
+		private Probe _probe;
+		//private static CancellationTokenSource _cancellationTokenSource;
 
-		public AndroidApplicationUsageManager()
+		public UsageStatsManager Manager { get; }
+
+		public AndroidApplicationUsageManager(Probe probe)
 		{
+			_probe = probe;
 			Manager = (UsageStatsManager)Application.Context.GetSystemService(global::Android.Content.Context.UsageStatsService);
 		}
 
+		//private class AppOpsCallback : Java.Lang.Object, AppOpsManager.IOnOpChangedListener
+		//{
+		//	public void OnOpChanged(string op, string packageName)
+		//	{
+		//		if (op == AppOpsManager.OpstrGetUsageStats && _cancellationTokenSource != null)
+		//		{
+		//			_cancellationTokenSource.Cancel();
+		//		}
+		//	}
+		//}
+
 		public async Task CheckPermission()
 		{
-			if (_permissionChecked == 0)
+			AppOpsManager appOps = (AppOpsManager)Application.Context.GetSystemService(global::Android.Content.Context.AppOpsService);
+			//AppOpsCallback callback = new AppOpsCallback();
+			//appOps.StartWatchingMode(AppOpsManager.OpstrGetUsageStats, Application.Context.PackageName, new AppOpsCallback());
+
+			if (appOps.CheckOpNoThrow(AppOpsManager.OpstrGetUsageStats, Process.MyUid(), Application.Context.PackageName) != AppOpsManagerMode.Allowed)
+			//while (appOps.CheckOpNoThrow(AppOpsManager.OpstrGetUsageStats, Process.MyUid(), Application.Context.PackageName) != AppOpsManagerMode.Allowed)
 			{
-				AppOpsManager appOps = (AppOpsManager)Application.Context.GetSystemService(global::Android.Content.Context.AppOpsService);
-
-				if (appOps.CheckOpNoThrow(AppOpsManager.OpstrGetUsageStats, Process.MyUid(), Application.Context.PackageName) != AppOpsManagerMode.Allowed)
+				bool continueStarting = await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
 				{
-					await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-					{
-						await XamarinApplication.Current.MainPage.DisplayAlert("Sensus", "Sensus requires access to app usage data. It can be granted on the following screen.", "Close");
-					});
+					return await XamarinApplication.Current.MainPage.DisplayAlert("Permission Request", "Please enable the App Usage permission for Sensus", "OK", "Cancel");
+				});
 
-					Application.Context.StartActivity(new Intent(global::Android.Provider.Settings.ActionUsageAccessSettings));
+				if (continueStarting)
+				{
+					Intent appUsageSettings = new Intent(Settings.ActionUsageAccessSettings);
+					appUsageSettings.AddFlags(ActivityFlags.NewTask);
+					Application.Context.StartActivity(appUsageSettings);
 
-					_permissionChecked += 1;
+					//AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+
+					//_cancellationTokenSource = new CancellationTokenSource();
+
+					//serviceHelper.WaitForFocus(_cancellationTokenSource.Token);
+
+					//_cancellationTokenSource.Dispose();
+					//_cancellationTokenSource = null;
+				}
+				else
+				{
+					_probe.Protocol.CancelStart();
+
+					return;
 				}
 			}
-		}
 
-		public void DecrementPermission()
-		{
-			_permissionChecked = Math.Max(0, _permissionChecked - 1);
+			//appOps.StopWatchingMode(callback);
 		}
 	}
 }

@@ -550,6 +550,7 @@ namespace Sensus.UI
                     if (action == "From QR Code")
                     {
                         url = await SensusServiceHelper.Get().ScanQrCodeAsync(QrCodePrefix.SENSUS_PROTOCOL);
+                        
                     }
                     else if (action == "From URL")
                     {
@@ -618,7 +619,20 @@ namespace Sensus.UI
                         {
                             try
                             {
-                                protocol = await Protocol.DeserializeAsync(new Uri(url), true);
+                                
+                                if (action == "From QR Code")
+                                {
+                                    Tuple<string, string> baseUrlParticipantId = ParseUnManagedProtocolURL(url);
+                                    protocol = await Protocol.DeserializeAsync(new Uri(baseUrlParticipantId.Item1), true);
+                                    
+                                    protocol.ParticipantId = baseUrlParticipantId.Item2;
+                                    //SensusServiceHelper.Get().Logger.Log("PID:  " + baseUrlParticipantId.Item2, LoggingLevel.Normal, GetType());
+                                    await SensusServiceHelper.Get().FlashNotificationAsync("PID:  " + baseUrlParticipantId.Item2);
+                                }
+                                else
+                                {
+                                    protocol = await Protocol.DeserializeAsync(new Uri(url), true);
+                                }
                             }
                             catch (Exception ex)
                             {
@@ -727,18 +741,14 @@ namespace Sensus.UI
 
         private Tuple<string, string> ParseManagedProtocolURL(string url)
         {
-            if (!url.StartsWith(Protocol.MANAGED_URL_STRING))
-            {
-                throw new Exception("Study URL is not managed.");
-            }
-
+            
             // should have the following parts (participant is optional but the last colon is still required):  managed:BASEURL:PARTICIPANT_ID
             int firstColon = url.IndexOf(':');
             int lastColon = url.LastIndexOf(':');
 
             if (firstColon == lastColon)
             {
-                throw new Exception("Invalid managed study URL format.");
+                throw new Exception("Invalid study URL format.");
             }
 
             string baseUrl = url.Substring(firstColon + 1, lastColon - firstColon - 1);
@@ -748,6 +758,30 @@ namespace Sensus.UI
             if (lastColon < url.Length - 1)
             {
                 participantId = url.Substring(lastColon + 1);
+            }
+
+            return new Tuple<string, string>(baseUrl, participantId);
+        }
+        private Tuple<string, string> ParseUnManagedProtocolURL(string url)
+        {
+
+            // should have the following parts (participant is optional):  BASEURL:PARTICIPANT_ID
+
+            int lastColon = url.LastIndexOf(':');
+            string baseUrl = null;
+            string participantId = null;
+            if (url.Contains(':'))
+            {
+                baseUrl= url.Substring(0, lastColon);
+                // get participant id if one follows the last colon
+                if (lastColon < url.Length - 1)
+                {
+                    participantId = url.Substring(lastColon + 1);
+                }
+            }
+            else
+            {
+                baseUrl = url;
             }
 
             return new Tuple<string, string>(baseUrl, participantId);

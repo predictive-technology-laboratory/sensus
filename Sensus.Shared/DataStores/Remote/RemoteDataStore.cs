@@ -49,7 +49,9 @@ namespace Sensus.DataStores.Remote
 		private float _requiredBatteryChargeLevelPercent;
         private bool _alertUserWhenBackgrounded;
 		private string _userNotificationMessage;
-		private EventHandler<bool> _powerConnectionChanged;
+
+
+        private EventHandler<bool> _powerConnectionChanged;
 		private ConnectivityChangedEventHandler _wifiConnectionChanged;
 		private CancellationTokenSource _powerConnectWriteCancellationToken;
 		private CancellationTokenSource _wifiConnectWriteCancellationToken;
@@ -169,7 +171,7 @@ namespace Sensus.DataStores.Remote
         /// <value><c>true</c> to alert user when backgrounded; otherwise, <c>false</c>.</value>
         [OnOffUiProperty("(iOS) Alert User When Backgrounded:", true, 57)]
         public bool AlertUserWhenBackgrounded {
-            ge { return _alertUserWhenBackgrounded} ; set { _alertUserWhenBackgrounded=value};
+            get { return _alertUserWhenBackgrounded; } set { _alertUserWhenBackgrounded = value; }
         }
 
         /// <summary>
@@ -186,12 +188,12 @@ namespace Sensus.DataStores.Remote
             set { _userNotificationMessage = value; }
         }
 
-        /// <summary>
-        /// Tolerance in milliseconds for running the <see cref="RemoteDataStore"/> before the scheduled 
-        /// time, if doing so will increase the number of batched actions and thereby decrease battery consumption.
-        /// </summary>
-        /// <value>The delay tolerance before.</value>
-        [EntryIntegerUiProperty("Delay Tolerance Before (MS):", true, 60, true)]
+            /// <summary>
+            /// Tolerance in milliseconds for running the <see cref="RemoteDataStore"/> before the scheduled 
+            /// time, if doing so will increase the number of batched actions and thereby decrease battery consumption.
+            /// </summary>
+            /// <value>The delay tolerance before.</value>
+            [EntryIntegerUiProperty("Delay Tolerance Before (MS):", true, 60, true)]
         public int DelayToleranceBeforeMS { get; set; }
 
         /// <summary>
