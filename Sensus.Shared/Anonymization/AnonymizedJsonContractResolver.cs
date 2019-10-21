@@ -195,6 +195,17 @@ namespace Sensus.Anonymization
             }
         }
 
+		public IDictionary<PropertyInfo, Anonymizer> Anonymizers
+		{
+			get
+			{
+				lock(_propertyAnonymizer)
+				{
+					return new ReadOnlyDictionary<PropertyInfo, Anonymizer>(_propertyAnonymizer);
+				}
+			}
+		}
+
         /// <summary>
         /// Gets a list of properties of a type that should be serialized. The purpose of this class is to
         /// anonymize Datum objects and their child classes; however, if a Datum (or child) class contains

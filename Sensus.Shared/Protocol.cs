@@ -2417,13 +2417,32 @@ namespace Sensus
             // that are currently enabled, as probes can be disabled due to user preferences and temporary system unavailability.
             // all probes originally enabled in the protocol should be shown to the user. only those that are currently enabled
             // will be shown as selected if the user is permitted to disabled them upon startup.
-            List<Tuple<Probe, string>> probeDescriptions = _probes.Where(probe => probe.OriginallyEnabled &&                                // probe was originally enabled in the protocol
+            List<(Probe Probe, string Description)> probeDescriptions = _probes.Where(probe => probe.OriginallyEnabled &&                                // probe was originally enabled in the protocol
                                                                                   probe.StoreData &&                                        // probes might only be enabled to trigger surveys. they don't actually store data and should not be listed here
                                                                                   !string.IsNullOrWhiteSpace(probe.CollectionDescription))  // probes like the script probe can be enabled but not have any intent to collect (e.g., no surveys)
 
                                                                   .OrderBy(probe => probe.DisplayName)
-                                                                  .Select(probe => new Tuple<Probe, string>(probe, probe.CollectionDescription))
+                                                                  .Select(probe => (probe, probe.CollectionDescription))
                                                                   .ToList();
+
+			probeDescriptions = probeDescriptions.GroupJoin(JsonAnonymizer.Anonymizers.Where(x => x.Value != null), o => o.Probe.DatumType, i => i.Key.DeclaringType, (o, i) =>
+			{
+				(Probe probe, string description) = o;
+
+				List<(Anonymizable, Anonymizer)> anonymizers = i.Select(x => (x.Key.GetCustomAttribute<Anonymizable>(true), x.Value)).ToList();
+
+				if (anonymizers.Any())
+				{
+					description += Environment.NewLine + "    Anonymization:";
+
+					foreach ((Anonymizable anonymizable, Anonymizer anonymizer) in anonymizers)
+					{
+						description += Environment.NewLine + $"        {anonymizable.PropertyDisplayName} {anonymizer.DisplayText}";
+					}
+				}
+
+				return (probe, description);
+			}).ToList();
 
             if (probeDescriptions.Count == 0)
             {
@@ -2608,7 +2627,7 @@ namespace Sensus
                 if (probePicker != null)
                 {
                     List<string> selectedProbeDescriptions = (probePicker.Value as List<object>).Cast<string>().ToList();
-                    foreach (Tuple<Probe, string> probeDescription in probeDescriptions)
+                    foreach ((Probe, string) probeDescription in probeDescriptions)
                     {
                         probeDescription.Item1.Enabled = selectedProbeDescriptions.Contains(probeDescription.Item2);
                     }
