@@ -66,7 +66,8 @@ namespace Sensus.UI
                     actions.AddRange(new string[] { "View Display Conditions" });
                 }
 
-                actions.Add("Delete");
+				actions.Add("Copy");
+				actions.Add("Delete");
 
                 string selectedAction = await DisplayActionSheet(selectedInput.Name, "Cancel", null, actions.ToArray());
 
@@ -146,6 +147,10 @@ namespace Sensus.UI
                         selectedInput.DisplayConditions.Clear();
                     }));
                 }
+				else if(selectedAction == "Copy")
+				{
+					inputGroup.Inputs.Add(selectedInput.Copy(true));
+				}
                 else if (selectedAction == "Delete")
                 {
                     if (await DisplayAlert("Delete " + selectedInput.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
