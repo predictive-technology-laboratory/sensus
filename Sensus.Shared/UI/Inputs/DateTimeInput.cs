@@ -126,7 +126,10 @@ namespace Sensus.UI.Inputs
 
 				_timePicker.PropertyChanged += (o, e) =>
 				{
-					Complete = e.PropertyName == nameof(TimePicker.Time) && Value != null;
+					if (e.PropertyName == nameof(TimePicker.Time))
+					{
+						Complete = Value != null;
+					}
 				};
 
 				_label = CreateLabel(index);
