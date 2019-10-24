@@ -105,6 +105,16 @@ namespace Sensus.UI.Inputs
 
 				Color defaultTextColor = _timePicker.TextColor;
 				_timePicker.TextColor = Color.Gray;
+				_hasFocused = false;
+
+				_timePicker.Focused += (o, e) =>
+				{
+					if (!_hasFocused)
+					{
+						_timePicker.TextColor = defaultTextColor;
+						_hasFocused = true;
+					}
+				};
 
 				_timePicker.PropertyChanged += (o, e) =>
 				{

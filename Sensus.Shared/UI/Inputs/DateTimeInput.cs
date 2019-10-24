@@ -118,6 +118,27 @@ namespace Sensus.UI.Inputs
 				Color defaultTextColor = _datePicker.TextColor;
                 _datePicker.TextColor = Color.Gray;
 				_timePicker.TextColor = Color.Gray;
+				_hasFocused = false;
+
+				_datePicker.Focused += (o, e) =>
+				{
+					if (!_hasFocused)
+					{
+						_datePicker.TextColor = defaultTextColor;
+						_timePicker.TextColor = defaultTextColor;
+						_hasFocused = true;
+					}
+				};
+
+				_timePicker.Focused += (o, e) =>
+				{
+					if (!_hasFocused)
+					{
+						_datePicker.TextColor = defaultTextColor;
+						_timePicker.TextColor = defaultTextColor;
+						_hasFocused = true;
+					}
+				};
 
 				_datePicker.DateSelected += (o, e) =>
                 {
