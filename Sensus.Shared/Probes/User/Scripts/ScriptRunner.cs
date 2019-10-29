@@ -27,6 +27,9 @@ using Sensus.UI.Inputs;
 using Plugin.Permissions.Abstractions;
 using System.ComponentModel;
 using Sensus.Notifications;
+using Sensus.Exceptions;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json.Serialization;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -838,5 +841,78 @@ namespace Sensus.Probes.User.Scripts
             await (Probe.Agent?.ObserveAsync(script, ScriptState.Delivered) ?? Task.CompletedTask);
             Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Delivered, script.RunTime.Value, script), CancellationToken.None);
         }
-    }
+
+		private string GetCopyName()
+		{
+			try
+			{
+				string pattern = @"\s*-\s*Copy\s*(?<number>\d*)$";
+
+				string name = Regex.Replace(Name, pattern, "");
+
+				string countString = Probe.ScriptRunners.Max(x => Regex.Match(x.Name, $@"(?<={name}){pattern}").Groups["number"].Value);
+
+				int.TryParse(countString, out int count);
+
+				count = Math.Max(count, Probe.ScriptRunners.Count(x => Regex.IsMatch(x.Name, $@"(?<={name})({pattern})?$")) - 1);
+
+				if (count > 0)
+				{
+					name += $" - Copy {count + 1}";
+				}
+				else
+				{
+					name += " - Copy";
+				}
+
+				return name;
+			}
+			catch
+			{
+				SensusServiceHelper.Get().Logger.Log("Error creating unique script runner name", LoggingLevel.Normal, GetType());
+			}
+
+			return Name + " - Copy";
+		}
+
+		public ScriptRunner Copy()
+		{
+			JsonSerializerSettings settings = new JsonSerializerSettings
+			{
+				PreserveReferencesHandling = PreserveReferencesHandling.None,
+				ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+				TypeNameHandling = TypeNameHandling.All,
+				ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+			};
+
+			try
+			{
+				SensusServiceHelper.Get().FlashNotificationsEnabled = false;
+				ScriptRunner copy = JsonConvert.DeserializeObject<ScriptRunner>(JsonConvert.SerializeObject(this, settings), settings);
+
+				copy.Script.Id = Guid.NewGuid().ToString();
+				copy.Probe = Probe;
+
+				copy.Name = GetCopyName();
+
+				foreach (InputGroup inputGroup in copy.Script.InputGroups)
+				{
+					inputGroup.Id = Guid.NewGuid().ToString();
+				}
+
+				return copy;
+			}
+			catch (Exception ex)
+			{
+				string message = $"Failed to copy script runner:  {ex.Message}";
+				SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+				SensusException.Report(message, ex);
+				return null;
+			}
+			finally
+			{
+				SensusServiceHelper.Get().FlashNotificationsEnabled = true;
+			}
+		}
+	}
 }
