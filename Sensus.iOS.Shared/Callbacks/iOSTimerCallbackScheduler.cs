@@ -36,11 +36,6 @@ namespace Sensus.iOS.Callbacks
 			}
 		}
 
-		public override void CancelSilentNotifications()
-		{
-			throw new NotImplementedException();
-		}
-
 		protected override void CancelLocalInvocation(ScheduledCallback callback)
 		{
 			SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
@@ -55,12 +50,6 @@ namespace Sensus.iOS.Callbacks
 					}
 				}
 			});
-		}
-
-		protected override Task ReissueSilentNotificationAsync(string id)
-		{
-			// we don't need to reissue silent notifications when timers are used for callbacks on iOS
-			return Task.CompletedTask;
 		}
 
 		protected override async Task RequestLocalInvocationAsync(ScheduledCallback callback)
@@ -107,14 +96,7 @@ namespace Sensus.iOS.Callbacks
 					{
 						if (callbackInfo != null)
 						{
-							if (callback.Silent)
-							{
-								if (gpsIsRunning == false)
-								{
-									await notifier.IssueSilentNotificationAsync(callback.Id, callback.NextExecution.Value, callbackInfo);
-								}
-							}
-							else
+							if (callback.Silent == false)
 							{
 								await notifier.IssueNotificationAsync(callback.Protocol?.Name ?? "Alert", callback.UserNotificationMessage, callback.Id, true, callback.Protocol, null, callback.NotificationUserResponseAction, callback.NotificationUserResponseMessage, callback.NextExecution.Value, callbackInfo);
 							}
