@@ -122,5 +122,15 @@ namespace Sensus.iOS.Callbacks
 				}
 			}
 		}
+
+		protected override Task ReissueSilentNotificationAsync(string id)
+		{
+			throw new NotImplementedException();
+		}
+
+		public override void CancelSilentNotifications()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
