@@ -1,9 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageId>Sensus</PackageId>
-    <PackageVersion>1.51.0</PackageVersion>
+    <PackageVersion>1.52.0</PackageVersion>
     <Authors>Matthew Gerber</Authors>
     <Description>Package for developing plug-ins and other code modules that integrate with Sensus. The process for releasing a new version of the NuGet package for this project is as follows:  (1) Update the version number in the metadata settings; (2) right-click the project and select "Create NuGet Package"; and (3) upload the resulting package to the NuGet website.</Description>
     <ReleaseVersion>2.0.0</ReleaseVersion>
@@ -15,6 +15,7 @@
     <RootNamespace>Sensus</RootNamespace>
     <PackageLicenseUrl>https://predictive-technology-laboratory.github.io/sensus/</PackageLicenseUrl>
     <Summary>Package for developing plug-ins and other code modules that integrate with Sensus.</Summary>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
