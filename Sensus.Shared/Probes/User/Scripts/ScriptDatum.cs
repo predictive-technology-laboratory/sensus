@@ -39,6 +39,7 @@ namespace Sensus.Probes.User.Scripts
         private string _inputId;
         private string _runId;
         private string _inputLabel;
+        private string _inputName;
         private object _response;
         private string _triggerDatumId;
         private double? _latitude;
@@ -114,6 +115,22 @@ namespace Sensus.Probes.User.Scripts
             set
             {
                 _inputId = value;
+            }
+        }
+
+        /// <summary>
+        /// Name of the <see cref="Input"/> that generated this <see cref="ScriptDatum"/>. 
+        /// </summary>
+        /// <value>The input name.</value>
+        public string InputName
+        {
+            get
+            {
+                return _inputName;
+            }
+            set
+            {
+                _inputName = value;
             }
         }
 
@@ -272,7 +289,7 @@ namespace Sensus.Probes.User.Scripts
             }
             set
             {
-                _runId = value;
+                _inputLabel = value;
             }
         }
 
@@ -320,7 +337,7 @@ namespace Sensus.Probes.User.Scripts
         }
 
 
-        public ScriptDatum(DateTimeOffset timestamp, string scriptId, string scriptName, string groupId, string inputId, string runId,string inputLabel, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset? locationTimestamp, DateTimeOffset runTimestamp, List<InputCompletionRecord> completionRecords, DateTimeOffset submissionTimestamp, bool manualRun)
+        public ScriptDatum(DateTimeOffset timestamp, string scriptId, string scriptName, string groupId, string inputId, string runId,string inputLabel, string inputName, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset? locationTimestamp, DateTimeOffset runTimestamp, List<InputCompletionRecord> completionRecords, DateTimeOffset submissionTimestamp, bool manualRun)
             : base(timestamp)
         {
             _scriptId = scriptId;
@@ -329,6 +346,7 @@ namespace Sensus.Probes.User.Scripts
             _inputId = inputId;
             _runId = runId;
             _inputLabel = inputLabel;
+            _inputName = inputName;
             _response = response;
             _triggerDatumId = triggerDatumId == null ? "" : triggerDatumId;
             _latitude = latitude;
@@ -348,6 +366,7 @@ namespace Sensus.Probes.User.Scripts
             "Input:  " + _inputId + Environment.NewLine +
             "Run:  " + _runId + Environment.NewLine +
             "Input label" + _inputLabel + Environment.NewLine +
+            "Input name" + _inputName + Environment.NewLine +
             "Response:  " + _response + Environment.NewLine +
             "Latitude:  " + _latitude + Environment.NewLine +
             "Longitude:  " + _longitude + Environment.NewLine +

@@ -13,6 +13,9 @@
 // limitations under the License.
 
 using Sensus.Probes.User.Scripts;
+using System;
+using System.Linq;
+using System.Text.RegularExpressions;
 using Xamarin.Forms;
 
 namespace Sensus.UI
@@ -39,12 +42,20 @@ namespace Sensus.UI
 
                 ScriptRunner selectedScriptRunner = scriptRunnersList.SelectedItem as ScriptRunner;
 
-                string selectedAction = await DisplayActionSheet(selectedScriptRunner.Name, "Cancel", null, "Edit", "Delete");
+                string selectedAction = await DisplayActionSheet(selectedScriptRunner.Name, "Cancel", null, "Edit", "Copy", "Delete");
 
                 if (selectedAction == "Edit")
                 {
                     await Navigation.PushAsync(new ScriptRunnerPage(selectedScriptRunner));
                 }
+				else if (selectedAction == "Copy")
+				{
+					ScriptRunner copy = selectedScriptRunner.Copy();
+
+					//MakeNameUnique(copy, probe);
+
+					probe.ScriptRunners.Add(copy);
+				}
                 else if (selectedAction == "Delete")
                 {
                     if (await DisplayAlert("Delete " + selectedScriptRunner.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
@@ -67,5 +78,27 @@ namespace Sensus.UI
 
             Content = scriptRunnersList;
         }
-    }
+
+		public void MakeNameUnique(ScriptRunner runner, ScriptProbe probe)
+		{
+			try
+			{
+				string pattern = @"\s*-\s*Copy\s*(?<number>\d*)$";
+
+				runner.Name = Regex.Replace(runner.Name, pattern, "");
+
+				string countString = probe.ScriptRunners.Max(x => Regex.Match(x.Name, $@"(?<={runner.Name}){pattern}").Groups["number"].Value);
+
+				int.TryParse(countString, out int count);
+
+				count = Math.Max(count, probe.ScriptRunners.Count(x => Regex.IsMatch(x.Name, $@"(?<={runner.Name})({pattern})?$")) - 1);
+
+				runner.Name += $" - Copy {count + 1}";
+			}
+			catch
+			{
+				SensusServiceHelper.Get().Logger.Log("Error creating unique script runner name", LoggingLevel.Normal, GetType());
+			}
+		}
+	}
 }

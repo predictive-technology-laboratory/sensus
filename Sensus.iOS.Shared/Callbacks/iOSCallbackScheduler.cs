@@ -72,12 +72,6 @@ namespace Sensus.iOS.Callbacks
                     notifier.CancelNotification(callback.Id);
                     await RaiseCallbackAsync(callback, callback.InvocationId);
                 }
-                // all silent notifications (e.g., those for health tests) were cancelled when the app entered background. reissue them now.
-                // if the notification has already been issued, it will simply be replaced with itself (no change).
-                else if (callback.Silent)
-                {
-                    await ReissueSilentNotificationAsync(callback.Id);
-                }
                 else
                 {
                     SensusServiceHelper.Get().Logger.Log("Non-silent callback notification " + callback.Id + " has upcoming trigger time of " + callback.NextExecution, LoggingLevel.Normal, GetType());
@@ -85,9 +79,9 @@ namespace Sensus.iOS.Callbacks
             }
         }
 
-        protected abstract Task ReissueSilentNotificationAsync(string id);
+		protected abstract Task ReissueSilentNotificationAsync(string id);
 
-        public NSMutableDictionary GetCallbackInfo(ScheduledCallback callback)
+		public NSMutableDictionary GetCallbackInfo(ScheduledCallback callback)
         {
             // we've seen cases where the UserInfo dictionary cannot be serialized because one of its values is null. if this happens, the 
             // callback won't be serviced, and things won't return to normal until Sensus is activated by the user and the callbacks are 
@@ -154,9 +148,9 @@ namespace Sensus.iOS.Callbacks
             });
         }
 
-        /// <summary>
-        /// Cancels the silent notifications (e.g., those for health test) when the app is going into the background.
-        /// </summary>
-        public abstract void CancelSilentNotifications();
-    }
+		/// <summary>
+		/// Cancels the silent notifications (e.g., those for health test) when the app is going into the background.
+		/// </summary>
+		public abstract void CancelSilentNotifications();
+	}
 }

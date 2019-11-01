@@ -234,12 +234,6 @@ namespace Sensus.iOS
                     // update/run all callbacks
                     await (SensusContext.Current.CallbackScheduler as iOSCallbackScheduler).UpdateCallbacksOnActivationAsync();
 
-                    // If the callback scheduler is timer-based then we don't need remote notifications now that the app is activated
-                    if (SensusContext.Current.CallbackScheduler is iOSTimerCallbackScheduler scheduler)
-                    {
-                        await scheduler.CancelNotificationsAsync();
-                    }
-
                     // disabling notifications will greatly impair the user's studies. let the user know.
                     if (!notificationsAuthorized)
                     {
@@ -396,13 +390,6 @@ namespace Sensus.iOS
 				bool gpsIsRunning = SensusServiceHelper.Get().GetRunningProtocols().SelectMany(x => x.Probes).OfType<ListeningLocationProbe>().Any(x => x.Enabled);
 
 				await scheduler.RequestNotificationsAsync(gpsIsRunning);
-            }
-            else // otherwise do what the callback scheduler used to do
-            {
-                // cancel all silent notifications, which should never be presented to the user. if these notifications
-                // are not cancelled and the app enters the background, then they will appear in the notification 
-                // tray and confuse the user.
-                (SensusContext.Current.CallbackScheduler as iOSCallbackScheduler).CancelSilentNotifications();
             }
 
             // save app state

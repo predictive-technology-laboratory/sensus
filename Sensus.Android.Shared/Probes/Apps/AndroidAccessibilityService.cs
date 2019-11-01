@@ -9,45 +9,22 @@ using System.Linq;
 using System.Threading.Tasks;
 using XamarinApp = Xamarin.Forms.Application;
 using Sensus.Context;
-using Android.OS;
+using System.Threading;
 
 namespace Sensus.Android.Probes.Apps
 {
 	[Service(Permission = Manifest.Permission.BindAccessibilityService)]
 	[IntentFilter(new[] { "android.accessibilityservice.AccessibilityService" })]
-	//[MetaData("android.accessibilityservice", Resource = "@xml/serviceconfig")] // this is currently disabled due to the fact that enabling "touch exploration mode" renders the phone unusable
+	//[MetaData("android.accessibilityservice", Resource = "@xml/accessibilityservice")] // this is currently disabled due to the fact that enabling "touch exploration mode" renders the phone unusable
 	public class AndroidAccessibilityService : AccessibilityService
 	{
 		private static readonly List<AndroidAccessibilityProbe> _probes;
-		//private static readonly ManualResetEventSlim _event;
-		//private static SettingActivtyState _settingsActivityState;
-		
-		//private enum SettingActivtyState
-		//{
-		//	DialogNotShown,
-		//	DialogShown,
-		//	DialogClosed
-		//}
+		//private static CancellationTokenSource _cancellationTokenSource;
 
 		static AndroidAccessibilityService()
 		{
 			_probes = new List<AndroidAccessibilityProbe>();
-			//_event = new ManualResetEventSlim();
 		}
-
-		//public static void ContinueAfterAccessibilitySettings()
-		//{
-		//	if (_settingsActivityState == SettingActivtyState.DialogClosed)
-		//	{
-		//		_event.Set();
-
-		//		_settingsActivityState = SettingActivtyState.DialogNotShown;
-		//	}
-		//	else if(_settingsActivityState == SettingActivtyState.DialogShown)
-		//	{
-		//		_settingsActivityState = SettingActivtyState.DialogClosed;
-		//	}
-		//}
 
 		private static bool IsServiceEnabled()
 		{
@@ -58,32 +35,43 @@ namespace Sensus.Android.Probes.Apps
 
 		public static async Task RegisterProbeAsync(AndroidAccessibilityProbe probe)
 		{
-			bool isFirstProbe = false;
-
-			lock(_probes)
+			lock (_probes)
 			{
-				isFirstProbe = _probes.Any() == false;
-
 				if (probe != null && _probes.Contains(probe) == false)
 				{
 					_probes.Add(probe);
 				}
 			}
 
-			if (IsServiceEnabled() == false && isFirstProbe)
+			if (IsServiceEnabled() == false)
+			//while (IsServiceEnabled() == false)
 			{
-				await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+				bool continueStarting = await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
 				{
-					//_settingsActivityState = SettingActivtyState.DialogShown;
-					await XamarinApp.Current.MainPage.DisplayAlert("Permission Request", "On the next screen, please enable the Accessibility Service permission for Sensus", "OK");
+					return await XamarinApp.Current.MainPage.DisplayAlert("Permission Request", "Please enable the Accessibility Service permission for Sensus", "OK", "Cancel");
 				});
 
-				Intent accessibilitySettings = new Intent(Settings.ActionAccessibilitySettings);
-				accessibilitySettings.AddFlags(ActivityFlags.NewTask);
-				Application.Context.StartActivity(accessibilitySettings);
+				if (continueStarting)
+				{
+					Intent accessibilitySettings = new Intent(Settings.ActionAccessibilitySettings);
+					accessibilitySettings.AddFlags(ActivityFlags.NewTask);
+					Application.Context.StartActivity(accessibilitySettings);
 
-				//_event.Wait();
-				//_settingsActivityState = SettingActivtyState.DialogNotShown;
+					//AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+
+					//_cancellationTokenSource = new CancellationTokenSource();
+
+					//serviceHelper.WaitForFocus(_cancellationTokenSource.Token);
+
+					//_cancellationTokenSource.Dispose();
+					//_cancellationTokenSource = null;
+				}
+				else
+				{
+					probe.Protocol.CancelStart();
+
+					return;
+				}
 			}
 		}
 
@@ -99,21 +87,6 @@ namespace Sensus.Android.Probes.Apps
 
 		public override void OnAccessibilityEvent(AccessibilityEvent e)
 		{
-			//string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-
-			//using (System.IO.StreamWriter sw = new System.IO.StreamWriter(System.IO.Path.Combine(path, $"{System.Guid.NewGuid()}.json")))
-			//{
-			//	sw.Write(Newtonsoft.Json.JsonConvert.SerializeObject(e));
-			//}
-
-			//var documents = 
-			//var filename = System.IO.Path.Combine(documents, $"{System.Guid.NewGuid()}.json");
-			//System.IO.File.WriteAllText(filename, "Write this text into a file");
-
-			//string json = Newtonsoft.Json.JsonConvert.SerializeObject(e.GetType().GetProperties().ToDictionary(x => x.Name, x => x.GetValue(e)?.ToString()));
-
-			//SensusServiceHelper.Get().Logger.Log(json, LoggingLevel.Normal, GetType());
-
 			lock (_probes)
 			{
 				Task.WaitAll(_probes.Select(p => p.OnAccessibilityEventAsync(e)).ToArray());
@@ -139,12 +112,10 @@ namespace Sensus.Android.Probes.Apps
 
 			SetServiceInfo(info);
 
-			//if (SensusServiceHelper.Get() is AndroidSensusServiceHelper serviceHelper)
+			//if (_cancellationTokenSource != null)
 			//{
-			//	serviceHelper.AccessibilityService = this;
+			//	_cancellationTokenSource.Cancel();
 			//}
-
-			//_event.Set();
 		}
 	}
 }

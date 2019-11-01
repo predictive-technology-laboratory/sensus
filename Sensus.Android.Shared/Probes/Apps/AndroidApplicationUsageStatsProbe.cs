@@ -18,7 +18,7 @@ namespace Sensus.Android.Probes.Apps
 		{
 			await base.InitializeAsync();
 
-			_manager = new AndroidApplicationUsageManager();
+			_manager = new AndroidApplicationUsageManager(this);
 
 			await _manager.CheckPermission();
 		}
@@ -26,8 +26,6 @@ namespace Sensus.Android.Probes.Apps
 		protected async override Task ProtectedStopAsync()
 		{
 			await base.ProtectedStopAsync();
-
-			_manager.DecrementPermission();
 		}
 
 		protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
