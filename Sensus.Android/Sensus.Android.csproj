@@ -75,7 +75,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
       <HintPath>..\packages\Xamarin.Forms.Contacts.1.0.5\lib\MonoAndroid10\Plugin.ContactService.dll</HintPath>
     </Reference>
     <Reference Include="Sensus.Shared.NuGet, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sensus.1.53.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
+      <HintPath>..\packages\Sensus.1.54.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
