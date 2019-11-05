@@ -51,7 +51,7 @@ namespace Sensus.UI.Inputs
         {
             get
             {
-				return _datePicker.Date.Add(_timePicker.Time);
+				return _datePicker == null || _timePicker == null || _hasFocused == false ? null : _datePicker?.Date.Add(_timePicker.Time);
             }
         }
 

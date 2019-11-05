@@ -18,6 +18,7 @@ using Sensus.Probes.Location;
 using System;
 using System.Threading.Tasks;
 using UIKit;
+using Xamarin.Forms.Platform.iOS;
 
 namespace Sensus.iOS.Probes.Location
 {
@@ -46,20 +47,25 @@ namespace Sensus.iOS.Probes.Location
 			double longitude = args.Visit.Coordinate.Longitude;
 
 			DateTimeOffset timestamp = DateTimeOffset.UtcNow;
-			DateTimeOffset? arrivalDate = (DateTime)args.Visit.ArrivalDate;
-			DateTimeOffset? departureDate = (DateTime)args.Visit.DepartureDate;
+			DateTimeOffset? arrivalDate = null;
+			DateTimeOffset? departureDate = null;
 
-			if (args.Visit.ArrivalDate == NSDate.DistantPast)
+			if (args.Visit.ArrivalDate == null || args.Visit.ArrivalDate.IsEqualToDate(NSDate.DistantPast))
 			{
-				timestamp = (DateTime)args.Visit.DepartureDate;
-
 				arrivalDate = null;
 			}
-			else if(args.Visit.DepartureDate == NSDate.DistantFuture)
+			else
 			{
-				timestamp = (DateTime)args.Visit.ArrivalDate;
-
+				arrivalDate = new DateTimeOffset(args.Visit.ArrivalDate.LaterDate(DateTime.MinValue.ToNSDate()).ToDateTime(), TimeSpan.Zero);
+			}
+			
+			if (args.Visit.DepartureDate == null || args.Visit.DepartureDate.IsEqualToDate(NSDate.DistantFuture))
+			{
 				departureDate = null;
+			}
+			else
+			{
+				departureDate = new DateTimeOffset(args.Visit.DepartureDate.EarlierDate(DateTime.MaxValue.ToNSDate()).ToDateTime(), TimeSpan.Zero);
 			}
 
 			Task.WaitAny(StoreDatumAsync(new VisitDatum(arrivalDate, departureDate, latitude, longitude, args.Visit.HorizontalAccuracy, timestamp)));

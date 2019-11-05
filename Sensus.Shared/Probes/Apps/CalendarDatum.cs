@@ -52,10 +52,12 @@ namespace Sensus.Probes.Apps
 				_eventId = value;
 			}
 		}
-		/// <summary>
-		/// The title of the event.
-		/// </summary>
-		public string Title
+        /// <summary>
+        /// The title of the event.
+        /// </summary>
+        [StringProbeTriggerProperty]
+        [Anonymizable(null, typeof(StringHashAnonymizer), false)]
+        public string Title
 		{
 			get
 			{

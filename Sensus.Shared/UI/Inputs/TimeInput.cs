@@ -50,7 +50,7 @@ namespace Sensus.UI.Inputs
         {
             get
             {
-				return _timePicker.Time;
+				return _timePicker == null || _hasFocused == false ? null : _timePicker?.Time;
             }
         }
 

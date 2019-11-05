@@ -396,7 +396,7 @@ namespace Sensus.Notifications
         {
             if (protocol == null)
             {
-                SensusException.Report("Received null PNR protocol.");
+                //SensusException.Report("Received null PNR protocol.");
                 return;
             }
 
