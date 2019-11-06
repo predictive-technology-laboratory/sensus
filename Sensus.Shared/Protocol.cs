@@ -2028,7 +2028,7 @@ namespace Sensus
 
             try
             {
-                await FireStateChangedAsync();
+                await FireStateChangedAsync(cancellationToken);
 
                 await (_protocolStartInitiatedAsync?.Invoke() ?? Task.CompletedTask);
 
@@ -2229,7 +2229,7 @@ namespace Sensus
                 if (cancelStartException == null)
                 {
                     _state = ProtocolState.Running;
-                    await FireStateChangedAsync();
+                    await FireStateChangedAsync(cancellationToken);
                 }
                 else
                 {
@@ -2974,12 +2974,19 @@ namespace Sensus
             return _name;
         }
 
-        private async Task FireStateChangedAsync()
+		private async Task FireStateChangedAsync()
+		{
+			await FireStateChangedAsync(CancellationToken.None);
+		}
+
+        private async Task FireStateChangedAsync(CancellationToken cancellationToken)
         {
             // the current method may be called in response to a UI interaction, so ensure we do not throw exceptions back.
             try
             {
                 SensusServiceHelper.Get().Logger.Log("New state:  " + _state, LoggingLevel.Normal, GetType());
+
+				_localDataStore.WriteDatum(new ProtocolStateDatum(Name, State, DateTimeOffset.Now), cancellationToken);
 
                 if (_state == ProtocolState.Running)
                 {
