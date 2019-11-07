@@ -103,6 +103,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\TriggerWindow.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Protocol.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ProtocolStateDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SensusServiceHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Remote\AmazonS3RemoteDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\AnonymizedJsonContractResolver.cs" />

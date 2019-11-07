@@ -100,8 +100,10 @@ namespace Sensus.iOS.Callbacks
 							{
 								await notifier.IssueNotificationAsync(callback.Protocol?.Name ?? "Alert", callback.UserNotificationMessage, callback.Id, true, callback.Protocol, null, callback.NotificationUserResponseAction, callback.NotificationUserResponseMessage, callback.NextExecution.Value, callbackInfo);
 							}
-
-							await RequestRemoteInvocationAsync(callback);
+							else
+							{
+								await RequestRemoteInvocationAsync(callback);
+							}
 						}
 					}
 				}

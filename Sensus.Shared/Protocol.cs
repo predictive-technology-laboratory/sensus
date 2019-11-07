@@ -2028,7 +2028,7 @@ namespace Sensus
 
             try
             {
-                await FireStateChangedAsync();
+                await FireStateChangedAsync(cancellationToken);
 
                 await (_protocolStartInitiatedAsync?.Invoke() ?? Task.CompletedTask);
 
@@ -2229,7 +2229,7 @@ namespace Sensus
                 if (cancelStartException == null)
                 {
                     _state = ProtocolState.Running;
-                    await FireStateChangedAsync();
+                    await FireStateChangedAsync(cancellationToken);
                 }
                 else
                 {
@@ -2780,6 +2780,17 @@ namespace Sensus
             await FireStateChangedAsync();
         }
 
+		public void RestorePausedState()
+		{
+			lock(this)
+			{
+				if (AllowPause && _state == ProtocolState.Stopped)
+				{
+					_state = ProtocolState.Paused;
+				}
+			}
+		}
+
         public async Task ResumeAsync()
         {
             // only permit resuming from the paused state
@@ -2974,23 +2985,34 @@ namespace Sensus
             return _name;
         }
 
-        private async Task FireStateChangedAsync()
+		private async Task FireStateChangedAsync()
+		{
+			await FireStateChangedAsync(CancellationToken.None);
+		}
+
+        private async Task FireStateChangedAsync(CancellationToken cancellationToken)
         {
             // the current method may be called in response to a UI interaction, so ensure we do not throw exceptions back.
             try
             {
                 SensusServiceHelper.Get().Logger.Log("New state:  " + _state, LoggingLevel.Normal, GetType());
 
+				_localDataStore.WriteDatum(new ProtocolStateDatum(Name, State, DateTimeOffset.Now), cancellationToken);
+
                 if (_state == ProtocolState.Running)
                 {
                     await SensusServiceHelper.Get().AddRunningProtocolIdAsync(_id);
                 }
-                else if (_state == ProtocolState.Stopped || _state == ProtocolState.Paused)
+                else if (_state == ProtocolState.Stopped)
                 {
                     await SensusServiceHelper.Get().RemoveRunningProtocolIdAsync(_id);
                 }
+				else if (_state == ProtocolState.Paused)
+				{
+                    await SensusServiceHelper.Get().AddPausedProtocolIdAsync(_id);
+				}
 
-                StateChanged?.Invoke(this, _state);
+				StateChanged?.Invoke(this, _state);
                 FireCaptionChanged();
 
 #if __ANDROID__
