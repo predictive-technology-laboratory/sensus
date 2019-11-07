@@ -2780,6 +2780,17 @@ namespace Sensus
             await FireStateChangedAsync();
         }
 
+		public void RestorePausedState()
+		{
+			lock(this)
+			{
+				if (AllowPause && _state == ProtocolState.Stopped)
+				{
+					_state = ProtocolState.Paused;
+				}
+			}
+		}
+
         public async Task ResumeAsync()
         {
             // only permit resuming from the paused state
@@ -2985,12 +2996,16 @@ namespace Sensus
                 {
                     await SensusServiceHelper.Get().AddRunningProtocolIdAsync(_id);
                 }
-                else if (_state == ProtocolState.Stopped || _state == ProtocolState.Paused)
+                else if (_state == ProtocolState.Stopped)
                 {
                     await SensusServiceHelper.Get().RemoveRunningProtocolIdAsync(_id);
                 }
+				else if (_state == ProtocolState.Paused)
+				{
+                    await SensusServiceHelper.Get().AddPausedProtocolIdAsync(_id);
+				}
 
-                StateChanged?.Invoke(this, _state);
+				StateChanged?.Invoke(this, _state);
                 FireCaptionChanged();
 
 #if __ANDROID__
