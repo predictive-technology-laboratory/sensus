@@ -542,8 +542,10 @@ namespace Sensus.Probes.User.Scripts
                 return;
             }
 
-            // clean up scheduled callback times
-            List<ScriptTriggerTime> callbackTimesToReschedule = new List<ScriptTriggerTime>();
+			bool isPastTrigger(ScriptTriggerTime x) => x.Trigger <= DateTime.Now && (x.Expiration == null || x.Expiration > DateTime.Now);
+
+			// clean up scheduled callback times
+			List<ScriptTriggerTime> callbackTimesToReschedule = new List<ScriptTriggerTime>();
             lock (_scheduledCallbackTimes)
             {
                 // remove any callbacks whose times have passed. be sure to use the callback's next execution time, as this may differ
@@ -567,11 +569,16 @@ namespace Sensus.Probes.User.Scripts
                         // we're about to reschedule the callback. remove the old one so we don't have duplicates.
                         _scheduledCallbackTimes.Remove(callbackTime);
                     }
+					else if (isPastTrigger(callbackTime.Item2))
+					{
+						// the trigger time is in the past but it is also in SensusContext.Current.CallbackScheduler, so it should not need to be run or rescheduled
+						_scheduledCallbackTimes.Remove(callbackTime);
+					}
                 }
             }
 
 			// if there are any trigger times in the past, then make sure the script has been run
-			if (callbackTimesToReschedule.Any(x => x.Trigger <= DateTime.Now && x.Expiration > DateTime.Now))
+			if (callbackTimesToReschedule.Any(isPastTrigger))
 			{
 				await RunAsync(Script);
 			}
