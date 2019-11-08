@@ -542,7 +542,7 @@ namespace Sensus.Probes.User.Scripts
                 return;
             }
 
-			bool isPastTrigger(ScriptTriggerTime x) => x.Trigger <= DateTime.Now && x.Expiration > DateTime.Now;
+			bool isPastTrigger(ScriptTriggerTime x) => x.Trigger <= DateTime.Now && (x.Expiration == null || x.Expiration > DateTime.Now);
 
 			// clean up scheduled callback times
 			List<ScriptTriggerTime> callbackTimesToReschedule = new List<ScriptTriggerTime>();
