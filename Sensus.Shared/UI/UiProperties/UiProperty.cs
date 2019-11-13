@@ -42,7 +42,9 @@ namespace Sensus.UI.UiProperties
 
             // For some reason, PropertyInfo.GetCustomAttributes doesn't return the UiProperty attribute placed on abstract 
             // properties that are overridden, so we have to navigate the inheritance tree to search for attributes.
-
+			// bzd3y: This is probably due to Inherited not being set to true in the [AttributeUsage] attribute above. The
+			// code below would probably be unnecessary if that was done. I'm not changing anything, but this can be a
+			// reminder of a possible future change.
             UiProperty attribute = property.GetCustomAttribute<UiProperty>();
 
             if (attribute == null)
@@ -63,6 +65,13 @@ namespace Sensus.UI.UiProperties
                 return attribute;
             }
         }
+
+		public static bool HasUiProperties(object o)
+		{
+			return o.GetType()
+				 .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+				 .Any(x => UiProperty.GetUiPropertyAttribute(x) != null);
+		}
 
         /// <summary>
         /// Gets a list of StackLayout objects associated with properties in an object that have been 
