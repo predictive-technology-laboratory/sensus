@@ -11,6 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\LongitudeStudyOffsetGpsAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\LongitudeParticipantOffsetGpsAnonymizer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Anonymization\Anonymizers\RegExAnonymizer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\ScheduledCallbackPriorities.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\ConcurrentObservableCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\IConcurrent.cs" />
@@ -159,6 +160,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\RunMode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\AddProximityTriggerPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\AddScriptTriggerPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\AnonymizerPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\App.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\DataStorePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\TimeInput.cs" />
