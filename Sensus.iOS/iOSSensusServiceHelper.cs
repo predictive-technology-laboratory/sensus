@@ -31,6 +31,7 @@ using WindowsAzure.Messaging;
 using Newtonsoft.Json;
 using Sensus.Exceptions;
 using Plugin.Geolocator.Abstractions;
+using MobileCoreServices;
 
 namespace Sensus.iOS
 {
@@ -441,5 +442,13 @@ namespace Sensus.iOS
         {
             return Task.FromResult(false);
         }
-    }
+
+		public override string GetMimeType(string path)
+		{
+			string extension = NSUrl.FromString(path).PathExtension;
+			string uniformTypeIdentifier = UTType.CreatePreferredIdentifier(UTType.TagClassFilenameExtension, extension, null);
+
+			return UTType.GetPreferredTag(uniformTypeIdentifier, UTType.TagClassMIMEType);
+		}
+	}
 }

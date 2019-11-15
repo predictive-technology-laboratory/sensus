@@ -29,6 +29,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\SymmetricEncryption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\SensusException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImpreciseDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MediaObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MediaView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\ApplicationUsageEventProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\ApplicationUsageStatsProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\ApplicationUsageEventDatum.cs" />
@@ -177,6 +179,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\SliderInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\VoiceInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\MapPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\MediaPreviewPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ParticipationReportDetailsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ParticipationReportPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\PendingScriptsPage.cs" />
@@ -190,6 +193,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProximityTriggersPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\RunScriptsPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\MediaPickerUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UserInitiatedScriptsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ScriptInputGroupPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ScriptInputGroupsPage.cs" />
@@ -217,6 +221,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\CallbackScheduler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\ScheduledCallback.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\DataRateCalculator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)VideoPlayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Window.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeacon.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeaconDatum.cs" />

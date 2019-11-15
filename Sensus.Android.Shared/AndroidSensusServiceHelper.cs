@@ -804,5 +804,12 @@ namespace Sensus.Android
 
 			_focusEvent.Dispose();
 		}
+
+		public override string GetMimeType(string path)
+		{
+			string extension = MimeTypeMap.GetFileExtensionFromUrl(path);
+
+			return MimeTypeMap.Singleton.GetMimeTypeFromExtension(extension)?.ToLower();
+		}
 	}
 }

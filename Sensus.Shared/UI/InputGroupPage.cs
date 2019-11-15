@@ -126,8 +126,37 @@ namespace Sensus.UI
 
                     if (inputView != null)
                     {
-                        // frame all enabled inputs that request a frame
-                        if (input.Enabled && input.Frame)
+						// add media view to inputs that have media attached
+						if (input.Media != null && string.IsNullOrWhiteSpace(input.Media.Data) == false)
+						{
+							MediaView mediaView = new MediaView()
+							{
+								HorizontalOptions = LayoutOptions.FillAndExpand,
+								VerticalOptions = LayoutOptions.FillAndExpand
+							};
+
+							Appearing += async (s, e) =>
+							{
+								await mediaView.SetMediaAsync(input.Media);
+							};
+
+							Disappearing += async (s, e) =>
+							{
+								await mediaView.DisposeMediaAsync();
+							};
+
+							StackLayout mediaLayout = new StackLayout
+							{
+								Children = { mediaView, inputView },
+								Orientation = StackOrientation.Vertical,
+								HorizontalOptions = LayoutOptions.CenterAndExpand
+							};
+
+							inputView = mediaLayout;
+						}
+
+						// frame all enabled inputs that request a frame
+						if (input.Enabled && input.Frame)
                         {
                             inputView = new Frame
                             {
@@ -140,13 +169,13 @@ namespace Sensus.UI
                             };
                         }
 
-                        // add some vertical separation between inputs
-                        if (_displayedInputCount > 0)
+						// add some vertical separation between inputs
+						if (_displayedInputCount > 0)
                         {
                             contentLayout.Children.Add(new BoxView { Color = Color.Transparent, HeightRequest = inputSeparatorHeight });
                         }
 
-                        contentLayout.Children.Add(inputView);
+						contentLayout.Children.Add(inputView);
                         displayedInputs.Add(input);
 
                         if (input.DisplayNumber)

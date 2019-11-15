@@ -414,6 +414,9 @@ namespace Sensus.UI.Inputs
         [JsonIgnore]
         public Datum TriggeringDatum { get; set; }
 
+		[MediaPickerUiProperty("Media:", true, 7)]
+		public MediaObject Media { get; set; }
+
         public Input()
         {
             _name = DefaultName;
