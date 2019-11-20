@@ -33,6 +33,14 @@ namespace Sensus.Anonymization.Anonymizers
         /// <param name="protocol">Protocol that owns the datum being anonymized.</param>
         public abstract object Apply(object value, Protocol protocol);
 
+		public bool IsValid => Validate(out string _);
+		public virtual bool Validate(out string errorMessage)
+		{
+			errorMessage = null;
+
+			return true;
+		}
+
         public override bool Equals(object obj)
         {
             if (obj == null)
