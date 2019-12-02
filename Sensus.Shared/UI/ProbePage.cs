@@ -304,6 +304,29 @@ namespace Sensus.UI
                         probe.Protocol.JsonAnonymizer.SetAnonymizer(anonymizableProperty, selectedAnonymizer);
                     };
 
+					anonymizerPicker.Unfocused += async (o, e) =>
+					{
+						if (anonymizerPicker.SelectedIndex > 0)
+						{
+							Anonymizer selectedAnonymizer = anonymizableAttribute.AvailableAnonymizers[anonymizerPicker.SelectedIndex - 1];
+
+							if (UiProperty.HasUiProperties(selectedAnonymizer))
+							{
+								AnonymizerPage anonymizerPage = new AnonymizerPage(selectedAnonymizer);
+
+								anonymizerPage.Disappearing += (o2, e2) =>
+								{
+									if (selectedAnonymizer.IsValid == false)
+									{
+										anonymizerPicker.SelectedIndex = 0;
+									}
+								};
+
+								await Navigation.PushModalAsync(anonymizerPage);
+							}
+						}
+					};
+
                     // set the picker's index to the current anonymizer (or "Do Not Anonymize" if there is no current)
                     Anonymizer currentAnonymizer = probe.Protocol.JsonAnonymizer.GetAnonymizer(anonymizableProperty);
                     int currentIndex = 0;
