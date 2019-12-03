@@ -578,9 +578,9 @@ namespace Sensus.Probes.User.Scripts
             }
 
 			// if there are any trigger times in the past, then make sure the script has been run
-			if (callbackTimesToReschedule.Any(isPastTrigger))
+			if (callbackTimesToReschedule.OrderByDescending(x => x.Trigger).FirstOrDefault(isPastTrigger) is ScriptTriggerTime pastTriggerTime)
 			{
-				await RunAsync(Script);
+				await RunAsync(Script.Copy(true, pastTriggerTime));
 			}
 
 			callbackTimesToReschedule.RemoveAll(x => x.Trigger <= DateTime.Now);
@@ -669,9 +669,7 @@ namespace Sensus.Probes.User.Scripts
         /// <param name="scriptId">Script identifier. If null, then a random identifier will be generated for the script that will be run.</param>
         private ScheduledCallback CreateScriptRunCallback(ScriptTriggerTime triggerTime, string scriptId = null)
         {
-            Script scriptToRun = Script.Copy(true);
-            scriptToRun.ExpirationDate = triggerTime.Expiration;
-            scriptToRun.ScheduledRunTime = triggerTime.Trigger;
+            Script scriptToRun = Script.Copy(true, triggerTime);
 
             // if we're passed a run ID, then override the random one that was generated above in the call to Script.Copy.
             if (scriptId != null)
