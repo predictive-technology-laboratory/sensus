@@ -15,6 +15,8 @@ namespace Sensus.Android.Probes.Apps
 		{
 			if (e.EventType == EventTypes.ViewTextChanged)
 			{
+				SensusServiceHelper.Get().Logger.Log($"Keystroke: {e.Text[0]}", LoggingLevel.Normal, GetType());
+
 				await StoreDatumAsync(new KeystrokeDatum(DateTimeOffset.UtcNow, e.Text[0].ToString(), e.PackageName));
 			}
 		}
