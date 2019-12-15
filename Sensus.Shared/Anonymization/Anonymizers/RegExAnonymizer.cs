@@ -1,4 +1,5 @@
-﻿using Sensus.UI.UiProperties;
+﻿using Newtonsoft.Json;
+using Sensus.UI.UiProperties;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -7,6 +8,7 @@ namespace Sensus.Anonymization.Anonymizers
 {
 	public class RegExAnonymizer : Anonymizer
 	{
+		[JsonIgnore]
 		public string DEFAULT_REPLACEMENT = "\u2588";
 
 		public override string DisplayText => "RegEx";
