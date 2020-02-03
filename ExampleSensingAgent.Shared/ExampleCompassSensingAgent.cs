@@ -21,6 +21,7 @@ using Sensus.Probes.Location;
 using Sensus.Adaptation;
 using System.Linq;
 using Sensus.Probes;
+using System.Threading;
 
 namespace ExampleSensingAgent
 {
