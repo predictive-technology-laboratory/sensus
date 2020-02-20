@@ -81,6 +81,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\GyroscopeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\LinearAccelerationDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\LinearAccelerationProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\MagnetometerDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\MagnetometerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\PedometerDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\PedometerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\SpeedDatum.cs" />
