@@ -132,7 +132,7 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
                 await IssueNotificationAsync(notificationRequest);
             }
 
-           \
+           
             
         }
 
