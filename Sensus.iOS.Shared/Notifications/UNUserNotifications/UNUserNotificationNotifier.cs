@@ -118,7 +118,22 @@ namespace Sensus.iOS.Notifications.UNUserNotifications
             UNNotificationRequest notificationRequest = UNNotificationRequest.FromIdentifier(id, content, trigger);
             requestCreated?.Invoke(notificationRequest);
 
-            await IssueNotificationAsync(notificationRequest);
+
+            // Issue notification only if notifications are allowed during Alert Exclusion Windows
+            if (protocol.TimeIsWithinAlertExclusionWindow(DateTime.Now.TimeOfDay))
+            {
+                if (protocol.AllowNotificationsAlertExclusionWindows)
+                {
+                    await IssueNotificationAsync(notificationRequest);
+                }
+            }
+            else
+            {
+                await IssueNotificationAsync(notificationRequest);
+            }
+
+           \
+            
         }
 
         public async Task IssueNotificationAsync(UNNotificationRequest request)
