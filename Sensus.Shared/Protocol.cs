@@ -1216,7 +1216,7 @@ namespace Sensus
         /// Whether or not to fire notifications during Alert Exclusion Windows/>.
         /// </summary>
         /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow notifications during Alert exclusion windows:", true, 37)]
+        [OnOffUiProperty("Notifications in alert exclusion windows:", true, 37)]
         public bool AllowNotificationsAlertExclusionWindows { get; set; } = true;
 
         /// <summary>
