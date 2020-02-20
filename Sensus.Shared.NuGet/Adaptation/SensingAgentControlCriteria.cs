@@ -78,5 +78,12 @@ namespace Sensus.Adaptation
                 return almExceedsThreshold;
             }
         }
+
+        protected bool new_method()
+        {
+            List<IDatum> accelerometerData = GetObservedData<IAccelerometerDatum>();
+
+            return
+        }
     }
 }
