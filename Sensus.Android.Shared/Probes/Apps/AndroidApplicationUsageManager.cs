@@ -51,10 +51,13 @@ namespace Sensus.Android.Probes.Apps
 
 				if (continueStarting)
 				{
-					Intent appUsageSettings = new Intent(Settings.ActionUsageAccessSettings);
-					appUsageSettings.AddFlags(ActivityFlags.NewTask);
-					Application.Context.StartActivity(appUsageSettings);
-
+                    //Check permission the second time to mitigate the case in which the permisions are asked twice. this happens if both ApplicationUdageEvent and ApplicationUsageStats probes are enabled
+                    if (appOps.CheckOpNoThrow(AppOpsManager.OpstrGetUsageStats, Process.MyUid(), Application.Context.PackageName) != AppOpsManagerMode.Allowed)
+                    {
+                        Intent appUsageSettings = new Intent(Settings.ActionUsageAccessSettings);
+                        appUsageSettings.AddFlags(ActivityFlags.NewTask);
+                        Application.Context.StartActivity(appUsageSettings);
+                    }
 					//AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
 
 					//_cancellationTokenSource = new CancellationTokenSource();
