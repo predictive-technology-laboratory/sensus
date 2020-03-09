@@ -31,11 +31,8 @@ namespace ExampleSensingAgent
     /// </summary>
     /// <remarks>
     /// TODO:
-    ///     (1) figure out how to get time stamp for start of listening window
-    ///     (2) figure out appropriate settings for active sensing
-    ///     (3) implement appropriate set policy options
-    ///     (4) determine appropriate values for base constructor call
-    ///     (5) test
+    ///     (1) determine on/off sensor settings
+    ///     (2) test
     /// </remarks>
     public class ExampleCapstoneAccelerationSensingAgent : SensingAgent
     {
@@ -143,37 +140,82 @@ namespace ExampleSensingAgent
         #endregion
 
         #region Private Properties
+        /// <summary>
+        /// Time in which the sensors plus model determine if sensors should be on or off in prediction window
+        /// </summary>
+        private TimeSpan ListeningWindow
+        {
+            get
+            {
+                return ActiveObservationDuration.Value;
+            }
+
+            set
+            {
+                ActiveObservationDuration = value;
+                ActionInterval = value + PredictingWindow;
+            }
+        }
+
+        /// <summary>
+        /// Time during which the sensors are controlled by this class based on the results of the listening window and model
+        /// </summary>
+        private TimeSpan PredictingWindow 
+        {
+            get
+            {
+                
+                return ControlCompletionCheckInterval;
+            }
+
+            set
+            {
+                ControlCompletionCheckInterval = value;
+                ActionInterval = ListeningWindow + value;
+            }
+        }
+
+        /// <summary>
+        /// Features for the listening window one cycle ago (i.e., the previous cycle)
+        /// </summary>
         private Features FeaturesLag1 { get; set; }
+        
+        /// <summary>
+        /// Features for the listening window two cycles ago
+        /// </summary>
         private Features FeaturesLag2 { get; set; }
+        
+        /// <summary>
+        /// Features for the listening window three cycles ago
+        /// </summary>
         private Features FeaturesLag3 { get; set; }
         #endregion
 
         #region Constructors
-        public ExampleCapstoneAccelerationSensingAgent()
-            : base("Acceleration", "ALM / Proximity", TimeSpan.FromSeconds(20), TimeSpan.FromSeconds(10), TimeSpan.FromSeconds(5))
+        public ExampleCapstoneAccelerationSensingAgent(): base("Capstone-2020", "ALM/TOD", default, default, default)
         {
-            //model definition document says sensing will occur once a second (not sure how to use this)
-            //model definition document defines an active phone as one with 3D-acceleration > 0.1 (not sure how to use this)
-
-            //interval          = listening window + prediction window
-            //listening window  = time in which the sensors plus model determine if sensors should be on or off in prediction window
-            //prediction window = time in which the sensors are either turned on or off based on the listening window and model
+            ListeningWindow  = TimeSpan.FromSeconds(10);
+            PredictingWindow = TimeSpan.FromSeconds(60);
         }
         #endregion
 
         #region Protected Overrides Methods
         protected override Task ProtectedSetPolicyAsync(JObject policy)
         {
+            ListeningWindow  = TimeSpan.FromSeconds(double.Parse(policy["cps-listening"].ToString()));
+            PredictingWindow = TimeSpan.FromSeconds(double.Parse(policy["cps-predicting"].ToString()));
+
             return Task.CompletedTask;
         }
 
         protected override bool ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>> typeData)
         {
             //collect sensor data for making decisions
-            var accelerometerData = GetObservedData<IAccelerometerDatum>().Cast<IAccelerometerDatum>();
+            var accelerometerData    = GetObservedData<IAccelerometerDatum>().Cast<IAccelerometerDatum>();
+            var listeningWindowStart = DateTime.Now.Subtract(ListeningWindow);
 
-            //store features for model decision
-            var featuresLag0 = new Features(DateTime.Now, accelerometerData);
+            //calculate and store features for model decision
+            var featuresLag0 = new Features(listeningWindowStart, accelerometerData);
             var featuresLag1 = FeaturesLag1;
             var featuresLag2 = FeaturesLag2;
             var featuresLag3 = FeaturesLag3;
@@ -193,32 +235,11 @@ namespace ExampleSensingAgent
 
             if (currentState == SensingAgentState.OpportunisticControl || currentState == SensingAgentState.ActiveControl)
             {
-                // keep device awake
-                await SensusServiceHelper.KeepDeviceAwakeAsync();
-
-                // increase sampling rate
-                if (Protocol.TryGetProbe<IAccelerometerDatum, IListeningProbe>(out IListeningProbe accelerometerProbe))
-                {
-                    // increase sampling rate
-                    accelerometerProbe.MaxDataStoresPerSecond = ControlAccelerometerMaxDataStoresPerSecond;
-
-                    // restart probe to take on new settings
-                    await accelerometerProbe.RestartAsync();
-                }
+                // determine the appropriate sensor settings for an "on" prediction window
             }
             else if (currentState == SensingAgentState.EndingControl)
             {
-                if (Protocol.TryGetProbe<IAccelerometerDatum, IListeningProbe>(out IListeningProbe accelerometerProbe))
-                {
-                    // decrease sampling rate
-                    accelerometerProbe.MaxDataStoresPerSecond = IdleAccelerometerMaxDataStoresPerSecond;
-
-                    // restart probe to take on original settings
-                    await accelerometerProbe.RestartAsync();
-                }
-
-                // let device sleep
-                await SensusServiceHelper.LetDeviceSleepAsync();
+                // determine the appropriate sensor settings for an "off" prediction window
             }
         }
         #endregion
@@ -230,8 +251,8 @@ namespace ExampleSensingAgent
         /// <param name="features">the current and three previous window features for model</param>
         /// <returns>true if we should take control of the sensors otherwise false</returns>
         private bool ShouldControlPredictionWindow(Features[] features)
-        {            
-            return false;
+        {
+            return features.Where(f => f != null).Count() < 2;
         }
         #endregion
     }
