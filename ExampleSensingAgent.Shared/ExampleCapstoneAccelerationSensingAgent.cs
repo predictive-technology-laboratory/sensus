@@ -42,6 +42,7 @@ namespace ExampleSensingAgent
         /// </summary>
         private class Features
         {
+            #region Public Properties
             /// <summary>
             /// The hour in 24 hour time (i.e. 0-23) at the start of the listening window
             /// </summary>
@@ -61,14 +62,17 @@ namespace ExampleSensingAgent
             /// The summary statistics (i.e., mean, median, SD and Range) for the accelerometer data
             /// </summary>
             public Statistics Acceleration { get; private set; }
-            
-            public Features(DateTime windowStart, IEnumerable<IAccelerometerDatum> accellerationData)
+            #endregion
+
+            #region Constructor
+            public Features(DateTime listeningWindowStart, IEnumerable<IAccelerometerDatum> accellerationData)
             {
-                Hour = windowStart.Hour;
-                Day  = ((int)windowStart.DayOfWeek + 6) % 7;
+                Hour = listeningWindowStart.Hour;
+                Day  = ((int)listeningWindowStart.DayOfWeek + 6) % 7;
 
                 Acceleration = new Statistics(accellerationData.Select(ToMagnitude));
             }
+            #endregion
 
             #region Private Methods
             /// <summary>
