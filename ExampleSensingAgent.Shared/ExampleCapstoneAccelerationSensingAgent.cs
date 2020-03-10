@@ -33,6 +33,9 @@ namespace ExampleSensingAgent
     /// TODO:
     ///     (1) determine on/off sensor settings
     ///     (2) test
+    ///         (a) make sure adding OpportunisticObservation returns false makes only active listening work
+    ///         (b) make sure that setting MaxDataAage to ListeningWindow works as desired
+    ///         (c) make sure active listening turns on every 5 seconds as desired
     /// </remarks>
     public class ExampleCapstoneAccelerationSensingAgent : SensingAgent
     {
@@ -156,6 +159,7 @@ namespace ExampleSensingAgent
 
             set
             {
+                MaxObservedDataAge = value;
                 ActiveObservationDuration = value;
                 ActionInterval = value + PredictingWindow;
             }
@@ -198,8 +202,8 @@ namespace ExampleSensingAgent
         #region Constructors
         public ExampleCapstoneAccelerationSensingAgent(): base("Capstone-2020", "ALM/TOD", default, default, default)
         {
-            ListeningWindow  = TimeSpan.FromSeconds(10);
-            PredictingWindow = TimeSpan.FromSeconds(60);
+            ListeningWindow  = TimeSpan.FromSeconds(5);
+            PredictingWindow = TimeSpan.FromSeconds(5);
         }
         #endregion
 
@@ -214,8 +218,13 @@ namespace ExampleSensingAgent
 
         protected override bool ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>> typeData)
         {
+            if(State == SensingAgentState.OpportunisticObservation)
+            {
+                return false;
+            }
+
             //collect sensor data for making decisions
-            var accelerometerData    = GetObservedData<IAccelerometerDatum>().Cast<IAccelerometerDatum>();
+            var accelerometerData    = GetObservedData<IAccelerometerDatum>().Cast<IAccelerometerDatum>().ToArray();
             var listeningWindowStart = DateTime.Now.Subtract(ListeningWindow);
 
             //calculate and store features for model decision
@@ -226,8 +235,8 @@ namespace ExampleSensingAgent
 
             //bump feature lags up by 1
             FeaturesLag1 = featuresLag0;
-            FeaturesLag2 = FeaturesLag1;
-            FeaturesLag3 = FeaturesLag2;
+            FeaturesLag2 = featuresLag1;
+            FeaturesLag3 = featuresLag2;
 
             //use stored features to make control decision
             return ShouldControlPredictionWindow(new[] { featuresLag0, featuresLag1, featuresLag2, featuresLag3 });
