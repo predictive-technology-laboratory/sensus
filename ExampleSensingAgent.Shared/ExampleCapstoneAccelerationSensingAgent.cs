@@ -32,10 +32,9 @@ namespace ExampleSensingAgent
     /// <remarks>
     /// TODO:
     ///     (1) determine on/off sensor settings
+    ///     (2) implement logistic regression
     ///     (2) test
-    ///         (a) make sure adding OpportunisticObservation returns false makes only active listening work
-    ///         (b) make sure that setting MaxDataAage to ListeningWindow works as desired
-    ///         (c) make sure active listening turns on every 5 seconds as desired
+    ///         (a) logistic regression
     /// </remarks>
     public class ExampleCapstoneAccelerationSensingAgent : SensingAgent
     {
@@ -159,7 +158,9 @@ namespace ExampleSensingAgent
 
             set
             {
+                //we set this value so all criteria tests consider the same window size
                 MaxObservedDataAge = value;
+                
                 ActiveObservationDuration = value;
                 ActionInterval = value + PredictingWindow;
             }
