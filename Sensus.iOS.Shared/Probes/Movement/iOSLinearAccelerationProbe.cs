@@ -40,7 +40,7 @@ namespace Sensus.iOS.Probes.Movement
             {
                 if (data != null && error == null)
                 {
-                    await StoreDatumAsync(new AccelerometerDatum(DateTimeOffset.UtcNow, data.UserAcceleration.X, data.UserAcceleration.Y, data.UserAcceleration.Z));
+                    await StoreDatumAsync(new LinearAccelerationDatum(DateTimeOffset.UtcNow, data.UserAcceleration.X, data.UserAcceleration.Y, data.UserAcceleration.Z));
                 }
             });
 
