@@ -67,12 +67,12 @@ namespace ExampleSensingAgent
             #endregion
 
             #region Constructor
-            public Features(DateTime listeningWindowStart, IEnumerable<IAccelerometerDatum> accellerationData)
+            public Features(DateTime listeningWindowStart, IEnumerable<ILinearAccelerationDatum> linearAccelerationData)
             {
                 Hour = listeningWindowStart.Hour;
                 Day  = ((int)listeningWindowStart.DayOfWeek + 6) % 7;
 
-                Acceleration = new Statistics(accellerationData.Select(ToMagnitude));
+                Acceleration = new Statistics(linearAccelerationData.Select(ToMagnitude));
             }
             #endregion
 
@@ -82,7 +82,7 @@ namespace ExampleSensingAgent
             /// </summary>
             /// <param name="datum">an accelerometer datum representing a 3 dimensional vector</param>
             /// <returns>the magnitude of the given 3 dimensional acceleration datum </returns>
-            private double ToMagnitude(IAccelerometerDatum datum)
+            private double ToMagnitude(ILinearAccelerationDatum datum)
             {
                 return Math.Sqrt(Math.Pow(datum.X, 2) + Math.Pow(datum.Y, 2) + Math.Pow(datum.Z, 2));
             }
@@ -225,11 +225,11 @@ namespace ExampleSensingAgent
             }
 
             //collect sensor data for making decisions
-            var accelerometerData    = GetObservedData<IAccelerometerDatum>().Cast<IAccelerometerDatum>().ToArray();
-            var listeningWindowStart = DateTime.Now.Subtract(ListeningWindow);
+            var linearAccelerationData = GetObservedData<ILinearAccelerationDatum>().Cast<ILinearAccelerationDatum>().ToArray();
+            var listeningWindowStart   = DateTime.Now.Subtract(ListeningWindow);
 
             //calculate and store features for model decision
-            var featuresLag0 = new Features(listeningWindowStart, accelerometerData);
+            var featuresLag0 = new Features(listeningWindowStart, linearAccelerationData);
             var featuresLag1 = FeaturesLag1;
             var featuresLag2 = FeaturesLag2;
             var featuresLag3 = FeaturesLag3;
