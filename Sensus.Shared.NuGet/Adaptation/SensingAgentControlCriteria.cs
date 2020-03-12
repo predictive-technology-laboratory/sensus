@@ -79,11 +79,6 @@ namespace Sensus.Adaptation
             }
         }
 
-        protected bool new_method()
-        {
-            List<IDatum> accelerometerData = GetObservedData<IAccelerometerDatum>();
 
-            return
-        }
     }
 }

@@ -4,7 +4,10 @@ using System.Text;
 
 namespace Sensus.Probes.Movement
 {
-    interface IMagnetometerDarum
+    public interface IMagnetometerDatum: IDatum
     {
+        double X { get; set; }
+        double Y { get; set; }
+        double Z { get; set; }
     }
 }
