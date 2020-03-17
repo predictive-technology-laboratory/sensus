@@ -32,9 +32,6 @@ namespace ExampleSensingAgent
     /// <remarks>
     /// TODO:
     ///     (1) determine on/off sensor settings
-    ///     (2) implement logistic regression
-    ///     (2) test
-    ///         (a) logistic regression
     /// </remarks>
     public class ExampleCapstoneAccelerationSensingAgent : SensingAgent
     {
