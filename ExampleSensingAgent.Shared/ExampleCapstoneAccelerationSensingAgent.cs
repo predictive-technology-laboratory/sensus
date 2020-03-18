@@ -19,6 +19,7 @@ using Newtonsoft.Json.Linq;
 using System.Linq;
 using Sensus;
 using Sensus.Probes.Movement;
+using Sensus.Probes.Location;
 using Sensus.Probes;
 using System.Threading;
 using Sensus.Extensions;
@@ -27,12 +28,8 @@ using Sensus.Adaptation;
 namespace ExampleSensingAgent
 {
     /// <summary>
-    /// The sekeleton implementation for the capstone 2020 active sensing project
+    /// The sensing agent for the spring 2020 capstone active sensing project
     /// </summary>
-    /// <remarks>
-    /// TODO:
-    ///     (1) determine on/off sensor settings
-    /// </remarks>
     public class ExampleCapstoneAccelerationSensingAgent : SensingAgent
     {
         #region Private Classes
@@ -166,11 +163,10 @@ namespace ExampleSensingAgent
         /// <summary>
         /// Time during which the sensors are controlled by this class based on the results of the listening window and model
         /// </summary>
-        private TimeSpan PredictingWindow 
+        private TimeSpan PredictingWindow
         {
             get
             {
-                
                 return ControlCompletionCheckInterval;
             }
 
@@ -200,14 +196,69 @@ namespace ExampleSensingAgent
         /// The prediction threshold for determining if sensors should be turned on
         /// </summary>
         private double Threshold { get; set; }
+
+        /// <summary>
+        /// The data frequency at which data is recorded when a probe is under active control
+        /// </summary>
+        private int ProbeHz { get; set; }
+
+        /// <summary>
+        /// These are the probes that we'd like to turn on as part of the study
+        /// This list of probes came from Mehdi in an email
+        /// </summary>
+        private IEnumerable<IListeningProbe> Probes
+        { 
+            get
+            {
+                IProbe probe;
+
+                //it is worth noting that there is a bug in TryGetProbe if it is called with a more specific interface than IProbe
+                //this is the reason why we pass in IProbe and then typecast to IListeningProbe after the probe is returned
+                if(Protocol.TryGetProbe<ILinearAccelerationDatum, IProbe>(out probe))
+                {
+                    yield return (IListeningProbe)probe;
+                }
+
+                if (Protocol.TryGetProbe<IAccelerometerDatum, IProbe>(out probe))
+                {
+                    yield return (IListeningProbe)probe;
+                }
+
+                if (Protocol.TryGetProbe<IGyroscopeDatum, IProbe>(out probe))
+                {
+                    yield return (IListeningProbe)probe;
+                }
+
+                if (Protocol.TryGetProbe<IAttitudeDatum, IProbe>(out probe))
+                {
+                    yield return (IListeningProbe)probe;
+                }
+
+                if (Protocol.TryGetProbe<IAltitudeDatum, IProbe>(out probe))
+                {
+                    yield return (IListeningProbe)probe;
+                }
+
+                if (Protocol.TryGetProbe<IMagnetometerDatum, IProbe> (out probe))
+                {
+                    yield return (IListeningProbe)probe;
+                }
+
+                if (Protocol.TryGetProbe<ICompassDatum, IProbe>(out probe))
+                {
+                    yield return (IListeningProbe)probe;
+                }
+            }
+        }
         #endregion
 
         #region Constructors
         public ExampleCapstoneAccelerationSensingAgent(): base("Capstone-2020", "ALM/TOD", default, default, default)
         {
-            ListeningWindow  = TimeSpan.FromSeconds(5);
-            PredictingWindow = TimeSpan.FromSeconds(5);
-            Threshold        = 0.5;
+            ListeningWindow  = TimeSpan.FromSeconds(10);  //provided by Mehdi in an email
+            PredictingWindow = TimeSpan.FromSeconds(300); //provided by Mehdi in an email
+            Threshold        = 0.5; //not provided
+            ProbeHz          = 20;  //provided by Mehdi in an email
         }
         #endregion
 
@@ -217,6 +268,7 @@ namespace ExampleSensingAgent
             ListeningWindow  = TimeSpan.FromSeconds(double.Parse(policy["cps-listening"].ToString()));
             PredictingWindow = TimeSpan.FromSeconds(double.Parse(policy["cps-predicting"].ToString()));
             Threshold        = double.Parse(policy["cps-threshold"].ToString());
+            ProbeHz          = int.Parse(policy["cps-hz"].ToString());
 
             return Task.CompletedTask;
         }
@@ -251,13 +303,31 @@ namespace ExampleSensingAgent
         {
             await base.OnStateChangedAsync(previousState, currentState, cancellationToken);
 
-            if (currentState == SensingAgentState.OpportunisticControl || currentState == SensingAgentState.ActiveControl)
+            if (currentState == SensingAgentState.OpportunisticControl)
             {
-                // determine the appropriate sensor settings for an "on" prediction window
+                throw new Exception("Error, opportunistic control should be disabled for this agent");
+            }
+
+            if ( currentState == SensingAgentState.ActiveControl)
+            {
+                await SensusServiceHelper.KeepDeviceAwakeAsync();
+
+                foreach(var probe in Probes)
+                {
+                    probe.MaxDataStoresPerSecond = ProbeHz;
+                    await probe.RestartAsync(); //whether the probe is stopped or currently running this should refresh
+                }
             }
             else if (currentState == SensingAgentState.EndingControl)
             {
-                // determine the appropriate sensor settings for an "off" prediction window
+
+                foreach(var probe in Probes)
+                {
+                    probe.MaxDataStoresPerSecond = 20;
+                    await probe.StopAsync(); //whether or not the probe is already stopped this should not cause an issue
+                }
+
+                await SensusServiceHelper.LetDeviceSleepAsync();
             }
         }
         #endregion
