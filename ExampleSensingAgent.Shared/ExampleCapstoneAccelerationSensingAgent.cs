@@ -35,6 +35,7 @@ namespace ExampleSensingAgent
         #region Private Classes
         /// <summary>
         /// A helper class for calculating, storing and passing model features.
+        /// These features and their values came from a design document created by the capstone class.
         /// </summary>
         private class Features
         {
@@ -64,6 +65,9 @@ namespace ExampleSensingAgent
             public Features(DateTime listeningWindowStart, IEnumerable<ILinearAccelerationDatum> linearAccelerationData)
             {
                 Hour = listeningWindowStart.Hour;
+
+                //design document defines day a zero-indexed beginning on Monday.
+                //by default .Net zero-indexes starting on Sunday thus this transform
                 Day  = ((int)listeningWindowStart.DayOfWeek + 6) % 7;
 
                 Acceleration = new Statistics(linearAccelerationData.Select(ToMagnitude));
@@ -204,7 +208,7 @@ namespace ExampleSensingAgent
 
         /// <summary>
         /// These are the probes that we'd like to turn on as part of the study
-        /// This list of probes came from Mehdi in an email
+        /// This list of probes was provided by Mehdi in an email.
         /// </summary>
         private IEnumerable<IListeningProbe> Probes
         { 
