@@ -279,6 +279,10 @@ namespace ExampleSensingAgent
 
         protected override bool ObservedDataMeetControlCriterion(Dictionary<Type, List<IDatum>> typeData)
         {
+            //we return on opportunitistc observations so that the
+            //listening window which we average over will always be
+            //the full length of time we desire and each saved
+            //feature lag will also be for the full listening time.
             if(State == SensingAgentState.OpportunisticObservation)
             {
                 return false;
