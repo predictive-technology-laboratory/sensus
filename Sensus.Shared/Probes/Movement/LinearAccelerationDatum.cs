@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Sensus.Probes.Movement
 {
-    class LinearAccelerationDatum : Datum
+    class LinearAccelerationDatum : Datum, ILinearAccelerationDatum
     {
         private double _x;
         private double _y;
