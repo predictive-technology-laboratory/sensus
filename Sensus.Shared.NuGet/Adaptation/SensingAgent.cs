@@ -167,9 +167,10 @@ namespace Sensus.Adaptation
         /// </summary>
         /// <param name="id">Identifier.</param>
         /// <param name="description">Description.</param>
-        /// <param name="controlCompletionCheckInterval">Control completion check interval.</param>
-        /// <param name="actionInterval">Action interval.</param>
-        /// <param name="observationDuration">Observation duration.</param>
+        /// <param name="controlCompletionCheckInterval">The duration we leave sensors under control before checking if they should be released.</param>
+        /// <param name="actionInterval">The duration between actively checking (vs oportunistic checking) if sensors should be controled.</param>
+        /// <param name="observationDuration">The duration we listen to determine if sensors should be controled by the agent.</param>
+        /// <remarks>For the three durations parameters also see their associated, more-detailed public property comments</remarks>
         protected SensingAgent(string id, string description, TimeSpan controlCompletionCheckInterval, TimeSpan actionInterval, TimeSpan observationDuration)
         {
             Construct(id, description, controlCompletionCheckInterval, actionInterval, observationDuration);
