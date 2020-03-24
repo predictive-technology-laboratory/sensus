@@ -276,7 +276,7 @@ namespace Sensus
                 _timestamp = timestamp;
                 _deviceId = SensusServiceHelper.Get().DeviceId;
                 _anonymized = false;
-                _buildId = SensusServiceHelper.BUILD_ID;
+                _buildId = SensusServiceHelper.Get().Version;
                 _deviceManufacturer = SensusServiceHelper.Get().DeviceManufacturer;
                 _deviceModel = SensusServiceHelper.Get().DeviceModel;
                 _operatingSystem = SensusServiceHelper.Get().OperatingSystem;

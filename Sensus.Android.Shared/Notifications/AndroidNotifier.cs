@@ -263,7 +263,20 @@ namespace Sensus.Android.Notifications
                     notificationBuilder.SetStyle(bigTextStyle);
                 }
 
-                _notificationManager.Notify(id, 0, notificationBuilder.Build());
+                // Issue notification only if notifications are allowed during Alert Exclusion Windows
+                if (protocol.TimeIsWithinAlertExclusionWindow(DateTime.Now.TimeOfDay))
+                {
+                    if (protocol.AllowNotificationsAlertExclusionWindows)
+                    {
+                        _notificationManager.Notify(id, 0, notificationBuilder.Build());
+                    }
+                }
+                else
+                {
+                    _notificationManager.Notify(id, 0, notificationBuilder.Build());
+                }
+                
+                
             }
 
             return Task.CompletedTask;

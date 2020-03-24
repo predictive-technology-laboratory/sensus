@@ -112,6 +112,7 @@ Global
 		Sensus.Shared\Sensus.Shared.projitems*{b2f65fe8-f266-4c0c-b4a8-d326002b9180}*SharedItemsImports = 13
 		Sensus.Android.Shared\Sensus.Android.Shared.projitems*{b6e23da5-2716-426b-9f8f-9c47bd6b68d3}*SharedItemsImports = 13
 		Sensus.iOS.Shared\Sensus.iOS.Shared.projitems*{ca15dd76-c484-4a56-a03f-9ef242294d55}*SharedItemsImports = 13
+		ExampleSensingAgent.Shared\ExampleSensingAgent.Shared.projitems*{d33b6cdb-795c-4826-b131-47c526ace07f}*SharedItemsImports = 4
 		Sensus.Android.Shared\Sensus.Android.Shared.projitems*{d33b6cdb-795c-4826-b131-47c526ace07f}*SharedItemsImports = 4
 		Sensus.Shared\Sensus.Shared.projitems*{d33b6cdb-795c-4826-b131-47c526ace07f}*SharedItemsImports = 4
 		Sensus.Tests.AppCenter.Shared\Sensus.Tests.AppCenter.Shared.projitems*{e2a77014-4847-4f00-b2b2-ce9a7b3bcb09}*SharedItemsImports = 4

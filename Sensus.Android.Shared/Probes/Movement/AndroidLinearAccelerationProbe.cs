@@ -7,7 +7,7 @@ using Sensus.Probes.Movement;
 
 namespace Sensus.Android.Probes.Movement
 {
-    class AndroidLinearAccelerationProbe : LinearAccelerationProbe
+    public class AndroidLinearAccelerationProbe : LinearAccelerationProbe
     {
         private AndroidSensorListener _linearaccelerationListener;
 

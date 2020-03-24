@@ -56,10 +56,23 @@ namespace Sensus.Probes.Device
             return Task.CompletedTask;
         }
 
+        [JsonIgnore]
+        protected override string DeviceAwakeWarning
+        {
+            get
+            {
+                return "Devices will use additional power to report all updates.";
+            }
+        }
 
-        protected override string DeviceAwakeWarning => throw new NotImplementedException();
-
-        protected override string DeviceAsleepWarning => throw new NotImplementedException();
+        [JsonIgnore]
+        protected override string DeviceAsleepWarning
+        {
+            get
+            {
+                return "Devices will sleep and pause updates.";
+            }
+        }
 
         protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
         {

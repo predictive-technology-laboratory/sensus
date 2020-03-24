@@ -19,3 +19,4 @@ Sensus.iOS/Resources/UnitTestingProtocol.json
 
 # Visual Studio 2015 cache/options directory
 .vs/
+Sensus.Shared.NuGet/Adaptation/SensingAgentControlCriteria.cs

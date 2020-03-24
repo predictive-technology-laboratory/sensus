@@ -49,27 +49,35 @@ namespace Sensus.Android.Probes.Apps
 					return await XamarinApplication.Current.MainPage.DisplayAlert("Permission Request", "Please enable the App Usage permission for Sensus", "OK", "Cancel");
 				});
 
-				if (continueStarting)
-				{
-					Intent appUsageSettings = new Intent(Settings.ActionUsageAccessSettings);
-					appUsageSettings.AddFlags(ActivityFlags.NewTask);
-					Application.Context.StartActivity(appUsageSettings);
 
-					//AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
+                //Check permission the second time to mitigate the case in which the permisions are asked twice. this happens if both ApplicationUdageEvent and ApplicationUsageStats probes are enabled
+                if (appOps.CheckOpNoThrow(AppOpsManager.OpstrGetUsageStats, Process.MyUid(), Application.Context.PackageName) != AppOpsManagerMode.Allowed)
+                {
+                    if (continueStarting)
+                    {
+                        
+                         Intent appUsageSettings = new Intent(Settings.ActionUsageAccessSettings);
+                         appUsageSettings.AddFlags(ActivityFlags.NewTask);
+                         Application.Context.StartActivity(appUsageSettings);
+                        
+                        //AndroidSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as AndroidSensusServiceHelper;
 
-					//_cancellationTokenSource = new CancellationTokenSource();
+                        //_cancellationTokenSource = new CancellationTokenSource();
 
-					//serviceHelper.WaitForFocus(_cancellationTokenSource.Token);
+                        //serviceHelper.WaitForFocus(_cancellationTokenSource.Token);
 
-					//_cancellationTokenSource.Dispose();
-					//_cancellationTokenSource = null;
-				}
-				else
-				{
-					_probe.Protocol.CancelStart();
+                        //_cancellationTokenSource.Dispose();
+                        //_cancellationTokenSource = null;
+                    }
+                    else
+                    {
+                        _probe.Protocol.CancelStart();
 
-					return;
-				}
+                        return;
+                    }
+                }
+
+                
 			}
 
 			//appOps.StopWatchingMode(callback);

@@ -9,6 +9,8 @@
     <Import_RootNamespace>ExampleSensingAgent</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ExampleCapstoneAccelerationSensingAgent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ExampleCompassSensingAgent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ExampleAccelerationSensingAgent.cs" />
   </ItemGroup>
 </Project>

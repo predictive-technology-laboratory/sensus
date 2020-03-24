@@ -78,5 +78,7 @@ namespace Sensus.Adaptation
                 return almExceedsThreshold;
             }
         }
+
+
     }
 }

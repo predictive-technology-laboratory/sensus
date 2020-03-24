@@ -25,6 +25,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\iOSAttitudeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\iOSGyroscopeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\iOSLinearAccelerationProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\IOSMagnetometerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\iOSPedometerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\iOSPollingWlanProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitBiologicalSexProbe.cs" />

@@ -42,7 +42,7 @@ namespace Sensus.Probes.Apps
         {
             get
             {
-                return "(Keystroke Data)";
+                return _key;
             }
         }
 

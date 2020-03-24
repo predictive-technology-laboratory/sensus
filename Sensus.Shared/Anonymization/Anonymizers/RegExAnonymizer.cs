@@ -1,17 +1,17 @@
-﻿using Sensus.UI.UiProperties;
+﻿using Newtonsoft.Json;
+using Sensus.UI.UiProperties;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Sensus.Anonymization.Anonymizers
 {
 	public class RegExAnonymizer : Anonymizer
 	{
+		[JsonIgnore]
 		public string DEFAULT_REPLACEMENT = "\u2588";
 
-		public override string DisplayText => "RegEx Anonymizer";
+		public override string DisplayText => "RegEx";
 
 		[EntryStringUiProperty("Pattern:", true, 1, true)]
 		public string Pattern { get; set; }
@@ -25,7 +25,7 @@ namespace Sensus.Anonymization.Anonymizers
 
 		public override object Apply(object value, Protocol protocol)
 		{
-			if (value is string stringValue)
+			if (string.IsNullOrEmpty(Pattern) == false && value is string stringValue)
 			{
 				return Regex.Replace(stringValue, Pattern, m =>
 				{
