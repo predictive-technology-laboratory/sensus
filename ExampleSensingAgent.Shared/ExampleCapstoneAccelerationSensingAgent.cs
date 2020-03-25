@@ -64,12 +64,11 @@ namespace ExampleSensingAgent
             #region Constructor
             public Features(DateTime listeningWindowStart, IEnumerable<ILinearAccelerationDatum> linearAccelerationData)
             {
-                Hour = listeningWindowStart.Hour;
-
                 //design document defines day a zero-indexed beginning on Monday.
                 //by default .Net zero-indexes starting on Sunday thus this transform
                 Day  = ((int)listeningWindowStart.DayOfWeek + 6) % 7;
 
+                Hour         = listeningWindowStart.Hour;
                 Acceleration = new Statistics(linearAccelerationData.Select(ToMagnitude));
             }
             #endregion
@@ -105,7 +104,7 @@ namespace ExampleSensingAgent
             {
                 // make sure the values are only 
                 // materialized into memory once
-                values = values.ToArray();
+                values = values.DefaultIfEmpty().ToArray();
 
                 Mean = CalculateMean(values);
                 Median = CalculateMedian(values);
@@ -260,7 +259,7 @@ namespace ExampleSensingAgent
         public ExampleCapstoneAccelerationSensingAgent(): base("Capstone-2020", "ALM/TOD", default, default, default)
         {
             ListeningWindow  = TimeSpan.FromSeconds(10);  //provided by Mehdi in an email
-            PredictingWindow = TimeSpan.FromSeconds(300); //provided by Mehdi in an email
+            PredictingWindow = TimeSpan.FromSeconds(10); //provided by Mehdi in an email
             Threshold        = 0.5; //not provided
             ProbeHz          = 20;  //provided by Mehdi in an email
         }
@@ -318,8 +317,6 @@ namespace ExampleSensingAgent
 
             if ( currentState == SensingAgentState.ActiveControl)
             {
-                await SensusServiceHelper.KeepDeviceAwakeAsync();
-
                 foreach(var probe in Probes)
                 {
                     probe.MaxDataStoresPerSecond = ProbeHz;
@@ -328,14 +325,10 @@ namespace ExampleSensingAgent
             }
             else if (currentState == SensingAgentState.EndingControl)
             {
-
                 foreach(var probe in Probes)
                 {
-                    probe.MaxDataStoresPerSecond = 20;
                     await probe.StopAsync(); //whether or not the probe is already stopped this should not cause an issue
                 }
-
-                await SensusServiceHelper.LetDeviceSleepAsync();
             }
         }
         #endregion
