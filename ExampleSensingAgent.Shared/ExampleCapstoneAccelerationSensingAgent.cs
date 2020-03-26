@@ -259,7 +259,7 @@ namespace ExampleSensingAgent
         public ExampleCapstoneAccelerationSensingAgent(): base("Capstone-2020", "ALM/TOD", default, default, default)
         {
             ListeningWindow  = TimeSpan.FromSeconds(10);  //provided by Mehdi in an email
-            PredictingWindow = TimeSpan.FromSeconds(10); //provided by Mehdi in an email
+            PredictingWindow = TimeSpan.FromSeconds(300); //provided by Mehdi in an email
             Threshold        = 0.5; //not provided
             ProbeHz          = 20;  //provided by Mehdi in an email
         }
