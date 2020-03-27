@@ -1213,6 +1213,13 @@ namespace Sensus
         }
 
         /// <summary>
+        /// Whether or not to fire notifications during Alert Exclusion Windows/>.
+        /// </summary>
+        /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
+        [OnOffUiProperty("Notifications in alert exclusion windows:", true, 37)]
+        public bool AllowNotificationsAlertExclusionWindows { get; set; } = true;
+
+        /// <summary>
         /// Sensus is able to use asymmetric key encryption to secure data before transmission from the device to a remote endpoint (e.g., AWS S3). This 
         /// provides a layer of security on top of SSL encryption and certificate pinning. For example, even if an attacker is able to intercept 
         /// and decrypt a service request (e.g., write data) to AWS S3 via a man-in-the-middle attack, the attacker would not be able to decrypt 
@@ -1243,7 +1250,7 @@ namespace Sensus
         /// 
         /// </summary>
         /// <value>The asymmetric encryption public key.</value>
-        [EntryStringUiProperty("Asymmetric Encryption Public Key:", true, 37, false)]
+        [EntryStringUiProperty("Asymmetric Encryption Public Key:", true, 38, false)]
         public string AsymmetricEncryptionPublicKey
         {
             get
@@ -1276,90 +1283,90 @@ namespace Sensus
         /// Whether or not to allow the user to view data being collected by the <see cref="Protocol"/>.
         /// </summary>
         /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow View Data:", true, 38)]
+        [OnOffUiProperty("Allow View Data:", true, 39)]
         public bool AllowViewData { get; set; } = false;
 
         /// <summary>
         /// Whether or not to allow the user to view the status of the <see cref="Protocol"/>.
         /// </summary>
         /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow View Status:", true, 39)]
+        [OnOffUiProperty("Allow View Status:", true, 40)]
         public bool AllowViewStatus { get; set; } = false;
 
         /// <summary>
         /// Whether or not to allow the user to manually submit data being collected by the <see cref="Protocol"/>.
         /// </summary>
         /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow Submit Data:", true, 40)]
+        [OnOffUiProperty("Allow Submit Data:", true, 41)]
         public bool AllowSubmitData { get; set; } = false;
 
         /// <summary>
         /// Whether or not to allow the user to display/scan participation QR codes for the <see cref="Protocol"/>.
         /// </summary>
         /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow Participation Scanning:", true, 41)]
+        [OnOffUiProperty("Allow Participation Scanning:", true, 42)]
         public bool AllowParticipationScanning { get; set; } = false;
 
         /// <summary>
         /// Whether or not to allow the user to copy the <see cref="Protocol"/>.
         /// </summary>
         /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow Copy:", true, 42)]
+        [OnOffUiProperty("Allow Copy:", true, 43)]
         public bool AllowCopy { get; set; } = false;
 
         /// <summary>
         /// Whether or not to allow the user to share the <see cref="Protocol"/>.
         /// </summary>
         /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow Protocol Share:", true, 43)]
+        [OnOffUiProperty("Allow Protocol Share:", true, 44)]
         public bool Shareable { get; set; } = false;
 
         /// <summary>
         /// Whether or not to allow the user to share local data collected on the device.
         /// </summary>
         /// <value><c>true</c> to allow; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow Local Data Share:", true, 44)]
+        [OnOffUiProperty("Allow Local Data Share:", true, 45)]
         public bool AllowLocalDataShare { get; set; } = false;
 
         /// <summary>
         /// Whether or not to allow the user to reset their participant ID. See <see cref="Protocol.ParticipantId"/> and <see cref="Protocol.StartConfirmationMode"/> for more information.
         /// </summary>
         /// <value><c>true</c> if allow participant identifier reset; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow ID Reset:", true, 45)]
+        [OnOffUiProperty("Allow ID Reset:", true, 46)]
         public bool AllowParticipantIdReset { get; set; } = false;
 
         /// <summary>
         /// Whether or not to allow the user to enter tagging mode. See [this article](xref:tagging_mode) for more information.
         /// </summary>
         /// <value><c>true</c> if allow tagging; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow Tagging:", true, 46)]
+        [OnOffUiProperty("Allow Tagging:", true, 47)]
         public bool AllowTagging { get; set; } = false;
 
         /// <summary>
         /// The tags to make available when in tagging mode. See [this article](xref:tagging_mode) for more information.
         /// </summary>
         /// <value>The tags.</value>
-        [EditableListUiProperty("Available Tags:", true, 47, false)]
+        [EditableListUiProperty("Available Tags:", true, 48, false)]
         public List<string> AvailableTags { get; set; } = new List<string>();
 
         /// <summary>
         /// Whether or not to allow the user to put the protocol into the <see cref="ProtocolState.Paused"/> state.
         /// </summary>
         /// <value><c>true</c> to allow pause; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Allow Pause:  ", true, 48)]
+        [OnOffUiProperty("Allow Pause:  ", true, 49)]
         public bool AllowPause { get; set; } = false;
 
-		[OnOffUiProperty("Allow Snooze:", true, 49)]
+		[OnOffUiProperty("Allow Snooze:", true, 50)]
 		public bool AllowSnooze { get; set; } = false;
 
-		[EntryFloatUiProperty("Max. Snooze (Mins.):  ", true, 50, false)]
+		[EntryFloatUiProperty("Max. Snooze (Mins.):  ", true, 51, false)]
 		public int MaxSnoozeTime { get; set; } = 1440;
 
 		/// <summary>
 		/// Whether or not to allow the user to request a test push notification.
 		/// </summary>
 		/// <value><c>true</c> if allow test push notification; otherwise, <c>false</c>.</value>
-		[OnOffUiProperty("Allow Test Push:  ", true, 51)]
+		[OnOffUiProperty("Allow Test Push:  ", true, 52)]
         public bool AllowTestPushNotification { get; set; } = false;
 
         /// <summary>
@@ -1397,7 +1404,7 @@ namespace Sensus
         /// for more information.
         /// </summary>
         /// <value>The protocol start confirmation mode.</value>
-        [ListUiProperty("Start Confirmation Mode:", true, 52, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.ParticipantIdDigits, ProtocolStartConfirmationMode.ParticipantIdText, ProtocolStartConfirmationMode.ParticipantIdQrCode }, true)]
+        [ListUiProperty("Start Confirmation Mode:", true, 53, new object[] { ProtocolStartConfirmationMode.None, ProtocolStartConfirmationMode.RandomDigits, ProtocolStartConfirmationMode.ParticipantIdDigits, ProtocolStartConfirmationMode.ParticipantIdText, ProtocolStartConfirmationMode.ParticipantIdQrCode }, true)]
         public ProtocolStartConfirmationMode StartConfirmationMode
         {
             get
@@ -1416,7 +1423,7 @@ namespace Sensus
         /// the <see cref="PushNotificationsSharedAccessSignature"/> for this hub.
         /// </summary>
         /// <value>The push notifications hub.</value>
-        [EntryStringUiProperty("Push Notification Hub:", true, 53, false)]
+        [EntryStringUiProperty("Push Notification Hub:", true, 54, false)]
         public string PushNotificationsHub
         {
             get { return _pushNotificationsHub; }
@@ -1429,7 +1436,7 @@ namespace Sensus
         /// the DefaultListenSharedAccessSignature policy and copy the entire value of the connection string into this field.
         /// </summary>
         /// <value>The push notifications shared access signature.</value>
-        [EntryStringUiProperty("Push Notifications Shared Access Signature:", true, 54, false)]
+        [EntryStringUiProperty("Push Notifications Shared Access Signature:", true, 55, false)]
         public string PushNotificationsSharedAccessSignature
         {
             get { return _pushNotificationsSharedAccessSignature; }
@@ -1448,7 +1455,7 @@ namespace Sensus
         /// Specifies whether the current <see cref="Protocol"/> should be compatible with Android only, iOS only, or both.
         /// </summary>
         /// <value>The protocol compatibility mode.</value>
-        [ListUiProperty("Compatibility:", true, 55, new object[] { ProtocolCompatibilityMode.CrossPlatform, ProtocolCompatibilityMode.AndroidOnly, ProtocolCompatibilityMode.iOSOnly }, true)]
+        [ListUiProperty("Compatibility:", true, 56, new object[] { ProtocolCompatibilityMode.CrossPlatform, ProtocolCompatibilityMode.AndroidOnly, ProtocolCompatibilityMode.iOSOnly }, true)]
         public ProtocolCompatibilityMode CompatibilityMode { get; set; } = ProtocolCompatibilityMode.CrossPlatform;
 
         /// <summary>
@@ -1457,16 +1464,19 @@ namespace Sensus
         /// be displayed.
         /// </summary>
         /// <value><c>true</c> if display participation percentage in foreground service notification; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("(Android) Display Participation:", true, 56)]
+        [OnOffUiProperty("(Android) Display Participation:", true, 57)]
         public bool DisplayParticipationPercentageInForegroundServiceNotification { get; set; } = true;
 
-        /// <summary>
-        /// We regenerate the offset every time a protocol starts, so there's 
-        /// no need to serialize it. Furthermore, we never want the offset
-        /// to be shared.
-        /// </summary>
-        /// <value>The gps longitude anonymization participant offset.</value>
-        [JsonIgnore]
+		[OnOffUiProperty("(Android) Continue listening on AC power:", true, 58)]
+		public bool ListenOnAcPower { get; set; }
+
+		/// <summary>
+		/// We regenerate the offset every time a protocol starts, so there's 
+		/// no need to serialize it. Furthermore, we never want the offset
+		/// to be shared.
+		/// </summary>
+		/// <value>The gps longitude anonymization participant offset.</value>
+		[JsonIgnore]
         public double GpsLongitudeAnonymizationParticipantOffset
         {
             get
@@ -2028,7 +2038,7 @@ namespace Sensus
 
             try
             {
-                await FireStateChangedAsync();
+                await FireStateChangedAsync(cancellationToken);
 
                 await (_protocolStartInitiatedAsync?.Invoke() ?? Task.CompletedTask);
 
@@ -2229,7 +2239,7 @@ namespace Sensus
                 if (cancelStartException == null)
                 {
                     _state = ProtocolState.Running;
-                    await FireStateChangedAsync();
+                    await FireStateChangedAsync(cancellationToken);
                 }
                 else
                 {
@@ -2799,6 +2809,17 @@ namespace Sensus
             await FireStateChangedAsync();
         }
 
+		public void RestorePausedState()
+		{
+			lock(this)
+			{
+				if (AllowPause && _state == ProtocolState.Stopped)
+				{
+					_state = ProtocolState.Paused;
+				}
+			}
+		}
+
         public async Task ResumeAsync()
         {
             // only permit resuming from the paused state
@@ -2993,23 +3014,34 @@ namespace Sensus
             return _name;
         }
 
-        private async Task FireStateChangedAsync()
+		private async Task FireStateChangedAsync()
+		{
+			await FireStateChangedAsync(CancellationToken.None);
+		}
+
+        private async Task FireStateChangedAsync(CancellationToken cancellationToken)
         {
             // the current method may be called in response to a UI interaction, so ensure we do not throw exceptions back.
             try
             {
                 SensusServiceHelper.Get().Logger.Log("New state:  " + _state, LoggingLevel.Normal, GetType());
 
+				_localDataStore.WriteDatum(new ProtocolStateDatum(Name, State, DateTimeOffset.Now), cancellationToken);
+
                 if (_state == ProtocolState.Running)
                 {
                     await SensusServiceHelper.Get().AddRunningProtocolIdAsync(_id);
                 }
-                else if (_state == ProtocolState.Stopped || _state == ProtocolState.Paused)
+                else if (_state == ProtocolState.Stopped)
                 {
                     await SensusServiceHelper.Get().RemoveRunningProtocolIdAsync(_id);
                 }
+				else if (_state == ProtocolState.Paused)
+				{
+                    await SensusServiceHelper.Get().AddPausedProtocolIdAsync(_id);
+				}
 
-                StateChanged?.Invoke(this, _state);
+				StateChanged?.Invoke(this, _state);
                 FireCaptionChanged();
 
 #if __ANDROID__

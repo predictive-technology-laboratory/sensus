@@ -50,7 +50,7 @@ namespace Sensus.UI.Inputs
         {
             get
             {
-				return _timePicker.Time;
+				return _timePicker == null || _hasFocused == false ? null : _timePicker?.Time;
             }
         }
 
@@ -105,10 +105,23 @@ namespace Sensus.UI.Inputs
 
 				Color defaultTextColor = _timePicker.TextColor;
 				_timePicker.TextColor = Color.Gray;
+				_hasFocused = false;
+
+				_timePicker.Focused += (o, e) =>
+				{
+					if (!_hasFocused)
+					{
+						_timePicker.TextColor = defaultTextColor;
+						_hasFocused = true;
+					}
+				};
 
 				_timePicker.PropertyChanged += (o, e) =>
 				{
-					Complete = e.PropertyName == nameof(TimePicker.Time) && Value != null;
+					if (e.PropertyName == nameof(TimePicker.Time))
+					{
+						Complete = Value != null;
+					}
 				};
 
 				_label = CreateLabel(index);

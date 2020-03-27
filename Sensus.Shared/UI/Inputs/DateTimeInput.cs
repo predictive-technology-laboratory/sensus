@@ -51,7 +51,7 @@ namespace Sensus.UI.Inputs
         {
             get
             {
-				return _datePicker.Date.Add(_timePicker.Time);
+				return _datePicker == null || _timePicker == null || _hasFocused == false ? null : _datePicker?.Date.Add(_timePicker.Time);
             }
         }
 
@@ -118,6 +118,27 @@ namespace Sensus.UI.Inputs
 				Color defaultTextColor = _datePicker.TextColor;
                 _datePicker.TextColor = Color.Gray;
 				_timePicker.TextColor = Color.Gray;
+				_hasFocused = false;
+
+				_datePicker.Focused += (o, e) =>
+				{
+					if (!_hasFocused)
+					{
+						_datePicker.TextColor = defaultTextColor;
+						_timePicker.TextColor = defaultTextColor;
+						_hasFocused = true;
+					}
+				};
+
+				_timePicker.Focused += (o, e) =>
+				{
+					if (!_hasFocused)
+					{
+						_datePicker.TextColor = defaultTextColor;
+						_timePicker.TextColor = defaultTextColor;
+						_hasFocused = true;
+					}
+				};
 
 				_datePicker.DateSelected += (o, e) =>
                 {
@@ -126,7 +147,10 @@ namespace Sensus.UI.Inputs
 
 				_timePicker.PropertyChanged += (o, e) =>
 				{
-					Complete = e.PropertyName == nameof(TimePicker.Time) && Value != null;
+					if (e.PropertyName == nameof(TimePicker.Time))
+					{
+						Complete = Value != null;
+					}
 				};
 
 				_label = CreateLabel(index);

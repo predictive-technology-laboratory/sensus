@@ -20,6 +20,7 @@ namespace Sensus.Android.Probes.Apps
 
 			_manager = new AndroidApplicationUsageManager(this);
 
+            
 			await _manager.CheckPermission();
 		}
 

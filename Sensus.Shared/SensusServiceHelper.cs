@@ -310,7 +310,7 @@ namespace Sensus
         #endregion
 
         private Logger _logger;
-        private List<string> _runningProtocolIds;
+        private Dictionary<string, ProtocolState> _protocolStates;
         private ScheduledCallback _healthTestCallback;
         private SHA256Managed _hasher;
         private List<PointOfInterest> _pointsOfInterest;
@@ -340,8 +340,16 @@ namespace Sensus
 
         public List<string> RunningProtocolIds
         {
-            get { return _runningProtocolIds; }
+            get { return _protocolStates.Where(x => x.Value == ProtocolState.Running).Select(x => x.Key).ToList(); }
         }
+
+		public Dictionary<string, ProtocolState> ProtocolStates
+		{
+			get
+			{
+				return _protocolStates;
+			}
+		}
 
         public List<PointOfInterest> PointsOfInterest
         {
@@ -515,7 +523,7 @@ namespace Sensus
 
             _registeredProtocols = new ConcurrentObservableCollection<Protocol>();
             _scriptsToRun = new ConcurrentObservableCollection<Script>();
-            _runningProtocolIds = new List<string>();
+            _protocolStates = new Dictionary<string, ProtocolState>();
             _hasher = new SHA256Managed();
             _pointsOfInterest = new List<PointOfInterest>();
             _barcodeWriter = new BarcodeWriter
@@ -644,14 +652,15 @@ namespace Sensus
         {
             bool save = false;
 
-            lock (_runningProtocolIds)
+            lock (_protocolStates)
             {
-                if (!_runningProtocolIds.Contains(id))
-                {
-                    _runningProtocolIds.Add(id);
-                    save = true;
-                }
-            }
+				if (_protocolStates.TryGetValue(id, out ProtocolState state) == false || state != ProtocolState.Running)
+				{
+					_protocolStates[id] = ProtocolState.Running;
+					
+					save = true;
+				}
+			}
 
             if (save)
             {
@@ -663,12 +672,14 @@ namespace Sensus
         {
             bool save = false;
 
-            lock (_runningProtocolIds)
+            lock (_protocolStates)
             {
-                if (_runningProtocolIds.Remove(id))
-                {
-                    save = true;
-                }
+				if (_protocolStates.TryGetValue(id, out ProtocolState state) == false || state == ProtocolState.Running)
+				{
+					_protocolStates[id] = ProtocolState.Stopped;
+					
+					save = true;
+				}
             }
 
             if (save)
@@ -677,7 +688,27 @@ namespace Sensus
             }
         }
 
-        public List<Protocol> GetRunningProtocols()
+		public async Task AddPausedProtocolIdAsync(string id)
+		{
+			bool save = false;
+
+			lock (_protocolStates)
+			{
+				if (_protocolStates.TryGetValue(id, out ProtocolState state) == false || state != ProtocolState.Paused)
+				{
+					_protocolStates[id] = ProtocolState.Paused;
+
+					save = true;
+				}
+			}
+
+			if (save)
+			{
+				await SaveAsync();
+			}
+		}
+
+		public List<Protocol> GetRunningProtocols()
         {
             return _registeredProtocols.Where(p => p.State == ProtocolState.Running).ToList();
         }
@@ -840,14 +871,26 @@ namespace Sensus
                 await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_healthTestCallback);
             }
 
-            foreach (Protocol registeredProtocol in _registeredProtocols)
-            {
-                if (registeredProtocol.State == ProtocolState.Stopped && _runningProtocolIds.Contains(registeredProtocol.Id))
+			foreach (Protocol registeredProtocol in _registeredProtocols)
+			{
+				/*if (registeredProtocol.State == ProtocolState.Stopped && _protocolStates.Contains(registeredProtocol.Id))
                 {
                     // don't present the user with an interface. just start up in the background.
                     await registeredProtocol.StartAsync(CancellationToken.None);
-                }
-            }
+                }*/
+
+				if (_protocolStates.TryGetValue(registeredProtocol.Id, out ProtocolState state))
+				{
+					if (state == ProtocolState.Running)
+					{
+						await registeredProtocol.StartAsync(CancellationToken.None);
+					}
+					else if (state == ProtocolState.Paused)
+					{
+						registeredProtocol.RestorePausedState();
+					}
+				}
+			}
         }
 
         public void RegisterProtocol(Protocol protocol)

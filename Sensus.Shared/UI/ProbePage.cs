@@ -287,10 +287,27 @@ namespace Sensus.UI
                         HorizontalOptions = LayoutOptions.FillAndExpand
                     };
 
-                    anonymizerPicker.Items.Add("Do Not Anonymize");
+					Button configureButton = new Button
+					{
+						Text = "Settings",
+						FontSize = 20
+					};
+
+					// get the current anonymizer for this property
+					Anonymizer currentAnonymizer = probe.Protocol.JsonAnonymizer.GetAnonymizer(anonymizableProperty);
+					
+					for (int index = 0; index < anonymizableAttribute.AvailableAnonymizers.Count; index++)
+					{
+						if (currentAnonymizer != null && anonymizableAttribute.AvailableAnonymizers[index].GetType() == currentAnonymizer.GetType())
+						{
+							anonymizableAttribute.AvailableAnonymizers[index] = currentAnonymizer;
+						}
+					}
+	  
+					anonymizerPicker.Items.Add("Do Not Anonymize");
                     foreach (Anonymizer anonymizer in anonymizableAttribute.AvailableAnonymizers)
                     {
-                        anonymizerPicker.Items.Add(anonymizer.DisplayText);
+						anonymizerPicker.Items.Add(anonymizer.DisplayText);
                     }
 
                     anonymizerPicker.SelectedIndexChanged += (o, e) =>
@@ -299,13 +316,26 @@ namespace Sensus.UI
                         if (anonymizerPicker.SelectedIndex > 0)
                         {
                             selectedAnonymizer = anonymizableAttribute.AvailableAnonymizers[anonymizerPicker.SelectedIndex - 1];  // subtract one from the selected index since the JsonAnonymizer's collection of anonymizers start after the "None" option within the picker.
-                        }
 
-                        probe.Protocol.JsonAnonymizer.SetAnonymizer(anonymizableProperty, selectedAnonymizer);
+							configureButton.IsVisible = UiProperty.HasUiProperties(selectedAnonymizer);
+						}
+						else
+						{
+							configureButton.IsVisible = false;
+						}
+
+						probe.Protocol.JsonAnonymizer.SetAnonymizer(anonymizableProperty, selectedAnonymizer);
                     };
 
+					configureButton.Clicked += async (o, e) =>
+					{
+						Anonymizer selectedAnonymizer = anonymizableAttribute.AvailableAnonymizers[anonymizerPicker.SelectedIndex - 1];
+
+						await ShowAnonymizerSettings(selectedAnonymizer, anonymizerPicker);
+					};
+
                     // set the picker's index to the current anonymizer (or "Do Not Anonymize" if there is no current)
-                    Anonymizer currentAnonymizer = probe.Protocol.JsonAnonymizer.GetAnonymizer(anonymizableProperty);
+                    //Anonymizer currentAnonymizer = probe.Protocol.JsonAnonymizer.GetAnonymizer(anonymizableProperty);
                     int currentIndex = 0;
                     if (currentAnonymizer != null)
                     {
@@ -318,7 +348,7 @@ namespace Sensus.UI
                     {
                         Orientation = StackOrientation.Horizontal,
                         HorizontalOptions = LayoutOptions.FillAndExpand,
-                        Children = { propertyLabel, anonymizerPicker }
+                        Children = { propertyLabel, anonymizerPicker, configureButton }
                     };
 
                     anonymizablePropertyStacks.Add(anonymizablePropertyStack);
@@ -336,6 +366,24 @@ namespace Sensus.UI
                 Content = contentLayout
             };
         }
+
+		private async Task ShowAnonymizerSettings(Anonymizer selectedAnonymizer, Picker anonymizerPicker)
+		{
+			if (selectedAnonymizer != null && UiProperty.HasUiProperties(selectedAnonymizer))
+			{
+				AnonymizerPage anonymizerPage = new AnonymizerPage(selectedAnonymizer);
+
+				anonymizerPage.Disappearing += (o2, e2) =>
+				{
+					if (selectedAnonymizer.IsValid == false)
+					{
+						anonymizerPicker.SelectedIndex = 0;
+					}
+				};
+
+				await Navigation.PushModalAsync(anonymizerPage);
+			}
+		}
 
         private async Task SetAgentButton_Clicked(Button setAgentButton, ScriptProbe scriptProbe)
         {

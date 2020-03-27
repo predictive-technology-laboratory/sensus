@@ -24,6 +24,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\AndroidBluetoothDeviceReceiver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AndroidAttitudeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AndroidGyroscopeProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AndroidLinearAccelerationProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AndroidMagnetometerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AndroidPedometerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SliderInputEffect.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\AndroidCallbackScheduler.cs" />

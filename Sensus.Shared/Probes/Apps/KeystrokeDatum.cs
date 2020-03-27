@@ -42,7 +42,7 @@ namespace Sensus.Probes.Apps
         {
             get
             {
-                return "(Keystroke Data)";
+                return _key;
             }
         }
 
@@ -50,7 +50,7 @@ namespace Sensus.Probes.Apps
 		/// The key pressed.
 		/// </summary>
 		[StringProbeTriggerProperty]
-        [Anonymizable(null, typeof(StringHashAnonymizer), false)]
+        [Anonymizable(null, new[] { typeof(StringHashAnonymizer), typeof(RegExAnonymizer) }, -1)]
         public string Key { get => _key; set => _key = value; }
 
 		/// <summary>

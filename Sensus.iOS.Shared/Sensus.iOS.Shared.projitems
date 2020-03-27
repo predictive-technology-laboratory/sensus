@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\iOSTimerCallbackScheduler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UNUserNotificationCallbackScheduler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Concurrent\MainConcurrent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Context\iOSSensusContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\iOSCalendarProbe.cs" />
@@ -24,6 +25,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\iOSAttitudeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\iOSGyroscopeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\iOSLinearAccelerationProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\IOSMagnetometerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\iOSPedometerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\iOSPollingWlanProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitBiologicalSexProbe.cs" />
@@ -52,7 +54,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\UNUserNotifications\UNUserNotificationDelegate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\UNUserNotifications\UNUserNotificationNotifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\iOSNotifier.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Callbacks\UNUserNotificationCallbackScheduler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GlobalSuppressions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NetworkConnectivity.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBackgroundIndoorLocationManagerDelegate.cs" />

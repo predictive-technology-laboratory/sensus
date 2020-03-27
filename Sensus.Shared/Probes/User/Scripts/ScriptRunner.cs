@@ -27,6 +27,9 @@ using Sensus.UI.Inputs;
 using Plugin.Permissions.Abstractions;
 using System.ComponentModel;
 using Sensus.Notifications;
+using Sensus.Exceptions;
+using System.Text.RegularExpressions;
+using Newtonsoft.Json.Serialization;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -539,8 +542,10 @@ namespace Sensus.Probes.User.Scripts
                 return;
             }
 
-            // clean up scheduled callback times
-            List<ScriptTriggerTime> callbackTimesToReschedule = new List<ScriptTriggerTime>();
+			bool isPastTrigger(ScriptTriggerTime x) => x.Trigger <= DateTime.Now && (x.Expiration == null || x.Expiration > DateTime.Now);
+
+			// clean up scheduled callback times
+			List<ScriptTriggerTime> callbackTimesToReschedule = new List<ScriptTriggerTime>();
             lock (_scheduledCallbackTimes)
             {
                 // remove any callbacks whose times have passed. be sure to use the callback's next execution time, as this may differ
@@ -564,13 +569,18 @@ namespace Sensus.Probes.User.Scripts
                         // we're about to reschedule the callback. remove the old one so we don't have duplicates.
                         _scheduledCallbackTimes.Remove(callbackTime);
                     }
+					else if (isPastTrigger(callbackTime.Item2))
+					{
+						// the trigger time is in the past but it is also in SensusContext.Current.CallbackScheduler, so it should not need to be run or rescheduled
+						_scheduledCallbackTimes.Remove(callbackTime);
+					}
                 }
             }
 
 			// if there are any trigger times in the past, then make sure the script has been run
-			if (callbackTimesToReschedule.Any(x => x.Trigger <= DateTime.Now && x.Expiration > DateTime.Now))
+			if (callbackTimesToReschedule.OrderByDescending(x => x.Trigger).FirstOrDefault(isPastTrigger) is ScriptTriggerTime pastTriggerTime)
 			{
-				await RunAsync(Script);
+				await RunAsync(Script.Copy(true, pastTriggerTime));
 			}
 
 			callbackTimesToReschedule.RemoveAll(x => x.Trigger <= DateTime.Now);
@@ -659,9 +669,7 @@ namespace Sensus.Probes.User.Scripts
         /// <param name="scriptId">Script identifier. If null, then a random identifier will be generated for the script that will be run.</param>
         private ScheduledCallback CreateScriptRunCallback(ScriptTriggerTime triggerTime, string scriptId = null)
         {
-            Script scriptToRun = Script.Copy(true);
-            scriptToRun.ExpirationDate = triggerTime.Expiration;
-            scriptToRun.ScheduledRunTime = triggerTime.Trigger;
+            Script scriptToRun = Script.Copy(true, triggerTime);
 
             // if we're passed a run ID, then override the random one that was generated above in the call to Script.Copy.
             if (scriptId != null)
@@ -838,5 +846,78 @@ namespace Sensus.Probes.User.Scripts
             await (Probe.Agent?.ObserveAsync(script, ScriptState.Delivered) ?? Task.CompletedTask);
             Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Delivered, script.RunTime.Value, script), CancellationToken.None);
         }
-    }
+
+		private string GetCopyName()
+		{
+			try
+			{
+				string pattern = @"\s*-\s*Copy\s*(?<number>\d*)$";
+
+				string name = Regex.Replace(Name, pattern, "");
+
+				string countString = Probe.ScriptRunners.Max(x => Regex.Match(x.Name, $@"(?<={name}){pattern}").Groups["number"].Value);
+
+				int.TryParse(countString, out int count);
+
+				count = Math.Max(count, Probe.ScriptRunners.Count(x => Regex.IsMatch(x.Name, $@"(?<={name})({pattern})?$")) - 1);
+
+				if (count > 0)
+				{
+					name += $" - Copy {count + 1}";
+				}
+				else
+				{
+					name += " - Copy";
+				}
+
+				return name;
+			}
+			catch
+			{
+				SensusServiceHelper.Get().Logger.Log("Error creating unique script runner name", LoggingLevel.Normal, GetType());
+			}
+
+			return Name + " - Copy";
+		}
+
+		public ScriptRunner Copy()
+		{
+			JsonSerializerSettings settings = new JsonSerializerSettings
+			{
+				PreserveReferencesHandling = PreserveReferencesHandling.None,
+				ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+				TypeNameHandling = TypeNameHandling.All,
+				ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+			};
+
+			try
+			{
+				SensusServiceHelper.Get().FlashNotificationsEnabled = false;
+				ScriptRunner copy = JsonConvert.DeserializeObject<ScriptRunner>(JsonConvert.SerializeObject(this, settings), settings);
+
+				copy.Script.Id = Guid.NewGuid().ToString();
+				copy.Probe = Probe;
+
+				copy.Name = GetCopyName();
+
+				foreach (InputGroup inputGroup in copy.Script.InputGroups)
+				{
+					inputGroup.Id = Guid.NewGuid().ToString();
+				}
+
+				return copy;
+			}
+			catch (Exception ex)
+			{
+				string message = $"Failed to copy script runner:  {ex.Message}";
+				SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+				SensusException.Report(message, ex);
+				return null;
+			}
+			finally
+			{
+				SensusServiceHelper.Get().FlashNotificationsEnabled = true;
+			}
+		}
+	}
 }

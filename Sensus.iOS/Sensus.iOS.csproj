@@ -107,6 +107,9 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <Reference Include="Plugin.Connectivity.Abstractions, Version=3.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xam.Plugin.Connectivity.3.2.0\lib\Xamarin.iOS10\Plugin.Connectivity.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="Sensus.Shared.NuGet, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sensus.1.55.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -335,9 +338,6 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     </Reference>
     <Reference Include="Plugin.FilePicker">
       <HintPath>..\packages\Xamarin.Plugin.FilePicker.2.0.135\lib\Xamarin.iOS10\Plugin.FilePicker.dll</HintPath>
-    </Reference>
-    <Reference Include="Sensus.Shared.NuGet">
-      <HintPath>..\packages\Sensus.1.51.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
