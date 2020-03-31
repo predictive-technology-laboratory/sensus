@@ -135,9 +135,13 @@ namespace Sensus.UI.UiProperties
 			{
 				if (file != null)
 				{
+					sourceButton.IsEnabled = false;
+					sourceButton.Text = "Processing...";
+
 					MediaObject media = await GetMediaObjectAsync(file);
 
 					setMediaObject(media);
+					sourceButton.IsEnabled = true;
 				}
 			}
 

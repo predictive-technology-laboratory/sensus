@@ -41,6 +41,7 @@ using Firebase.Iid;
 using Sensus.Exceptions;
 using WindowsAzure.Messaging;
 using Sensus.UI;
+using Android.Webkit;
 //using Sensus.Android.Probes.Apps.Accessibility;
 
 namespace Sensus.Android
