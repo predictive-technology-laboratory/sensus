@@ -76,7 +76,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
       <HintPath>..\packages\Xamarin.Forms.Contacts.1.0.5\lib\MonoAndroid10\Plugin.ContactService.dll</HintPath>
     </Reference>
     <Reference Include="Sensus.Shared.NuGet, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sensus.1.54.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
+      <HintPath>..\packages\Sensus.1.55.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -394,6 +394,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
   </ItemGroup>
   <Import Project="..\Sensus.Shared\Sensus.Shared.projitems" Label="Shared" />
   <Import Project="..\Sensus.Android.Shared\Sensus.Android.Shared.projitems" Label="Shared" />
+  <Import Project="..\ExampleSensingAgent.Shared\ExampleSensingAgent.Shared.projitems" Label="Shared" />
   <Import Project="..\packages\Xamarin.Build.Download.0.4.11\build\Xamarin.Build.Download.targets" Condition="Exists('..\packages\Xamarin.Build.Download.0.4.11\build\Xamarin.Build.Download.targets')" />
   <Import Project="..\packages\Xamarin.GooglePlayServices.Basement.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Basement.targets" Condition="Exists('..\packages\Xamarin.GooglePlayServices.Basement.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Basement.targets')" />
   <Import Project="..\packages\Xamarin.GooglePlayServices.Tasks.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Tasks.targets" Condition="Exists('..\packages\Xamarin.GooglePlayServices.Tasks.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Tasks.targets')" />
