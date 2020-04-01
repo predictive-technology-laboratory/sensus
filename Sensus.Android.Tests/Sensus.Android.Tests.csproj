@@ -37,6 +37,7 @@
     <JavaMaximumHeapSize>2G</JavaMaximumHeapSize>
     <NoWarn>
     </NoWarn>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
