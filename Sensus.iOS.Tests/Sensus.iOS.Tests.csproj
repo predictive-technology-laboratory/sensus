@@ -81,6 +81,7 @@
     </MtouchVerbosity>
     <BuildIpa>
     </BuildIpa>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <CodesignKey>iPhone Developer</CodesignKey>
