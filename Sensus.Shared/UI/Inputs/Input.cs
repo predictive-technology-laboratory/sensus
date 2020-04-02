@@ -22,6 +22,7 @@ using Sensus.UI.Inputs;
 using Sensus.Probes.User.Scripts;
 using Sensus.Exceptions;
 using System.ComponentModel;
+using static Sensus.UI.InputGroupPage;
 
 // register the input effect group
 [assembly: ResolutionGroupName(Input.EFFECT_RESOLUTION_GROUP_NAME)]
@@ -575,6 +576,11 @@ namespace Sensus.UI.Inputs
             _completionTimestamp = null;
             _backgroundColor = null;
             _padding = null;
+        }
+
+        public virtual void OnDisappearing(NavigationResult result)
+        {
+ 
         }
 
         public virtual bool ValueMatches(object conditionValue, bool conjunctive)

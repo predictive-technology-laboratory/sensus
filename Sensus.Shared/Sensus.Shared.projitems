@@ -180,6 +180,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\NumberEntryInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\SingleLineTextInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\SliderInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\TimerInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\VoiceInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\MapPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ParticipationReportDetailsPage.cs" />
