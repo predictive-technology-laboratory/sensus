@@ -7,9 +7,23 @@ namespace Sensus.UI.Inputs
 {
 	public class MediaInput : Input
 	{
+        private struct MediaEvent
+        {
+            public DateTimeOffset Timestamp { get; set; }
+            public int Position { get; set; }
+            public string Event { get; set; }
+        }
+
+        private List<MediaEvent> _events;
         private Label _label;
 
-		public override object Value => null;
+		public override object Value
+        {
+            get
+            {
+                return _events;
+            }
+        }
 
 		public override bool Enabled { get; set; }
 
@@ -28,6 +42,28 @@ namespace Sensus.UI.Inputs
                     HorizontalOptions = LayoutOptions.FillAndExpand,
                     Children = { _label }
                 });
+
+                _events = new List<MediaEvent>();
+
+                if (Media.Type.ToLower().StartsWith("image"))
+                {
+                    _events.Add(new MediaEvent { Timestamp = DateTimeOffset.UtcNow, Position = 0, Event = "View" });
+
+                    Complete = true;
+                }
+                else if (Media.Type.ToLower().StartsWith("video"))
+                {
+                    // the MediaView should be set after SetView is called
+                    MediaView.VideoEvent += (o, e) =>
+                    {
+                        _events.Add(new MediaEvent { Timestamp = DateTimeOffset.UtcNow, Position = (int)e.Position.TotalMilliseconds, Event = e.Event });
+
+                        if (e.Event == VideoPlayer.END)
+                        {
+                            Complete = true;
+                        }
+                    };
+                }
             }
             else
             {

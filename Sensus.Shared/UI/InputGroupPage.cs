@@ -126,37 +126,23 @@ namespace Sensus.UI
 
                     if (inputView != null)
                     {
-						// add media view to inputs that have media attached
-						if (input.Media != null && string.IsNullOrWhiteSpace(input.Media.Data) == false)
-						{
-							MediaView mediaView = new MediaView()
-							{
-								HorizontalOptions = LayoutOptions.FillAndExpand,
-								VerticalOptions = LayoutOptions.FillAndExpand
-							};
+                        // add media view to inputs that have media attached
+                        // this is done here because the media needs to be attached on appearing and disposed on disappearing
+                        if (input.Media != null && string.IsNullOrWhiteSpace(input.Media.Data) == false)
+                        {
+                            Appearing += async (s, e) =>
+                            {
+                                await input.InitializeMediaAsync();
+                            };
 
-							Appearing += async (s, e) =>
-							{
-								await mediaView.SetMediaAsync(input.Media);
-							};
+                            Disappearing += async (s, e) =>
+                            {
+                                await input.DisposeMediaAsync();
+                            };
+                        }
 
-							Disappearing += async (s, e) =>
-							{
-								await mediaView.DisposeMediaAsync();
-							};
-
-							StackLayout mediaLayout = new StackLayout
-							{
-								Children = { mediaView, inputView },
-								Orientation = StackOrientation.Vertical,
-								HorizontalOptions = LayoutOptions.CenterAndExpand
-							};
-
-							inputView = mediaLayout;
-						}
-
-						// frame all enabled inputs that request a frame
-						if (input.Enabled && input.Frame)
+                        // frame all enabled inputs that request a frame
+                        if (input.Enabled && input.Frame)
                         {
                             inputView = new Frame
                             {

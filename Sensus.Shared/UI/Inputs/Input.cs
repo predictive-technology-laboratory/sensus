@@ -22,6 +22,7 @@ using Sensus.UI.Inputs;
 using Sensus.Probes.User.Scripts;
 using Sensus.Exceptions;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 // register the input effect group
 [assembly: ResolutionGroupName(Input.EFFECT_RESOLUTION_GROUP_NAME)]
@@ -414,9 +415,6 @@ namespace Sensus.UI.Inputs
         [JsonIgnore]
         public Datum TriggeringDatum { get; set; }
 
-		[MediaPickerUiProperty("Media:", true, 7)]
-		public MediaObject Media { get; set; }
-
         public Input()
         {
             _name = DefaultName;
@@ -565,6 +563,26 @@ namespace Sensus.UI.Inputs
             }
 
             _view = viewContainer;
+
+            if (HasMedia)
+            {
+                MediaView mediaView = new MediaView()
+                {
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    VerticalOptions = LayoutOptions.FillAndExpand
+                };
+
+                MediaView = mediaView;
+
+                StackLayout mediaLayout = new StackLayout
+                {
+                    Children = { mediaView, _view },
+                    Orientation = StackOrientation.Vertical,
+                    HorizontalOptions = LayoutOptions.CenterAndExpand
+                };
+
+                _view = mediaLayout;
+            }
         }
 
         public void Reset()
@@ -624,6 +642,36 @@ namespace Sensus.UI.Inputs
         public override string ToString()
         {
             return _name;
+        }
+
+        [MediaPickerUiProperty("Media:", true, 7)]
+        public MediaObject Media { get; set; }
+
+        [JsonIgnore]
+        public MediaView MediaView { get; private set; }
+
+        public bool HasMedia
+        { 
+            get
+            {
+                return Media != null && string.IsNullOrWhiteSpace(Media.Data) == false;
+            }
+        }
+
+        public async Task InitializeMediaAsync()
+        {
+            if (HasMedia)
+            {
+                await MediaView.SetMediaAsync(Media);
+            }
+        }
+
+        public async Task DisposeMediaAsync()
+        {
+            if (HasMedia)
+            {
+                await MediaView.DisposeMediaAsync();
+            }
         }
     }
 }

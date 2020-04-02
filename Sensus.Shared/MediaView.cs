@@ -42,6 +42,8 @@ namespace Sensus
 				{
 					VideoPlayer player = new VideoPlayer();
 
+					player.VideoEvent += VideoEvent;
+
 					if (media.Embeded)
 					{
 						_filePath = Path.GetTempFileName();
@@ -90,5 +92,7 @@ namespace Sensus
 				}
 			}
 		}
+
+		public event EventHandler<VideoEventArgs> VideoEvent;
 	}
 }
