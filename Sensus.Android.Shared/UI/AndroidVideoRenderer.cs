@@ -13,11 +13,12 @@ using System;
 
 namespace Sensus.Android.UI
 {
-	public class AndroidVideoRenderer : ViewRenderer<VideoPlayer, RelativeLayout>, MediaPlayer.IOnPreparedListener, MediaPlayer.IOnCompletionListener
+	public class AndroidVideoRenderer : ViewRenderer<VideoPlayer, RelativeLayout>, MediaPlayer.IOnPreparedListener
 	{
 		private VideoView _videoView;
 		private MediaController _mediaController;
 		private View _parent;
+
 		public AndroidVideoRenderer(global::Android.Content.Context context) : base(context)
 		{
 
@@ -38,11 +39,6 @@ namespace Sensus.Android.UI
 
 				_parent.HeightRequest = ratio * mp.VideoHeight;
 			}
-		}
-
-		public void OnCompletion(MediaPlayer mp)
-		{
-			
 		}
 
 		protected override void OnElementChanged(ElementChangedEventArgs<VideoPlayer> e)
