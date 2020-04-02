@@ -211,6 +211,16 @@ namespace Sensus.Probes.User.Scripts
             return copy;
         }
 
+		public Script Copy(bool newId, ScriptTriggerTime triggerTime)
+		{
+			Script copy = Copy(newId);
+
+			copy.ExpirationDate = triggerTime.Expiration;
+			copy.ScheduledRunTime = triggerTime.Trigger;
+
+			return copy;
+		}
+
         public int CompareTo(Script script)
         {
             return DisplayDateTime.CompareTo(script.DisplayDateTime);

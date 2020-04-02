@@ -42,7 +42,7 @@ namespace Sensus.Probes.Location
 		{
 			get
 			{
-				return "Visits";
+				return "GPS Location Visits";
 			}
 		}
 

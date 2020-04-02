@@ -75,17 +75,18 @@ namespace Sensus.UI
                         {
                             indoorLocationPage.Content.IsVisible = true;
 
-                            EstimoteIndoorLocationDatum currentEstimoteDatum = current as EstimoteIndoorLocationDatum;
-
-                            // draw location before updating position
+							if (current is EstimoteIndoorLocationDatum currentEstimoteDatum)
+							{
+								// draw location before updating position
 #if __ANDROID__
-                            locationView.SetLocation(currentEstimoteDatum.EstimoteLocation);
+								locationView.SetLocation(currentEstimoteDatum.EstimoteLocation);
 #elif __IOS__
 
-                            locationView.DrawLocation(currentEstimoteDatum.EstimoteLocation);
+								locationView.DrawLocation(currentEstimoteDatum.EstimoteLocation);
 #endif
 
-                            locationView.UpdatePosition(currentEstimoteDatum.EstimotePosition);
+								locationView.UpdatePosition(currentEstimoteDatum.EstimotePosition);
+							}
                         }
                     });
 

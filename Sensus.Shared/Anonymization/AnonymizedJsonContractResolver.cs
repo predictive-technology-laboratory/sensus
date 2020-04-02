@@ -94,7 +94,7 @@ namespace Sensus.Anonymization
         private Protocol _protocol;
         private Dictionary<PropertyInfo, Anonymizer> _propertyAnonymizer;
 
-        public Protocol Protocol
+		public Protocol Protocol
         {
             get
             {
@@ -106,65 +106,107 @@ namespace Sensus.Anonymization
             }
         }
 
-        /// <summary>
-        /// Allows JSON serialization of the _propertyAnonymizer collection, which includes unserializable
-        /// PropertyInfo objects. Store the type/name of the PropertyInfo objects, along with the type of 
-        /// anonymizer.
-        /// </summary>
-        /// <value>The property string anonymizer string.</value>
-        public ObservableCollection<string> PropertyStringAnonymizerString
-        {
-            get
-            {
-                lock (_propertyAnonymizer)
-                {
-                    // get specs for current collection. in the case of serialization, this will store the current _propertyAnonymizer details. in 
-                    // the case of deserialization, this will be empty and will be filled in.
-                    ObservableCollection<string> propertyAnonymizerSpecs = new ObservableCollection<string>();
-                    foreach (PropertyInfo property in _propertyAnonymizer.Keys)
-                    {
-                        string anonymizerTypeStr = "";
-                        Anonymizer anonymizer = _propertyAnonymizer[property];
-                        if (anonymizer != null)
-                        {
-                            anonymizerTypeStr = anonymizer.GetType().FullName;
-                        }
+		public struct PropertyAnonymizer
+		{
+			public string Type { get; set; }
+			public string Property { get; set; }
+			public Anonymizer Anonymizer { get; set; }
+		}
 
-                        propertyAnonymizerSpecs.Add(property.ReflectedType.FullName + "-" + property.Name + ":" + anonymizerTypeStr);  // use the reflected type and not the declaring type, because we want different anonymizers for the same base-class property (e.g., DeviceId) within child-class implementations.
-                    }
+		/// <summary>
+		/// Allows JSON serialization of the _propertyAnonymizer collection, which includes unserializable
+		/// PropertyInfo objects. Store the type/name of the PropertyInfo object as a key and serialize the anonymizer itself.
+		/// </summary>
+		/// <value>The property string anonymizer string.</value>
+		public ObservableCollection<PropertyAnonymizer> PropertyAnonymizers
+		{
+			get
+			{
+				IEnumerable<PropertyAnonymizer> anonymizers = _propertyAnonymizer
+					.Where(x => x.Value != null)
+					.Select(x => new PropertyAnonymizer { Type = x.Key.DeclaringType.FullName, Property = x.Key.Name, Anonymizer = x.Value });
 
-                    // if we're deserializing, then propertyAnonymizerSpecs will be filled up after it is returned. handle the addition of 
-                    // items to rebuild the _propertyAnonymizer collection.
-                    propertyAnonymizerSpecs.CollectionChanged += (o, a) =>
-                    {
-                        foreach (string propertyAnonymizerSpec in a.NewItems)
-                        {
-                            string[] propertyAnonymizerParts = propertyAnonymizerSpec.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+				ObservableCollection<PropertyAnonymizer> observableAnonymizers = new ObservableCollection<PropertyAnonymizer>(anonymizers);
 
-                            string[] propertyParts = propertyAnonymizerParts[0].Split('-');
-                            Type datumType = Type.GetType(propertyParts[0]);
-                            PropertyInfo property = datumType.GetProperty(propertyParts[1]);
+				observableAnonymizers.CollectionChanged += (o, e) =>
+				{
+					foreach (PropertyAnonymizer item in e.NewItems)
+					{
+						// should be safer than add since this will overwrite if it already exists.
+						_propertyAnonymizer[Type.GetType(item.Type).GetProperty(item.Property)] = item.Anonymizer;
+					}
+				};
 
-                            Anonymizer anonymizer = null;
-                            if (propertyAnonymizerParts.Length > 1)
-                            {
-                                Type anonymizerType = Type.GetType(propertyAnonymizerParts[1]);
-                                anonymizer = Activator.CreateInstance(anonymizerType) as Anonymizer;
-                            }
+				return observableAnonymizers;
+			}
+		}
 
-                            _propertyAnonymizer.Add(property, anonymizer);
-                        }
-                    };
+		/// <summary>
+		/// Allows JSON serialization of the _propertyAnonymizer collection, which includes unserializable
+		/// PropertyInfo objects. Store the type/name of the PropertyInfo objects, along with the type of 
+		/// anonymizer.
+		/// 
+		/// This is preserved to support legacy protocols and should only allow the old serialized anonymizers to be deserialized.
+		/// </summary>
+		/// <value>The property string anonymizer string.</value>
+		[Obsolete] // marking this as obsolete even though it is never used directly in code.
+		public ObservableCollection<string> PropertyStringAnonymizerString
+		{
+			get
+			{
+				lock (_propertyAnonymizer)
+				{
+					// get specs for current collection. in the case of serialization, this will store the current _propertyAnonymizer details. in 
+					// the case of deserialization, this will be empty and will be filled in.
+					ObservableCollection<string> propertyAnonymizerSpecs = new ObservableCollection<string>();
+					//foreach (PropertyInfo property in _propertyAnonymizer.Keys)
+					//{
+					//	string anonymizerTypeStr = "";
+					//	Anonymizer anonymizer = _propertyAnonymizer[property];
+					//	if (anonymizer != null)
+					//	{
+					//		anonymizerTypeStr = anonymizer.GetType().FullName;
+					//	}
 
-                    return propertyAnonymizerSpecs;
-                }
-            }
-        }
+					//	propertyAnonymizerSpecs.Add(property.ReflectedType.FullName + "-" + property.Name + ":" + anonymizerTypeStr);  // use the reflected type and not the declaring type, because we want different anonymizers for the same base-class property (e.g., DeviceId) within child-class implementations.
+					//}
 
-        /// <summary>
-        /// For JSON.NET deserialization.
-        /// </summary>
-        private AnonymizedJsonContractResolver()
+					// if we're deserializing, then propertyAnonymizerSpecs will be filled up after it is returned. handle the addition of 
+					// items to rebuild the _propertyAnonymizer collection.
+					propertyAnonymizerSpecs.CollectionChanged += (o, a) =>
+					{
+						foreach (string propertyAnonymizerSpec in a.NewItems)
+						{
+							string[] propertyAnonymizerParts = propertyAnonymizerSpec.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
+
+							string[] propertyParts = propertyAnonymizerParts[0].Split('-');
+							Type datumType = Type.GetType(propertyParts[0]);
+							PropertyInfo property = datumType.GetProperty(propertyParts[1]);
+
+							Anonymizer anonymizer = null;
+							if (propertyAnonymizerParts.Length > 1)
+							{
+								Type anonymizerType = Type.GetType(propertyAnonymizerParts[1]);
+								anonymizer = Activator.CreateInstance(anonymizerType) as Anonymizer;
+							}
+
+							// now that this is legacy support code, only add if the key doesn't already exist.
+							if (_propertyAnonymizer.ContainsKey(property) == false)
+							{
+								_propertyAnonymizer.Add(property, anonymizer);
+							}
+						}
+					};
+
+					return propertyAnonymizerSpecs;
+				}
+			}
+		}
+
+		/// <summary>
+		/// For JSON.NET deserialization.
+		/// </summary>
+		private AnonymizedJsonContractResolver()
         {
             _propertyAnonymizer = new Dictionary<PropertyInfo, Anonymizer>();
         }
@@ -194,6 +236,17 @@ namespace Sensus.Anonymization
                 return anonymizer;
             }
         }
+
+		public IDictionary<PropertyInfo, Anonymizer> Anonymizers
+		{
+			get
+			{
+				lock(_propertyAnonymizer)
+				{
+					return new ReadOnlyDictionary<PropertyInfo, Anonymizer>(_propertyAnonymizer);
+				}
+			}
+		}
 
         /// <summary>
         /// Gets a list of properties of a type that should be serialized. The purpose of this class is to

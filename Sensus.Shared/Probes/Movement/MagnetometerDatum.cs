@@ -7,12 +7,12 @@ using System.Text;
 
 namespace Sensus.Probes.Movement
 {
-    class LinearAccelerationDatum : Datum, ILinearAccelerationDatum
+    class MagnetometerDatum : Datum
     {
         private double _x;
         private double _y;
         private double _z;
-        public LinearAccelerationDatum(DateTimeOffset timestamp,double x, double y, double z) : base(timestamp)
+        public MagnetometerDatum(DateTimeOffset timestamp, double x, double y, double z) : base(timestamp)
         {
             _x = x;
             _y = y;
@@ -25,7 +25,8 @@ namespace Sensus.Probes.Movement
         }
 
 
-        public override object StringPlaceholderValue {
+        public override object StringPlaceholderValue
+        {
             get
             {
                 return "[" + Math.Round(_x, 1) + "," + Math.Round(_y, 1) + "," + Math.Round(_z, 1) + "]";
@@ -35,21 +36,21 @@ namespace Sensus.Probes.Movement
         /// <summary>
         /// Linear acceleration along the Z axis.
         /// </summary>
-        [DoubleProbeTriggerProperty("X Acceleration")]
+        [DoubleProbeTriggerProperty("X Magnetic Field")]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         public double X { get => _x; set => _x = value; }
 
         /// <summary>
         /// Linear acceleration along the Z axis.
         /// </summary>
-        [DoubleProbeTriggerProperty("Y Acceleration")]
+        [DoubleProbeTriggerProperty("Y Magentic Field")]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         public double Y { get => _y; set => _y = value; }
 
         /// <summary>
         /// Linear acceleration along the Z axis.
         /// </summary>
-        [DoubleProbeTriggerProperty("Z Acceleration")]
+        [DoubleProbeTriggerProperty("Z Magnetic Field")]
         [Anonymizable(null, new Type[] { typeof(DoubleRoundingOnesAnonymizer), typeof(DoubleRoundingTensAnonymizer) }, -1)]
         public double Z { get => _z; set => _z = value; }
 
