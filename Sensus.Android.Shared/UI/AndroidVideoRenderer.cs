@@ -5,19 +5,44 @@ using Sensus.Android.UI;
 using Sensus;
 using RelativeLayout = Android.Widget.RelativeLayout;
 using Uri = Android.Net.Uri;
+using Android.Media;
+using Java.Interop;
+using System;
 
 [assembly: ExportRenderer(typeof(VideoPlayer), typeof(AndroidVideoRenderer))]
 
 namespace Sensus.Android.UI
 {
-	public class AndroidVideoRenderer : ViewRenderer<VideoPlayer, RelativeLayout>
+	public class AndroidVideoRenderer : ViewRenderer<VideoPlayer, RelativeLayout>, MediaPlayer.IOnPreparedListener, MediaPlayer.IOnCompletionListener
 	{
 		private VideoView _videoView;
 		private MediaController _mediaController;
-
+		private View _parent;
 		public AndroidVideoRenderer(global::Android.Content.Context context) : base(context)
 		{
 
+		}
+
+		public void OnPrepared(MediaPlayer mp)
+		{
+			_videoView.LayoutParameters.Height = LayoutParams.MatchParent;
+
+			if (_parent.Parent is ContentView == false)
+			{
+				double ratio = mp.VideoWidth / _parent.Width;
+
+				if (ratio > 1)
+				{
+					ratio = 1 / ratio;
+				}
+
+				_parent.HeightRequest = ratio * mp.VideoHeight;
+			}
+		}
+
+		public void OnCompletion(MediaPlayer mp)
+		{
+			
 		}
 
 		protected override void OnElementChanged(ElementChangedEventArgs<VideoPlayer> e)
@@ -26,14 +51,18 @@ namespace Sensus.Android.UI
 
 			if (e.NewElement != null)
 			{
+				_parent = e.NewElement.Parent as View;
+
 				if (Control == null)
 				{
 					RelativeLayout layout = new RelativeLayout(Context);
-					RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MatchParent, LayoutParams.MatchParent);
-					
+					RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MatchParent, 1);
+
 					_videoView = new VideoView(Context);
 					_mediaController = new MediaController(Context);
-					
+
+					_videoView.SetOnPreparedListener(this);
+
 					layout.AddView(_videoView);
 					layoutParams.AddRule(LayoutRules.CenterInParent);
 
