@@ -5,29 +5,77 @@ using Sensus.Android.UI;
 using Sensus;
 using RelativeLayout = Android.Widget.RelativeLayout;
 using Uri = Android.Net.Uri;
+using View = Xamarin.Forms.View;
 using Android.Media;
-using Java.Interop;
+using Android.Views;
 using System;
 
 [assembly: ExportRenderer(typeof(VideoPlayer), typeof(AndroidVideoRenderer))]
 
 namespace Sensus.Android.UI
 {
-	public class AndroidVideoRenderer : ViewRenderer<VideoPlayer, RelativeLayout>, MediaPlayer.IOnPreparedListener, MediaPlayer.IOnCompletionListener, MediaPlayer.IOnSeekCompleteListener
+	public class AndroidVideoRenderer : ViewRenderer<VideoPlayer, RelativeLayout>
 	{
 		private PrivateVideoView _videoView;
 		private VideoPlayer _videoPlayer;
 		private MediaController _mediaController;
 		private View _parent;
 
-		private class PrivateVideoView : VideoView
+		private class PrivateVideoView : VideoView, MediaPlayer.IOnPreparedListener, MediaPlayer.IOnCompletionListener, MediaPlayer.IOnSeekCompleteListener, ViewTreeObserver.IOnScrollChangedListener
 		{
 			private readonly VideoPlayer _videoPlayer;
 			private MediaPlayer _mediaPlayer;
+			private MediaController _mediaController;
 
 			public PrivateVideoView(global::Android.Content.Context context, VideoPlayer videoPlayer) : base(context)
 			{
 				_videoPlayer = videoPlayer;
+
+				SetOnPreparedListener(this);
+				SetOnCompletionListener(this);
+				ViewTreeObserver.AddOnScrollChangedListener(this);
+			}
+
+			public override void SetMediaController(MediaController controller)
+			{
+				_mediaController = controller;
+
+				base.SetMediaController(controller);
+			}
+
+			public void OnPrepared(MediaPlayer mp)
+			{
+				mp.SetOnSeekCompleteListener(this);
+				
+				SetMediaPlayer(mp);
+			}
+
+			public void OnSeekComplete(MediaPlayer mp)
+			{
+				_videoPlayer.OnVideoSeek(new VideoEventArgs(VideoPlayer.SEEK, TimeSpan.FromMilliseconds(mp.CurrentPosition)));
+			}
+
+			public void OnCompletion(MediaPlayer mp)
+			{
+				_videoPlayer.OnVideoEnd(new VideoEventArgs(VideoPlayer.END, TimeSpan.FromMilliseconds(mp.CurrentPosition)));
+			}
+
+			public override bool OnTouchEvent(MotionEvent e)
+			{
+				if (_mediaController != null && e.Action == MotionEventActions.Up)
+				{
+					_mediaController.Show();
+				}
+
+				return true;
+			}
+
+			public void OnScrollChanged()
+			{
+				if (_mediaController != null)
+				{
+					_mediaController.Hide();
+				}
 			}
 
 			public override void Start()
@@ -54,42 +102,26 @@ namespace Sensus.Android.UI
 			public void SetMediaPlayer(MediaPlayer mediaPlayer)
 			{
 				_mediaPlayer = mediaPlayer;
+
+				LayoutParameters.Height = LayoutParams.MatchParent;
+
+				if (_videoPlayer.Parent is View parent && parent.Parent is ContentView == false)
+				{
+					double ratio = mediaPlayer.VideoWidth / parent.Width;
+
+					if (ratio > 1)
+					{
+						ratio = 1 / ratio;
+					}
+
+					parent.HeightRequest = ratio * mediaPlayer.VideoHeight;
+				}
 			}
 		}
 
 		public AndroidVideoRenderer(global::Android.Content.Context context) : base(context)
 		{
 
-		}
-
-		public void OnPrepared(MediaPlayer mp)
-		{
-			mp.SetOnSeekCompleteListener(this);
-			_videoView.SetMediaPlayer(mp);
-
-			_videoView.LayoutParameters.Height = LayoutParams.MatchParent;
-
-			if (_parent.Parent is ContentView == false)
-			{
-				double ratio = mp.VideoWidth / _parent.Width;
-
-				if (ratio > 1)
-				{
-					ratio = 1 / ratio;
-				}
-
-				_parent.HeightRequest = ratio * mp.VideoHeight;
-			}
-		}
-
-		public void OnSeekComplete(MediaPlayer mp)
-		{
-			_videoPlayer.OnVideoSeek(new VideoEventArgs(VideoPlayer.SEEK, TimeSpan.FromMilliseconds(mp.CurrentPosition)));
-		}
-
-		public void OnCompletion(MediaPlayer mp)
-		{
-			_videoPlayer.OnVideoEnd(new VideoEventArgs(VideoPlayer.END, TimeSpan.FromMilliseconds(mp.CurrentPosition)));
 		}
 
 		protected override void OnElementChanged(ElementChangedEventArgs<VideoPlayer> e)
@@ -106,19 +138,14 @@ namespace Sensus.Android.UI
 					RelativeLayout layout = new RelativeLayout(Context);
 					RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(LayoutParams.MatchParent, 1);
 
-					_videoView = new PrivateVideoView(Context, _videoPlayer);
 					_mediaController = new MediaController(Context);
-
-					_videoView.SetOnPreparedListener(this);
-					_videoView.SetOnCompletionListener(this);
+					_videoView = new PrivateVideoView(Context, _videoPlayer);
 
 					layout.AddView(_videoView);
 					layoutParams.AddRule(LayoutRules.CenterInParent);
 
 					_videoView.LayoutParameters = layoutParams;
 
-					_mediaController.SetMediaPlayer(_videoView);
-					_mediaController.SetPrevNextListeners(null, null);
 					_videoView.SetMediaController(_mediaController);
 
 					SetNativeControl(layout);
