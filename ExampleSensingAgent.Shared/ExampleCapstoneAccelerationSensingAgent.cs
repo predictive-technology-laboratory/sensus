@@ -213,11 +213,9 @@ namespace ExampleSensingAgent
         { 
             get
             {
-                IProbe probe;
-
                 //it is worth noting that there is a bug in TryGetProbe if it is called with a more specific interface than IProbe
                 //this is the reason why we pass in IProbe and then typecast to IListeningProbe after the probe is returned
-                if(Protocol.TryGetProbe<ILinearAccelerationDatum, IProbe>(out probe))
+                if (Protocol.TryGetProbe<ILinearAccelerationDatum, IProbe>(out IProbe probe))
                 {
                     yield return (IListeningProbe)probe;
                 }
@@ -315,19 +313,19 @@ namespace ExampleSensingAgent
                 throw new Exception("Error, opportunistic control should be disabled for this agent");
             }
 
-            if ( currentState == SensingAgentState.ActiveControl)
+            if (currentState == SensingAgentState.ActiveControl || currentState == SensingAgentState.ActiveObservation)
             {
                 foreach(var probe in Probes)
                 {
                     probe.MaxDataStoresPerSecond = ProbeHz;
-                    await probe.RestartAsync(); //whether the probe is stopped or currently running this should refresh
+                    await probe.RestartAsync(); //this will work when whether the probes are stopped or currently running
                 }
             }
-            else if (currentState == SensingAgentState.EndingControl)
+            else if (currentState == SensingAgentState.Idle)
             {
                 foreach(var probe in Probes)
                 {
-                    await probe.StopAsync(); //whether or not the probe is already stopped this should not cause an issue
+                    await probe.StopAsync(); //this will work whether or not the probe is already stopped
                 }
             }
         }
