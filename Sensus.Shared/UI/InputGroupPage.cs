@@ -126,6 +126,21 @@ namespace Sensus.UI
 
                     if (inputView != null)
                     {
+                        // add media view to inputs that have media attached
+                        // this is done here because the media needs to be attached on appearing and disposed on disappearing
+                        if (input.Media != null && string.IsNullOrWhiteSpace(input.Media.Data) == false)
+                        {
+                            Appearing += async (s, e) =>
+                            {
+                                await input.InitializeMediaAsync();
+                            };
+
+                            Disappearing += async (s, e) =>
+                            {
+                                await input.DisposeMediaAsync();
+                            };
+                        }
+
                         // frame all enabled inputs that request a frame
                         if (input.Enabled && input.Frame)
                         {
@@ -140,13 +155,13 @@ namespace Sensus.UI
                             };
                         }
 
-                        // add some vertical separation between inputs
-                        if (_displayedInputCount > 0)
+						// add some vertical separation between inputs
+						if (_displayedInputCount > 0)
                         {
                             contentLayout.Children.Add(new BoxView { Color = Color.Transparent, HeightRequest = inputSeparatorHeight });
                         }
 
-                        contentLayout.Children.Add(inputView);
+						contentLayout.Children.Add(inputView);
                         displayedInputs.Add(input);
 
                         if (input.DisplayNumber)

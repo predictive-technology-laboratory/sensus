@@ -11,6 +11,13 @@ namespace Sensus.UI.Inputs
 {
 	public class TimerInput : Input, IVariableDefiningInput
 	{
+		private const string STARTED = "Started";
+		private const string USER_STARTED = "UserStarted";
+		private const string USER_PAUSED = "UserPaused";
+		private const string USER_STOPPED = "UserStopped";
+		private const string USER_SUBMITTED = "UserSubmitted";
+
+
 		private struct TimerEvent
 		{
 			public DateTimeOffset Timestamp { get; set; }
@@ -143,7 +150,7 @@ namespace Sensus.UI.Inputs
 
 				if (result == NavigationResult.Submit)
 				{
-					_events.Add(new TimerEvent { Timestamp = DateTimeOffset.UtcNow, ElapsedTime = _elapsedTime, Event = "UserSubmitted" });
+					_events.Add(new TimerEvent { Timestamp = DateTimeOffset.UtcNow, ElapsedTime = _elapsedTime, Event = USER_SUBMITTED });
 
 					Complete = true;
 				}
@@ -185,7 +192,7 @@ namespace Sensus.UI.Inputs
 					{
 						_timer.Start();
 
-						_events.Add(new TimerEvent { Timestamp = DateTimeOffset.UtcNow, ElapsedTime = _elapsedTime, Event = "UserStarted" });
+						_events.Add(new TimerEvent { Timestamp = DateTimeOffset.UtcNow, ElapsedTime = _elapsedTime, Event = USER_STARTED });
 
 						_startButton.IsEnabled = false;
 
@@ -207,7 +214,7 @@ namespace Sensus.UI.Inputs
 				{
 					_timer.Start();
 
-					_events.Add(new TimerEvent { Timestamp = DateTimeOffset.UtcNow, ElapsedTime = _elapsedTime, Event = "Started" });
+					_events.Add(new TimerEvent { Timestamp = DateTimeOffset.UtcNow, ElapsedTime = _elapsedTime, Event = STARTED });
 				}
 
 				if (ShowPauseButton)
@@ -227,7 +234,7 @@ namespace Sensus.UI.Inputs
 					{
 						_timer.Stop();
 
-						_events.Add(new TimerEvent { Timestamp = DateTimeOffset.UtcNow, ElapsedTime = _elapsedTime, Event = "UserPaused" });
+						_events.Add(new TimerEvent { Timestamp = DateTimeOffset.UtcNow, ElapsedTime = _elapsedTime, Event = USER_PAUSED });
 
 						_startButton.IsEnabled = true;
 						_pauseButton.IsEnabled = false;
@@ -253,7 +260,7 @@ namespace Sensus.UI.Inputs
 					{
 						_timer.Stop();
 
-						_events.Add(new TimerEvent { Timestamp = DateTimeOffset.UtcNow, ElapsedTime = _elapsedTime, Event = "UserStopped" });
+						_events.Add(new TimerEvent { Timestamp = DateTimeOffset.UtcNow, ElapsedTime = _elapsedTime, Event = USER_STOPPED });
 
 						_stopButton.IsEnabled = false;
 

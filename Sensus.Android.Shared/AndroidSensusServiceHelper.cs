@@ -41,6 +41,7 @@ using Firebase.Iid;
 using Sensus.Exceptions;
 using WindowsAzure.Messaging;
 using Sensus.UI;
+using Android.Webkit;
 //using Sensus.Android.Probes.Apps.Accessibility;
 
 namespace Sensus.Android
@@ -803,6 +804,13 @@ namespace Sensus.Android
 			await base.StopAsync();
 
 			_focusEvent.Dispose();
+		}
+
+		public override string GetMimeType(string path)
+		{
+			string extension = MimeTypeMap.GetFileExtensionFromUrl(path);
+
+			return MimeTypeMap.Singleton.GetMimeTypeFromExtension(extension)?.ToLower();
 		}
 	}
 }
