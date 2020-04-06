@@ -2435,24 +2435,45 @@ namespace Sensus
                                                                   .Select(probe => (probe, probe.CollectionDescription))
                                                                   .ToList();
 
-			probeDescriptions = probeDescriptions.GroupJoin(JsonAnonymizer.Anonymizers.Where(x => x.Value != null), o => o.Probe.DatumType, i => i.Key.DeclaringType, (o, i) =>
-			{
-				(Probe probe, string description) = o;
+            var test = JsonAnonymizer.Anonymizers;
 
-				List<(Anonymizable, Anonymizer)> anonymizers = i.Select(x => (x.Key.GetCustomAttribute<Anonymizable>(true), x.Value)).ToList();
+            //probeDescriptions = probeDescriptions.GroupJoin(JsonAnonymizer.Anonymizers.Where(x => x.Value != null), o => o.Probe.DatumType, i => i.Key.DeclaringType, (o, i) =>
+            //{
+            //    (Probe probe, string description) = o;
 
-				if (anonymizers.Any())
-				{
-					description += Environment.NewLine + "    Anonymization:";
+            //    string[] anonymizedProperties = i.Select(x => x.Key.GetCustomAttribute<Anonymizable>(true)?.PropertyDisplayName ?? x.Key.Name).ToArray();
 
-					foreach ((Anonymizable anonymizable, Anonymizer anonymizer) in anonymizers)
-					{
-						description += Environment.NewLine + $"        {anonymizable.PropertyDisplayName} {anonymizer.DisplayText}";
-					}
-				}
+            //    if (anonymizedProperties.Length > 1)
+            //    {
+            //        o.Description += " " + string.Join(", ", anonymizedProperties[0..^1]) + " and " + anonymizedProperties[^1] + " are anonymized.";
+            //    }
+            //    else if (anonymizedProperties.Length > 0)
+            //    {
+            //        o.Description += " " + anonymizedProperties[0] + "is anonymized.";
+            //    }
 
-				return (probe, description);
-			}).ToList();
+            //    return o;
+            //}).ToList();
+
+            probeDescriptions = probeDescriptions.Select(x =>
+            {
+                (Probe Probe, string Description) = x;
+
+                string[] anonymizedProperties = Probe.DatumType.GetProperties()
+                    .Where(y => JsonAnonymizer.Anonymizers.Any(z => z.Key.DeclaringType.IsAssignableFrom(y.DeclaringType) && z.Key.Name == y.Name))
+                    .Select(y => y.GetCustomAttribute<Anonymizable>(true)?.PropertyDisplayName ?? y.Name).ToArray();
+
+                if (anonymizedProperties.Length > 1)
+                {
+                    Description += " " + string.Join(", ", anonymizedProperties[0..^1]) + " and " + anonymizedProperties[^1] + " are anonymized.";
+                }
+                else if (anonymizedProperties.Length > 0)
+                {
+                    Description += " " + anonymizedProperties[0] + "is anonymized.";
+                }
+
+                return (Probe, Description);
+            }).ToList();
 
             if (probeDescriptions.Count == 0)
             {
