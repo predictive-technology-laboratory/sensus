@@ -33,6 +33,7 @@ namespace Sensus.Android.UI
 
 				SetOnPreparedListener(this);
 				SetOnCompletionListener(this);
+
 				ViewTreeObserver.AddOnScrollChangedListener(this);
 			}
 
