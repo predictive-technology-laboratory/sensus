@@ -259,6 +259,24 @@ namespace Sensus
             return fileBytes;
         }
 
+		public static async Task<byte[]> ReadAllBytesAsync(Stream stream)
+		{
+			const int BUFFER_SIZE = 1024;
+			byte[] fileBuffer = new byte[stream.Length];
+			byte[] buffer = new byte[BUFFER_SIZE];
+			int totalBytesRead = 0;
+			int bytesRead = 0;
+
+			while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+			{
+				Array.Copy(buffer, 0, fileBuffer, totalBytesRead, bytesRead);
+
+				totalBytesRead += bytesRead;
+			}
+
+			return fileBuffer;
+		}
+
         public static double GetDirectorySizeMB(string directory)
         {
             double directorySizeMB = 0;
@@ -1880,5 +1898,7 @@ namespace Sensus
 
             return index;
         }
+
+		public abstract string GetMimeType(string path);
     }
 }

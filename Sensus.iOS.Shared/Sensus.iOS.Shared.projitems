@@ -44,6 +44,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitWeightProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitWheelchairUseProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitNumberOfTimesFallenProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\iOSVideoRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SliderInputEffect.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\iOSBluetoothDeviceProximityProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\iOSActivityProbe.cs" />
@@ -60,7 +61,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteForegroundIndoorLocationManagerDelegate.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)UI\" />
     <Folder Include="$(MSBuildThisFileDirectory)Notifications\" />
     <Folder Include="$(MSBuildThisFileDirectory)Notifications\UNUserNotifications\" />
   </ItemGroup>
