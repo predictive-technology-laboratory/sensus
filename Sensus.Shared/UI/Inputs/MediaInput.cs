@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Sensus.UI.UiProperties;
+using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace Sensus.UI.Inputs
@@ -16,6 +18,7 @@ namespace Sensus.UI.Inputs
 
         private List<MediaEvent> _events;
         private Label _label;
+        private MediaView _mediaView;
 
 		public override object Value
         {
@@ -36,11 +39,17 @@ namespace Sensus.UI.Inputs
                 _label = CreateLabel(index);
                 _label.VerticalTextAlignment = TextAlignment.Center;
 
+                _mediaView = new MediaView()
+                {
+                    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    VerticalOptions = LayoutOptions.FillAndExpand
+                };
+
                 base.SetView(new StackLayout
                 {
-                    Orientation = StackOrientation.Horizontal,
-                    HorizontalOptions = LayoutOptions.FillAndExpand,
-                    Children = { _label }
+                    Orientation = StackOrientation.Vertical,
+                    HorizontalOptions = LayoutOptions.CenterAndExpand,
+                    Children = { _label, _mediaView }
                 });
 
                 _events = new List<MediaEvent>();
@@ -54,7 +63,7 @@ namespace Sensus.UI.Inputs
                 else if (Media.Type.ToLower().StartsWith("video"))
                 {
                     // the MediaView should be set after SetView is called
-                    MediaView.VideoEvent += (o, e) =>
+                    _mediaView.VideoEvent += (o, e) =>
                     {
                         _events.Add(new MediaEvent { Timestamp = DateTimeOffset.UtcNow, Position = (int)e.Position.TotalMilliseconds, Event = e.Event });
 
@@ -71,6 +80,33 @@ namespace Sensus.UI.Inputs
             }
 
             return base.GetView(index);
+        }
+
+        [MediaPickerUiProperty("Media:", true, 7)]
+        public MediaObject Media { get; set; }
+
+        public bool HasMedia
+        {
+            get
+            {
+                return Media != null && string.IsNullOrWhiteSpace(Media.Data) == false;
+            }
+        }
+
+        public async Task InitializeMediaAsync()
+        {
+            if (HasMedia)
+            {
+                await _mediaView.SetMediaAsync(Media);
+            }
+        }
+
+        public async Task DisposeMediaAsync()
+        {
+            if (HasMedia)
+            {
+                await _mediaView.DisposeMediaAsync();
+            }
         }
     }
 }

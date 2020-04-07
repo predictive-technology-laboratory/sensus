@@ -128,16 +128,16 @@ namespace Sensus.UI
                     {
                         // add media view to inputs that have media attached
                         // this is done here because the media needs to be attached on appearing and disposed on disappearing
-                        if (input.Media != null && string.IsNullOrWhiteSpace(input.Media.Data) == false)
+                        if (input is MediaInput mediaInput && mediaInput.HasMedia)
                         {
                             Appearing += async (s, e) =>
                             {
-                                await input.InitializeMediaAsync();
+                                await mediaInput.InitializeMediaAsync();
                             };
 
                             Disappearing += async (s, e) =>
                             {
-                                await input.DisposeMediaAsync();
+                                await mediaInput.DisposeMediaAsync();
                             };
                         }
 

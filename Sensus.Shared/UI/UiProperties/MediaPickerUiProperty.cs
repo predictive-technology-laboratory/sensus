@@ -27,6 +27,7 @@ namespace Sensus.UI.UiProperties
 		public const string URL = "Url";
 		public const string FROM_URL = "From Url";
 		public const string NONE = "None";
+		public const string CHOOSE = "Choose...";
 
 		private async Task<MediaObject> GetMediaObjectAsync(MediaFile file)
 		{
@@ -88,7 +89,7 @@ namespace Sensus.UI.UiProperties
 				}
 			}
 
-			return NONE;
+			return CHOOSE;
 		}
 
 		public override View GetView(PropertyInfo property, object o, out BindableProperty bindingProperty, out IValueConverter converter)
@@ -270,7 +271,7 @@ namespace Sensus.UI.UiProperties
 						property.SetValue(o, null);
 
 						urlStack.IsVisible = false;
-						sourceButton.Text = NONE;
+						sourceButton.Text = CHOOSE;
 					}
 				}
 				catch (Exception exception)
