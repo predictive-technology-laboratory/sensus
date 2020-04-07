@@ -32,6 +32,17 @@ namespace ExampleSensingAgent
     /// </summary>
     public class ExampleCapstoneAccelerationSensingAgent : SensingAgent
     {
+        #region Private Enums
+        /// <summary>
+        /// These are the states that the design document is built on these states don't 
+        /// perfectly map to the internal states of the sensing agent so we define a map below
+        /// </summary>
+        private enum DesignDocumentState
+        {
+            ListeningWindow, ActivePredictionWindow, InactivePredictionWindow
+        }
+        #endregion
+
         #region Private Classes
         /// <summary>
         /// A helper class for calculating, storing and passing model features.
@@ -204,53 +215,6 @@ namespace ExampleSensingAgent
         /// The data frequency at which data is recorded when a probe is under active control
         /// </summary>
         private int ProbeHz { get; set; }
-
-        /// <summary>
-        /// These are the probes that we'd like to turn on as part of the study
-        /// This list of probes was provided by Mehdi in an email.
-        /// </summary>
-        private IEnumerable<IListeningProbe> Probes
-        { 
-            get
-            {
-                //it is worth noting that there is a bug in TryGetProbe if it is called with a more specific interface than IProbe
-                //this is the reason why we pass in IProbe and then typecast to IListeningProbe after the probe is returned
-                if (Protocol.TryGetProbe<ILinearAccelerationDatum, IProbe>(out IProbe probe))
-                {
-                    yield return (IListeningProbe)probe;
-                }
-
-                if (Protocol.TryGetProbe<IAccelerometerDatum, IProbe>(out probe))
-                {
-                    yield return (IListeningProbe)probe;
-                }
-
-                if (Protocol.TryGetProbe<IGyroscopeDatum, IProbe>(out probe))
-                {
-                    yield return (IListeningProbe)probe;
-                }
-
-                if (Protocol.TryGetProbe<IAttitudeDatum, IProbe>(out probe))
-                {
-                    yield return (IListeningProbe)probe;
-                }
-
-                if (Protocol.TryGetProbe<IAltitudeDatum, IProbe>(out probe))
-                {
-                    yield return (IListeningProbe)probe;
-                }
-
-                if (Protocol.TryGetProbe<IMagnetometerDatum, IProbe> (out probe))
-                {
-                    yield return (IListeningProbe)probe;
-                }
-
-                if (Protocol.TryGetProbe<ICompassDatum, IProbe>(out probe))
-                {
-                    yield return (IListeningProbe)probe;
-                }
-            }
-        }
         #endregion
 
         #region Constructors
@@ -260,6 +224,26 @@ namespace ExampleSensingAgent
             PredictingWindow = TimeSpan.FromSeconds(300); //provided by Mehdi in an email
             Threshold        = 0.5; //not provided
             ProbeHz          = 20;  //provided by Mehdi in an email
+        }
+        #endregion
+
+        #region Public Override Methods
+        public override async Task InitializeAsync()
+        {
+            await base.InitializeAsync();
+
+            //Whenever a protocol first starts all the probes are on but the sensing agent is in an idle state.
+            //This causes problems with turning probes on and off. To address this we tell the sensing agent that it just
+            //transitioned from active (where all the probes would be on) to idle (which is the state its actually in).
+            //This transition places our sensing agent into a state where the probes that are on align with the idle state. 
+            await OnStateChangedAsync(SensingAgentState.ActiveControl, SensingAgentState.Idle, CancellationToken.None);
+
+            //We then immediately start a listening window to determine if sensors should be on since we just turned them off.
+            //it should be noted that the unusual assignment to an empty variable is done to hide a warning where the compiler
+            //complaines about the fact that we don't call ActAsync with "await". We intentionally don't call it with await because
+            //the InitializeAsync method is called as part of the protocol starting procedure and awaiting for the entire listening
+            //window causes a bad user experience since appears that the protocol is hanging when in fact it is simply listening
+            var task = ActAsync(CancellationToken.None);
         }
         #endregion
 
@@ -313,19 +297,27 @@ namespace ExampleSensingAgent
                 throw new Exception("Error, opportunistic control should be disabled for this agent");
             }
 
-            if (IsProbeStopState(previousState) && IsProbeStartState(currentState))
+            var previousDesignDocumentState = ToDesignDocumentState(previousState);
+            var currentDesignDocumentState  = ToDesignDocumentState(currentState);
+
+            if (currentDesignDocumentState != previousDesignDocumentState)
             {
-                foreach(var probe in Probes)
+                var previousProbes = ToDesignDocumentProbe(previousDesignDocumentState).ToArray();
+                var currentProbes  = ToDesignDocumentProbe(currentDesignDocumentState).ToArray();
+
+                var probesToIgnore = previousProbes.Intersect(currentProbes).ToArray();
+                var probesToStop   = previousProbes.Except(probesToIgnore).ToArray();
+                var probesToStart  = currentProbes.Except(probesToIgnore).ToArray();
+
+                foreach (var probe in probesToStop)
+                {
+                    await probe.StopAsync(); //this will work whether or not the probe is already stopped
+                }
+
+                foreach(var probe in probesToStart)
                 {
                     probe.MaxDataStoresPerSecond = ProbeHz;
                     await probe.RestartAsync(); //this will work when whether the probes are stopped or currently running
-                }
-            }
-            else if (IsProbeStartState(previousState) && IsProbeStopState(currentState))
-            {
-                foreach(var probe in Probes)
-                {
-                    await probe.StopAsync(); //this will work whether or not the probe is already stopped
                 }
             }
         }
@@ -427,23 +419,52 @@ namespace ExampleSensingAgent
         }
 
         /// <summary>
-        /// These are the states that sensors should be started in (selected by design)
+        /// A function to map state to the constructs used/defined in the design document
         /// </summary>
         /// <param name="state">a sensing agent state</param>
-        /// <returns>If the sensors should start for the given state</returns>
-        private bool IsProbeStartState(SensingAgentState state)
+        /// <returns>The state in terms of design document constructs</returns>
+        private DesignDocumentState ToDesignDocumentState(SensingAgentState state)
         {
-            return state == SensingAgentState.ActiveObservation || state == SensingAgentState.ActiveObservation;
+            if (state == SensingAgentState.ActiveObservation)
+            {
+                return DesignDocumentState.ListeningWindow;
+            }
+            else if(state == SensingAgentState.ActiveControl)
+            {
+                return DesignDocumentState.ActivePredictionWindow;
+            }
+            else
+            {
+                return DesignDocumentState.InactivePredictionWindow;
+            }
         }
 
         /// <summary>
-        /// These are the states that sensors should be stopped in (selected by design)
+        /// A function to map state to probes as defined in the design document and an email from Mehdi
         /// </summary>
         /// <param name="state">a sensing agent state</param>
-        /// <returns>If the sensors should stop for the given state</returns>
-        private bool IsProbeStopState(SensingAgentState state)
+        /// <returns>The state in terms of design document constructs</returns>
+        private IEnumerable<IListeningProbe> ToDesignDocumentProbe(DesignDocumentState state)
         {
-            return !IsProbeStartState(state);
+            //it is worth noting that there is a bug in TryGetProbe if it is called with a more specific interface than IProbe
+            //this is the reason why we pass in IProbe and then typecast to IListeningProbe after the probe is returned
+            IProbe probe;
+
+            if (state == DesignDocumentState.ListeningWindow)
+            {
+                if(Protocol.TryGetProbe<ILinearAccelerationDatum, IProbe>(out probe)) yield return (IListeningProbe)probe;
+            }
+
+            if(state == DesignDocumentState.ActivePredictionWindow)
+            {
+                if(Protocol.TryGetProbe<ILinearAccelerationDatum, IProbe>(out probe)) yield return (IListeningProbe)probe;
+                if(Protocol.TryGetProbe<IAccelerometerDatum     , IProbe>(out probe)) yield return (IListeningProbe)probe;
+                if(Protocol.TryGetProbe<IGyroscopeDatum         , IProbe>(out probe)) yield return (IListeningProbe)probe;
+                if(Protocol.TryGetProbe<IAttitudeDatum          , IProbe>(out probe)) yield return (IListeningProbe)probe;
+                if(Protocol.TryGetProbe<IAltitudeDatum          , IProbe>(out probe)) yield return (IListeningProbe)probe;
+                if(Protocol.TryGetProbe<IMagnetometerDatum      , IProbe>(out probe)) yield return (IListeningProbe)probe;
+                if(Protocol.TryGetProbe<ICompassDatum           , IProbe>(out probe)) yield return (IListeningProbe)probe;
+            }
         }
         #endregion
     }
