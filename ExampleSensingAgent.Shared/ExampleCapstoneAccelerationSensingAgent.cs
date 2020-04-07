@@ -302,8 +302,8 @@ namespace ExampleSensingAgent
 
             if (currentDesignDocumentState != previousDesignDocumentState)
             {
-                var previousProbes = ToDesignDocumentProbe(previousDesignDocumentState).ToArray();
-                var currentProbes  = ToDesignDocumentProbe(currentDesignDocumentState).ToArray();
+                var previousProbes = ToDesignDocumentProbes(previousDesignDocumentState).ToArray();
+                var currentProbes  = ToDesignDocumentProbes(currentDesignDocumentState).ToArray();
 
                 var probesToIgnore = previousProbes.Intersect(currentProbes).ToArray();
                 var probesToStop   = previousProbes.Except(probesToIgnore).ToArray();
@@ -311,13 +311,13 @@ namespace ExampleSensingAgent
 
                 foreach (var probe in probesToStop)
                 {
-                    await probe.StopAsync(); //this will work whether or not the probe is already stopped
+                    await probe.StopAsync();
                 }
 
                 foreach(var probe in probesToStart)
                 {
                     probe.MaxDataStoresPerSecond = ProbeHz;
-                    await probe.RestartAsync(); //this will work when whether the probes are stopped or currently running
+                    await probe.StartAsync();
                 }
             }
         }
@@ -444,7 +444,7 @@ namespace ExampleSensingAgent
         /// </summary>
         /// <param name="state">a sensing agent state</param>
         /// <returns>The state in terms of design document constructs</returns>
-        private IEnumerable<IListeningProbe> ToDesignDocumentProbe(DesignDocumentState state)
+        private IEnumerable<IListeningProbe> ToDesignDocumentProbes(DesignDocumentState state)
         {
             //it is worth noting that there is a bug in TryGetProbe if it is called with a more specific interface than IProbe
             //this is the reason why we pass in IProbe and then typecast to IListeningProbe after the probe is returned
