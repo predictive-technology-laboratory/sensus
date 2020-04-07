@@ -109,6 +109,8 @@ namespace Sensus.UI.Inputs
 					{
 						_stopButton.IsEnabled = false;
 					}
+
+					Complete = true;
 				}
 
 				if (_elapsedTime % DISPLAY_PRECISION == 0)
