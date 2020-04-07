@@ -313,7 +313,7 @@ namespace ExampleSensingAgent
                 throw new Exception("Error, opportunistic control should be disabled for this agent");
             }
 
-            if (currentState == SensingAgentState.ActiveControl || currentState == SensingAgentState.ActiveObservation)
+            if (IsProbeStopState(previousState) && IsProbeStartState(currentState))
             {
                 foreach(var probe in Probes)
                 {
@@ -321,7 +321,7 @@ namespace ExampleSensingAgent
                     await probe.RestartAsync(); //this will work when whether the probes are stopped or currently running
                 }
             }
-            else if (currentState == SensingAgentState.Idle)
+            else if (IsProbeStartState(previousState) && IsProbeStopState(currentState))
             {
                 foreach(var probe in Probes)
                 {
@@ -424,6 +424,26 @@ namespace ExampleSensingAgent
 
             // the intercept
             yield return 1;
+        }
+
+        /// <summary>
+        /// These are the states that sensors should be started in (selected by design)
+        /// </summary>
+        /// <param name="state">a sensing agent state</param>
+        /// <returns>If the sensors should start for the given state</returns>
+        private bool IsProbeStartState(SensingAgentState state)
+        {
+            return state == SensingAgentState.ActiveObservation || state == SensingAgentState.ActiveObservation;
+        }
+
+        /// <summary>
+        /// These are the states that sensors should be stopped in (selected by design)
+        /// </summary>
+        /// <param name="state">a sensing agent state</param>
+        /// <returns>If the sensors should stop for the given state</returns>
+        private bool IsProbeStopState(SensingAgentState state)
+        {
+            return !IsProbeStartState(state);
         }
         #endregion
     }

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Sensus.Probes.Movement
 {
-    class MagnetometerDatum : Datum
+    class MagnetometerDatum : Datum, IMagnetometerDatum
     {
         private double _x;
         private double _y;
