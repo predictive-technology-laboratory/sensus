@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Sensus.Probes.Movement
 {
-    class AttitudeDatum : Datum
+    class AttitudeDatum : Datum, IAttitudeDatum
     {
         double _x;
         double _y;
