@@ -77,6 +77,8 @@ namespace Sensus.Android.Probes.Context
                 if (service == null)
                 {
                     SensusServiceHelper.Get().Logger.Log("Null service returned. The device is not running Senus.", LoggingLevel.Normal, GetType());
+
+                    _readCompletionSource.SetResult(null);
                 }
             }
             catch (Exception ex)
