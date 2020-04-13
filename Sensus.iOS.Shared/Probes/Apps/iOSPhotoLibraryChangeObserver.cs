@@ -66,7 +66,7 @@ namespace Sensus.iOS.Probes.Apps
 							string path = urlAsset.Url.Path;
 							string extension = urlAsset.Url.PathExtension;
 							string uniformTypeIdentifier = UTType.CreatePreferredIdentifier(UTType.TagClassFilenameExtension, extension, null);
-							string mimeType = UTType.GetPreferredTag(uniformTypeIdentifier, UTType.TagClassMIMEType); ;
+							string mimeType = UTType.GetPreferredTag(uniformTypeIdentifier, UTType.TagClassMIMEType);
 
 							await _probe.CreateAndStoreDatumAsync(path, mimeType, (DateTime)image.CreationDate);
 						}

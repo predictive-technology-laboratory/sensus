@@ -234,16 +234,9 @@ namespace Sensus.Android.Probes.Context
 				{
 					readCallback = new AndroidBluetoothClientGattCallback(_deviceIdService, _deviceIdCharacteristic);
 					BluetoothGatt gatt = deviceGroup.First().Device.ConnectGatt(Application.Context, false, readCallback);
-					BluetoothGattService service = gatt.GetService(_deviceIdService.Uuid);
-					string deviceId = null;
-					bool runningSensus = service != null;
+					string deviceId = await readCallback.ReadCharacteristicValueAsync(cancellationToken);
 
-					if (runningSensus)
-					{
-						deviceId = await readCallback.ReadCharacteristicValueAsync(cancellationToken);
-					}
-
-					if (DiscoverAll || runningSensus)
+					if (DiscoverAll || deviceId != null)
 					{
 						DateTimeOffset timestamp = deviceGroup.Min(x => x.Timestamp);
 
@@ -252,7 +245,7 @@ namespace Sensus.Android.Probes.Context
 						int rssi = deviceGroup.Min(x => x.Rssi);
 						bool paired = deviceGroup.Any(x => x.Device.BondState != Bond.None);
 
-						bluetoothDeviceProximityData.Add(new BluetoothDeviceProximityDatum(timestamp, deviceId, address, name, rssi, paired, runningSensus));
+						bluetoothDeviceProximityData.Add(new BluetoothDeviceProximityDatum(timestamp, deviceId, address, name, rssi, paired, deviceId != null));
 						ReadSuccessCount++;
 					}
 				}
