@@ -22,6 +22,7 @@ using Sensus.UI.Inputs;
 using Sensus.Probes.User.Scripts;
 using Sensus.Exceptions;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using static Sensus.UI.InputGroupPage;
 
 // register the input effect group

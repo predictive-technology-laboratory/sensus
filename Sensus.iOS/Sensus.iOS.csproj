@@ -343,6 +343,9 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <Reference Include="Plugin.FilePicker">
       <HintPath>..\packages\Xamarin.Plugin.FilePicker.2.0.135\lib\Xamarin.iOS10\Plugin.FilePicker.dll</HintPath>
     </Reference>
+    <Reference Include="Plugin.Media, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Xam.Plugin.Media.4.0.1.5\lib\xamarinios10\Plugin.Media.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
