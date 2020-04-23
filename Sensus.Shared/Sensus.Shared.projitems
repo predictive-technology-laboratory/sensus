@@ -32,6 +32,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ImpreciseDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MediaObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MediaView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Notifications\NotificationMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\ApplicationUsageEventProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\ApplicationUsageStatsProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\ApplicationUsageEventDatum.cs" />
@@ -187,6 +188,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\VoiceInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\MapPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\MediaPreviewPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\NotificationsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ParticipationReportDetailsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ParticipationReportPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\PendingScriptsPage.cs" />
@@ -224,10 +226,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\TimeUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\UiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\VerifiedParticipationPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\ViewNotificationPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ViewTextLinesPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\CallbackScheduler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\ScheduledCallback.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\DataRateCalculator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\ViewVisibleValueConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VideoPlayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Window.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeacon.cs" />
@@ -298,7 +302,6 @@
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ProbeTriggerProperties\" />
     <Folder Include="$(MSBuildThisFileDirectory)Callbacks\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Notifications\" />
     <Folder Include="$(MSBuildThisFileDirectory)Authentication\" />
     <Folder Include="$(MSBuildThisFileDirectory)Extensions\" />
   </ItemGroup>

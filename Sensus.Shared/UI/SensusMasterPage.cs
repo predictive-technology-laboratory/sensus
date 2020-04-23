@@ -52,6 +52,13 @@ namespace Sensus.UI
 
             detailPageItems.Add(new SensusDetailPageItem
             {
+                Title = "Notifications",
+                IconSource = "surveys.png",
+                TargetType = typeof(NotificationsPage)
+            });
+
+            detailPageItems.Add(new SensusDetailPageItem
+            {
                 Title = "Privacy Policy",
                 IconSource = "privacy.png",
                 Action = () =>
