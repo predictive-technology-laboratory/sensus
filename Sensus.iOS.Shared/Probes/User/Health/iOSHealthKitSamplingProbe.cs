@@ -42,7 +42,7 @@ namespace Sensus.iOS.Probes.User.Health
         public iOSHealthKitSamplingProbe(HKObjectType objectType)
             : base(objectType)
         {
-            //_queryAnchor = 0;
+
         }
 
         protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
