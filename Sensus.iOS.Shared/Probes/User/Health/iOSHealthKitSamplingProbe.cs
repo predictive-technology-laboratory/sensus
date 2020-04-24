@@ -40,7 +40,7 @@ namespace Sensus.iOS.Probes.User.Health
         public iOSHealthKitSamplingProbe(HKObjectType objectType)
             : base(objectType)
         {
-            _queryAnchor = 0;
+            //_queryAnchor = 0;
         }
 
         protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
@@ -51,7 +51,6 @@ namespace Sensus.iOS.Probes.User.Health
             Exception exception = null;
 
             HealthStore.ExecuteQuery(new HKAnchoredObjectQuery(ObjectType as HKSampleType, null, (nuint)_queryAnchor, nuint.MaxValue, new HKAnchoredObjectResultHandler2(
-                
                 (query, samples, newQueryAnchor, error) =>
                 {
                     try
