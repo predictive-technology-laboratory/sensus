@@ -18,6 +18,8 @@ using System.Collections.Generic;
 using Sensus;
 using HealthKit;
 using System.Threading.Tasks;
+using Foundation;
+using System.Linq;
 
 namespace Sensus.iOS.Probes.User.Health
 {
@@ -57,6 +59,11 @@ namespace Sensus.iOS.Probes.User.Health
                     {
                         if (error == null)
                         {
+                            if (_queryAnchor == 0 && samples.Length > 0)
+                            {
+                                samples = new[] { samples.Last() };
+                            }
+
                             foreach (HKSample sample in samples)
                             {
                                 Datum datum = ConvertSampleToDatum(sample);
