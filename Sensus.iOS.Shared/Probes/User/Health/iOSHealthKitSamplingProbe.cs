@@ -59,7 +59,7 @@ namespace Sensus.iOS.Probes.User.Health
                     {
                         if (error == null)
                         {
-                            if (_queryAnchor == 0 && samples.Length > 0)
+                            if (_queryAnchor == 0 && samples.Length > 1)
                             {
                                 samples = new[] { samples.Last() };
                             }
