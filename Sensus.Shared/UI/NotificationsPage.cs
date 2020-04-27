@@ -60,9 +60,9 @@ namespace Sensus.UI
 
 			_notificationList.SetBinding(IsVisibleProperty, new Binding("Count", converter: new ViewVisibleValueConverter(), converterParameter: false));  // don't show list when there are no surveys
 			_notificationList.ItemTemplate = new DataTemplate(typeof(NotificationTextCell));
-			_notificationList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(NotificationMessage.Title));
+			_notificationList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(NotificationMessage.DisplayTitle));
 			_notificationList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding(nameof(NotificationMessage.ViewedOn), converter: new TitleColorValueConverter(new TextCell().TextColor)));
-			_notificationList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding(nameof(NotificationMessage.ReceivedOn), stringFormat: "{0:g}")); //  nameof(NotificationMessage.DisplayReceivedOn));
+			_notificationList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding(nameof(NotificationMessage.ReceivedOn), stringFormat: "{0:g}"));
 			_notificationList.ItemsSource = SensusServiceHelper.Get().Notifications;
 
 			_notificationList.ItemTapped += ItemTapped;
@@ -93,10 +93,10 @@ namespace Sensus.UI
 
 			_contentGrid.Children.Add(noSurveysLabel, 0, 0);
 
-			SensusServiceHelper.Get().Notifications.Clear();
+			//SensusServiceHelper.Get().Notifications.Clear();
 
-			SensusServiceHelper.Get().Notifications.Add(new NotificationMessage { Title = "Test", Message = "This is a test notification", ReceivedOn = DateTime.Now.AddSeconds(-30) });
-			SensusServiceHelper.Get().Notifications.Add(new NotificationMessage { Title = "Test 2", Message = "This is another one.", ReceivedOn = DateTime.Now });
+			//SensusServiceHelper.Get().Notifications.Add(new NotificationMessage { Title = "Test", Message = "This is a test notification", ReceivedOn = DateTime.Now.AddSeconds(-30) });
+			//SensusServiceHelper.Get().Notifications.Add(new NotificationMessage { Title = "Test 2", Message = "This is another one.", ReceivedOn = DateTime.Now });
 		}
 
 		protected virtual async void ItemTapped(object sender, ItemTappedEventArgs args)
@@ -115,24 +115,15 @@ namespace Sensus.UI
 		{
 			public NotificationTextCell()
 			{
-				MenuItem deleteMenuItem = new MenuItem { Text = "Delete", IsDestructive = true };
-				deleteMenuItem.SetBinding(MenuItem.CommandParameterProperty, ".");
+				//MenuItem deleteMenuItem = new MenuItem { Text = "Delete", IsDestructive = true };
+				//deleteMenuItem.SetBinding(MenuItem.CommandParameterProperty, ".");
 
-				deleteMenuItem.Clicked += async (sender, e) =>
-				{
-					//Script scriptToDelete = (sender as MenuItem).CommandParameter as Script;
+				//deleteMenuItem.Clicked += async (sender, e) =>
+				//{
 
-					//if (SensusServiceHelper.Get().RemoveScripts(scriptToDelete))
-					//{
-					//	await SensusServiceHelper.Get().IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.Badge, scriptToDelete.Runner.Probe.Protocol);
-					//}
+				//};
 
-					//// let the script agent know and store a datum to record the event
-					//await (scriptToDelete.Runner.Probe.Agent?.ObserveAsync(scriptToDelete, ScriptState.Deleted) ?? Task.CompletedTask);
-					//scriptToDelete.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Deleted, DateTimeOffset.UtcNow, scriptToDelete), CancellationToken.None);
-				};
-
-				ContextActions.Add(deleteMenuItem);
+				//ContextActions.Add(deleteMenuItem);
 			}
 		}
 	}
