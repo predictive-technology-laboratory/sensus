@@ -81,7 +81,7 @@ namespace Sensus.UI
 			// display an informative message when there are no surveys
 			Label noSurveysLabel = new Label
 			{
-				Text = "You have no notifications.",
+				Text = "You have no messages.",
 				TextColor = Color.Accent,
 				FontSize = 20,
 				VerticalOptions = LayoutOptions.Center,
