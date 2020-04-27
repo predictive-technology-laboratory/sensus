@@ -22,7 +22,7 @@ using Xamarin.Forms;
 
 namespace Sensus.UI
 {
-	public class NotificationsPage : ContentPage
+	public class MessageCenterPage : ContentPage
 	{
 		protected Grid _contentGrid;
 		protected ListView _notificationList;
@@ -52,9 +52,9 @@ namespace Sensus.UI
 			}
 		}
 
-		public NotificationsPage()
+		public MessageCenterPage()
 		{
-			Title = "Notifications";
+			Title = "Message Center";
 
 			_notificationList = new ListView(ListViewCachingStrategy.RecycleElement);
 
@@ -101,14 +101,14 @@ namespace Sensus.UI
 
 		protected virtual async void ItemTapped(object sender, ItemTappedEventArgs args)
 		{
-			await Navigation.PushAsync(new ViewNotificationPage(_notificationList.SelectedItem as NotificationMessage, this));
+			await Navigation.PushAsync(new MessagePage(_notificationList.SelectedItem as NotificationMessage, this));
 		}
 
 		public async Task ViewNotification(NotificationMessage notificationMessage)
 		{
 			await Navigation.PopAsync();
 
-			await Navigation.PushAsync(new ViewNotificationPage(notificationMessage, this));
+			await Navigation.PushAsync(new MessagePage(notificationMessage, this));
 		}
 
 		private class NotificationTextCell : TextCell

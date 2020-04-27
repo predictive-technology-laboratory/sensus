@@ -52,9 +52,9 @@ namespace Sensus.UI
 
             detailPageItems.Add(new SensusDetailPageItem
             {
-                Title = "Notifications",
+                Title = "Message Center",
                 IconSource = "surveys.png",
-                TargetType = typeof(NotificationsPage)
+                TargetType = typeof(MessageCenterPage)
             });
 
             detailPageItems.Add(new SensusDetailPageItem

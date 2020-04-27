@@ -13,23 +13,21 @@
 // limitations under the License.
 
 using Sensus.Notifications;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Xamarin.Forms;
 
 namespace Sensus.UI
 {
-	public class ViewNotificationPage : ContentPage
+	public class MessagePage : ContentPage
 	{
-		public ViewNotificationPage(NotificationMessage notificationMessage, NotificationsPage parent)
+		public MessagePage(NotificationMessage notificationMessage, MessageCenterPage parent)
 		{
 			Title = notificationMessage.Title;
 
 			ToolbarItems.Add(new ToolbarItem("Delete", null, async () =>
 			{
-				if (await DisplayAlert("Confirm", "Are you sure you want to delete this notification?", "Yes", "No"))
+				if (await DisplayAlert("Confirm", "Are you sure you want to delete this message?", "Yes", "No"))
 				{
 					SensusServiceHelper.Get().Notifications.Remove(notificationMessage);
 

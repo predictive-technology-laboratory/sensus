@@ -188,7 +188,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\VoiceInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\MapPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\MediaPreviewPage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\NotificationsPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\MessageCenterPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ParticipationReportDetailsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ParticipationReportPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\PendingScriptsPage.cs" />
@@ -226,7 +226,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\TimeUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\UiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\VerifiedParticipationPage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\ViewNotificationPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\MessagePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ViewTextLinesPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\CallbackScheduler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\ScheduledCallback.cs" />
