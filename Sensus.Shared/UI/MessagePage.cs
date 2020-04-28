@@ -13,14 +13,19 @@
 // limitations under the License.
 
 using Sensus.Notifications;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Xamarin.Forms;
 
 namespace Sensus.UI
 {
 	public class MessagePage : ContentPage
 	{
+		public const string VIEW_EVENT = "View";
+		public const string DELETE_EVENT = "Delete";
+
 		public MessagePage(NotificationMessage notificationMessage, MessageCenterPage parent)
 		{
 			Title = notificationMessage.Title;
@@ -30,6 +35,8 @@ namespace Sensus.UI
 				if (await DisplayAlert("Confirm", "Are you sure you want to delete this message?", "Yes", "No"))
 				{
 					SensusServiceHelper.Get().Notifications.Remove(notificationMessage);
+
+					notificationMessage.Protocol.LocalDataStore.WriteDatum(new MessageEventDatum(notificationMessage.Id, notificationMessage.ProtocolId, DELETE_EVENT, DateTimeOffset.UtcNow), CancellationToken.None);
 
 					await Navigation.PopAsync();
 				}
@@ -105,6 +112,7 @@ namespace Sensus.UI
 
 			Content = layout;
 
+			notificationMessage.Protocol.LocalDataStore.WriteDatum(new MessageEventDatum(notificationMessage.Id, notificationMessage.ProtocolId, VIEW_EVENT, DateTimeOffset.UtcNow), CancellationToken.None);
 			notificationMessage.SetAsViewed();
 		}
 

@@ -12,7 +12,13 @@ namespace Sensus.Notifications
 		public DateTime ReceivedOn { get; set; }
 		public DateTime? ViewedOn { get; set; }
 
-		public string DisplayTitle { get; set; }
+		public string DisplayTitle
+		{
+			get
+			{
+				return Title + $" ({Protocol?.Name ?? "No Protocol"})";
+			}
+		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
 

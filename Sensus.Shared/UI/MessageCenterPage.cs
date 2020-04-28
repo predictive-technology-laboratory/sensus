@@ -95,8 +95,10 @@ namespace Sensus.UI
 
 			//SensusServiceHelper.Get().Notifications.Clear();
 
-			//SensusServiceHelper.Get().Notifications.Add(new NotificationMessage { Title = "Test", Message = "This is a test notification", ReceivedOn = DateTime.Now.AddSeconds(-30) });
-			//SensusServiceHelper.Get().Notifications.Add(new NotificationMessage { Title = "Test 2", Message = "This is another one.", ReceivedOn = DateTime.Now });
+			//Protocol protocol = Protocol.CreateAsync("Test protocol").Result;
+
+			//SensusServiceHelper.Get().Notifications.Add(new NotificationMessage { Title = "Test", Message = "This is a test notification", ReceivedOn = DateTime.Now.AddSeconds(-30), Protocol = protocol });
+			//SensusServiceHelper.Get().Notifications.Add(new NotificationMessage { Title = "Test 2", Message = "This is another one.", ReceivedOn = DateTime.Now, Protocol = protocol });
 		}
 
 		protected virtual async void ItemTapped(object sender, ItemTappedEventArgs args)
@@ -115,15 +117,7 @@ namespace Sensus.UI
 		{
 			public NotificationTextCell()
 			{
-				//MenuItem deleteMenuItem = new MenuItem { Text = "Delete", IsDestructive = true };
-				//deleteMenuItem.SetBinding(MenuItem.CommandParameterProperty, ".");
 
-				//deleteMenuItem.Clicked += async (sender, e) =>
-				//{
-
-				//};
-
-				//ContextActions.Add(deleteMenuItem);
 			}
 		}
 	}
