@@ -60,10 +60,10 @@ namespace Sensus.UI
 
 			_notificationList.SetBinding(IsVisibleProperty, new Binding("Count", converter: new ViewVisibleValueConverter(), converterParameter: false));  // don't show list when there are no surveys
 			_notificationList.ItemTemplate = new DataTemplate(typeof(NotificationTextCell));
-			_notificationList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(NotificationMessage.DisplayTitle));
-			_notificationList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding(nameof(NotificationMessage.ViewedOn), converter: new TitleColorValueConverter(new TextCell().TextColor)));
-			_notificationList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding(nameof(NotificationMessage.ReceivedOn), stringFormat: "{0:g}"));
-			_notificationList.ItemsSource = SensusServiceHelper.Get().Notifications;
+			_notificationList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(UserMessage.DisplayTitle));
+			_notificationList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding(nameof(UserMessage.ViewedOn), converter: new TitleColorValueConverter(new TextCell().TextColor)));
+			_notificationList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding(nameof(UserMessage.ReceivedOn), stringFormat: "{0:g}"));
+			_notificationList.ItemsSource = SensusServiceHelper.Get().UserMessages;
 
 			_notificationList.ItemTapped += ItemTapped;
 
@@ -86,27 +86,20 @@ namespace Sensus.UI
 				FontSize = 20,
 				VerticalOptions = LayoutOptions.Center,
 				HorizontalOptions = LayoutOptions.Center,
-				BindingContext = SensusServiceHelper.Get().Notifications
+				BindingContext = SensusServiceHelper.Get().UserMessages
 			};
 
 			noSurveysLabel.SetBinding(IsVisibleProperty, new Binding("Count", converter: new ViewVisibleValueConverter(), converterParameter: true));
 
 			_contentGrid.Children.Add(noSurveysLabel, 0, 0);
-
-			//SensusServiceHelper.Get().Notifications.Clear();
-
-			//Protocol protocol = Protocol.CreateAsync("Test protocol").Result;
-
-			//SensusServiceHelper.Get().Notifications.Add(new NotificationMessage { Title = "Test", Message = "This is a test notification", ReceivedOn = DateTime.Now.AddSeconds(-30), Protocol = protocol });
-			//SensusServiceHelper.Get().Notifications.Add(new NotificationMessage { Title = "Test 2", Message = "This is another one.", ReceivedOn = DateTime.Now, Protocol = protocol });
 		}
 
 		protected virtual async void ItemTapped(object sender, ItemTappedEventArgs args)
 		{
-			await Navigation.PushAsync(new MessagePage(_notificationList.SelectedItem as NotificationMessage, this));
+			await Navigation.PushAsync(new MessagePage(_notificationList.SelectedItem as UserMessage, this));
 		}
 
-		public async Task ViewNotification(NotificationMessage notificationMessage)
+		public async Task ViewNotification(UserMessage notificationMessage)
 		{
 			await Navigation.PopAsync();
 

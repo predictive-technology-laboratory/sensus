@@ -336,7 +336,7 @@ namespace Sensus
         private bool _flashNotificationsEnabled;
         private ConcurrentObservableCollection<Protocol> _registeredProtocols;
         private ConcurrentObservableCollection<Script> _scriptsToRun;
-        private ConcurrentObservableCollection<NotificationMessage> _notifications;
+        private ConcurrentObservableCollection<UserMessage> _notifications;
         private bool _updatingPushNotificationRegistrations;
         private bool _updatePushNotificationRegistrationsOnNextHealthTest;
         private bool _saving;
@@ -404,7 +404,7 @@ namespace Sensus
             }
         }
 
-        public ConcurrentObservableCollection<NotificationMessage> Notifications
+        public ConcurrentObservableCollection<UserMessage> UserMessages
         {
             get
             {
@@ -551,7 +551,7 @@ namespace Sensus
 
             _registeredProtocols = new ConcurrentObservableCollection<Protocol>();
             _scriptsToRun = new ConcurrentObservableCollection<Script>();
-            _notifications = new ConcurrentObservableCollection<NotificationMessage>();
+            _notifications = new ConcurrentObservableCollection<UserMessage>();
             _protocolStates = new Dictionary<string, ProtocolState>();
             _hasher = new SHA256Managed();
             _pointsOfInterest = new List<PointOfInterest>();

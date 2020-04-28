@@ -321,6 +321,23 @@ namespace Sensus.Notifications
 
                         await SensusContext.Current.CallbackScheduler.RaiseCallbackAsync(callbackId, invocationId);
                     }
+					#endregion
+
+					#region Feedback
+                    else if (pendingUpdate.Type == PushNotificationUpdateType.Feedback)
+                    {
+                        UserMessage message = new UserMessage()
+                        {
+                            Id = pendingUpdate.Id,
+                            ProtocolId = protocol.Id,
+                            Title = pendingUpdate.Content.Value<string>("title"),
+                            Message = pendingUpdate.Content.Value<string>("message"),
+                            ReceivedOn = DateTime.Now,
+                            Protocol = protocol
+                        };
+
+                        SensusServiceHelper.Get().UserMessages.Add(message);
+                    }
                     #endregion
 
                     #region clear pnr backlog

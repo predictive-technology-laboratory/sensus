@@ -1,9 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Threading;
 
 namespace Sensus.Notifications
 {
-	public class NotificationMessage : INotifyPropertyChanged
+	public class UserMessage : INotifyPropertyChanged
 	{
 		public string Id { get; set; }
 		public string ProtocolId { get; set; }
@@ -29,6 +30,11 @@ namespace Sensus.Notifications
 			if (ViewedOn == null)
 			{
 				ViewedOn = DateTime.Now;
+
+				if (Protocol != null)
+				{
+					Protocol.LocalDataStore.WriteDatum(new MessageEventDatum(Id, ProtocolId, MessageEventDatum.VIEW_EVENT, DateTimeOffset.UtcNow), CancellationToken.None);
+				}
 
 				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ViewedOn)));
 			}

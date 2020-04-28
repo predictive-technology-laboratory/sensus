@@ -4,6 +4,9 @@ namespace Sensus
 {
 	public class MessageEventDatum : Datum
 	{
+		public const string VIEW_EVENT = "View";
+		public const string DELETE_EVENT = "Delete";
+
 		public MessageEventDatum(string messageId, string protocolId, string eventType, DateTimeOffset timestamp) : base(timestamp)
 		{
 			MessageId = messageId;

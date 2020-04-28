@@ -23,20 +23,17 @@ namespace Sensus.UI
 {
 	public class MessagePage : ContentPage
 	{
-		public const string VIEW_EVENT = "View";
-		public const string DELETE_EVENT = "Delete";
-
-		public MessagePage(NotificationMessage notificationMessage, MessageCenterPage parent)
+		public MessagePage(UserMessage message, MessageCenterPage parent)
 		{
-			Title = notificationMessage.Title;
+			Title = message.Title;
 
 			ToolbarItems.Add(new ToolbarItem("Delete", null, async () =>
 			{
 				if (await DisplayAlert("Confirm", "Are you sure you want to delete this message?", "Yes", "No"))
 				{
-					SensusServiceHelper.Get().Notifications.Remove(notificationMessage);
+					SensusServiceHelper.Get().UserMessages.Remove(message);
 
-					notificationMessage.Protocol.LocalDataStore.WriteDatum(new MessageEventDatum(notificationMessage.Id, notificationMessage.ProtocolId, DELETE_EVENT, DateTimeOffset.UtcNow), CancellationToken.None);
+					message.Protocol.LocalDataStore.WriteDatum(new MessageEventDatum(message.Id, message.ProtocolId, MessageEventDatum.DELETE_EVENT, DateTimeOffset.UtcNow), CancellationToken.None);
 
 					await Navigation.PopAsync();
 				}
@@ -62,7 +59,7 @@ namespace Sensus.UI
 			buttonLayout.Children.Add(previousButton);
 			buttonLayout.Children.Add(nextButton);
 
-			if (IsFirst(notificationMessage))
+			if (IsFirst(message))
 			{
 				previousButton.IsEnabled = false;
 			}
@@ -70,11 +67,11 @@ namespace Sensus.UI
 			{
 				previousButton.Clicked += async (s, e) =>
 				{
-					await parent.ViewNotification(GetOtherNotification(notificationMessage, -1));
+					await parent.ViewNotification(GetMessage(message, -1));
 				};
 			}
 
-			if (IsLast(notificationMessage))
+			if (IsLast(message))
 			{
 				nextButton.IsEnabled = false;
 			}
@@ -82,14 +79,14 @@ namespace Sensus.UI
 			{
 				nextButton.Clicked += async (s, e) =>
 				{
-					await parent.ViewNotification(GetOtherNotification(notificationMessage, 1));
+					await parent.ViewNotification(GetMessage(message, 1));
 				};
 			}
 
 			ScrollView scrollView = new ScrollView
 			{
 				VerticalOptions = LayoutOptions.FillAndExpand,
-				Content = new Label { Text = notificationMessage.Message }
+				Content = new Label { Text = message.Message }
 			};
 
 			Frame frame = new Frame
@@ -112,32 +109,31 @@ namespace Sensus.UI
 
 			Content = layout;
 
-			notificationMessage.Protocol.LocalDataStore.WriteDatum(new MessageEventDatum(notificationMessage.Id, notificationMessage.ProtocolId, VIEW_EVENT, DateTimeOffset.UtcNow), CancellationToken.None);
-			notificationMessage.SetAsViewed();
+			message.SetAsViewed();
 		}
 
-		private static NotificationMessage GetOtherNotification(NotificationMessage notificationMessage, int offset)
+		private static UserMessage GetMessage(UserMessage message, int offset)
 		{
-			List<NotificationMessage> notifications = SensusServiceHelper.Get().Notifications.ToList();
+			List<UserMessage> messages = SensusServiceHelper.Get().UserMessages.ToList();
 
-			int index = notifications.IndexOf(notificationMessage) + offset;
+			int index = messages.IndexOf(message) + offset;
 
-			if (index > -1 && index < notifications.Count)
+			if (index > -1 && index < messages.Count)
 			{
-				return notifications[index];
+				return messages[index];
 			}
 
 			return null;
 		}
 
-		private static bool IsFirst(NotificationMessage notificationMessage)
+		private static bool IsFirst(UserMessage message)
 		{
-			return SensusServiceHelper.Get().Notifications.First() == notificationMessage;
+			return SensusServiceHelper.Get().UserMessages.First() == message;
 		}
 
-		private static bool IsLast(NotificationMessage notificationMessage)
+		private static bool IsLast(UserMessage message)
 		{
-			return SensusServiceHelper.Get().Notifications.Last() == notificationMessage;
+			return SensusServiceHelper.Get().UserMessages.Last() == message;
 		}
 
 	}
