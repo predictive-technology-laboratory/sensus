@@ -24,7 +24,6 @@ namespace Sensus.UI.Inputs
 		{
 			if (base.GetView(index) == null)
 			{
-				Required = false;
 				Label label = CreateLabel(-1);
 				
 				label.TextDecorations = TextDecorations.Underline;
