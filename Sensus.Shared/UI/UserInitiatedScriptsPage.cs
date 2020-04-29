@@ -31,7 +31,6 @@ namespace Sensus.UI
 
 			_scriptList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(Script.Caption));
 			_scriptList.ItemsSource = new ObservableCollection<Script>(_scripts);
-
 		}
 
 		public static IEnumerable<Script> GetProtocolScripts(Protocol protocol)
