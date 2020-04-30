@@ -18,6 +18,8 @@ using System.Collections.Generic;
 using Sensus;
 using HealthKit;
 using System.Threading.Tasks;
+using Foundation;
+using System.Linq;
 
 namespace Sensus.iOS.Probes.User.Health
 {
@@ -40,7 +42,7 @@ namespace Sensus.iOS.Probes.User.Health
         public iOSHealthKitSamplingProbe(HKObjectType objectType)
             : base(objectType)
         {
-            _queryAnchor = 0;
+
         }
 
         protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
@@ -51,13 +53,17 @@ namespace Sensus.iOS.Probes.User.Health
             Exception exception = null;
 
             HealthStore.ExecuteQuery(new HKAnchoredObjectQuery(ObjectType as HKSampleType, null, (nuint)_queryAnchor, nuint.MaxValue, new HKAnchoredObjectResultHandler2(
-                
                 (query, samples, newQueryAnchor, error) =>
                 {
                     try
                     {
                         if (error == null)
                         {
+                            if (_queryAnchor == 0 && samples.Length > 1)
+                            {
+                                samples = new[] { samples.Last() };
+                            }
+
                             foreach (HKSample sample in samples)
                             {
                                 Datum datum = ConvertSampleToDatum(sample);
