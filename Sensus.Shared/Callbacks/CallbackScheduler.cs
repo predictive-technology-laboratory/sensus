@@ -302,7 +302,7 @@ namespace Sensus.Callbacks
                                 await RequestLocalInvocationAsync(callback);
 
 #if __IOS__
-                                //await RequestRemoteInvocationAsync(callback);
+                                await RequestRemoteInvocationAsync(callback);
 #endif
                             }
                             else
