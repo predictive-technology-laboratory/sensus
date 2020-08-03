@@ -67,11 +67,12 @@ namespace Sensus
 			}
 		}
 
-		public async Task DisposeMediaAsync()
+		public /*async*/ Task DisposeMediaAsync()
 		{
 			if (_stream != null)
 			{
-				await _stream.DisposeAsync();
+				//await _stream.DisposeAsync();
+				_stream.Dispose();
 
 				_stream = null;
 			}
@@ -80,6 +81,8 @@ namespace Sensus
 			{
 				File.Delete(_filePath);
 			}
+
+			return Task.CompletedTask;
 		}
 
 		private async Task<Stream> GetFromUrlAsync(MediaObject media)
