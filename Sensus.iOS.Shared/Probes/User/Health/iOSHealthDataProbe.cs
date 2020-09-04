@@ -54,6 +54,7 @@ namespace Sensus.iOS.Probes.User.Health
 		public class SampleCollector : HealthDataCollector
 		{
 			private HKQuantityTypeIdentifier _sampleType;
+			private nuint _queryAnchor;
 			private HKUnit _unit;
 
 			public HKQuantityTypeIdentifier SampleType
@@ -61,7 +62,7 @@ namespace Sensus.iOS.Probes.User.Health
 				get
 				{
 					return _sampleType;
-				}	
+				}
 				set
 				{
 					_sampleType = value;
@@ -70,8 +71,17 @@ namespace Sensus.iOS.Probes.User.Health
 					Key = value.ToString();
 				}
 			}
-			public uint QueryAnchor { get; set; }
-
+			public uint QueryAnchor
+			{
+				get
+				{
+					return (uint)_queryAnchor;
+				}
+				set
+				{
+					_queryAnchor = value;
+				}
+			}
 			public string Unit
 			{
 				get
@@ -99,7 +109,7 @@ namespace Sensus.iOS.Probes.User.Health
 			{
 				TaskCompletionSource<List<HealthDatum>> completionSource = new TaskCompletionSource<List<HealthDatum>>();
 
-				HealthStore.ExecuteQuery(new HKAnchoredObjectQuery(ObjectType as HKSampleType, null, (nuint)QueryAnchor, nuint.MaxValue, new HKAnchoredObjectResultHandler2(
+				HealthStore.ExecuteQuery(new HKAnchoredObjectQuery(ObjectType as HKSampleType, null, _queryAnchor, nuint.MaxValue, new HKAnchoredObjectResultHandler2(
 					(query, samples, newQueryAnchor, error) =>
 					{
 						List<HealthDatum> data = new List<HealthDatum>();
@@ -120,7 +130,7 @@ namespace Sensus.iOS.Probes.User.Health
 									data.Add(datum);
 								}
 
-								QueryAnchor = (uint)newQueryAnchor;
+								_queryAnchor = newQueryAnchor;
 							}
 							else
 							{
@@ -434,7 +444,7 @@ namespace Sensus.iOS.Probes.User.Health
 					NSSet objectTypesToRead = NSSet.MakeNSObjectSet(objectTypes);
 
 					(bool success, NSError error) = await _healthStore.RequestAuthorizationToShareAsync(new NSSet(), objectTypesToRead);
-					
+
 					if (success == false)
 					{
 						string message = "Failed to request HealthKit authorization: " + (error?.ToString() ?? "[no details]");
