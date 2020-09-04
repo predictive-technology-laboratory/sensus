@@ -405,11 +405,6 @@ namespace Sensus.iOS.Probes.User.Health
 
 		private void InitializeCollectors()
 		{
-			//if (Collectors == null)
-			//{
-			//	Collectors = new List<HealthDataCollector>();
-			//}
-
 			_collectors = Collectors.ToDictionary(x => x.Key);
 
 			InitializeCollector(CollectBiologicalSex, new BiologicalSexCollector(_healthStore));
