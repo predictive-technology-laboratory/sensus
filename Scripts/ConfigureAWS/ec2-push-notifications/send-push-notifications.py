@@ -98,16 +98,22 @@ def main(arguments):
     #requests = list(dict([(request.request["id"], request) for request in requests]).values())
 
     processed_ids = {}
+    updates = {}
 
     for request in requests:
-        request_id = request.request["id"]
+        id = request.request["id"]
         time = datetime.fromtimestamp(request.request["time"], timezone.utc)
 
         # check whether we've already processed the push notification id for a request that 
         # was newer. if we haven, then the current request is obsolete and can be removed.
-        if (request_id not in processed_ids):
-            print(f"New request identifier {request_id} ({time})")
-            processed_ids[request_id] = True
+        if (id not in processed_ids):
+            print(f"New request identifier {id} (time {time})")
+            processed_ids[id] = True
+
+            device = request.request["device"]
+            device_token = get_device_token(local_tokens_path, device)
+
+            token = device_token.get("token", "")
 
             # the cron scheduler runs periodically. we're going to be proactive and try to ensure that push notifications 
             # arrive at the device no later than the desired time. this is important, particularly on iOS where the arrival
@@ -124,22 +130,59 @@ def main(arguments):
             # get a negative time_until_delivery and compared with <= to the negative value of the number of seconds in a day
             time_horizon = datetime.now(timezone.utc) + timedelta(minutes=6)
             time_since_delivery = time_horizon - time
-            print(time_since_delivery)
+
              # delete any push notifications that have failed for an entire day
             if (time_since_delivery >= timedelta(days=1)):
                 delete_request(local_request_path, f"Push notification has failed for more than {timedelta(days=1).total_seconds():.0f} seconds. Deleting it.")
-            elif (time_since_delivery > timedelta(0)): # the delivery time has passed
-                pass # TODO: process request...
-            else: # the delivery time has not yet passed
+            elif (time_since_delivery < timedelta(0)): # proceed to next request if current delivery time has not arrived
                 print(f"Push notification will be delivered in {time_since_delivery.total_seconds()} seconds.")
+            elif (token == ""): # might not have a token (e.g., in cases where we failed to upload it or cleared it when stopping the protocol)
+                delete_request(local_request_path, f"No token found. Assuming the request is stale. Deleting it.")
+            elif ("update" not in request.request): # if the request does not have an update, then send it directly to the device. do not delete the request file in this case, as the app must do it to signal receipt.
+                print("Pushing non-update notification")
+                
+                # the backend key is the file name without the extension. this value
+                # is used by the app upon receipt to delete the push notification
+                # request from the s3 bucket.
+                backend_key = os.path.splitext(os.path.basename(os.path.normpath(request.path)))[0]
+
+                format = request.request["format"]
+                protocol = request.request["protocol"]
+                title = request.request["title"]
+                body = request.request["body"]
+                sound = request.request["sound"]
+
+                push_via_azure(format, "false", id, backend_key, protocol, title, body, sound, token)
+            else:  # otherwise pack the update into a per-device updates file to be delivered at the end
+                if (device not in updates):
+                    updates[device] = []
+                
+                update = request.request["update"]
+                update_type = update["type"]
+                update_content = update["content"]
+
+                updates[device].append({"id": id, "type": update_type, "content": update_content })
         else: # if the request id has been encountered already then delete the request file
-            delete_request(local_request_path, f"Obsolete request identifier {request_id} (time {time}). Deleting file.")
+            delete_request(local_request_path, f"Obsolete request identifier {id} (time {time}). Deleting file.")
+
+    print(updates)
 
     return
 
 def delete_request(request_path, message):
     print(message)
     # TODO: add remote delete and local delete...
+    return
+
+def get_device_token(local_tokens_path, device):
+    local_token_path = f"{local_tokens_path}/{device}.json"
+    if (os.path.exists(local_token_path)):
+        with open(local_token_path) as token:
+            return json.load(token)
+    return {} # return an empty dict if the file doesn't exist
+
+def push_via_azure(format, update, id, backend_key, protocol, title, body, sound, token):
+    print(f"push_vi_azure...")
     return
 
 def get_sas(namespace, hub, key):
