@@ -10,6 +10,9 @@ import signal
 import atexit
 import shutil
 from subprocess import call
+import json
+import glob
+from collections import namedtuple
 
 def main(arguments):
     # check options
@@ -67,14 +70,77 @@ def main(arguments):
     os.mkdir(new_updates_dir)
 
     # sync notifications from s3 to local, deleting anything local that doesn't exist in s3
-    print("\n************* DOWNLOADING REQUESTS FROM S3 *************")
-    os.makedirs(local_notifications_path, exist_ok=True)
-    call(f"aws s3 sync '{s3_notifications_path}' '{local_notifications_path}' --delete --exact-timestamps") # need the --exact-timestamps because 
-                                                                                                            # the token files can be updated but 
-                                                                                                            # remain the same size. without this
-                                                                                                            # options such updates don't register.
+    # print("\n************* DOWNLOADING REQUESTS FROM S3 *************")
+    # os.makedirs(local_notifications_path, exist_ok=True)
+    # call(f"aws s3 sync '{s3_notifications_path}' '{local_notifications_path}' --delete --exact-timestamps") # need the --exact-timestamps because 
+    #                                                                                                         # the token files can be updated but 
+    #                                                                                                         # remain the same size. without this
+    #                                                                                                         # options such updates don't register.
 
+    Request = namedtuple('Request', ['path', 'request'])
 
+    requests = []
+
+    paths = glob.glob(f"{local_requests_path}/*.json")
+
+    for local_request_path in paths:
+        # if the file isn't empty, open and deserialize it
+        if (os.path.getsize(local_request_path) > 0):
+            with open(local_request_path) as request:
+                requests.append(Request(local_request_path, json.load(request)))
+        else: # delete the file if it is empty
+            delete_request(local_request_path, f"Empty request {local_requests_path}. Deleting file.")
+
+    # sort the requests by their creation time in descending order
+    requests.sort(key=lambda request: request.request["creation-time"], reverse=True)
+
+    # convert the list of requests into a dictionary keyed by the request id, for duplicates the last entry is taken
+    #requests = list(dict([(request.request["id"], request) for request in requests]).values())
+
+    processed_ids = {}
+
+    for request in requests:
+        request_id = request.request["id"]
+        time = datetime.fromtimestamp(request.request["time"], timezone.utc)
+
+        # check whether we've already processed the push notification id for a request that 
+        # was newer. if we haven, then the current request is obsolete and can be removed.
+        if (request_id not in processed_ids):
+            print(f"New request identifier {request_id} ({time})")
+            processed_ids[request_id] = True
+
+            # the cron scheduler runs periodically. we're going to be proactive and try to ensure that push notifications 
+            # arrive at the device no later than the desired time. this is important, particularly on iOS where the arrival
+            # of push notifications cancels local notifications that disrupt the user. set up a buffer accounting for the 
+            # following latencies:
+            #   
+            #   * interval between cron runs:  5 minutes
+            #   * native push notification infrastructure:  1 minute
+            #
+            # we don't know exactly how long it will take for the current script to make a pass through
+            # the notifications. this will depend on deployment size and the protocol.
+
+            # note: the operands are transposed here compared to the original script. the original script subtracted to 
+            # get a negative time_until_delivery and compared with <= to the negative value of the number of seconds in a day
+            time_horizon = datetime.now(timezone.utc) + timedelta(minutes=6)
+            time_since_delivery = time_horizon - time
+            print(time_since_delivery)
+             # delete any push notifications that have failed for an entire day
+            if (time_since_delivery >= timedelta(days=1)):
+                delete_request(local_request_path, f"Push notification has failed for more than {timedelta(days=1).total_seconds():.0f} seconds. Deleting it.")
+            elif (time_since_delivery > timedelta(0)): # the delivery time has passed
+                pass # TODO: process request...
+            else: # the delivery time has not yet passed
+                print(f"Push notification will be delivered in {time_since_delivery.total_seconds()} seconds.")
+        else: # if the request id has been encountered already then delete the request file
+            delete_request(local_request_path, f"Obsolete request identifier {request_id} (time {time}). Deleting file.")
+
+    return
+
+def delete_request(request_path, message):
+    print(message)
+    # TODO: add remote delete and local delete...
+    return
 
 def get_sas(namespace, hub, key):
     url = f"https://{namespace}.servicebus.windows.net/{hub}/messages"
