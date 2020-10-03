@@ -13,6 +13,7 @@ from subprocess import call
 import json
 import glob
 from collections import namedtuple
+import uuid
 
 def main(arguments):
     # check options
@@ -65,9 +66,9 @@ def main(arguments):
     local_updates_path = f"{local_notifications_path}/{updates_dir}"
 
     # create special directory for updates created by this run of the script
-    new_updates_dir = "new_updates"
-    shutil.rmtree(new_updates_dir, True)
-    os.mkdir(new_updates_dir)
+    # new_updates_dir = "new_updates"
+    # shutil.rmtree(new_updates_dir, True)
+    # os.mkdir(new_updates_dir)
 
     # sync notifications from s3 to local, deleting anything local that doesn't exist in s3
     # print("\n************* DOWNLOADING REQUESTS FROM S3 *************")
@@ -77,13 +78,12 @@ def main(arguments):
     #                                                                                                         # remain the same size. without this
     #                                                                                                         # options such updates don't register.
 
-    Request = namedtuple('Request', ['path', 'request'])
+    Request = namedtuple("Request", ["path", "request"])
+    #Update = namedtuple("Update", ["path", "update"])
 
     requests = []
 
-    paths = glob.glob(f"{local_requests_path}/*.json")
-
-    for local_request_path in paths:
+    for local_request_path in glob.glob(f"{local_requests_path}/*.json"):
         # if the file isn't empty, open and deserialize it
         if (os.path.getsize(local_request_path) > 0):
             with open(local_request_path) as request:
@@ -93,9 +93,6 @@ def main(arguments):
 
     # sort the requests by their creation time in descending order
     requests.sort(key=lambda request: request.request["creation-time"], reverse=True)
-
-    # convert the list of requests into a dictionary keyed by the request id, for duplicates the last entry is taken
-    #requests = list(dict([(request.request["id"], request) for request in requests]).values())
 
     processed_ids = {}
     updates = {}
@@ -162,10 +159,41 @@ def main(arguments):
                 update_content = update["content"]
 
                 updates[device].append({"id": id, "type": update_type, "content": update_content })
+
+                # delete the request, as we're going to upload the updates file to s3
+                delete_request(local_request_path, f"Packed request into updates file. Deleting the request.")
         else: # if the request id has been encountered already then delete the request file
             delete_request(local_request_path, f"Obsolete request identifier {id} (time {time}). Deleting file.")
 
-    print(updates)
+    for device, device_updates in updates.items():
+        device_updates_path = f"{local_updates_path}/{device}"
+        
+        # create device's updates directory if needed
+        os.makedirs(device_updates_path, exist_ok=True)
+        # write device updates to file in update directory
+        with open(f"{device_updates_path}/{uuid.uuid4()}.json", "w") as update:
+            json.dump(device_updates, update)
+
+    #print("************* UPLOADING NEW UPDATES TO S3 *************")
+    #call(f"aws s3 sync '${local_updates_path}' '{s3_updates_path}'")
+
+    for device, device_updates in updates.items():
+        device_token = get_device_token(local_tokens_path, device)
+
+        token = device_token.get("token", "")
+
+        if (token != ""):
+             # the token exists. send push notification.
+            format = device_token.get("format", "")
+            protocol = device_token.get("protocol", "")
+
+            push_via_azure(format, "true", f"{uuid.uuid4()}", "", protocol, "", "", "", token)
+
+            print(f"Pushed updates for device {device}")
+        else:
+            print(f"Token file does not exist for device {device}. Clearing updates for this device.")
+            shutil.rmtree(f"{local_updates_path}/{device}", True)
+            #call(f"aws s3 rm --recursive '{s3_updates_path}/{device}'")
 
     return
 
@@ -182,7 +210,7 @@ def get_device_token(local_tokens_path, device):
     return {} # return an empty dict if the file doesn't exist
 
 def push_via_azure(format, update, id, backend_key, protocol, title, body, sound, token):
-    print(f"push_vi_azure...")
+    print(f"push_via_azure...")
     return
 
 def get_sas(namespace, hub, key):
