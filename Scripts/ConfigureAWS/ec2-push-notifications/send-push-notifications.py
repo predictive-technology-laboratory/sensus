@@ -14,6 +14,8 @@ import json
 import glob
 from collections import namedtuple
 import uuid
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError
 
 def main(arguments):
     # check options
@@ -45,7 +47,8 @@ def main(arguments):
     key = arguments[4]
     
     # get shared access signature for communicating with azure endpoint
-    sas = get_sas(namespace, hub, key)
+    url = f"https://{namespace}.servicebus.windows.net/{hub}/messages"
+    sas = get_sas(url, key)
 
     # set up directory names
     push_notifications_dir = "push-notifications"
@@ -55,9 +58,9 @@ def main(arguments):
 
     # set up s3 paths
     s3_notifications_path = f"s3://{bucket}/{push_notifications_dir}"
-    s3_requests_path = f"{s3_notifications_path}/{requests_dir}"
-    s3_tokens_path = f"{s3_notifications_path}/{tokens_dir}"
-    s3_updates_path = f"{s3_notifications_path}/{updates_dir}"
+    #s3_requests_path = f"{s3_notifications_path}/{requests_dir}"
+    #s3_tokens_path = f"{s3_notifications_path}/{tokens_dir}"
+    #s3_updates_path = f"{s3_notifications_path}/{updates_dir}"
 
     # set up local paths
     local_notifications_path = f"{bucket}-{push_notifications_dir}"
@@ -149,7 +152,7 @@ def main(arguments):
                 body = request.request["body"]
                 sound = request.request["sound"]
 
-                push_via_azure(format, "false", id, backend_key, protocol, title, body, sound, token)
+                push_via_azure(url, sas, format, "false", id, backend_key, protocol, title, body, sound, token)
             else:  # otherwise pack the update into a per-device updates file to be delivered at the end
                 if (device not in updates):
                     updates[device] = []
@@ -187,7 +190,7 @@ def main(arguments):
             format = device_token.get("format", "")
             protocol = device_token.get("protocol", "")
 
-            push_via_azure(format, "true", f"{uuid.uuid4()}", "", protocol, "", "", "", token)
+            push_via_azure(url, sas, format, "true", f"{uuid.uuid4()}", "", protocol, "", "", "", token)
 
             print(f"Pushed updates for device {device}")
         else:
@@ -209,12 +212,26 @@ def get_device_token(local_tokens_path, device):
             return json.load(token)
     return {} # return an empty dict if the file doesn't exist
 
-def push_via_azure(format, update, id, backend_key, protocol, title, body, sound, token):
-    print(f"push_via_azure...")
+def push_via_azure(url, sas, format, update, id, backend_key, protocol, title, body, sound, token):
+    data = ""
+    
+    if (format == "gcm"):
+        data = json.dumps({"data": {"id": id, "protocol": protocol, "backend-key": backend_key, "update": update, "title": title, "body": body, "sound": sound}})
+    elif (format == "apple"):
+        data = json.dumps({"id": id, "protocol": protocol, "backend-key": backend_key, "update": update, "aps": {"content-available": 1, "alert": {"title": title, "body": body}, "sound": sound}})
+
+    request = Request(f"{url}/?direct&api-version=2015-04", bytearray(data, 'utf-8'), method="POST", headers={"ServiceBusNotification-Format": format, "ServiceBusNotification-DeviceHandle": token, "x-ms-version": "2015-04", "Authorization": sas, "Content-Type": "application/json;charset=utf-8"})
+    
+    try:
+        with urlopen(request) as response:
+            print(f"Azure push result: {response.status} {response.reason}")
+    except HTTPError as error:
+        print(f"Azure push result: {error.code} {error.reason}")
+
     return
 
-def get_sas(namespace, hub, key):
-    url = f"https://{namespace}.servicebus.windows.net/{hub}/messages"
+def get_sas(url, key):
+    #url = f"https://{namespace}.servicebus.windows.net/{hub}/messages"
 
     expiration = datetime.now(timezone.utc) + timedelta(minutes = 60)
     #expiration = datetime(2020, 9, 30, 0, 0, tzinfo=timezone.utc) + timedelta(minutes = 60)
