@@ -60,7 +60,7 @@ def main(arguments):
     s3_notifications_path = f"s3://{bucket}/{push_notifications_dir}"
     #s3_requests_path = f"{s3_notifications_path}/{requests_dir}"
     #s3_tokens_path = f"{s3_notifications_path}/{tokens_dir}"
-    #s3_updates_path = f"{s3_notifications_path}/{updates_dir}"
+    s3_updates_path = f"{s3_notifications_path}/{updates_dir}"
 
     # set up local paths
     local_notifications_path = f"{bucket}-{push_notifications_dir}"
@@ -74,12 +74,12 @@ def main(arguments):
     # os.mkdir(new_updates_dir)
 
     # sync notifications from s3 to local, deleting anything local that doesn't exist in s3
-    # print("\n************* DOWNLOADING REQUESTS FROM S3 *************")
-    # os.makedirs(local_notifications_path, exist_ok=True)
-    # call(f"aws s3 sync '{s3_notifications_path}' '{local_notifications_path}' --delete --exact-timestamps") # need the --exact-timestamps because 
-    #                                                                                                         # the token files can be updated but 
-    #                                                                                                         # remain the same size. without this
-    #                                                                                                         # options such updates don't register.
+    print("\n************* DOWNLOADING REQUESTS FROM S3 *************")
+    os.makedirs(local_notifications_path, exist_ok=True)
+    call(f"aws s3 sync '{s3_notifications_path}' '{local_notifications_path}' --delete --exact-timestamps") # need the --exact-timestamps because 
+                                                                                                            # the token files can be updated but 
+                                                                                                            # remain the same size. without this
+                                                                                                            # options such updates don't register.
 
     Request = namedtuple("Request", ["path", "request"])
     #Update = namedtuple("Update", ["path", "update"])
@@ -178,7 +178,7 @@ def main(arguments):
             json.dump(device_updates, update)
 
     #print("************* UPLOADING NEW UPDATES TO S3 *************")
-    #call(f"aws s3 sync '${local_updates_path}' '{s3_updates_path}'")
+    call(f"aws s3 sync '${local_updates_path}' '{s3_updates_path}'")
 
     for device, device_updates in updates.items():
         device_token = get_device_token(local_tokens_path, device)
@@ -196,7 +196,7 @@ def main(arguments):
         else:
             print(f"Token file does not exist for device {device}. Clearing updates for this device.")
             shutil.rmtree(f"{local_updates_path}/{device}", True)
-            #call(f"aws s3 rm --recursive '{s3_updates_path}/{device}'")
+            call(f"aws s3 rm --recursive '{s3_updates_path}/{device}'")
 
     return
 
