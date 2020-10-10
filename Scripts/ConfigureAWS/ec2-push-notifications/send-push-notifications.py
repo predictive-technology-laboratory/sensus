@@ -58,7 +58,7 @@ def main(arguments):
 
     # set up s3 paths
     s3_notifications_path = f"s3://{bucket}/{push_notifications_dir}"
-    #s3_requests_path = f"{s3_notifications_path}/{requests_dir}"
+    s3_requests_path = f"{s3_notifications_path}/{requests_dir}"
     #s3_tokens_path = f"{s3_notifications_path}/{tokens_dir}"
     s3_updates_path = f"{s3_notifications_path}/{updates_dir}"
 
@@ -76,7 +76,7 @@ def main(arguments):
     # sync notifications from s3 to local, deleting anything local that doesn't exist in s3
     print("\n************* DOWNLOADING REQUESTS FROM S3 *************")
     os.makedirs(local_notifications_path, exist_ok=True)
-    call(f"aws s3 sync '{s3_notifications_path}' '{local_notifications_path}' --delete --exact-timestamps") # need the --exact-timestamps because 
+    call(f'aws s3 sync "{s3_notifications_path}" "{local_notifications_path}" --delete --exact-timestamps') # need the --exact-timestamps because 
                                                                                                             # the token files can be updated but 
                                                                                                             # remain the same size. without this
                                                                                                             # options such updates don't register.
@@ -92,7 +92,7 @@ def main(arguments):
             with open(local_request_path) as request:
                 requests.append(Request(local_request_path, json.load(request)))
         else: # delete the file if it is empty
-            delete_request(local_request_path, f"Empty request {local_requests_path}. Deleting file.")
+            delete_request(local_request_path, s3_requests_path, f"Empty request {local_requests_path}. Deleting file.")
 
     # sort the requests by their creation time in descending order
     requests.sort(key=lambda request: request.request["creation-time"], reverse=True)
@@ -126,18 +126,19 @@ def main(arguments):
             # we don't know exactly how long it will take for the current script to make a pass through
             # the notifications. this will depend on deployment size and the protocol.
 
-            # note: the operands are transposed here compared to the original script. the original script subtracted to 
-            # get a negative time_until_delivery and compared with <= to the negative value of the number of seconds in a day
+            # NOTE: the operands are transposed here compared to the original script. the original script subtracted to 
+            # get a negative time_until_delivery and compared with <= to the negative value of the number of seconds in a day.
+            # in this case we have a positive time_since_delivery and compare with >= to check if the request is more than a day old.
             time_horizon = datetime.now(timezone.utc) + timedelta(minutes=6)
             time_since_delivery = time_horizon - time
 
              # delete any push notifications that have failed for an entire day
             if (time_since_delivery >= timedelta(days=1)):
-                delete_request(local_request_path, f"Push notification has failed for more than {timedelta(days=1).total_seconds():.0f} seconds. Deleting it.")
+                delete_request(local_request_path, s3_requests_path, f"Push notification has failed for more than {timedelta(days=1).total_seconds():.0f} seconds. Deleting it.")
             elif (time_since_delivery < timedelta(0)): # proceed to next request if current delivery time has not arrived
                 print(f"Push notification will be delivered in {time_since_delivery.total_seconds()} seconds.")
             elif (token == ""): # might not have a token (e.g., in cases where we failed to upload it or cleared it when stopping the protocol)
-                delete_request(local_request_path, f"No token found. Assuming the request is stale. Deleting it.")
+                delete_request(local_request_path, s3_requests_path, f"No token found. Assuming the request is stale. Deleting it.")
             elif ("update" not in request.request): # if the request does not have an update, then send it directly to the device. do not delete the request file in this case, as the app must do it to signal receipt.
                 print("Pushing non-update notification")
                 
@@ -153,7 +154,7 @@ def main(arguments):
                 sound = request.request["sound"]
 
                 push_via_azure(url, sas, format, "false", id, backend_key, protocol, title, body, sound, token)
-            else:  # otherwise pack the update into a per-device updates file to be delivered at the end
+            else: # otherwise pack the update into a per-device updates file to be delivered at the end
                 if (device not in updates):
                     updates[device] = []
                 
@@ -164,10 +165,11 @@ def main(arguments):
                 updates[device].append({"id": id, "type": update_type, "content": update_content })
 
                 # delete the request, as we're going to upload the updates file to s3
-                delete_request(local_request_path, f"Packed request into updates file. Deleting the request.")
+                delete_request(local_request_path, s3_requests_path, f"Packed request into updates file. Deleting the request.")
         else: # if the request id has been encountered already then delete the request file
-            delete_request(local_request_path, f"Obsolete request identifier {id} (time {time}). Deleting file.")
+            delete_request(local_request_path, s3_requests_path, f"Obsolete request identifier {id} (time {time}). Deleting file.")
 
+    # write updates to files
     for device, device_updates in updates.items():
         device_updates_path = f"{local_updates_path}/{device}"
         
@@ -177,39 +179,49 @@ def main(arguments):
         with open(f"{device_updates_path}/{uuid.uuid4()}.json", "w") as update:
             json.dump(device_updates, update)
 
-    #print("************* UPLOADING NEW UPDATES TO S3 *************")
-    call(f"aws s3 sync '${local_updates_path}' '{s3_updates_path}'")
+    if (len(updates) > 0):
+        # sync local updates to S3 to make them available to the app. if any of the updates
+        # have duplicative ids, the app will take the most recent one of each identifier.
+        print("************* UPLOADING NEW UPDATES TO S3 *************")
+        call(f'aws s3 sync "{local_updates_path}" "{s3_updates_path}"')
 
-    for device, device_updates in updates.items():
-        device_token = get_device_token(local_tokens_path, device)
+        # send push notification to each device that has a pending update
+        print("************* SENDING PUSH NOTIFICATION TO EACH DEVICE WITH AN UPDATE *************")
+        for device, device_updates in updates.items():
+            device_token = get_device_token(local_tokens_path, device)
 
-        token = device_token.get("token", "")
+            token = device_token.get("token", "")
 
-        if (token != ""):
-             # the token exists. send push notification.
-            format = device_token.get("format", "")
-            protocol = device_token.get("protocol", "")
+            if (token != ""):
+                # the token exists. send push notification.
+                format = device_token.get("format", "")
+                protocol = device_token.get("protocol", "")
 
-            push_via_azure(url, sas, format, "true", f"{uuid.uuid4()}", "", protocol, "", "", "", token)
+                push_via_azure(url, sas, format, "true", f"{uuid.uuid4()}", "", protocol, "", "", "", token)
 
-            print(f"Pushed updates for device {device}")
-        else:
-            print(f"Token file does not exist for device {device}. Clearing updates for this device.")
-            shutil.rmtree(f"{local_updates_path}/{device}", True)
-            call(f"aws s3 rm --recursive '{s3_updates_path}/{device}'")
+                print(f"Pushed updates for device {device}")
+            else:
+                print(f"Token file does not exist for device {device}. Clearing updates for this device.")
+                shutil.rmtree(f"{local_updates_path}/{device}", True)
+                call(f'aws s3 rm --recursive "{s3_updates_path}/{device}"')
 
     return
 
-def delete_request(request_path, message):
+def delete_request(local_request_path, s3_requests_path, message):
     print(message)
-    # TODO: add remote delete and local delete...
+
+    call(f'aws s3 rm "{s3_requests_path}/{os.path.basename(local_request_path)}"')
+    os.remove(local_request_path)
+
     return
 
 def get_device_token(local_tokens_path, device):
     local_token_path = f"{local_tokens_path}/{device}.json"
+
     if (os.path.exists(local_token_path)):
         with open(local_token_path) as token:
             return json.load(token)
+
     return {} # return an empty dict if the file doesn't exist
 
 def push_via_azure(url, sas, format, update, id, backend_key, protocol, title, body, sound, token):
@@ -231,8 +243,6 @@ def push_via_azure(url, sas, format, update, id, backend_key, protocol, title, b
     return
 
 def get_sas(url, key):
-    #url = f"https://{namespace}.servicebus.windows.net/{hub}/messages"
-
     expiration = datetime.now(timezone.utc) + timedelta(minutes = 60)
     #expiration = datetime(2020, 9, 30, 0, 0, tzinfo=timezone.utc) + timedelta(minutes = 60)
     expirationSeconds = ('%.3f' % expiration.timestamp()).replace(".000", "")
