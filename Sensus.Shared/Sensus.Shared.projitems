@@ -100,6 +100,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\FitzpatrickSkinType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\FitzpatrickSkinTypeDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\FlightsClimbedDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\HealthDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\HealthDataProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\HeartRateDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\NumberOfTimesFallenDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\StepCountDatum.cs" />
