@@ -22,128 +22,175 @@ using System.ComponentModel;
 
 namespace Sensus.UI.Inputs
 {
-    public class InputGroup : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
+	public class InputGroup : INotifyPropertyChanged
+	{
+		public event PropertyChangedEventHandler PropertyChanged;
 
-        private string _name;
+		private string _name;
+		private string _description;
 
-        public string Id { get; set; }
-        public ObservableCollection<Input> Inputs { get; }
+		public string Id { get; set; }
+		public ObservableCollection<Input> Inputs { get; }
 
-        /// <summary>
-        /// Name of the input group.
-        /// </summary>
-        /// <value>The name.</value>
-        [EntryStringUiProperty(null, true, 0, true)]
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-            set
-            {
-                if (value != _name)
-                {
-                    _name = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
-                }
-            }
-        }
+		/// <summary>
+		/// Name of the input group.
+		/// </summary>
+		/// <value>The name.</value>
+		[EntryStringUiProperty(null, true, 0, true)]
+		public string Name
+		{
+			get
+			{
+				return _name;
+			}
+			set
+			{
+				if (value != _name)
+				{
+					_name = value;
+					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name)));
+					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListItemText)));
+				}
+			}
+		}
 
-        /// <summary>
-        /// Whether or not to tag inputs in this group with the device's current GPS location.
-        /// </summary>
-        /// <value><c>true</c> if geotag; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty(null, true, 1)]
-        public bool Geotag { get; set; }
+		/// <summary>
+		/// A short description of the <c>InputGroup</c> to distinguish it from <c>InputGroup</c>s with the same name.
+		/// </summary>
+		/// <value>The description.</value>
+		[EntryStringUiProperty(null, true, 1, true)]
+		public string Description
+		{
+			get
+			{
+				return _description;
+			}
+			set
+			{
+				if (value != _name)
+				{
+					_description = value;
+					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Description)));
+					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ListItemText)));
+				}
+			}
+		}
 
-        /// <summary>
-        /// Whether or not to force valid input values (e.g., all required fields completed, etc.)
-        /// before allowing the user to move to the next input group.
-        /// </summary>
-        /// <value><c>true</c> if force valid inputs; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Force Valid Inputs:", true, 2)]
-        public bool ForceValidInputs { get; set; }
+		[JsonIgnore]
+		public string ListItemText
+		{
+			get
+			{
+				if (string.IsNullOrWhiteSpace(Description))
+				{
+					return Name;
+				}
 
-        /// <summary>
-        /// Whether or not to randomly shuffle the inputs in this group when displaying them to the user.
-        /// </summary>
-        /// <value><c>true</c> if shuffle inputs; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Shuffle Inputs:", true, 3)]
-        public bool ShuffleInputs { get; set; }
+				return $"{Name} ({Description})";
+			}
+		}
 
-        /// <summary>
-        /// Gets a value indicating whether this <see cref="InputGroup"/> is valid.
-        /// A valid input group is one in which each <see cref="Input"/> in the group is valid.
-        /// An input group with no inputs is deemed valid by default.
-        /// </summary>
-        [JsonIgnore]
-        public bool Valid => Inputs.All(input => input?.Valid ?? true);
+		/// <summary>
+		/// Whether or not to display the built in navigation buttons. If set to true, 
+		/// the input group page is responsible for providing a mechanism to navigate
+		/// to the next and/or previous page.
+		/// </summary>
+		/// <value><c>true</c> to hide the navigation buttons; otherwise, <c>false</c>.</value>
+		[OnOffUiProperty("Hide navigation buttons:", true, 2)]
+		public bool HideNavigationButtons { get; set; }
 
-        public InputGroup()
-        {
-            Id = Guid.NewGuid().ToString();
-            Inputs = NewObservableCollection();
-            Geotag = false;
-            ForceValidInputs = false;
-            ShuffleInputs = false;
-        }
+		/// <summary>
+		/// Whether or not to tag inputs in this group with the device's current GPS location.
+		/// </summary>
+		/// <value><c>true</c> if geotag; otherwise, <c>false</c>.</value>
+		[OnOffUiProperty(null, true, 3)]
+		public bool Geotag { get; set; }
 
-        private ObservableCollection<Input> NewObservableCollection()
-        {
-            ObservableCollection<Input> collection = new ObservableCollection<Input>();
+		/// <summary>
+		/// Whether or not to force valid input values (e.g., all required fields completed, etc.)
+		/// before allowing the user to move to the next input group.
+		/// </summary>
+		/// <value><c>true</c> if force valid inputs; otherwise, <c>false</c>.</value>
+		[OnOffUiProperty("Force Valid Inputs:", true, 4)]
+		public bool ForceValidInputs { get; set; }
 
-            // I've tested this and the closure still looks up Id by reference.
-            // That means we don't need to update this handler when Id changes. 
-            collection.CollectionChanged += CollectionChanged;
+		/// <summary>
+		/// Whether or not to randomly shuffle the inputs in this group when displaying them to the user.
+		/// </summary>
+		/// <value><c>true</c> if shuffle inputs; otherwise, <c>false</c>.</value>
+		[OnOffUiProperty("Shuffle Inputs:", true, 5)]
+		public bool ShuffleInputs { get; set; }
 
-            return collection;
-        }
+		/// <summary>
+		/// Gets a value indicating whether this <see cref="InputGroup"/> is valid.
+		/// A valid input group is one in which each <see cref="Input"/> in the group is valid.
+		/// An input group with no inputs is deemed valid by default.
+		/// </summary>
+		[JsonIgnore]
+		public bool Valid => Inputs.All(input => input?.Valid ?? true);
 
-        private void CollectionChanged(object o, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Add)
-            {
-                foreach (Input input in e.NewItems)
-                {
-                    input.GroupId = Id;
-                }
-            }
+		public InputGroup()
+		{
+			Id = Guid.NewGuid().ToString();
+			Inputs = NewObservableCollection();
+			Geotag = false;
+			ForceValidInputs = false;
+			ShuffleInputs = false;
+		}
 
-            if (e.Action == NotifyCollectionChangedAction.Remove)
-            {
-                foreach (Input input in e.OldItems)
-                {
-                    input.GroupId = null;
-                }
-            }
-        }
+		private ObservableCollection<Input> NewObservableCollection()
+		{
+			ObservableCollection<Input> collection = new ObservableCollection<Input>();
 
-        /// <summary>
-        /// Creates a copy of this <see cref="InputGroup"/>.
-        /// </summary>
-        /// <returns>The copy.</returns>
-        /// <param name="newId">If set to <c>true</c>, set new random <see cref="Id"/> and <see cref="Input.Id"/> values for the current group
-        /// and <see cref="Input"/>s associated with this <see cref="InputGroup"/>.</param>
-        public InputGroup Copy(bool newId)
-        {
-            InputGroup copy = JsonConvert.DeserializeObject<InputGroup>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+			// I've tested this and the closure still looks up Id by reference.
+			// That means we don't need to update this handler when Id changes. 
+			collection.CollectionChanged += CollectionChanged;
 
-            if (newId)
-            {
-                copy.Id = Guid.NewGuid().ToString();
+			return collection;
+		}
 
-                // update all inputs to have the new group ID and new IDs themselves.
-                foreach (Input input in copy.Inputs)
-                {
-                    input.GroupId = copy.Id;
-                    input.Id = Guid.NewGuid().ToString();
-                }
-            }
+		private void CollectionChanged(object o, NotifyCollectionChangedEventArgs e)
+		{
+			if (e.Action == NotifyCollectionChangedAction.Add)
+			{
+				foreach (Input input in e.NewItems)
+				{
+					input.GroupId = Id;
+				}
+			}
 
-            return copy;
-        }
-    }
+			if (e.Action == NotifyCollectionChangedAction.Remove)
+			{
+				foreach (Input input in e.OldItems)
+				{
+					input.GroupId = null;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Creates a copy of this <see cref="InputGroup"/>.
+		/// </summary>
+		/// <returns>The copy.</returns>
+		/// <param name="newId">If set to <c>true</c>, set new random <see cref="Id"/> and <see cref="Input.Id"/> values for the current group
+		/// and <see cref="Input"/>s associated with this <see cref="InputGroup"/>.</param>
+		public InputGroup Copy(bool newId)
+		{
+			InputGroup copy = JsonConvert.DeserializeObject<InputGroup>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+
+			if (newId)
+			{
+				copy.Id = Guid.NewGuid().ToString();
+
+				// update all inputs to have the new group ID and new IDs themselves.
+				foreach (Input input in copy.Inputs)
+				{
+					input.GroupId = copy.Id;
+					input.Id = Guid.NewGuid().ToString();
+				}
+			}
+
+			return copy;
+		}
+	}
 }

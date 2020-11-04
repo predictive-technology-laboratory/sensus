@@ -28,7 +28,7 @@ namespace Sensus.UI
 
             ListView groupsList = new ListView(ListViewCachingStrategy.RecycleElement);
             groupsList.ItemTemplate = new DataTemplate(typeof(TextCell));
-            groupsList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(InputGroup.Name));
+            groupsList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(InputGroup.ListItemText));
             groupsList.ItemsSource = script.InputGroups;
             groupsList.ItemTapped += async (o, e) =>
             {
@@ -52,7 +52,7 @@ namespace Sensus.UI
                     actions.Insert(0, "Move Up");
                 }
 
-                string selectedAction = await DisplayActionSheet(selectedInputGroup.Name, "Cancel", null, actions.ToArray());
+                string selectedAction = await DisplayActionSheet(selectedInputGroup.ListItemText, "Cancel", null, actions.ToArray());
 
                 if (selectedAction == "Move Up")
                 {
@@ -75,7 +75,7 @@ namespace Sensus.UI
                 }
                 else if (selectedAction == "Delete")
                 {
-                    if (await DisplayAlert("Delete " + selectedInputGroup.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
+                    if (await DisplayAlert("Delete " + selectedInputGroup.ListItemText + "?", "This action cannot be undone.", "Delete", "Cancel"))
                     {
                         script.InputGroups.Remove(selectedInputGroup);
                         groupsList.SelectedItem = null;

@@ -315,6 +315,7 @@ namespace Sensus.UI
                     // pop up wait screen while we submit the participation reward datum
                     IEnumerable<InputGroup> inputGroups = await SensusServiceHelper.Get().PromptForInputsAsync(
                         null,
+                        null,
                         new InputGroup[] { new InputGroup { Name = "Please Wait", Inputs = { new LabelOnlyInput("Submitting participation information.", false) } } },
                         cancellationTokenSource.Token,
                         false,
@@ -384,6 +385,7 @@ namespace Sensus.UI
 
                             // pop up wait screen while we get the participation reward datum
                             IEnumerable<InputGroup> inputGroups = await SensusServiceHelper.Get().PromptForInputsAsync(
+                                null,
                                 null,
                                 new InputGroup[] { new InputGroup { Name = "Please Wait", Inputs = { new LabelOnlyInput("Retrieving participation information.", false) } } },
                                 cancellationTokenSource.Token,
