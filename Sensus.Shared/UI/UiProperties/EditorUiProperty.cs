@@ -17,27 +17,30 @@ using System.Reflection;
 
 namespace Sensus.UI.UiProperties
 {
-    /// <summary>
-    /// Decorated members should be rendered as editor fields that support
-    /// multi-line editing.
-    /// </summary>
-    public class EditorUiProperty : UiProperty
-    {
-        public EditorUiProperty(string labelText, bool editable, int order, bool required)
-            : base(labelText, editable, order, required)
-        {
-        }
+	/// <summary>
+	/// Decorated members should be rendered as editor fields that support
+	/// multi-line editing.
+	/// </summary>
+	public class EditorUiProperty : UiProperty
+	{
+		public EditorUiProperty(string labelText, bool editable, int order, bool required)
+			: base(labelText, editable, order, required)
+		{
+		}
 
-        public override View GetView(PropertyInfo property, object o, out BindableProperty bindingProperty, out IValueConverter converter)
-        {
-            bindingProperty = Editor.TextProperty;
-            converter = null;
+		public override View GetView(PropertyInfo property, object o, out BindableProperty bindingProperty, out IValueConverter converter)
+		{
+			bindingProperty = Editor.TextProperty;
+			converter = null;
 
-            return new Editor
-            {
-                Keyboard = Keyboard.Default,
-                HorizontalOptions = LayoutOptions.FillAndExpand
-            };
-        }
-    }
+			Editor editor = new Editor
+			{
+				Keyboard = Keyboard.Default,
+				HorizontalOptions = LayoutOptions.FillAndExpand,
+				AutoSize = EditorAutoSizeOption.TextChanges
+			};
+
+			return editor;
+		}
+	}
 }

@@ -1,6 +1,5 @@
 ﻿using Plugin.Media;
 using Plugin.Media.Abstractions;
-using Sensus.Context;
 using Sensus.Exceptions;
 using System;
 using System.Collections.Generic;

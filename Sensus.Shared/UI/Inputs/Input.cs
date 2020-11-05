@@ -24,610 +24,700 @@ using Sensus.Exceptions;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using static Sensus.UI.InputGroupPage;
+using Android.Support.V4.View;
 
 // register the input effect group
 [assembly: ResolutionGroupName(Input.EFFECT_RESOLUTION_GROUP_NAME)]
 
 namespace Sensus.UI.Inputs
 {
-    public abstract class Input : INotifyPropertyChanged
-    {
-        public event PropertyChangedEventHandler PropertyChanged;
+	public abstract class Input : INotifyPropertyChanged
+	{
+		public event PropertyChangedEventHandler PropertyChanged;
 
-        public const string EFFECT_RESOLUTION_GROUP_NAME = "InputEffects";
+		public const string EFFECT_RESOLUTION_GROUP_NAME = "InputEffects";
 
-        private string _name;
-        private string _id;
-        private string _groupId;
-        private string _labelText;
-        private int _labelFontSize;
-        private View _view;
-        private bool _displayNumber;
-        private bool _complete;
-        private double? _latitude;
-        private double? _longitude;
-        private DateTimeOffset? _locationUpdateTimestamp;
-        private bool _required;
-        private bool _viewed;
-        private DateTimeOffset? _completionTimestamp;
-        private List<InputDisplayCondition> _displayConditions;
-        private Color? _backgroundColor;
-        private Thickness? _padding;
-        private bool _frame;
-        private List<InputCompletionRecord> _completionRecords;
-        private DateTimeOffset? _submissionTimestamp;
+		private string _name;
+		private string _id;
+		private string _groupId;
+		private string _labelText;
+		private int _labelFontSize;
+		private View _view;
+		private bool _displayNumber;
+		private bool _complete;
+		private double? _latitude;
+		private double? _longitude;
+		private DateTimeOffset? _locationUpdateTimestamp;
+		private bool _required;
+		private bool _viewed;
+		private DateTimeOffset? _completionTimestamp;
+		private List<InputDisplayCondition> _displayConditions;
+		private Color? _backgroundColor;
+		private Thickness? _padding;
+		private bool _frame;
+		private List<InputCompletionRecord> _completionRecords;
+		private DateTimeOffset? _submissionTimestamp;
+		private int _attempts;
+		protected float _score;
 
-        /// <summary>
-        /// The name by which this input will be referred to within the Sensus app.
-        /// </summary>
-        /// <value>The name.</value>
-        [EntryStringUiProperty("Name:", true, 0, true)]
-        public string Name
-        {
-            get { return _name; }
-            set
-            {
-                if (value != _name)
-                {
-                    _name = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Caption)));
-                }
-            }
-        }
+		/// <summary>
+		/// The name by which this input will be referred to within the Sensus app.
+		/// </summary>
+		/// <value>The name.</value>
+		[EntryStringUiProperty("Name:", true, 0, true)]
+		public string Name
+		{
+			get { return _name; }
+			set
+			{
+				if (value != _name)
+				{
+					_name = value;
+					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Caption)));
+				}
+			}
+		}
 
-        public string Id
-        {
-            get
-            {
-                return _id;
-            }
-            set
-            {
-                _id = value;
-            }
-        }
+		public string Id
+		{
+			get
+			{
+				return _id;
+			}
+			set
+			{
+				_id = value;
+			}
+		}
 
-        public string GroupId
-        {
-            get
-            {
-                return _groupId;
-            }
-            set
-            {
-                _groupId = value;
-            }
-        }
+		public string GroupId
+		{
+			get
+			{
+				return _groupId;
+			}
+			set
+			{
+				_groupId = value;
+			}
+		}
 
-        /// <summary>
-        /// The text to display next to the input when showing the field to the user for completion. If you would like to 
-        /// use the value of a survey-triggering <see cref="Script.CurrentDatum"/> within the input's label, you can do so 
-        /// by placing a <c>{0}</c> within <see cref="LabelText"/> as a placeholder. The placeholder will be replaced with
-        /// the value of the triggering <see cref="Datum"/> at runtime. You can read more about the format of the 
-        /// placeholder [here](https://msdn.microsoft.com/en-us/library/system.string.format(v=vs.110).aspx).
-        /// </summary>
-        /// <value>The label text.</value>
-        [EntryStringUiProperty("Label Text:", true, 1, true)]
-        public string LabelText
-        {
-            get
-            {
-                return _labelText;
-            }
-            set
-            {
-                _labelText = value;
-            }
-        }
+		/// <summary>
+		/// The text to display next to the input when showing the field to the user for completion. If you would like to 
+		/// use the value of a survey-triggering <see cref="Script.CurrentDatum"/> within the input's label, you can do so 
+		/// by placing a <c>{0}</c> within <see cref="LabelText"/> as a placeholder. The placeholder will be replaced with
+		/// the value of the triggering <see cref="Datum"/> at runtime. You can read more about the format of the 
+		/// placeholder [here](https://msdn.microsoft.com/en-us/library/system.string.format(v=vs.110).aspx).
+		/// </summary>
+		/// <value>The label text.</value>
+		[EntryStringUiProperty("Label Text:", true, 1, true)]
+		public string LabelText
+		{
+			get
+			{
+				return _labelText;
+			}
+			set
+			{
+				_labelText = value;
+			}
+		}
 
-        public int LabelFontSize
-        {
-            get
-            {
-                return _labelFontSize;
-            }
-            set
-            {
-                _labelFontSize = value;
-            }
-        }
+		public int LabelFontSize
+		{
+			get
+			{
+				return _labelFontSize;
+			}
+			set
+			{
+				_labelFontSize = value;
+			}
+		}
 
-        public bool DisplayNumber
-        {
-            get
-            {
-                return _displayNumber;
-            }
-            set
-            {
-                _displayNumber = value;
-            }
-        }
+		public bool DisplayNumber
+		{
+			get
+			{
+				return _displayNumber;
+			}
+			set
+			{
+				_displayNumber = value;
+			}
+		}
 
-        [JsonIgnore]
-        public abstract object Value { get; }
+		/// <summary>
+		/// The score group to associate the <see cref="ScoreInput"/> with the <see cref="Input"/>s it keeps score.
+		/// A <see cref="ScoreInput"/> with a ScoreGroup of <c>null</c> will accumulate the scores of every 
+		/// <see cref="Input"/> in the collection of <see cref="InputGroup"/>s being displayed.
+		/// </summary>
+		[EntryStringUiProperty("Score Group:", true, 2, false)]
+		public string ScoreGroup { get; set; }
 
-        /// <summary>
-        /// Gets or sets a value indicating whether the user has interacted with this <see cref="Input"/>,
-        /// leaving it in a state of completion. Contrast with Valid, which merely indicates that the 
-        /// state of the input will not prevent the user from moving through an input request (e.g., in the case
-        /// of inputs that are not required).
-        /// </summary>
-        /// <value><c>true</c> if complete; otherwise, <c>false</c>.</value>
-        [JsonIgnore]
-        public bool Complete
-        {
-            get
-            {
-                return _complete;
-            }
-            protected set
-            {
-                _complete = value;
+		/// <summary>
+		/// The score that the user will get for a correct answer.
+		/// </summary>
+		/// <value>A positive real number to make the <see cref="Input"/> scored or <c>0</c> to make it unscored.</value>
+		[EntryFloatUiProperty("Score Value:", true, 3, false)]
+		public virtual float ScoreValue { get; set; }
 
-                DateTimeOffset timestamp = DateTimeOffset.UtcNow;
-                object inputValue = null;
-                _completionTimestamp = null;
+		/// <summary>
+		/// The method used to accumulate the score for the <see cref="Input"/>.
+		/// </summary>
+		[ListUiProperty("Score Method:", true, 4, new object[] { ScoreMethods.First, ScoreMethods.Last, ScoreMethods.Maximum, ScoreMethods.Average }, false)]
+		public virtual ScoreMethods ScoreMethod { get; set; }
 
-                if (_complete)
-                {
-                    _completionTimestamp = timestamp;
+		/// <summary>
+		/// The number of times the user can retry the <see cref="Input"/> to get a correct answer or improve their score.
+		/// </summary>
+		[EntryIntegerUiProperty("Allowed Retries:", true, 5, false)]
+		public virtual int? Retries { get; set; }
 
-                    // get a deep copy of the value. some inputs have list values, and simply using the list reference wouldn't track the history, since the most up-to-date list would be used for all history values.
-                    inputValue = JsonConvert.DeserializeObject<object>(JsonConvert.SerializeObject(Value, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
-                }
+		public int Attempts
+		{
+			get
+			{
+				return _attempts;
+			}
+			set
+			{
+				int retries = Math.Max(0, Retries ?? int.MaxValue);
 
-                if (StoreCompletionRecords)
-                {
-                    _completionRecords.Add(new InputCompletionRecord(timestamp, inputValue));
-                }
+				_attempts = value;
 
-                // if this input defines a protocol variable, set that variable here.
-                if (this is IVariableDefiningInput)
-                {
-                    IVariableDefiningInput input = this as IVariableDefiningInput;
-                    string definedVariable = input.DefinedVariable;
-                    if (definedVariable != null)
-                    {
-                        Protocol protocolForInput = GetProtocol();
+				// if the maximum number of attempts have been made, then disable the view
+				if (_attempts >= retries + 1 && _view != null)
+				{
+					_view.IsEnabled = false;
+				}
+			}
+		}
 
-                        if (protocolForInput != null)
-                        {
-                            // if the input is complete, set the variable on the protocol
-                            if (_complete)
-                            {
-                                protocolForInput.VariableValue[definedVariable] = inputValue.ToString();
-                            }
-                            // if the input is incomplete, set the value to null on the protocol
-                            else
-                            {
-                                protocolForInput.VariableValue[definedVariable] = null;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+		public virtual float Score
+		{
+			get
+			{
+				return _score;
+			}
+			set
+			{
+				if (_score != value)
+				{
+					_score = value;
 
-        /// <summary>
-        /// Gets a value indicating whether this <see cref="Input"/> is valid. A valid <see cref="Input"/> 
-        /// is one that is complete, one that has been viewed but is not required, or one that isn't 
-        /// displayed. It is an <see cref="Input"/> in a state that should not prevent the user from 
-        /// proceeding through an <see cref="Input"/> request.
-        /// </summary>
-        /// <value><c>true</c> if valid; otherwise, <c>false</c>.</value>
-        [JsonIgnore]
-        public bool Valid
-        {
-            get
-            {
-                return _complete || _viewed && !_required || !Display;
-            }
-        }
+					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Score)));
+				}
+			}
+		}
 
-        /// <summary>
-        /// Gets a value indicating whether this <see cref="T:Sensus.UI.Inputs.Input"/> should be stored in the <see cref="LocalDataStore"/>.
-        /// </summary>
-        /// <value><c>true</c> if store; otherwise, <c>false</c>.</value>
-        public virtual bool Store => true;
+		public virtual void SetScore(float score)
+		{
+			Attempts += 1;
 
-        public double? Latitude
-        {
-            get { return _latitude; }
-            set { _latitude = value; }
-        }
+			if (Attempts == 1 && ScoreMethod == ScoreMethods.First)
+			{
+				Score = score;
+			}
+			else if (ScoreMethod == ScoreMethods.Last)
+			{
+				Score = score;
+			}
+			else if (ScoreMethod == ScoreMethods.Maximum && (score > Score))
+			{
+				Score = score;
+			}
+			else if (ScoreMethod == ScoreMethods.Average)
+			{
+				Score = ((Score * (Attempts - 1)) + score) / Attempts;
+			}
+		}
 
-        public double? Longitude
-        {
-            get { return _longitude; }
-            set { _longitude = value; }
-        }
+		[JsonIgnore]
+		public abstract object Value { get; }
 
-        public DateTimeOffset? LocationUpdateTimestamp
-        {
-            get
-            {
-                return _locationUpdateTimestamp;
-            }
-            set
-            {
-                _locationUpdateTimestamp = value;
-            }
-        }
+		/// <summary>
+		/// Gets or sets a value indicating whether the user has interacted with this <see cref="Input"/>,
+		/// leaving it in a state of completion. Contrast with Valid, which merely indicates that the 
+		/// state of the input will not prevent the user from moving through an input request (e.g., in the case
+		/// of inputs that are not required).
+		/// </summary>
+		/// <value><c>true</c> if complete; otherwise, <c>false</c>.</value>
+		[JsonIgnore]
+		public bool Complete
+		{
+			get
+			{
+				return _complete;
+			}
+			protected set
+			{
+				_complete = value;
 
-        [JsonIgnore]
-        public abstract bool Enabled { get; set; }
+				DateTimeOffset timestamp = DateTimeOffset.UtcNow;
+				object inputValue = null;
+				_completionTimestamp = null;
 
-        [JsonIgnore]
-        public abstract string DefaultName { get; }
+				if (_complete)
+				{
+					_completionTimestamp = timestamp;
 
-        /// <summary>
-        /// Whether or not a valid value is required for this input. Also see <see cref="InputGroup.ForceValidInputs"/>.
-        /// </summary>
-        /// <value><c>true</c> if required; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty(null, true, 5)]
-        public bool Required
-        {
-            get
-            {
-                return _required;
-            }
-            set
-            {
-                if (value != _required)
-                {
-                    _required = value;
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Caption)));
-                }
-            }
-        }
+					// get a deep copy of the value. some inputs have list values, and simply using the list reference wouldn't track the history, since the most up-to-date list would be used for all history values.
+					inputValue = JsonConvert.DeserializeObject<object>(JsonConvert.SerializeObject(Value, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+				}
 
-        public bool Viewed
-        {
-            get
-            {
-                return _viewed;
-            }
-            set
-            {
-                _viewed = value;
-            }
-        }
+				if (StoreCompletionRecords)
+				{
+					_completionRecords.Add(new InputCompletionRecord(timestamp, inputValue));
+				}
 
-        [JsonIgnore]
-        public DateTimeOffset? CompletionTimestamp
-        {
-            get
-            {
-                return _completionTimestamp;
-            }
-        }
+				// if this input defines a protocol variable, set that variable here.
+				if (this is IVariableDefiningInput)
+				{
+					IVariableDefiningInput input = this as IVariableDefiningInput;
+					string definedVariable = input.DefinedVariable;
+					if (definedVariable != null)
+					{
+						Protocol protocolForInput = GetProtocol();
 
-        public List<InputDisplayCondition> DisplayConditions
-        {
-            get
-            {
-                return _displayConditions;
-            }
-        }
+						if (protocolForInput != null)
+						{
+							// if the input is complete, set the variable on the protocol
+							if (_complete)
+							{
+								protocolForInput.VariableValue[definedVariable] = inputValue.ToString();
+							}
+							// if the input is incomplete, set the value to null on the protocol
+							else
+							{
+								protocolForInput.VariableValue[definedVariable] = null;
+							}
+						}
+					}
+				}
+			}
+		}
 
-        public Color? BackgroundColor
-        {
-            get
-            {
-                return _backgroundColor;
-            }
-            set
-            {
-                _backgroundColor = value;
-            }
-        }
+		/// <summary>
+		/// Gets a value indicating whether this <see cref="Input"/> is valid. A valid <see cref="Input"/> 
+		/// is one that is complete, one that has been viewed but is not required, or one that isn't 
+		/// displayed. It is an <see cref="Input"/> in a state that should not prevent the user from 
+		/// proceeding through an <see cref="Input"/> request.
+		/// </summary>
+		/// <value><c>true</c> if valid; otherwise, <c>false</c>.</value>
+		[JsonIgnore]
+		public bool Valid
+		{
+			get
+			{
+				return _complete || _viewed && !_required || !Display;
+			}
+		}
 
-        public Thickness? Padding
-        {
-            get
-            {
-                return _padding;
-            }
-            set
-            {
-                _padding = value;
-            }
-        }
+		/// <summary>
+		/// Gets a value indicating whether this <see cref="T:Sensus.UI.Inputs.Input"/> should be stored in the <see cref="LocalDataStore"/>.
+		/// </summary>
+		/// <value><c>true</c> if store; otherwise, <c>false</c>.</value>
+		public virtual bool Store => true;
 
-        public bool Frame
-        {
-            get
-            {
-                return _frame;
-            }
-            set
-            {
-                _frame = value;
-            }
-        }
+		public double? Latitude
+		{
+			get { return _latitude; }
+			set { _latitude = value; }
+		}
 
-        public List<InputCompletionRecord> CompletionRecords
-        {
-            get
-            {
-                return _completionRecords;
-            }
-        }
+		public double? Longitude
+		{
+			get { return _longitude; }
+			set { _longitude = value; }
+		}
 
-        /// <summary>
-        /// Whether or not to record a trace of all input values from the first to the final.
-        /// </summary>
-        /// <value><c>true</c> if store completion records; otherwise, <c>false</c>.</value>
-        [OnOffUiProperty("Store Completion Records:", true, 6)]
-        public bool StoreCompletionRecords
-        {
-            get; set;
-        }
+		public DateTimeOffset? LocationUpdateTimestamp
+		{
+			get
+			{
+				return _locationUpdateTimestamp;
+			}
+			set
+			{
+				_locationUpdateTimestamp = value;
+			}
+		}
 
-        [JsonIgnore]
-        public bool Display
-        {
-            get
-            {
-                List<InputDisplayCondition> conjuncts = _displayConditions.Where(displayCondition => displayCondition.Conjunctive).ToList();
-                if (conjuncts.Count > 0 && conjuncts.Any(displayCondition => !displayCondition.Satisfied))
-                {
-                    return false;
-                }
+		[JsonIgnore]
+		public abstract bool Enabled { get; set; }
 
-                List<InputDisplayCondition> disjuncts = _displayConditions.Where(displayCondition => !displayCondition.Conjunctive).ToList();
-                if (disjuncts.Count > 0 && disjuncts.All(displayCondition => !displayCondition.Satisfied))
-                {
-                    return false;
-                }
+		[JsonIgnore]
+		public abstract string DefaultName { get; }
 
-                return true;
-            }
-        }
+		/// <summary>
+		/// Whether or not a valid value is required for this input. Also see <see cref="InputGroup.ForceValidInputs"/>.
+		/// </summary>
+		/// <value><c>true</c> if required; otherwise, <c>false</c>.</value>
+		[OnOffUiProperty(null, true, 5)]
+		public bool Required
+		{
+			get
+			{
+				return _required;
+			}
+			set
+			{
+				if (value != _required)
+				{
+					_required = value;
+					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Caption)));
+				}
+			}
+		}
 
-        public DateTimeOffset? SubmissionTimestamp
-        {
-            get
-            {
-                return _submissionTimestamp;
-            }
+		public bool Viewed
+		{
+			get
+			{
+				return _viewed;
+			}
+			set
+			{
+				_viewed = value;
+			}
+		}
 
-            set
-            {
-                _submissionTimestamp = value;
-            }
-        }
+		[JsonIgnore]
+		public DateTimeOffset? CompletionTimestamp
+		{
+			get
+			{
+				return _completionTimestamp;
+			}
+		}
 
-        [JsonIgnore]
-        public string Caption
-        {
-            get
-            {
-                return _name + (_name == DefaultName ? "" : " -- " + DefaultName) + (_required ? "*" : "");
-            }
-        }
+		public List<InputDisplayCondition> DisplayConditions
+		{
+			get
+			{
+				return _displayConditions;
+			}
+		}
 
-        /// <summary>
-        /// Gets or sets the <see cref="Datum"/> that triggered the deployment of this <see cref="Input"/>. This
-        /// is what will be used when formatting placeholder text in the input <see cref="LabelText"/>.
-        /// </summary>
-        /// <value>The triggering datum.</value>
-        [JsonIgnore]
-        public Datum TriggeringDatum { get; set; }
+		public Color? BackgroundColor
+		{
+			get
+			{
+				return _backgroundColor;
+			}
+			set
+			{
+				_backgroundColor = value;
+			}
+		}
 
-        public Input()
-        {
-            _name = DefaultName;
-            _id = Guid.NewGuid().ToString();
-            _displayNumber = true;
-            _complete = false;
-            _required = true;
-            _viewed = false;
-            _completionTimestamp = null;
-            _labelFontSize = 20;
-            _displayConditions = new List<InputDisplayCondition>();
-            _backgroundColor = null;
-            _padding = null;
-            _frame = true;
-            _completionRecords = new List<InputCompletionRecord>();
-            _submissionTimestamp = null;
+		public Thickness? Padding
+		{
+			get
+			{
+				return _padding;
+			}
+			set
+			{
+				_padding = value;
+			}
+		}
 
-            StoreCompletionRecords = true;
-        }
+		public bool Frame
+		{
+			get
+			{
+				return _frame;
+			}
+			set
+			{
+				_frame = value;
+			}
+		}
 
-        public Input(string labelText)
-            : this()
-        {
-            _labelText = labelText;
-        }
+		public List<InputCompletionRecord> CompletionRecords
+		{
+			get
+			{
+				return _completionRecords;
+			}
+		}
 
-        public Input(string labelText, int labelFontSize)
-            : this(labelText)
-        {
-            _labelFontSize = labelFontSize;
-        }
+		/// <summary>
+		/// Whether or not to record a trace of all input values from the first to the final.
+		/// </summary>
+		/// <value><c>true</c> if store completion records; otherwise, <c>false</c>.</value>
+		[OnOffUiProperty("Store Completion Records:", true, 6)]
+		public bool StoreCompletionRecords
+		{
+			get; set;
+		}
 
-        public Input(string labelText, string name)
-            : this(labelText)
-        {
-            _name = name;
-        }
+		[JsonIgnore]
+		public bool Display
+		{
+			get
+			{
+				List<InputDisplayCondition> conjuncts = _displayConditions.Where(displayCondition => displayCondition.Conjunctive).ToList();
+				if (conjuncts.Count > 0 && conjuncts.Any(displayCondition => !displayCondition.Satisfied))
+				{
+					return false;
+				}
 
-        protected Label CreateLabel(int index)
-        {
-            return new Label
-            {
-                Text = GetLabelText(index),
-                FontSize = _labelFontSize
+				List<InputDisplayCondition> disjuncts = _displayConditions.Where(displayCondition => !displayCondition.Conjunctive).ToList();
+				if (disjuncts.Count > 0 && disjuncts.All(displayCondition => !displayCondition.Satisfied))
+				{
+					return false;
+				}
 
-                // set the style ID on the label so that we can retrieve it when UI testing
+				return true;
+			}
+		}
+
+		public DateTimeOffset? SubmissionTimestamp
+		{
+			get
+			{
+				return _submissionTimestamp;
+			}
+
+			set
+			{
+				_submissionTimestamp = value;
+			}
+		}
+
+		[JsonIgnore]
+		public string Caption
+		{
+			get
+			{
+				return _name + (_name == DefaultName ? "" : " -- " + DefaultName) + (_required ? "*" : "");
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the <see cref="Datum"/> that triggered the deployment of this <see cref="Input"/>. This
+		/// is what will be used when formatting placeholder text in the input <see cref="LabelText"/>.
+		/// </summary>
+		/// <value>The triggering datum.</value>
+		[JsonIgnore]
+		public Datum TriggeringDatum { get; set; }
+
+		public Input()
+		{
+			_name = DefaultName;
+			_id = Guid.NewGuid().ToString();
+			_displayNumber = true;
+			_complete = false;
+			_required = true;
+			_viewed = false;
+			_completionTimestamp = null;
+			_labelFontSize = 20;
+			_displayConditions = new List<InputDisplayCondition>();
+			_backgroundColor = null;
+			_padding = null;
+			_frame = true;
+			_completionRecords = new List<InputCompletionRecord>();
+			_submissionTimestamp = null;
+			ScoreMethod = ScoreMethods.Last;
+
+			StoreCompletionRecords = true;
+		}
+
+		public Input(string labelText)
+			: this()
+		{
+			_labelText = labelText;
+		}
+
+		public Input(string labelText, int labelFontSize)
+			: this(labelText)
+		{
+			_labelFontSize = labelFontSize;
+		}
+
+		public Input(string labelText, string name)
+			: this(labelText)
+		{
+			_name = name;
+		}
+
+		protected Label CreateLabel(int index)
+		{
+			return new Label
+			{
+				Text = GetLabelText(index),
+				FontSize = _labelFontSize
+
+				// set the style ID on the label so that we can retrieve it when UI testing
 #if UI_TESTING
                 , StyleId = Name + " Label"
 #endif
-            };
-        }
+			};
+		}
 
-        protected string GetLabelText(int index)
-        {
-            if (string.IsNullOrWhiteSpace(_labelText))
-            {
-                return "";
-            }
-            else
-            {
-                string requiredStr = _required ? "*" : "";
-                string indexStr = index > 0 && _displayNumber ? index + ") " : "";
-                string labelTextStr = _labelText;
+		protected string GetLabelText(int index)
+		{
+			if (string.IsNullOrWhiteSpace(_labelText))
+			{
+				return "";
+			}
+			else
+			{
+				string requiredStr = _required ? "*" : "";
+				string indexStr = index > 0 && _displayNumber ? index + ") " : "";
+				string labelTextStr = _labelText;
 
-                // get the protocol that contains the current input in a script runner (if any)
-                Protocol protocolForInput = GetProtocol();
+				// get the protocol that contains the current input in a script runner (if any)
+				Protocol protocolForInput = GetProtocol();
 
-                if (protocolForInput != null)
-                {
-                    // replace all variable references in the input label text with the variables' values
-                    foreach (string variable in protocolForInput.VariableValue.Keys)
-                    {
-                        // get the value for the variable as defined on the protocol
-                        string variableValue = protocolForInput.VariableValue[variable];
+				if (protocolForInput != null)
+				{
+					// replace all variable references in the input label text with the variables' values
+					foreach (string variable in protocolForInput.VariableValue.Keys)
+					{
+						// get the value for the variable as defined on the protocol
+						string variableValue = protocolForInput.VariableValue[variable];
 
-                        // if the variable's value has not been defined, then just use the variable name as a fallback.
-                        if (variableValue == null)
-                        {
-                            variableValue = variable;
-                        }
+						// if the variable's value has not been defined, then just use the variable name as a fallback.
+						if (variableValue == null)
+						{
+							variableValue = variable;
+						}
 
-                        // replace variable references with its value
-                        labelTextStr = labelTextStr.Replace("{" + variable + "}", variableValue);
-                    }
-                }
+						// replace variable references with its value
+						labelTextStr = labelTextStr.Replace("{" + variable + "}", variableValue);
+					}
+				}
 
-                // if this input is being shown as part of a datum-triggered script, format the label 
-                // text of the input to replace any {0} references with the triggering datum's placeholder
-                // value.
-                if (TriggeringDatum != null)
-                {
-                    labelTextStr = string.Format(labelTextStr, TriggeringDatum.StringPlaceholderValue.ToString().ToLower());
-                }
+				// if this input is being shown as part of a datum-triggered script, format the label 
+				// text of the input to replace any {0} references with the triggering datum's placeholder
+				// value.
+				if (TriggeringDatum != null)
+				{
+					labelTextStr = string.Format(labelTextStr, TriggeringDatum.StringPlaceholderValue.ToString().ToLower());
+				}
 
-                return requiredStr + indexStr + labelTextStr;
-            }
-        }
+				return requiredStr + indexStr + labelTextStr;
+			}
+		}
 
-        /// <summary>
-        /// Gets the <see cref="Protocol"/> containing the current input.
-        /// </summary>
-        /// <returns>The <see cref="Protocol"/>.</returns>
-        private Protocol GetProtocol()
-        {
-            try
-            {
-                return SensusServiceHelper.Get().RegisteredProtocols.SingleOrDefault(protocol => protocol.Probes.OfType<ScriptProbe>()             // get script probes
-                                                                                                 .Single()                                         // must be only 1 script probe
-                                                                                                 .ScriptRunners                                    // get runners
-                                                                                                 .SelectMany(runner => runner.Script.InputGroups)  // get input groups for each runner
-                                                                                                 .SelectMany(inputGroup => inputGroup.Inputs)      // get inputs for each input group
-                                                                                                 .Any(input => input.Id == _id));                  // check if any inputs are the current one. must check ids rather than object references, as we make deep copies of inputs when instantiating scripts to run.
-            }
-            catch (Exception ex)
-            {
-                // there is only one known situation in which multiple protocols may contain inputs with the same
-                // ids:  when the user manually set the protocol id and loads both protocols (one with the original
-                // id and one with the new id. when manually setting the protocol id, any script inputs do not receive
-                // a new id. this is by design in the use case where authentication servers wish to push out an updated
-                // protocol.
-                SensusServiceHelper.Get().Logger.Log("Exception while getting protocol for input:  " + ex.Message, LoggingLevel.Normal, GetType());
-                return null;
-            }
-        }
+		/// <summary>
+		/// Gets the <see cref="Protocol"/> containing the current input.
+		/// </summary>
+		/// <returns>The <see cref="Protocol"/>.</returns>
+		private Protocol GetProtocol()
+		{
+			try
+			{
+				return SensusServiceHelper.Get().RegisteredProtocols.SingleOrDefault(protocol => protocol.Probes.OfType<ScriptProbe>()             // get script probes
+																								 .Single()                                         // must be only 1 script probe
+																								 .ScriptRunners                                    // get runners
+																								 .SelectMany(runner => runner.Script.InputGroups)  // get input groups for each runner
+																								 .SelectMany(inputGroup => inputGroup.Inputs)      // get inputs for each input group
+																								 .Any(input => input.Id == _id));                  // check if any inputs are the current one. must check ids rather than object references, as we make deep copies of inputs when instantiating scripts to run.
+			}
+			catch (Exception ex)
+			{
+				// there is only one known situation in which multiple protocols may contain inputs with the same
+				// ids:  when the user manually set the protocol id and loads both protocols (one with the original
+				// id and one with the new id. when manually setting the protocol id, any script inputs do not receive
+				// a new id. this is by design in the use case where authentication servers wish to push out an updated
+				// protocol.
+				SensusServiceHelper.Get().Logger.Log("Exception while getting protocol for input:  " + ex.Message, LoggingLevel.Normal, GetType());
+				return null;
+			}
+		}
 
-        public virtual View GetView(int index)
-        {
-            return _view;
-        }
+		public virtual View GetView(int index)
+		{
+			return _view;
+		}
 
-        protected virtual void SetView(View value)
-        {
-            ContentView viewContainer = new ContentView
-            {
-                Content = value
-            };
+		protected virtual void SetView(View value)
+		{
+			ContentView viewContainer = new ContentView
+			{
+				Content = value
+			};
 
-            if (_backgroundColor != null)
-            {
-                viewContainer.BackgroundColor = _backgroundColor.GetValueOrDefault();
-            }
+			if (_backgroundColor != null)
+			{
+				viewContainer.BackgroundColor = _backgroundColor.GetValueOrDefault();
+			}
 
-            if (_padding != null)
-            {
-                viewContainer.Padding = _padding.GetValueOrDefault();
-            }
+			if (_padding != null)
+			{
+				viewContainer.Padding = _padding.GetValueOrDefault();
+			}
 
-            _view = viewContainer;
-        }
+			_view = viewContainer;
+		}
 
-        public void Reset()
-        {
-            _view = null;
-            _complete = false;
-            _latitude = null;
-            _longitude = null;
-            _locationUpdateTimestamp = null;
-            _viewed = false;
-            _completionTimestamp = null;
-            _backgroundColor = null;
-            _padding = null;
-        }
+		public void Reset()
+		{
+			_view = null;
+			_complete = false;
+			_latitude = null;
+			_longitude = null;
+			_locationUpdateTimestamp = null;
+			_viewed = false;
+			_completionTimestamp = null;
+			_backgroundColor = null;
+			_padding = null;
+		}
 
-        public virtual void OnDisappearing(NavigationResult result)
-        {
- 
-        }
+		public virtual void OnDisappearing(NavigationResult result)
+		{
 
-        public virtual bool ValueMatches(object conditionValue, bool conjunctive)
-        {
-            // if either is null, both must be null to be equal
-            if (Value == null || conditionValue == null)
-            {
-                return Value == null && conditionValue == null;
-            }
-            // if they're of the same type, compare
-            else if (Value.GetType().Equals(conditionValue.GetType()))
-            {
-                return Value.Equals(conditionValue);
-            }
-            else
-            {
-                // this should never happen
-                SensusException.Report(new Exception("Called Input.ValueMatches with conditionValue of type " + conditionValue.GetType() + ". Comparing with value of type " + Value.GetType() + "."));
+		}
 
-                return false;
-            }
-        }
+		public virtual bool ValueMatches(object conditionValue, bool conjunctive)
+		{
+			// if either is null, both must be null to be equal
+			if (Value == null || conditionValue == null)
+			{
+				return Value == null && conditionValue == null;
+			}
+			// if they're of the same type, compare
+			else if (Value.GetType().Equals(conditionValue.GetType()))
+			{
+				return Value.Equals(conditionValue);
+			}
+			else
+			{
+				// this should never happen
+				SensusException.Report(new Exception("Called Input.ValueMatches with conditionValue of type " + conditionValue.GetType() + ". Comparing with value of type " + Value.GetType() + "."));
 
-        public Input Copy(bool newId)
-        {
-            Input copy = JsonConvert.DeserializeObject<Input>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+				return false;
+			}
+		}
 
-            copy.Reset();
+		public Input Copy(bool newId)
+		{
+			Input copy = JsonConvert.DeserializeObject<Input>(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
 
-            // the reset on the previous line only resets the state of the input. it does not assign it a new/unique ID, which all inputs normally require.
-            if (newId)
-            {
-                copy.Id = Guid.NewGuid().ToString();
-            }
+			copy.Reset();
 
-            return copy;
-        }
+			// the reset on the previous line only resets the state of the input. it does not assign it a new/unique ID, which all inputs normally require.
+			if (newId)
+			{
+				copy.Id = Guid.NewGuid().ToString();
+			}
 
-        /// <summary>
-        /// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:Sensus.UI.Inputs.Input"/>. This is needed
-        /// when adding display conditions.
-        /// </summary>
-        /// <returns>A <see cref="T:System.String"/> that represents the current <see cref="T:Sensus.UI.Inputs.Input"/>.</returns>
-        public override string ToString()
-        {
-            return _name;
-        }
-    }
+			return copy;
+		}
+
+		/// <summary>
+		/// Returns a <see cref="T:System.String"/> that represents the current <see cref="T:Sensus.UI.Inputs.Input"/>. This is needed
+		/// when adding display conditions.
+		/// </summary>
+		/// <returns>A <see cref="T:System.String"/> that represents the current <see cref="T:Sensus.UI.Inputs.Input"/>.</returns>
+		public override string ToString()
+		{
+			return _name;
+		}
+	}
 }
