@@ -25,13 +25,15 @@ namespace Sensus.UI.Inputs
 
 		public override string DefaultName => "Score";
 
-		[EntryFloatUiProperty("Score Value:", false, 3, false)]
-		public override float ScoreValue => 0;
-
-		[ListUiProperty("Score Method:", true, 4, new object[] { ScoreMethods.Total, ScoreMethods.Average }, false)]
+		[ListUiProperty("Score Method:", true, 21, new object[] { ScoreMethods.Total, ScoreMethods.Average }, false)]
 		public override ScoreMethods ScoreMethod { get; set; } = ScoreMethods.Total;
 
-		[EntryIntegerUiProperty("Allowed Retries:", false, 5, false)]
+		[HiddenUiProperty]
+		//[EntryFloatUiProperty("Score Value:", false, 21, false)]
+		public override float ScoreValue => 0;
+
+		[HiddenUiProperty]
+		//[EntryIntegerUiProperty("Allowed Retries:", false, 23, false)]
 		public override int? Retries => 0;
 
 		[JsonIgnore] // TODO: determine if this needs to be serialized or not

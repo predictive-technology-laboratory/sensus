@@ -24,7 +24,7 @@ namespace Sensus.UI.Inputs
 
 		public override string DefaultName => "Text";
 
-		[EditorUiProperty("Text", true, 5, true)]
+		[EditorUiProperty("Text", true, 2, true)]
 		public string Text { get; set; }
 
 		public override View GetView(int index)

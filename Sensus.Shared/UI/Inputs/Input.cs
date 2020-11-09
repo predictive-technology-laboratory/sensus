@@ -152,26 +152,26 @@ namespace Sensus.UI.Inputs
 		/// A <see cref="ScoreInput"/> with a ScoreGroup of <c>null</c> will accumulate the scores of every 
 		/// <see cref="Input"/> in the collection of <see cref="InputGroup"/>s being displayed.
 		/// </summary>
-		[EntryStringUiProperty("Score Group:", true, 2, false)]
+		[EntryStringUiProperty("Score Group:", true, 20, false)]
 		public string ScoreGroup { get; set; }
+
+		/// <summary>
+		/// The method used to accumulate the score for the <see cref="Input"/>.
+		/// </summary>
+		[ListUiProperty("Score Method:", true, 21, new object[] { ScoreMethods.First, ScoreMethods.Last, ScoreMethods.Maximum, ScoreMethods.Average }, false)]
+		public virtual ScoreMethods ScoreMethod { get; set; }
 
 		/// <summary>
 		/// The score that the user will get for a correct answer.
 		/// </summary>
 		/// <value>A positive real number to make the <see cref="Input"/> scored or <c>0</c> to make it unscored.</value>
-		[EntryFloatUiProperty("Score Value:", true, 3, false)]
+		[EntryFloatUiProperty("Score Value:", true, 22, false)]
 		public virtual float ScoreValue { get; set; }
-
-		/// <summary>
-		/// The method used to accumulate the score for the <see cref="Input"/>.
-		/// </summary>
-		[ListUiProperty("Score Method:", true, 4, new object[] { ScoreMethods.First, ScoreMethods.Last, ScoreMethods.Maximum, ScoreMethods.Average }, false)]
-		public virtual ScoreMethods ScoreMethod { get; set; }
 
 		/// <summary>
 		/// The number of times the user can retry the <see cref="Input"/> to get a correct answer or improve their score.
 		/// </summary>
-		[EntryIntegerUiProperty("Allowed Retries:", true, 5, false)]
+		[EntryIntegerUiProperty("Allowed Retries:", true, 23, false)]
 		public virtual int? Retries { get; set; }
 
 		public int Attempts
