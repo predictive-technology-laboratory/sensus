@@ -277,6 +277,8 @@ namespace Sensus.UI.Inputs
 						}
 						else // if not, then return without marking the input as complete.
 						{
+							SetScore(0);
+
 							_complete = false;
 
 							return;
