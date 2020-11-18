@@ -6,6 +6,7 @@ namespace Sensus.UI.Inputs
 {
 	public enum ScoreMethods
 	{
+		None,
 		Last,
 		First,
 		Maximum,

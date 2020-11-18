@@ -7,8 +7,9 @@ using Xamarin.Forms;
 
 namespace Sensus.UI.Inputs
 {
-	public class ScoreInput : Input
+	public class ScoreInput : Input, IVariableDefiningInput
 	{
+		private string _definedVariable;
 		private IEnumerable<Input> _inputs = new List<Input>();
 		private float _maxScore;
 		private Label _scoreLabel;
@@ -25,12 +26,27 @@ namespace Sensus.UI.Inputs
 
 		public override string DefaultName => "Score";
 
+		[EntryStringUiProperty("Define Variable:", true, 2, false)]
+		public string DefinedVariable
+		{
+			get
+			{
+				return _definedVariable;
+			}
+			set
+			{
+				_definedVariable = value?.Trim();
+			}
+		}
+
 		[ListUiProperty("Score Method:", true, 21, new object[] { ScoreMethods.Total, ScoreMethods.Average }, false)]
 		public override ScoreMethods ScoreMethod { get; set; } = ScoreMethods.Total;
 
 		[HiddenUiProperty]
-		//[EntryFloatUiProperty("Score Value:", false, 21, false)]
 		public override float ScoreValue => 0;
+
+		[HiddenUiProperty]
+		public override string CorrectValue { get; set; }
 
 		[HiddenUiProperty]
 		//[EntryIntegerUiProperty("Allowed Retries:", false, 23, false)]

@@ -171,6 +171,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\AnonymizerPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\App.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\DataStorePage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ButtonGridInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ScoreInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ReadOnlyTextInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\HyperlinkInput.cs" />

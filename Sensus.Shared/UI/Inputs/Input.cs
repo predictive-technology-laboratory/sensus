@@ -158,7 +158,7 @@ namespace Sensus.UI.Inputs
 		/// <summary>
 		/// The method used to accumulate the score for the <see cref="Input"/>.
 		/// </summary>
-		[ListUiProperty("Score Method:", true, 21, new object[] { ScoreMethods.First, ScoreMethods.Last, ScoreMethods.Maximum, ScoreMethods.Average }, false)]
+		[ListUiProperty("Score Method:", true, 21, new object[] { ScoreMethods.None, ScoreMethods.First, ScoreMethods.Last, ScoreMethods.Maximum, ScoreMethods.Average }, false)]
 		public virtual ScoreMethods ScoreMethod { get; set; }
 
 		/// <summary>
@@ -168,10 +168,13 @@ namespace Sensus.UI.Inputs
 		[EntryFloatUiProperty("Score Value:", true, 22, false)]
 		public virtual float ScoreValue { get; set; }
 
+		[EntryFloatUiProperty("Correct Value:", true, 23, false)]
+		public virtual string CorrectValue { get; set; }
+
 		/// <summary>
 		/// The number of times the user can retry the <see cref="Input"/> to get a correct answer or improve their score.
 		/// </summary>
-		[EntryIntegerUiProperty("Allowed Retries:", true, 23, false)]
+		[EntryIntegerUiProperty("Allowed Retries:", true, 24, false)]
 		public virtual int? Retries { get; set; }
 
 		public int Attempts
@@ -260,10 +263,29 @@ namespace Sensus.UI.Inputs
 
 				if (_complete)
 				{
-					_completionTimestamp = timestamp;
-
 					// get a deep copy of the value. some inputs have list values, and simply using the list reference wouldn't track the history, since the most up-to-date list would be used for all history values.
 					inputValue = JsonConvert.DeserializeObject<object>(JsonConvert.SerializeObject(Value, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+
+					if (CorrectValue != null)
+					{
+						// check if the correct value was provided
+						if (CorrectValue == Value?.ToString() || CorrectValue == inputValue?.ToString())
+						{
+							_completionTimestamp = timestamp;
+
+							SetScore(ScoreValue);
+						}
+						else // if not, then return without marking the input as complete.
+						{
+							_complete = false;
+
+							return;
+						}
+					}
+					else
+					{
+						SetScore(ScoreValue);
+					}
 				}
 
 				if (StoreCompletionRecords)
@@ -667,6 +689,8 @@ namespace Sensus.UI.Inputs
 			_completionTimestamp = null;
 			_backgroundColor = null;
 			_padding = null;
+
+			Score = 0;
 		}
 
 		public virtual void OnDisappearing(NavigationResult result)
