@@ -168,7 +168,7 @@ namespace Sensus.UI.Inputs
 		[EntryFloatUiProperty("Score Value:", true, 22, false)]
 		public virtual float ScoreValue { get; set; }
 
-		[EntryFloatUiProperty("Correct Value:", true, 23, false)]
+		[EntryStringUiProperty("Correct Value:", true, 23, false)]
 		public virtual string CorrectValue { get; set; }
 
 		/// <summary>
@@ -190,7 +190,7 @@ namespace Sensus.UI.Inputs
 				_attempts = value;
 
 				// if the maximum number of attempts have been made, then disable the view
-				if (_attempts >= retries + 1 && _view != null)
+				if (_attempts >= retries && _view != null)
 				{
 					_view.IsEnabled = false;
 				}
@@ -690,6 +690,7 @@ namespace Sensus.UI.Inputs
 			_backgroundColor = null;
 			_padding = null;
 
+			_attempts = 0;
 			Score = 0;
 		}
 

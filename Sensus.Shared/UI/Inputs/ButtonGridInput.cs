@@ -41,7 +41,7 @@ namespace Sensus.UI.Inputs
 		public List<string> Buttons { get; set; }
 
 		[EntryIntegerUiProperty("Number of Columns:", true, 3, false)]
-		public int ColumnCount { get; set; } = 3;
+		public int ColumnCount { get; set; } = 1;
 
 		public void Add(string text, string value)
 		{
