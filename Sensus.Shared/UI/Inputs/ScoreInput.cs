@@ -46,10 +46,9 @@ namespace Sensus.UI.Inputs
 		public override float ScoreValue => 0;
 
 		[HiddenUiProperty]
-		public override string CorrectValue { get; set; }
+		public override object CorrectValue { get; set; }
 
 		[HiddenUiProperty]
-		//[EntryIntegerUiProperty("Allowed Retries:", false, 23, false)]
 		public override int? Retries => 0;
 
 		[JsonIgnore] // TODO: determine if this needs to be serialized or not
@@ -91,12 +90,13 @@ namespace Sensus.UI.Inputs
 
 			if (ScoreMethod == ScoreMethods.Total)
 			{
-				Score = _inputs.Sum(x => x.ScoreValue);
+				Score = _inputs.Sum(x => x.Score);
 				_maxScore = _inputs.Sum(x => x.ScoreValue);
 			}
 			else if (ScoreMethod == ScoreMethods.Average)
 			{
-				Score = _inputs.Sum(x => x.ScoreValue) / _inputs.Count();
+				Score = _inputs.Average(x => x.Score);
+				_maxScore = _inputs.Average(x => ScoreValue);
 			}
 
 			// if the label has been created, update its text
@@ -114,7 +114,7 @@ namespace Sensus.UI.Inputs
 		private void UpdateScoreText()
 		{
 			if (_scoreLabel != null)
-			{			
+			{
 				_scoreLabel.Text = $"{_score}/{_maxScore}";
 			}
 		}

@@ -169,7 +169,7 @@ namespace Sensus.UI.Inputs
 		public virtual float ScoreValue { get; set; }
 
 		[EntryStringUiProperty("Correct Value:", true, 23, false)]
-		public virtual string CorrectValue { get; set; }
+		public virtual object CorrectValue { get; set; }
 
 		/// <summary>
 		/// The number of times the user can retry the <see cref="Input"/> to get a correct answer or improve their score.
@@ -269,7 +269,7 @@ namespace Sensus.UI.Inputs
 					if (CorrectValue != null)
 					{
 						// check if the correct value was provided
-						if (CorrectValue == Value?.ToString() || CorrectValue == inputValue?.ToString())
+						if (CorrectValue?.ToString() == Value?.ToString() || CorrectValue?.ToString() == inputValue?.ToString())
 						{
 							_completionTimestamp = timestamp;
 
