@@ -83,7 +83,6 @@ namespace Sensus.UI.Inputs
 
 		private void TimerElapsed(object sender, ElapsedEventArgs e)
 		{
-			/*SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(*/
 			Device.BeginInvokeOnMainThread(() =>
 			{
 				_elapsedTime += 1;
