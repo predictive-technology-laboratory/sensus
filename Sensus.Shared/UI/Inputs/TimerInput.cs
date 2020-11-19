@@ -17,7 +17,6 @@ namespace Sensus.UI.Inputs
 		private const string USER_STOPPED = "UserStopped";
 		private const string USER_SUBMITTED = "UserSubmitted";
 
-
 		private struct TimerEvent
 		{
 			public DateTimeOffset Timestamp { get; set; }
