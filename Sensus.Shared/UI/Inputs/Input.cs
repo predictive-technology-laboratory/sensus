@@ -60,6 +60,8 @@ namespace Sensus.UI.Inputs
 		private int _attempts;
 		protected float _score;
 
+		public InputGroupPage InputGroupPage { get; set; }
+
 		/// <summary>
 		/// The name by which this input will be referred to within the Sensus app.
 		/// </summary>

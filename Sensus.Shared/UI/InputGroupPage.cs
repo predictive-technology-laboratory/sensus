@@ -49,6 +49,8 @@ namespace Sensus.UI
 			get { return _responseTaskCompletionSource.Task; }
 		}
 
+		public bool IsLastPage { get; }
+
 		public InputGroupPage(InputGroup inputGroup,
 							  int stepNumber,
 							  int totalSteps,
@@ -65,6 +67,7 @@ namespace Sensus.UI
 			_canNavigateBackward = canNavigateBackward;
 			_displayedInputCount = 0;
 			_responseTaskCompletionSource = new TaskCompletionSource<NavigationResult>();
+			IsLastPage = totalSteps <= stepNumber;
 
 			StackLayout contentLayout = new StackLayout
 			{
@@ -130,6 +133,8 @@ namespace Sensus.UI
 				{
 					View inputView = input.GetView(viewNumber);
 
+					input.InputGroupPage = this;
+
 					if (inputView != null)
 					{
 						// add media view to inputs that have media attached
@@ -187,6 +192,64 @@ namespace Sensus.UI
 			}
 			#endregion
 
+			_cancelHandler = async (o, e) =>
+			{
+				if (string.IsNullOrWhiteSpace(cancelConfirmation) || await DisplayAlert("Confirm", cancelConfirmation, "Yes", "No"))
+				{
+					_responseTaskCompletionSource.TrySetResult(NavigationResult.Cancel);
+				}
+			};
+
+			_previousHandler = (o, e) =>
+			{
+				if (_canNavigateBackward)
+				{
+					_responseTaskCompletionSource.TrySetResult(NavigationResult.Backward);
+				}
+			};
+
+			_nextHandler = async (o, e) =>
+			{
+				if (!inputGroup.Valid && inputGroup.ForceValidInputs)
+				{
+					await DisplayAlert("Mandatory", "You must provide values for all required fields before proceeding.", "Back");
+				}
+				else
+				{
+					string confirmationMessage = "";
+					NavigationResult navigationResult = NavigationResult.Forward;
+
+					// warn about incomplete inputs if a message is provided
+					if (!inputGroup.Valid && !string.IsNullOrWhiteSpace(incompleteSubmissionConfirmation))
+					{
+						confirmationMessage += incompleteSubmissionConfirmation;
+					}
+
+					if (IsLastPage)
+					{
+						// confirm submission if a message is provided
+						if (!string.IsNullOrWhiteSpace(submitConfirmation))
+						{
+							// if we already warned about incomplete fields, make the submit confirmation sound natural.
+							if (!string.IsNullOrWhiteSpace(confirmationMessage))
+							{
+								confirmationMessage += " Also, this is the final page. ";
+							}
+
+							// confirm submission
+							confirmationMessage += submitConfirmation;
+						}
+
+						navigationResult = NavigationResult.Submit;
+					}
+
+					if (string.IsNullOrWhiteSpace(confirmationMessage) || await DisplayAlert("Confirm", confirmationMessage, "Yes", "No"))
+					{
+						_responseTaskCompletionSource.TrySetResult(navigationResult);
+					}
+				}
+			};
+
 			if (inputGroup.HideNavigationButtons == false)
 			{
 				StackLayout navigationStack = new StackLayout
@@ -212,10 +275,7 @@ namespace Sensus.UI
 						Text = "Previous"
 					};
 
-					previousButton.Clicked += (o, e) =>
-					{
-						_responseTaskCompletionSource.TrySetResult(NavigationResult.Backward);
-					};
+					previousButton.Clicked += _previousHandler;
 
 					previousNextStack.Children.Add(previousButton);
 				}
@@ -224,7 +284,7 @@ namespace Sensus.UI
 				{
 					HorizontalOptions = LayoutOptions.FillAndExpand,
 					FontSize = 20,
-					Text = stepNumber < totalSteps ? "Next" : "Submit"
+					Text = "Next"
 
 #if UI_TESTING
 				// set style id so that we can retrieve the button when UI testing
@@ -236,48 +296,12 @@ namespace Sensus.UI
 				{
 					nextButton.Text = nextButtonTextOverride;
 				}
-
-				nextButton.Clicked += async (o, e) =>
+				else if (IsLastPage)
 				{
-					if (!inputGroup.Valid && inputGroup.ForceValidInputs)
-					{
-						await DisplayAlert("Mandatory", "You must provide values for all required fields before proceeding.", "Back");
-					}
-					else
-					{
-						string confirmationMessage = "";
-						NavigationResult navigationResult = NavigationResult.Forward;
+					nextButton.Text = "Submit";
+				}
 
-						// warn about incomplete inputs if a message is provided
-						if (!inputGroup.Valid && !string.IsNullOrWhiteSpace(incompleteSubmissionConfirmation))
-						{
-							confirmationMessage += incompleteSubmissionConfirmation;
-						}
-
-						if (nextButton.Text == "Submit")
-						{
-							// confirm submission if a message is provided
-							if (!string.IsNullOrWhiteSpace(submitConfirmation))
-							{
-								// if we already warned about incomplete fields, make the submit confirmation sound natural.
-								if (!string.IsNullOrWhiteSpace(confirmationMessage))
-								{
-									confirmationMessage += " Also, this is the final page. ";
-								}
-
-								// confirm submission
-								confirmationMessage += submitConfirmation;
-							}
-
-							navigationResult = NavigationResult.Submit;
-						}
-
-						if (string.IsNullOrWhiteSpace(confirmationMessage) || await DisplayAlert("Confirm", confirmationMessage, "Yes", "No"))
-						{
-							_responseTaskCompletionSource.TrySetResult(navigationResult);
-						}
-					}
-				};
+				nextButton.Clicked += _nextHandler;
 
 				previousNextStack.Children.Add(nextButton);
 				navigationStack.Children.Add(previousNextStack);
@@ -297,13 +321,7 @@ namespace Sensus.UI
 					navigationStack.Children.Add(new BoxView { Color = Color.Gray, HorizontalOptions = LayoutOptions.FillAndExpand, HeightRequest = 0.5 });
 					navigationStack.Children.Add(cancelButton);
 
-					cancelButton.Clicked += async (o, e) =>
-					{
-						if (string.IsNullOrWhiteSpace(cancelConfirmation) || await DisplayAlert("Confirm", cancelConfirmation, "Yes", "No"))
-						{
-							_responseTaskCompletionSource.TrySetResult(NavigationResult.Cancel);
-						}
-					};
+					cancelButton.Clicked += _cancelHandler;
 				}
 
 				contentLayout.Children.Add(navigationStack);
@@ -338,6 +356,26 @@ namespace Sensus.UI
 			{
 				Content = contentLayout
 			};
+		}
+
+		protected EventHandler _cancelHandler;
+		protected EventHandler _nextHandler;
+		protected EventHandler _previousHandler;
+
+		public void Navigate(Input input, NavigationResult navigationResult)
+		{
+			if (navigationResult == NavigationResult.Cancel)
+			{
+				_cancelHandler?.Invoke(input, EventArgs.Empty);
+			}
+			else if (navigationResult == NavigationResult.Backward)
+			{
+				_previousHandler?.Invoke(input, EventArgs.Empty);
+			}
+			else
+			{
+				_nextHandler?.Invoke(input, EventArgs.Empty);
+			}
 		}
 
 		protected override bool OnBackButtonPressed()
