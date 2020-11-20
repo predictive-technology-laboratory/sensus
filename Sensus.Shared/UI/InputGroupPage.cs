@@ -248,25 +248,25 @@ namespace Sensus.UI
 						string confirmationMessage = "";
 						NavigationResult navigationResult = NavigationResult.Forward;
 
-					// warn about incomplete inputs if a message is provided
-					if (!inputGroup.Valid && !string.IsNullOrWhiteSpace(incompleteSubmissionConfirmation))
+						// warn about incomplete inputs if a message is provided
+						if (!inputGroup.Valid && !string.IsNullOrWhiteSpace(incompleteSubmissionConfirmation))
 						{
 							confirmationMessage += incompleteSubmissionConfirmation;
 						}
 
 						if (nextButton.Text == "Submit")
 						{
-						// confirm submission if a message is provided
-						if (!string.IsNullOrWhiteSpace(submitConfirmation))
+							// confirm submission if a message is provided
+							if (!string.IsNullOrWhiteSpace(submitConfirmation))
 							{
-							// if we already warned about incomplete fields, make the submit confirmation sound natural.
-							if (!string.IsNullOrWhiteSpace(confirmationMessage))
+								// if we already warned about incomplete fields, make the submit confirmation sound natural.
+								if (!string.IsNullOrWhiteSpace(confirmationMessage))
 								{
 									confirmationMessage += " Also, this is the final page. ";
 								}
 
-							// confirm submission
-							confirmationMessage += submitConfirmation;
+								// confirm submission
+								confirmationMessage += submitConfirmation;
 							}
 
 							navigationResult = NavigationResult.Submit;
