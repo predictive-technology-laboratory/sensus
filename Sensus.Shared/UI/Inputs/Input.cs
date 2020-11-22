@@ -293,11 +293,6 @@ namespace Sensus.UI.Inputs
 					{
 						SetScore(ScoreValue);
 					}
-
-					if (NavigationOnCompleted != NavigationResult.None)
-					{
-						InputGroupPage.Navigate(this, NavigationOnCompleted);
-					}
 				}
 
 				if (StoreCompletionRecords)
@@ -328,6 +323,11 @@ namespace Sensus.UI.Inputs
 							}
 						}
 					}
+				}
+
+				if (_complete && NavigationOnCompleted != NavigationResult.None)
+				{
+					InputGroupPage.Navigate(this, NavigationOnCompleted);
 				}
 			}
 		}
