@@ -149,6 +149,9 @@ namespace Sensus.UI.Inputs
 			}
 		}
 
+		[ListUiProperty("Navigate on Complete:", true, 19, new object[] { NavigationResult.None, NavigationResult.Forward, NavigationResult.Backward, NavigationResult.Cancel }, false)]
+		public NavigationResult NavigationOnCompleted { get; set; }
+
 		/// <summary>
 		/// The score group to associate the <see cref="ScoreInput"/> with the <see cref="Input"/>s it keeps score.
 		/// A <see cref="ScoreInput"/> with a ScoreGroup of <c>null</c> will accumulate the scores of every 
@@ -289,6 +292,11 @@ namespace Sensus.UI.Inputs
 					else
 					{
 						SetScore(ScoreValue);
+					}
+
+					if (NavigationOnCompleted != NavigationResult.None)
+					{
+						InputGroupPage.Navigate(this, NavigationOnCompleted);
 					}
 				}
 

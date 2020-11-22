@@ -26,6 +26,7 @@ namespace Sensus.UI
 	{
 		public enum NavigationResult
 		{
+			None,
 			Backward,
 			Forward,
 			Submit,
@@ -372,7 +373,7 @@ namespace Sensus.UI
 			{
 				_previousHandler?.Invoke(input, EventArgs.Empty);
 			}
-			else
+			else if (navigationResult == NavigationResult.Forward)
 			{
 				_nextHandler?.Invoke(input, EventArgs.Empty);
 			}
