@@ -176,6 +176,32 @@ namespace Sensus.UI.Inputs
 		[EntryStringUiProperty("Correct Value:", true, 23, false)]
 		public virtual object CorrectValue { get; set; }
 
+		public virtual bool IsCorrect(object deserializedValue)
+		{
+			if (CorrectValue != null)
+			{
+				if (CorrectValue is string stringValue && stringValue.StartsWith("=") && (stringValue.StartsWith("==") == false))
+				{
+					Protocol protocol = GetProtocol();
+
+					if (protocol.VariableValue.TryGetValue(stringValue.Substring(1), out string value) && CorrectValue.ToString() == value)
+					{
+						return true;
+					}
+
+					return false;
+				}
+				else if (CorrectValue.ToString() == Value.ToString() || CorrectValue.ToString() == deserializedValue?.ToString())
+				{
+					return true;
+				}
+
+				return false;
+			}
+
+			return true;
+		}
+
 		/// <summary>
 		/// The number of times the user can retry the <see cref="Input"/> to get a correct answer or improve their score.
 		/// </summary>
@@ -274,7 +300,7 @@ namespace Sensus.UI.Inputs
 					if (CorrectValue != null)
 					{
 						// check if the correct value was provided
-						if (CorrectValue?.ToString() == Value?.ToString() || CorrectValue?.ToString() == inputValue?.ToString())
+						if (IsCorrect(inputValue))
 						{
 							_completionTimestamp = timestamp;
 
