@@ -60,6 +60,9 @@ namespace Sensus.UI.Inputs
 		private int _attempts;
 		protected float _score;
 
+		private StackLayout _feedbackView;
+		private Label _feedbackLabel;
+
 		public InputGroupPage InputGroupPage { get; set; }
 
 		/// <summary>
@@ -247,7 +250,7 @@ namespace Sensus.UI.Inputs
 			{
 				return _score;
 			}
-			set
+			protected set
 			{
 				if (_score != value)
 				{
@@ -258,7 +261,7 @@ namespace Sensus.UI.Inputs
 			}
 		}
 
-		public virtual void SetScore(float score)
+		protected virtual void SetScore(float score)
 		{
 			Attempts += 1;
 
@@ -277,6 +280,31 @@ namespace Sensus.UI.Inputs
 			else if (ScoreMethod == ScoreMethods.Average)
 			{
 				Score = ((Score * (Attempts - 1)) + score) / Attempts;
+			}
+		}
+
+		[EntryStringUiProperty("Correct Value:", true, 25, false)]
+		public virtual string CorrectFeedbackMessage { get; set; }
+
+		[EntryStringUiProperty("Correct Value:", true, 26, false)]
+		public virtual string IncorrectFeedbackMessage { get; set; }
+
+		protected virtual void ShowFeedback(bool isCorrect)
+		{
+			if (_feedbackView != null)
+			{
+				if (isCorrect && (string.IsNullOrWhiteSpace(CorrectFeedbackMessage) == false))
+				{
+					_feedbackLabel.Text = CorrectFeedbackMessage;
+					
+					_feedbackView.IsVisible = true;
+				}
+				else if (string.IsNullOrWhiteSpace(IncorrectFeedbackMessage) == false)
+				{
+					_feedbackLabel.Text = IncorrectFeedbackMessage;
+					
+					_feedbackView.IsVisible = true;
+				}
 			}
 		}
 
@@ -318,10 +346,14 @@ namespace Sensus.UI.Inputs
 							_completionTimestamp = timestamp;
 
 							SetScore(ScoreValue);
+
+							ShowFeedback(true);
 						}
 						else // if not, then return without marking the input as complete.
 						{
 							SetScore(0);
+
+							ShowFeedback(false);
 
 							_complete = false;
 
@@ -711,9 +743,26 @@ namespace Sensus.UI.Inputs
 
 		protected virtual void SetView(View value)
 		{
+			View view = value;
+
+			if (string.IsNullOrWhiteSpace(CorrectFeedbackMessage) == false || string.IsNullOrWhiteSpace(IncorrectFeedbackMessage) == false)
+			{
+				_feedbackLabel = new Label();
+
+				_feedbackView = new StackLayout()
+				{
+					Children = { _feedbackLabel }
+				};
+
+				view = new StackLayout()
+				{
+					Children = { value, _feedbackView }
+				};
+			}
+
 			ContentView viewContainer = new ContentView
 			{
-				Content = value
+				Content = view
 			};
 
 			if (_backgroundColor != null)
@@ -743,6 +792,16 @@ namespace Sensus.UI.Inputs
 
 			_attempts = 0;
 			Score = 0;
+
+			if (_feedbackView != null)
+			{
+				if (_feedbackLabel != null)
+				{
+					_feedbackLabel.Text = null;
+				}
+
+				_feedbackView.IsVisible = false;
+			}
 		}
 
 		public virtual void OnDisappearing(NavigationResult result)
