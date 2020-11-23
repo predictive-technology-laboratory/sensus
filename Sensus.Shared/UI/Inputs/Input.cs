@@ -164,7 +164,7 @@ namespace Sensus.UI.Inputs
 		/// The method used to accumulate the score for the <see cref="Input"/>.
 		/// </summary>
 		[ListUiProperty("Score Method:", true, 21, new object[] { ScoreMethods.None, ScoreMethods.First, ScoreMethods.Last, ScoreMethods.Maximum, ScoreMethods.Average }, false)]
-		public virtual ScoreMethods ScoreMethod { get; set; }
+		public virtual ScoreMethods ScoreMethod { get; set; } = ScoreMethods.Last;
 
 		/// <summary>
 		/// The score that the user will get for a correct answer.
@@ -581,7 +581,7 @@ namespace Sensus.UI.Inputs
 			_frame = true;
 			_completionRecords = new List<InputCompletionRecord>();
 			_submissionTimestamp = null;
-			ScoreMethod = ScoreMethods.Last;
+			//ScoreMethod = ScoreMethods.Last;
 
 			StoreCompletionRecords = true;
 		}
