@@ -97,6 +97,11 @@ namespace Sensus.UI.Inputs
 				ScoreValue = _inputs.Average(x => x.ScoreValue);
 			}
 
+			if (Score == ScoreValue)
+			{
+				Complete = true;
+			}
+
 			// if the label has been created, update its text
 			UpdateScoreText();
 		}
