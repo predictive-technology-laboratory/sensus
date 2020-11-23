@@ -1280,24 +1280,23 @@ namespace Sensus
 			Stack<int> inputGroupNumBackStack = new Stack<int>();
 
 			IEnumerable<Input> allInputs = inputGroups.SelectMany(x => x.Inputs);
+			IEnumerable<ScoreInput> groupedScoreInputs = allInputs.OfType<ScoreInput>().Where(x => string.IsNullOrWhiteSpace(x.ScoreGroup) == false);
 
-			foreach (IGrouping<string, Input> scoreGroup in allInputs.GroupBy(x => x.ScoreGroup))
+			foreach (IGrouping<string, Input> scoreGroup in allInputs.GroupBy(x => x.ScoreGroup).OrderBy(x => string.IsNullOrWhiteSpace(x.Key)))
 			{
-				// if the score group key is null, then the ScoreKeeperInputs accumulates the total of the other ScoreKeeperInputs in the collection of InputGroups
+				// if the score group key is null, then the ScoreKeeperInputs accumulates the score of the other ScoreInputs in the collection of InputGroups
 				if (string.IsNullOrWhiteSpace(scoreGroup.Key))
 				{
-					IEnumerable<ScoreInput> scoreKeepers = allInputs.OfType<ScoreInput>().Where(x => string.IsNullOrWhiteSpace(x.ScoreGroup) == false);
-
-					foreach (ScoreInput scoreKeeper in scoreGroup.OfType<ScoreInput>())
+					foreach (ScoreInput scoreInput in scoreGroup.OfType<ScoreInput>())
 					{
-						scoreKeeper.Inputs = scoreKeepers;
+						scoreInput.Inputs = groupedScoreInputs;
 					}
 				}
 				else // otherwise, it keeps score of the only the Inputs in its group
 				{
-					foreach (ScoreInput scoreKeeper in scoreGroup.OfType<ScoreInput>())
+					foreach (ScoreInput scoreInput in scoreGroup.OfType<ScoreInput>())
 					{
-						scoreKeeper.Inputs = scoreGroup.ToList();
+						scoreInput.Inputs = scoreGroup.ToList();
 					}
 				}
 			}

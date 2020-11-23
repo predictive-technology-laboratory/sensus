@@ -11,7 +11,7 @@ namespace Sensus.UI.Inputs
 	{
 		private string _definedVariable;
 		private IEnumerable<Input> _inputs = new List<Input>();
-		private float _maxScore;
+		//private float _maxScore;
 		private Label _scoreLabel;
 
 		public override object Value
@@ -43,7 +43,7 @@ namespace Sensus.UI.Inputs
 		public override ScoreMethods ScoreMethod { get; set; } = ScoreMethods.Total;
 
 		[HiddenUiProperty]
-		public override float ScoreValue => 0;
+		public override float ScoreValue { get; set; }
 
 		[HiddenUiProperty]
 		public override object CorrectValue { get; set; }
@@ -86,17 +86,15 @@ namespace Sensus.UI.Inputs
 
 		public void SetScore()
 		{
-			_maxScore = 0;
-
 			if (ScoreMethod == ScoreMethods.Total)
 			{
 				Score = _inputs.Sum(x => x.Score);
-				_maxScore = _inputs.Sum(x => x.ScoreValue);
+				ScoreValue = _inputs.Sum(x => x.ScoreValue);
 			}
 			else if (ScoreMethod == ScoreMethods.Average)
 			{
 				Score = _inputs.Average(x => x.Score);
-				_maxScore = _inputs.Average(x => ScoreValue);
+				ScoreValue = _inputs.Average(x => x.ScoreValue);
 			}
 
 			// if the label has been created, update its text
@@ -115,7 +113,7 @@ namespace Sensus.UI.Inputs
 		{
 			if (_scoreLabel != null)
 			{
-				_scoreLabel.Text = $"{_score}/{_maxScore}";
+				_scoreLabel.Text = $"{_score}/{ScoreValue}";
 			}
 		}
 
