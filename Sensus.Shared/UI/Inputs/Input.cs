@@ -149,6 +149,9 @@ namespace Sensus.UI.Inputs
 			}
 		}
 
+		/// <summary>
+		/// The <see cref="NavigationResult"/> that is set for the <see cref="UI.InputGroupPage"/> when the <see cref="Input"/> is set as complete.
+		/// </summary>
 		[ListUiProperty("Navigate on Complete:", true, 19, new object[] { NavigationResult.None, NavigationResult.Forward, NavigationResult.Backward, NavigationResult.Cancel }, false)]
 		public NavigationResult NavigationOnCompleted { get; set; }
 
@@ -173,6 +176,10 @@ namespace Sensus.UI.Inputs
 		[EntryFloatUiProperty("Score Value:", true, 22, false)]
 		public virtual float ScoreValue { get; set; }
 
+		/// <summary>
+		/// The correct answer that needs to be provided.
+		/// </summary>
+		/// <value>A positive real number to make the <see cref="Input"/> scored or <c>0</c> to make it unscored.</value>
 		[EntryStringUiProperty("Correct Value:", true, 23, false)]
 		public virtual object CorrectValue { get; set; }
 
@@ -208,6 +215,9 @@ namespace Sensus.UI.Inputs
 		[EntryIntegerUiProperty("Allowed Retries:", true, 24, false)]
 		public virtual int? Retries { get; set; }
 
+		/// <summary>
+		/// The number of attempts the user has made to provide the correct value to the <see cref="Input"/>
+		/// </summary>
 		public int Attempts
 		{
 			get
@@ -228,6 +238,9 @@ namespace Sensus.UI.Inputs
 			}
 		}
 
+		/// <summary>
+		/// The current score of the <see cref="Input"/>
+		/// </summary>
 		public virtual float Score
 		{
 			get
