@@ -251,13 +251,18 @@ namespace Sensus.UI
 				}
 			};
 
-			if (inputGroup.HideNavigationButtons == false)
+			if (inputGroup.ShowNavigationButtons != ShowNavigationOptions.Never)
 			{
 				StackLayout navigationStack = new StackLayout
 				{
 					Orientation = StackOrientation.Vertical,
 					HorizontalOptions = LayoutOptions.FillAndExpand,
 				};
+
+				if (inputGroup.ShowNavigationButtons == ShowNavigationOptions.WhenValid)
+				{
+					navigationStack.IsVisible = false;
+				}
 
 				#region previous/next buttons
 				StackLayout previousNextStack = new StackLayout

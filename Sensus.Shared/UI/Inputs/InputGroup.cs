@@ -96,8 +96,8 @@ namespace Sensus.UI.Inputs
 		/// to the next and/or previous page.
 		/// </summary>
 		/// <value><c>true</c> to hide the navigation buttons; otherwise, <c>false</c>.</value>
-		[OnOffUiProperty("Hide navigation buttons:", true, 2)]
-		public bool HideNavigationButtons { get; set; }
+		[ListUiProperty("Show Navigation:", true, 2, new object[] { ShowNavigationOptions.Always, ShowNavigationOptions.WhenValid, ShowNavigationOptions.Never }, false)]
+		public ShowNavigationOptions ShowNavigationButtons { get; set; }
 
 		/// <summary>
 		/// Whether or not to tag inputs in this group with the device's current GPS location.
