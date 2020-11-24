@@ -283,10 +283,10 @@ namespace Sensus.UI.Inputs
 			}
 		}
 
-		[EntryStringUiProperty("Correct Value:", true, 25, false)]
+		[EntryStringUiProperty("Correct Feedback:", true, 25, false)]
 		public virtual string CorrectFeedbackMessage { get; set; }
 
-		[EntryStringUiProperty("Correct Value:", true, 26, false)]
+		[EntryStringUiProperty("Incorrect Feedback:", true, 26, false)]
 		public virtual string IncorrectFeedbackMessage { get; set; }
 
 		protected virtual void ShowFeedback(bool isCorrect)
@@ -299,11 +299,17 @@ namespace Sensus.UI.Inputs
 					
 					_feedbackView.IsVisible = true;
 				}
-				else if (string.IsNullOrWhiteSpace(IncorrectFeedbackMessage) == false)
+				else if (isCorrect == false && string.IsNullOrWhiteSpace(IncorrectFeedbackMessage) == false)
 				{
 					_feedbackLabel.Text = IncorrectFeedbackMessage;
 					
 					_feedbackView.IsVisible = true;
+				}
+				else
+				{
+					_feedbackLabel.Text = null;
+
+					_feedbackView.IsVisible = false;
 				}
 			}
 		}
@@ -751,6 +757,7 @@ namespace Sensus.UI.Inputs
 
 				_feedbackView = new StackLayout()
 				{
+					IsVisible = false,
 					Children = { _feedbackLabel }
 				};
 
