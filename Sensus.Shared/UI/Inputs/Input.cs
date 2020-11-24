@@ -25,6 +25,7 @@ using System.ComponentModel;
 using System.Threading.Tasks;
 using static Sensus.UI.InputGroupPage;
 using Android.Support.V4.View;
+using System.Timers;
 
 // register the input effect group
 [assembly: ResolutionGroupName(Input.EFFECT_RESOLUTION_GROUP_NAME)]
@@ -62,6 +63,8 @@ namespace Sensus.UI.Inputs
 
 		private StackLayout _feedbackView;
 		private Label _feedbackLabel;
+		private Timer _progressTimer;
+		private ProgressBar _progressBar;
 
 		public InputGroupPage InputGroupPage { get; set; }
 
@@ -283,16 +286,60 @@ namespace Sensus.UI.Inputs
 			}
 		}
 
-		[EntryStringUiProperty("Correct Feedback:", true, 25, false)]
+		[EntryIntegerUiProperty("Correct Delay (MS):", true, 25, false)]
+		public virtual int? CorrectDelay { get; set; }
+
+		[EntryStringUiProperty("Correct Feedback:", true, 26, false)]
 		public virtual string CorrectFeedbackMessage { get; set; }
 
-		[EntryStringUiProperty("Incorrect Feedback:", true, 26, false)]
+		[EntryIntegerUiProperty("Incorrect Delay (MS):", true, 27, false)]
+		public virtual int? IncorrectDelay { get; set; }
+
+		[EntryStringUiProperty("Incorrect Feedback:", true, 28, false)]
 		public virtual string IncorrectFeedbackMessage { get; set; }
+
+		private void StartProgress(double interval)
+		{
+			_progressTimer.Stop();
+
+			if (interval > 0)
+			{
+				_progressBar.Progress = 0;
+				_progressBar.IsVisible = true;
+
+				_progressTimer.Interval = interval / 200;
+
+				_progressTimer.Elapsed += (s, o) =>
+				{
+					_progressBar.Progress += 0.005;
+				};
+
+				_progressTimer.Start();
+			}
+			else
+			{
+				_progressBar.Progress = 0;
+				_progressBar.IsVisible = false;
+			}
+		}
 
 		protected virtual void ShowFeedback(bool isCorrect)
 		{
 			if (_feedbackView != null)
 			{
+				if (isCorrect && CorrectDelay > 0)
+				{
+					StartProgress(CorrectDelay.Value);
+				}
+				else if (isCorrect == false && IncorrectDelay > 0)
+				{
+					StartProgress(IncorrectDelay.Value);
+				}
+				else
+				{
+					StartProgress(0);
+				}
+
 				if (isCorrect && (string.IsNullOrWhiteSpace(CorrectFeedbackMessage) == false))
 				{
 					_feedbackLabel.Text = CorrectFeedbackMessage;
@@ -751,15 +798,28 @@ namespace Sensus.UI.Inputs
 		{
 			View view = value;
 
-			if (string.IsNullOrWhiteSpace(CorrectFeedbackMessage) == false || string.IsNullOrWhiteSpace(IncorrectFeedbackMessage) == false)
+			if (CorrectDelay > 0 || IncorrectDelay > 0 || string.IsNullOrWhiteSpace(CorrectFeedbackMessage) == false || string.IsNullOrWhiteSpace(IncorrectFeedbackMessage) == false)
 			{
-				_feedbackLabel = new Label();
-
 				_feedbackView = new StackLayout()
 				{
 					IsVisible = false,
-					Children = { _feedbackLabel }
 				};
+
+				if (CorrectDelay > 0 || IncorrectDelay > 0)
+				{
+					_progressTimer = new Timer();
+
+					_progressBar = new ProgressBar();
+
+					_feedbackView.Children.Add(_progressBar);
+				}
+
+				if (string.IsNullOrWhiteSpace(CorrectFeedbackMessage) == false || string.IsNullOrWhiteSpace(IncorrectFeedbackMessage) == false)
+				{
+					_feedbackLabel = new Label();
+
+					_feedbackView.Children.Add(_feedbackLabel);
+				}
 
 				view = new StackLayout()
 				{
