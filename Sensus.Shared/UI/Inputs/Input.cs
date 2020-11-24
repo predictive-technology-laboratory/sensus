@@ -60,11 +60,7 @@ namespace Sensus.UI.Inputs
 		private DateTimeOffset? _submissionTimestamp;
 		private int _attempts;
 		protected float _score;
-
-		private StackLayout _feedbackView;
-		private Label _feedbackLabel;
-		private Timer _progressTimer;
-		private ProgressBar _progressBar;
+		private InputFeedbackView _feedbackView;
 
 		public InputGroupPage InputGroupPage { get; set; }
 
@@ -287,85 +283,18 @@ namespace Sensus.UI.Inputs
 		}
 
 		[EntryIntegerUiProperty("Correct Delay (MS):", true, 25, false)]
-		public virtual int? CorrectDelay { get; set; }
+		public virtual int CorrectDelay { get; set; }
 
 		[EntryStringUiProperty("Correct Feedback:", true, 26, false)]
 		public virtual string CorrectFeedbackMessage { get; set; }
 
 		[EntryIntegerUiProperty("Incorrect Delay (MS):", true, 27, false)]
-		public virtual int? IncorrectDelay { get; set; }
+		public virtual int IncorrectDelay { get; set; }
 
 		[EntryStringUiProperty("Incorrect Feedback:", true, 28, false)]
 		public virtual string IncorrectFeedbackMessage { get; set; }
 
 		private const double PROGRESS_INCREMENT = 0.005;
-
-		private void StartProgress(double delay)
-		{
-			if (_progressTimer != null)
-			{
-				_progressTimer.Dispose();
-			}
-
-			_progressBar.Progress = 0;
-
-			if (delay > 0)
-			{
-				_progressBar.IsVisible = true;
-
-				_progressTimer = new Timer(delay * PROGRESS_INCREMENT);
-				_progressTimer.Elapsed += (s, o) =>
-				{
-					Device.BeginInvokeOnMainThread(() =>
-					{
-						_progressBar.Progress += PROGRESS_INCREMENT;
-					});
-				};
-				_progressTimer.Start();
-			}
-			else
-			{
-				_progressBar.IsVisible = false;
-			}
-		}
-
-		protected virtual void ShowFeedback(bool isCorrect)
-		{
-			if (_feedbackView != null)
-			{
-				if (isCorrect && CorrectDelay > 0)
-				{
-					StartProgress(CorrectDelay.Value);
-				}
-				else if (isCorrect == false && IncorrectDelay > 0)
-				{
-					StartProgress(IncorrectDelay.Value);
-				}
-				else
-				{
-					StartProgress(0);
-				}
-
-				if (isCorrect && (string.IsNullOrWhiteSpace(CorrectFeedbackMessage) == false))
-				{
-					_feedbackLabel.Text = CorrectFeedbackMessage;
-					
-					_feedbackView.IsVisible = true;
-				}
-				else if (isCorrect == false && string.IsNullOrWhiteSpace(IncorrectFeedbackMessage) == false)
-				{
-					_feedbackLabel.Text = IncorrectFeedbackMessage;
-					
-					_feedbackView.IsVisible = true;
-				}
-				else
-				{
-					_feedbackLabel.Text = null;
-
-					_feedbackView.IsVisible = false;
-				}
-			}
-		}
 
 		[JsonIgnore]
 		public abstract object Value { get; }
@@ -406,13 +335,13 @@ namespace Sensus.UI.Inputs
 
 							SetScore(ScoreValue);
 
-							ShowFeedback(true);
+							_feedbackView?.SetFeedback(true);
 						}
 						else // if not, then return without marking the input as complete.
 						{
 							SetScore(0);
 
-							ShowFeedback(false);
+							_feedbackView?.SetFeedback(false);
 
 							_complete = false;
 
@@ -685,7 +614,6 @@ namespace Sensus.UI.Inputs
 			_frame = true;
 			_completionRecords = new List<InputCompletionRecord>();
 			_submissionTimestamp = null;
-			//ScoreMethod = ScoreMethods.Last;
 
 			StoreCompletionRecords = true;
 		}
@@ -806,24 +734,7 @@ namespace Sensus.UI.Inputs
 
 			if (CorrectDelay > 0 || IncorrectDelay > 0 || string.IsNullOrWhiteSpace(CorrectFeedbackMessage) == false || string.IsNullOrWhiteSpace(IncorrectFeedbackMessage) == false)
 			{
-				_feedbackView = new StackLayout()
-				{
-					IsVisible = false,
-				};
-
-				if (CorrectDelay > 0 || IncorrectDelay > 0)
-				{
-					_progressBar = new ProgressBar();
-
-					_feedbackView.Children.Add(_progressBar);
-				}
-
-				if (string.IsNullOrWhiteSpace(CorrectFeedbackMessage) == false || string.IsNullOrWhiteSpace(IncorrectFeedbackMessage) == false)
-				{
-					_feedbackLabel = new Label();
-
-					_feedbackView.Children.Add(_feedbackLabel);
-				}
+				_feedbackView = new InputFeedbackView(PROGRESS_INCREMENT, CorrectFeedbackMessage, CorrectDelay, IncorrectFeedbackMessage, IncorrectDelay);
 
 				view = new StackLayout()
 				{
@@ -864,15 +775,7 @@ namespace Sensus.UI.Inputs
 			_attempts = 0;
 			Score = 0;
 
-			if (_feedbackView != null)
-			{
-				if (_feedbackLabel != null)
-				{
-					_feedbackLabel.Text = null;
-				}
-
-				_feedbackView.IsVisible = false;
-			}
+			_feedbackView?.Reset();
 		}
 
 		public virtual void OnDisappearing(NavigationResult result)
