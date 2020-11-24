@@ -298,27 +298,33 @@ namespace Sensus.UI.Inputs
 		[EntryStringUiProperty("Incorrect Feedback:", true, 28, false)]
 		public virtual string IncorrectFeedbackMessage { get; set; }
 
-		private void StartProgress(double interval)
-		{
-			_progressTimer.Stop();
+		private const double PROGRESS_INCREMENT = 0.005;
 
-			if (interval > 0)
+		private void StartProgress(double delay)
+		{
+			if (_progressTimer != null)
 			{
-				_progressBar.Progress = 0;
+				_progressTimer.Dispose();
+			}
+
+			_progressBar.Progress = 0;
+
+			if (delay > 0)
+			{
 				_progressBar.IsVisible = true;
 
-				_progressTimer.Interval = interval / 200;
-
+				_progressTimer = new Timer(delay * PROGRESS_INCREMENT);
 				_progressTimer.Elapsed += (s, o) =>
 				{
-					_progressBar.Progress += 0.005;
+					Device.BeginInvokeOnMainThread(() =>
+					{
+						_progressBar.Progress += PROGRESS_INCREMENT;
+					});
 				};
-
 				_progressTimer.Start();
 			}
 			else
 			{
-				_progressBar.Progress = 0;
 				_progressBar.IsVisible = false;
 			}
 		}
@@ -807,8 +813,6 @@ namespace Sensus.UI.Inputs
 
 				if (CorrectDelay > 0 || IncorrectDelay > 0)
 				{
-					_progressTimer = new Timer();
-
 					_progressBar = new ProgressBar();
 
 					_feedbackView.Children.Add(_progressBar);
