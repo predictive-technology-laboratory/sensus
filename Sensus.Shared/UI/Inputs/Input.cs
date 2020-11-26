@@ -22,9 +22,7 @@ using Sensus.UI.Inputs;
 using Sensus.Probes.User.Scripts;
 using Sensus.Exceptions;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using static Sensus.UI.InputGroupPage;
-using Android.Support.V4.View;
 using System.Timers;
 
 // register the input effect group
@@ -34,6 +32,8 @@ namespace Sensus.UI.Inputs
 {
 	public abstract class Input : INotifyPropertyChanged
 	{
+		private const double PROGRESS_INCREMENT = 0.005;
+
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		public const string EFFECT_RESOLUTION_GROUP_NAME = "InputEffects";
@@ -58,9 +58,11 @@ namespace Sensus.UI.Inputs
 		private bool _frame;
 		private List<InputCompletionRecord> _completionRecords;
 		private DateTimeOffset? _submissionTimestamp;
+		private bool _correct;
 		private int _attempts;
 		protected float _score;
 		private InputFeedbackView _feedbackView;
+		private Timer _delayTimer;
 
 		public InputGroupPage InputGroupPage { get; set; }
 
@@ -152,73 +154,63 @@ namespace Sensus.UI.Inputs
 		}
 
 		/// <summary>
-		/// The <see cref="NavigationResult"/> that is set for the <see cref="UI.InputGroupPage"/> when the <see cref="Input"/> is set as complete.
+		/// The value that needs to be provided for the input to be considered correct.
 		/// </summary>
-		[ListUiProperty("Navigate on Complete:", true, 19, new object[] { NavigationResult.None, NavigationResult.Forward, NavigationResult.Backward, NavigationResult.Cancel }, false)]
-		public NavigationResult NavigationOnCompleted { get; set; }
-
-		/// <summary>
-		/// The score group to associate the <see cref="ScoreInput"/> with the <see cref="Input"/>s it keeps score.
-		/// A <see cref="ScoreInput"/> with a ScoreGroup of <c>null</c> will accumulate the scores of every 
-		/// <see cref="Input"/> in the collection of <see cref="InputGroup"/>s being displayed.
-		/// </summary>
-		[EntryStringUiProperty("Score Group:", true, 20, false)]
-		public string ScoreGroup { get; set; }
-
-		/// <summary>
-		/// The method used to accumulate the score for the <see cref="Input"/>.
-		/// </summary>
-		[ListUiProperty("Score Method:", true, 21, new object[] { ScoreMethods.None, ScoreMethods.First, ScoreMethods.Last, ScoreMethods.Maximum, ScoreMethods.Average }, false)]
-		public virtual ScoreMethods ScoreMethod { get; set; } = ScoreMethods.Last;
-
-		/// <summary>
-		/// The score that the user will get for a correct answer.
-		/// </summary>
-		/// <value>A positive real number to make the <see cref="Input"/> scored or <c>0</c> to make it unscored.</value>
-		[EntryFloatUiProperty("Score Value:", true, 22, false)]
-		public virtual float ScoreValue { get; set; }
-
-		/// <summary>
-		/// The correct answer that needs to be provided.
-		/// </summary>
-		/// <value>A positive real number to make the <see cref="Input"/> scored or <c>0</c> to make it unscored.</value>
-		[EntryStringUiProperty("Correct Value:", true, 23, false)]
+		/// <value>Any string, or a Protocol variable name prefixed with an =, e.g. =SomeVariable.</value>
+		[EntryStringUiProperty("Correct Value:", true, 20, false)]
 		public virtual object CorrectValue { get; set; }
 
-		public virtual bool IsCorrect(object deserializedValue)
-		{
-			if (CorrectValue != null)
-			{
-				if (CorrectValue is string stringValue && stringValue.StartsWith("=") && (stringValue.StartsWith("==") == false))
-				{
-					Protocol protocol = GetProtocol();
+		/// <summary>
+		/// Set whether a correct value is required to mark the <see cref="Input"/> complete.
+		/// </summary>
+		/// <value>Any string, or a Protocol variable name prefixed with an =, e.g. =SomeVariable.</value>
+		[OnOffUiProperty("Require Correct Value:", true, 21)]
+		public virtual bool RequireCorrectValue { get; set; }
 
-					if (protocol.VariableValue.TryGetValue(stringValue.Substring(1), out string value) && CorrectValue.ToString() == value)
-					{
-						return true;
-					}
+		/// <summary>
+		/// The delay in milliseconds to wait when a correct value is provided before navigating, allowing navigation or allowing the user to retry.
+		/// </summary>
+		[EntryIntegerUiProperty("Correct Delay (MS):", true, 22, false)]
+		public virtual int CorrectDelay { get; set; }
 
-					return false;
-				}
-				else if (CorrectValue.ToString() == Value.ToString() || CorrectValue.ToString() == deserializedValue?.ToString())
-				{
-					return true;
-				}
+		/// <summary>
+		/// The message to provide as feedback when a correct value is provided.
+		/// </summary>
+		[EntryStringUiProperty("Correct Feedback:", true, 23, false)]
+		public virtual string CorrectFeedbackMessage { get; set; }
 
-				return false;
-			}
+		/// <summary>
+		/// The delay in milliseconds to wait when an incorrect value is provided before navigating, allowing navigation or allowing the user to retry.
+		/// </summary>
+		[EntryIntegerUiProperty("Incorrect Delay (MS):", true, 24, false)]
+		public virtual int IncorrectDelay { get; set; }
 
-			return true;
-		}
+		/// <summary>
+		/// The message to provide as feedback when an incorrect value is provided.
+		/// </summary>
+		[EntryStringUiProperty("Incorrect Feedback:", true, 25, false)]
+		public virtual string IncorrectFeedbackMessage { get; set; }
+
+		/// <summary>
+		/// The <see cref="NavigationResult"/> that is set for the <see cref="UI.InputGroupPage"/> when the <see cref="Input"/> is set as complete with a correct value.
+		/// </summary>
+		[ListUiProperty("Navigate when Correct:", true, 26, new object[] { NavigationResult.None, NavigationResult.Forward, NavigationResult.Backward, NavigationResult.Cancel }, false)]
+		public NavigationResult NavigationOnCorrect { get; set; }
+
+		/// <summary>
+		/// The <see cref="NavigationResult"/> that is set for the <see cref="UI.InputGroupPage"/> when the <see cref="Input"/> is set as complete with an incorrect value.
+		/// </summary>
+		[ListUiProperty("Navigate when Incorrect:", true, 27, new object[] { NavigationResult.None, NavigationResult.Forward, NavigationResult.Backward, NavigationResult.Cancel }, false)]
+		public NavigationResult NavigationOnIncorrect { get; set; }
 
 		/// <summary>
 		/// The number of times the user can retry the <see cref="Input"/> to get a correct answer or improve their score.
 		/// </summary>
-		[EntryIntegerUiProperty("Allowed Retries:", true, 24, false)]
+		[EntryIntegerUiProperty("Allowed Retries:", true, 28, false)]
 		public virtual int? Retries { get; set; }
 
 		/// <summary>
-		/// The number of attempts the user has made to provide the correct value to the <see cref="Input"/>
+		/// The number of attempts the user has made to provide the correct value to the <see cref="Input"/>. The input is disabled after (<see cref="Retries"/> + 1) attempts.
 		/// </summary>
 		public int Attempts
 		{
@@ -241,7 +233,35 @@ namespace Sensus.UI.Inputs
 		}
 
 		/// <summary>
-		/// The current score of the <see cref="Input"/>
+		/// The score group to associate the <see cref="ScoreInput"/> with the <see cref="Input"/>s it keeps score.
+		/// A <see cref="ScoreInput"/> with a ScoreGroup of <c>null</c> will accumulate the scores of every 
+		/// <see cref="Input"/> in the collection of <see cref="InputGroup"/>s being displayed.
+		/// </summary>
+		[EntryStringUiProperty("Score Group:", true, 29, false)]
+		public string ScoreGroup { get; set; }
+
+		/// <summary>
+		/// The method used to accumulate the score for the <see cref="Input"/>.
+		/// </summary>
+		[ListUiProperty("Score Method:", true, 30, new object[] { ScoreMethods.None, ScoreMethods.First, ScoreMethods.Last, ScoreMethods.Maximum, ScoreMethods.Average }, false)]
+		public virtual ScoreMethods ScoreMethod { get; set; } = ScoreMethods.Last;
+
+		/// <summary>
+		/// The score that the user will get for providing a correct value.
+		/// </summary>
+		/// <value>A positive real number to make the <see cref="Input"/> scored or <c>0</c> to make it unscored.</value>
+		[EntryFloatUiProperty("Correct Score:", true, 31, false)]
+		public virtual float CorrectScore { get; set; }
+
+		/// <summary>
+		/// The score that the user will get for providing an incorrect value.
+		/// </summary>
+		/// <value>A positive real number to make the <see cref="Input"/> scored or <c>0</c> to make it unscored.</value>
+		[EntryFloatUiProperty("Incorrect Score:", true, 32, false)]
+		public virtual float IncorrectScore { get; set; }
+
+		/// <summary>
+		/// The current score of the <see cref="Input"/>.
 		/// </summary>
 		public virtual float Score
 		{
@@ -260,41 +280,16 @@ namespace Sensus.UI.Inputs
 			}
 		}
 
-		protected virtual void SetScore(float score)
+		/// <summary>
+		/// A boolean value indicating whether the <see cref="Value"/> is equal to <see cref="CorrectValue"/>.
+		/// </summary>
+		public bool Correct
 		{
-			Attempts += 1;
-
-			if (Attempts == 1 && ScoreMethod == ScoreMethods.First)
+			get
 			{
-				Score = score;
-			}
-			else if (ScoreMethod == ScoreMethods.Last)
-			{
-				Score = score;
-			}
-			else if (ScoreMethod == ScoreMethods.Maximum && (score > Score))
-			{
-				Score = score;
-			}
-			else if (ScoreMethod == ScoreMethods.Average)
-			{
-				Score = ((Score * (Attempts - 1)) + score) / Attempts;
+				return _correct;
 			}
 		}
-
-		[EntryIntegerUiProperty("Correct Delay (MS):", true, 25, false)]
-		public virtual int CorrectDelay { get; set; }
-
-		[EntryStringUiProperty("Correct Feedback:", true, 26, false)]
-		public virtual string CorrectFeedbackMessage { get; set; }
-
-		[EntryIntegerUiProperty("Incorrect Delay (MS):", true, 27, false)]
-		public virtual int IncorrectDelay { get; set; }
-
-		[EntryStringUiProperty("Incorrect Feedback:", true, 28, false)]
-		public virtual string IncorrectFeedbackMessage { get; set; }
-
-		private const double PROGRESS_INCREMENT = 0.005;
 
 		[JsonIgnore]
 		public abstract object Value { get; }
@@ -320,42 +315,32 @@ namespace Sensus.UI.Inputs
 				DateTimeOffset timestamp = DateTimeOffset.UtcNow;
 				object inputValue = null;
 				_completionTimestamp = null;
+				_correct = false;
 
 				if (_complete)
 				{
 					// get a deep copy of the value. some inputs have list values, and simply using the list reference wouldn't track the history, since the most up-to-date list would be used for all history values.
 					inputValue = JsonConvert.DeserializeObject<object>(JsonConvert.SerializeObject(Value, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
 
-					if (CorrectValue != null)
+					_completionTimestamp = timestamp;
+
+					_correct = IsCorrect(inputValue);
+
+					if (_correct)
 					{
-						// check if the correct value was provided
-						if (IsCorrect(inputValue))
-						{
-							_completionTimestamp = timestamp;
-
-							SetScore(ScoreValue);
-
-							_feedbackView?.SetFeedback(true);
-						}
-						else // if not, then return without marking the input as complete.
-						{
-							SetScore(0);
-
-							_feedbackView?.SetFeedback(false);
-
-							_complete = false;
-
-							return;
-						}
+						SetScore(CorrectScore);
 					}
 					else
 					{
-						SetScore(ScoreValue);
+						SetScore(IncorrectScore);
 					}
+
+					_feedbackView?.SetFeedback(_correct);
 				}
 
 				if (StoreCompletionRecords)
 				{
+					// TODO: determine if completion records need to record whether the input was correct and the correct value.
 					_completionRecords.Add(new InputCompletionRecord(timestamp, inputValue));
 				}
 
@@ -384,9 +369,13 @@ namespace Sensus.UI.Inputs
 					}
 				}
 
-				if (_complete && NavigationOnCompleted != NavigationResult.None)
+				if (_correct)
 				{
-					InputGroupPage.Navigate(this, NavigationOnCompleted);
+					NavigateOrDelay(NavigationOnCorrect, CorrectDelay);
+				}
+				else
+				{
+					NavigateOrDelay(NavigationOnIncorrect, IncorrectDelay);
 				}
 			}
 		}
@@ -403,7 +392,7 @@ namespace Sensus.UI.Inputs
 		{
 			get
 			{
-				return _complete || _viewed && !_required || !Display;
+				return (_complete && (_correct || !RequireCorrectValue)) || (_viewed && !_required) || !Display;
 			}
 		}
 
@@ -598,6 +587,84 @@ namespace Sensus.UI.Inputs
 		[JsonIgnore]
 		public Datum TriggeringDatum { get; set; }
 
+		protected virtual void SetScore(float score)
+		{
+			Attempts += 1;
+
+			if (Attempts == 1 && ScoreMethod == ScoreMethods.First)
+			{
+				Score = score;
+			}
+			else if (ScoreMethod == ScoreMethods.Last)
+			{
+				Score = score;
+			}
+			else if (ScoreMethod == ScoreMethods.Maximum && (score > Score))
+			{
+				Score = score;
+			}
+			else if (ScoreMethod == ScoreMethods.Average)
+			{
+				Score = ((Score * (Attempts - 1)) + score) / Attempts;
+			}
+		}
+
+		protected virtual bool IsCorrect(object deserializedValue)
+		{
+			if (CorrectValue != null)
+			{
+				if (CorrectValue is string stringValue && stringValue.StartsWith("=") && (stringValue.StartsWith("==") == false))
+				{
+					Protocol protocol = GetProtocol();
+
+					if (protocol.VariableValue.TryGetValue(stringValue.Substring(1), out string value) && CorrectValue.ToString() == value)
+					{
+						return true;
+					}
+
+					return false;
+				}
+				else if (CorrectValue.ToString() == Value.ToString() || CorrectValue.ToString() == deserializedValue?.ToString())
+				{
+					return true;
+				}
+
+				return false;
+			}
+
+			return true;
+		}
+
+		protected virtual void NavigateOrDelay(NavigationResult navigationResult, int delay)
+		{
+			if (delay > 0)
+			{
+				_delayTimer?.Dispose();
+
+				_delayTimer = new Timer(delay) { AutoReset = false };
+
+				_view.IsEnabled = false;
+
+				_delayTimer.Elapsed += (o, s) =>
+				{
+					_view.IsEnabled = true;
+
+					if (navigationResult != NavigationResult.None)
+					{
+						InputGroupPage.Navigate(this, navigationResult);
+					}
+
+					InputGroupPage.SetNavigationVisibility(this);
+				};
+
+				_delayTimer.Start();
+			}
+			else if (navigationResult != NavigationResult.None)
+			{
+				InputGroupPage.Navigate(this, navigationResult);
+			}
+		}
+
 		public Input()
 		{
 			_name = DefaultName;
@@ -780,7 +847,7 @@ namespace Sensus.UI.Inputs
 
 		public virtual void OnDisappearing(NavigationResult result)
 		{
-
+			_delayTimer?.Dispose();
 		}
 
 		public virtual bool ValueMatches(object conditionValue, bool conjunctive)

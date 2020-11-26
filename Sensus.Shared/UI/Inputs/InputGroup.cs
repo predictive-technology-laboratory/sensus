@@ -96,7 +96,7 @@ namespace Sensus.UI.Inputs
 		/// to the next and/or previous page.
 		/// </summary>
 		/// <value><c>true</c> to hide the navigation buttons; otherwise, <c>false</c>.</value>
-		[ListUiProperty("Show Navigation:", true, 2, new object[] { ShowNavigationOptions.Always, ShowNavigationOptions.WhenValid, ShowNavigationOptions.Never }, false)]
+		[ListUiProperty("Show Navigation:", true, 2, new object[] { ShowNavigationOptions.Always, ShowNavigationOptions.WhenValid, ShowNavigationOptions.WhenComplete, ShowNavigationOptions.WhenCorrect, ShowNavigationOptions.Never }, false)]
 		public ShowNavigationOptions ShowNavigationButtons { get; set; }
 
 		/// <summary>

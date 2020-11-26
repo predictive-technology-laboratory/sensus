@@ -43,7 +43,7 @@ namespace Sensus.UI.Inputs
 		public override ScoreMethods ScoreMethod { get; set; } = ScoreMethods.Total;
 
 		[HiddenUiProperty]
-		public override float ScoreValue { get; set; }
+		public override float CorrectScore { get; set; }
 
 		[HiddenUiProperty]
 		public override object CorrectValue { get; set; }
@@ -89,15 +89,15 @@ namespace Sensus.UI.Inputs
 			if (ScoreMethod == ScoreMethods.Total)
 			{
 				Score = _inputs.Sum(x => x.Score);
-				ScoreValue = _inputs.Sum(x => x.ScoreValue);
+				CorrectScore = _inputs.Sum(x => x.CorrectScore);
 			}
 			else if (ScoreMethod == ScoreMethods.Average)
 			{
 				Score = _inputs.Average(x => x.Score);
-				ScoreValue = _inputs.Average(x => x.ScoreValue);
+				CorrectScore = _inputs.Average(x => x.CorrectScore);
 			}
 
-			if (Score == ScoreValue)
+			if (Score == CorrectScore)
 			{
 				Complete = true;
 			}
@@ -118,7 +118,7 @@ namespace Sensus.UI.Inputs
 		{
 			if (_scoreLabel != null)
 			{
-				_scoreLabel.Text = $"{_score}/{ScoreValue}";
+				_scoreLabel.Text = $"{_score}/{CorrectScore}";
 			}
 		}
 

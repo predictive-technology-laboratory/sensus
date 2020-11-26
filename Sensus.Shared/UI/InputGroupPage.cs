@@ -33,9 +33,12 @@ namespace Sensus.UI
 			Cancel
 		}
 
+		private InputGroup _inputGroup;
+		private StackLayout _navigationStack;
 		private bool _canNavigateBackward;
 		private int _displayedInputCount;
 		private TaskCompletionSource<NavigationResult> _responseTaskCompletionSource;
+		private ShowNavigationOptions _showNavigationButtons;
 
 		public int DisplayedInputCount
 		{
@@ -65,9 +68,13 @@ namespace Sensus.UI
 							  bool displayProgress,
 							  string title = "")
 		{
+
+			_inputGroup = inputGroup;
 			_canNavigateBackward = canNavigateBackward;
 			_displayedInputCount = 0;
 			_responseTaskCompletionSource = new TaskCompletionSource<NavigationResult>();
+			_showNavigationButtons = inputGroup.ShowNavigationButtons;
+
 			IsLastPage = totalSteps <= stepNumber;
 
 			StackLayout contentLayout = new StackLayout
@@ -253,7 +260,7 @@ namespace Sensus.UI
 
 			if (inputGroup.ShowNavigationButtons != ShowNavigationOptions.Never)
 			{
-				StackLayout navigationStack = new StackLayout
+				_navigationStack = new StackLayout
 				{
 					Orientation = StackOrientation.Vertical,
 					HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -261,7 +268,7 @@ namespace Sensus.UI
 
 				if (inputGroup.ShowNavigationButtons == ShowNavigationOptions.WhenValid)
 				{
-					navigationStack.IsVisible = false;
+					_navigationStack.IsVisible = false;
 				}
 
 				#region previous/next buttons
@@ -310,7 +317,7 @@ namespace Sensus.UI
 				nextButton.Clicked += _nextHandler;
 
 				previousNextStack.Children.Add(nextButton);
-				navigationStack.Children.Add(previousNextStack);
+				_navigationStack.Children.Add(previousNextStack);
 				#endregion
 
 				#region cancel button and token
@@ -324,13 +331,13 @@ namespace Sensus.UI
 					};
 
 					// separate cancel button from previous/next with a thin visible separator
-					navigationStack.Children.Add(new BoxView { Color = Color.Gray, HorizontalOptions = LayoutOptions.FillAndExpand, HeightRequest = 0.5 });
-					navigationStack.Children.Add(cancelButton);
+					_navigationStack.Children.Add(new BoxView { Color = Color.Gray, HorizontalOptions = LayoutOptions.FillAndExpand, HeightRequest = 0.5 });
+					_navigationStack.Children.Add(cancelButton);
 
 					cancelButton.Clicked += _cancelHandler;
 				}
 
-				contentLayout.Children.Add(navigationStack);
+				contentLayout.Children.Add(_navigationStack);
 
 				// allow the cancellation token to set the result of this page
 				cancellationToken?.Register(() =>
@@ -381,6 +388,22 @@ namespace Sensus.UI
 			else if (navigationResult == NavigationResult.Forward)
 			{
 				_nextHandler?.Invoke(input, EventArgs.Empty);
+			}
+		}
+
+		public virtual void SetNavigationVisibility(Input input)
+		{
+			if (_showNavigationButtons == ShowNavigationOptions.WhenComplete)
+			{
+				_navigationStack.IsVisible = input.Complete && _inputGroup.Inputs.Where(x => x.Required).All(x => x.Complete);
+			}
+			else if (_showNavigationButtons == ShowNavigationOptions.WhenValid)
+			{
+				_navigationStack.IsVisible = input.Valid && _inputGroup.Inputs.All(x => x.Valid);
+			}
+			else if (_showNavigationButtons == ShowNavigationOptions.WhenCorrect)
+			{
+				_navigationStack.IsVisible = input.Valid && _inputGroup.Inputs.All(x => x.Correct);
 			}
 		}
 

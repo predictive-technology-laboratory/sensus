@@ -7,7 +7,9 @@ namespace Sensus.UI.Inputs
 	public enum ShowNavigationOptions
 	{
 		Always,
+		WhenComplete,
 		WhenValid,
+		WhenCorrect,
 		Never
 	}
 }

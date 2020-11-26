@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Timers;
+﻿using System.Timers;
 using Xamarin.Forms;
 
 namespace Sensus.UI.Inputs
