@@ -97,13 +97,18 @@ namespace Sensus.UI.Inputs
 				CorrectScore = _inputs.Average(x => x.CorrectScore);
 			}
 
-			if (Score == CorrectScore)
+			if (Score == CorrectScore || (Score > 0 && RequireCorrectValue == false))
 			{
 				Complete = true;
 			}
 
 			// if the label has been created, update its text
 			UpdateScoreText();
+		}
+
+		protected override void SetScore(float score)
+		{
+			// The ScoreInput does not need to set it's score when set as complete
 		}
 
 		private void ScoreChanged(object sender, PropertyChangedEventArgs e)
