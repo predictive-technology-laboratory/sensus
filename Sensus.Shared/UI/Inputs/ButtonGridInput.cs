@@ -40,7 +40,10 @@ namespace Sensus.UI.Inputs
 			{
 				ButtonGridView grid = new ButtonGridView(ColumnCount, (o, s) =>
 				{
-					_value = (o as ButtonGridView.ButtonWithValue)?.Value;
+					if (o is ButtonWithValue button)
+					{
+						_value = button.Value;
+					}
 
 					Complete = true;
 				});

@@ -1,7 +1,5 @@
-﻿using Sensus.UI.UiProperties;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Xamarin.Forms;
 
 namespace Sensus.UI.Inputs
@@ -25,11 +23,6 @@ namespace Sensus.UI.Inputs
 		public ButtonGridView() : this(1, null)
 		{
 
-		}
-
-		public class ButtonWithValue : Button
-		{
-			public string Value { get; set; }
 		}
 
 		public int ColumnCount { get; private set; }
@@ -86,6 +79,11 @@ namespace Sensus.UI.Inputs
 			ColumnDefinitions.Clear();
 			RowDefinitions.Clear();
 			Children.Clear();
+
+			if (ColumnCount <= 0)
+			{
+				ColumnCount = _buttons.Count;
+			}
 
 			for (int column = 0; column < ColumnCount; column++)
 			{

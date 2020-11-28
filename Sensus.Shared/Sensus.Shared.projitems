@@ -173,6 +173,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\DataStorePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ButtonGridView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ButtonGridInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ButtonWithValue.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\InputFeedbackView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ScoreInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ReadOnlyTextInput.cs" />
