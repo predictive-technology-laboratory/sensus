@@ -11,6 +11,8 @@ namespace Sensus.UI.Inputs
 		private string _definedVariable;
 		private string _value;
 
+		private ButtonWithValue _correctButton;
+
 		public override object Value => _value;
 
 		public override bool Enabled { get; set; }
@@ -60,7 +62,7 @@ namespace Sensus.UI.Inputs
 
 					if (letterIndex == missingLetterIndex)
 					{
-						wordGrid.AddButton("", "", Color.Default);
+						_correctButton = wordGrid.AddButton("", "", Color.Default);
 
 						missingLetter = letter;
 					}
@@ -83,6 +85,13 @@ namespace Sensus.UI.Inputs
 					if (o is ButtonWithValue button)
 					{
 						_value = button.Value;
+
+						if (button.Value == missingLetter)
+						{
+							_correctButton.Text = button.Text;
+
+							button.IsVisible = false;
+						}
 					}
 
 					Complete = true;
