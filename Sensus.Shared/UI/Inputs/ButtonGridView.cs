@@ -29,31 +29,31 @@ namespace Sensus.UI.Inputs
 
 		public EventHandler DefaultClickEvent { get; set; }
 
-		public void AddButton(string text, string value)
+		public ButtonWithValue AddButton(string text, string value)
 		{
-			AddButton(text, value, Color.Default, null, Color.Default, Color.Default);
+			return AddButton(text, value, Color.Default, null, Color.Default, Color.Default);
 		}
-		public void AddButton(string text, string value, Color color)
+		public ButtonWithValue AddButton(string text, string value, Color color)
 		{
-			AddButton(text, value, color, null, Color.Default, color);
+			return AddButton(text, value, color, null, Color.Default, color);
 		}
-		public void AddButton(string text, string value, Color color, Color textColor)
+		public ButtonWithValue AddButton(string text, string value, Color color, Color textColor)
 		{
-			AddButton(text, value, color, null, textColor, color);
+			return AddButton(text, value, color, null, textColor, color);
 		}
-		public void AddButton(string text, string value, Color color, Color textColor, Color borderColor)
+		public ButtonWithValue AddButton(string text, string value, Color color, Color textColor, Color borderColor)
 		{
-			AddButton(text, value, color, null, textColor, borderColor);
+			return AddButton(text, value, color, null, textColor, borderColor);
 		}
-		public void AddButton(string text, string value, Color color, EventHandler clicked)
+		public ButtonWithValue AddButton(string text, string value, Color color, EventHandler clicked)
 		{
-			AddButton(text, value, color, clicked, Color.Default, color);
+			return AddButton(text, value, color, clicked, Color.Default, color);
 		}
-		public void AddButton(string text, string value, Color color, EventHandler clicked, Color textColor)
+		public ButtonWithValue AddButton(string text, string value, Color color, EventHandler clicked, Color textColor)
 		{
-			AddButton(text, value, color, clicked, textColor, Color.Default);
+			return AddButton(text, value, color, clicked, textColor, Color.Default);
 		}
-		public void AddButton(string text, string value, Color color, EventHandler clicked, Color textColor, Color borderColor)
+		public ButtonWithValue AddButton(string text, string value, Color color, EventHandler clicked, Color textColor, Color borderColor)
 		{
 			ButtonWithValue button = new ButtonWithValue
 			{
@@ -72,6 +72,8 @@ namespace Sensus.UI.Inputs
 			button.Clicked += DefaultClickEvent;
 
 			_buttons.Add(button);
+
+			return button;
 		}
 
 		public void Arrange()

@@ -198,6 +198,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\SliderInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\TimerInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\VoiceInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\WordPuzzleInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\MapPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\MediaPreviewPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\MessageCenterPage.cs" />
