@@ -94,6 +94,7 @@ namespace Sensus.UI.Inputs
 				HashSet<string> choices = new HashSet<string>();
 
 				CorrectValue = missingLetter;
+
 				choices.Add(missingLetter);
 
 				while (choices.Count < ChoiceCount)
