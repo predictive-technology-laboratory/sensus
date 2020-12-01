@@ -70,7 +70,8 @@ namespace Sensus.UI.UiProperties
 
             return new Editor
             {
-                HorizontalOptions = LayoutOptions.FillAndExpand
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                AutoSize = EditorAutoSizeOption.TextChanges
             };
         }
     }
