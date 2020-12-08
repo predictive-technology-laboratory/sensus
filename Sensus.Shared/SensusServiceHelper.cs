@@ -1279,6 +1279,7 @@ namespace Sensus
 			// conditions, so we can't simply decrement the index to navigate backwards.
 			Stack<int> inputGroupNumBackStack = new Stack<int>();
 
+			// assign inputs to scoreinputs by scoregroup
 			IEnumerable<Input> allInputs = inputGroups.SelectMany(x => x.Inputs);
 			IEnumerable<ScoreInput> groupedScoreInputs = allInputs.OfType<ScoreInput>().Where(x => string.IsNullOrWhiteSpace(x.ScoreGroup) == false);
 
