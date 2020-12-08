@@ -99,6 +99,9 @@ namespace Sensus.UI.Inputs
 		[ListUiProperty("Show Navigation:", true, 2, new object[] { ShowNavigationOptions.Always, ShowNavigationOptions.WhenValid, ShowNavigationOptions.WhenComplete, ShowNavigationOptions.WhenCorrect, ShowNavigationOptions.Never }, false)]
 		public ShowNavigationOptions ShowNavigationButtons { get; set; }
 
+		[OnOffUiProperty("Prevent Navigation Backward:", true, 3)]
+		public bool HidePreviousButton { get; set; }
+
 		/// <summary>
 		/// Whether or not to tag inputs in this group with the device's current GPS location.
 		/// </summary>

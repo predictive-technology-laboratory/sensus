@@ -70,7 +70,7 @@ namespace Sensus.UI
 		{
 
 			_inputGroup = inputGroup;
-			_canNavigateBackward = canNavigateBackward;
+			_canNavigateBackward = canNavigateBackward && (inputGroup.HidePreviousButton == false);
 			_displayedInputCount = 0;
 			_responseTaskCompletionSource = new TaskCompletionSource<NavigationResult>();
 			_showNavigationButtons = inputGroup.ShowNavigationButtons;
@@ -135,7 +135,7 @@ namespace Sensus.UI
 			List<Input> displayedInputs = new List<Input>();
 			int viewNumber = 1;
 			int inputSeparatorHeight = 10;
-			foreach (Input input in inputGroup.Inputs)
+			foreach (Input input in inputGroup.Inputs.Where(x => x != null))
 			{
 				if (input.Display)
 				{
