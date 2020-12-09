@@ -32,6 +32,8 @@ namespace Sensus.UI.Inputs
 		public string Id { get; set; }
 		public ObservableCollection<Input> Inputs { get; }
 
+		public virtual bool HasInputs => Inputs.Any();
+
 		/// <summary>
 		/// Name of the input group.
 		/// </summary>
