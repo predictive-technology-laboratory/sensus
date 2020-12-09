@@ -266,7 +266,7 @@ namespace Sensus.UI
 					HorizontalOptions = LayoutOptions.FillAndExpand,
 				};
 
-				if (inputGroup.ShowNavigationButtons == ShowNavigationOptions.WhenValid)
+				if (inputGroup.ShowNavigationButtons != ShowNavigationOptions.Always)
 				{
 					_navigationStack.IsVisible = false;
 				}
