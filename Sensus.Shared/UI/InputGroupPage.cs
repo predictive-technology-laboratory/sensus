@@ -135,7 +135,7 @@ namespace Sensus.UI
 			List<Input> displayedInputs = new List<Input>();
 			int viewNumber = 1;
 			int inputSeparatorHeight = 10;
-			foreach (Input input in inputGroup.Inputs.Where(x => x != null))
+			foreach (Input input in inputGroup.Inputs)
 			{
 				input.InputGroupPage = this;
 
