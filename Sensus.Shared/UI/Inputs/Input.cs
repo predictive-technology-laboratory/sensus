@@ -637,36 +637,39 @@ namespace Sensus.UI.Inputs
 
 		protected virtual void NavigateOrDelay(NavigationResult navigationResult, int delay)
 		{
-			if (delay > 0)
+			if (InputGroupPage != null)
 			{
-				_delayTimer?.Dispose();
-
-				_delayTimer = new Timer(delay) { AutoReset = false };
-
-				_view.IsEnabled = false;
-
-				_delayTimer.Elapsed += (o, s) =>
+				if (delay > 0)
 				{
-					_view.IsEnabled = true;
+					_delayTimer?.Dispose();
 
+					_delayTimer = new Timer(delay) { AutoReset = false };
+
+					_view.IsEnabled = false;
+
+					_delayTimer.Elapsed += (o, s) =>
+					{
+						_view.IsEnabled = true;
+
+						if (navigationResult != NavigationResult.None)
+						{
+							InputGroupPage.Navigate(this, navigationResult);
+						}
+
+						InputGroupPage.SetNavigationVisibility(this);
+					};
+
+					_delayTimer.Start();
+				}
+				else
+				{
 					if (navigationResult != NavigationResult.None)
 					{
 						InputGroupPage.Navigate(this, navigationResult);
 					}
 
 					InputGroupPage.SetNavigationVisibility(this);
-				};
-
-				_delayTimer.Start();
-			}
-			else
-			{
-				if (navigationResult != NavigationResult.None)
-				{
-					InputGroupPage.Navigate(this, navigationResult);
 				}
-
-				InputGroupPage.SetNavigationVisibility(this);
 			}
 		}
 
