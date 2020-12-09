@@ -659,9 +659,14 @@ namespace Sensus.UI.Inputs
 
 				_delayTimer.Start();
 			}
-			else if (navigationResult != NavigationResult.None)
+			else
 			{
-				InputGroupPage.Navigate(this, navigationResult);
+				if (navigationResult != NavigationResult.None)
+				{
+					InputGroupPage.Navigate(this, navigationResult);
+				}
+
+				InputGroupPage.SetNavigationVisibility(this);
 			}
 		}
 
