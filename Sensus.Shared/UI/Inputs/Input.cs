@@ -641,6 +641,8 @@ namespace Sensus.UI.Inputs
 			{
 				if (delay > 0)
 				{
+					InputGroupPage.SetNavigationVisibility(this);
+
 					_delayTimer?.Dispose();
 
 					_delayTimer = new Timer(delay) { AutoReset = false };

@@ -393,17 +393,20 @@ namespace Sensus.UI
 
 		public virtual void SetNavigationVisibility(Input input)
 		{
-			if (_showNavigationButtons == ShowNavigationOptions.WhenComplete)
+			if (_navigationStack != null)
 			{
-				_navigationStack.IsVisible = input.Complete && _inputGroup.Inputs.Where(x => x.Required).All(x => x.Complete);
-			}
-			else if (_showNavigationButtons == ShowNavigationOptions.WhenValid)
-			{
-				_navigationStack.IsVisible = input.Valid && _inputGroup.Inputs.All(x => x.Valid);
-			}
-			else if (_showNavigationButtons == ShowNavigationOptions.WhenCorrect)
-			{
-				_navigationStack.IsVisible = input.Valid && _inputGroup.Inputs.All(x => x.Correct);
+				if (_showNavigationButtons == ShowNavigationOptions.WhenComplete)
+				{
+					_navigationStack.IsVisible = input.Complete && _inputGroup.Inputs.Where(x => x.Required).All(x => x.Complete);
+				}
+				else if (_showNavigationButtons == ShowNavigationOptions.WhenValid)
+				{
+					_navigationStack.IsVisible = input.Valid && _inputGroup.Inputs.All(x => x.Valid);
+				}
+				else if (_showNavigationButtons == ShowNavigationOptions.WhenCorrect)
+				{
+					_navigationStack.IsVisible = input.Valid && _inputGroup.Inputs.All(x => x.Correct);
+				}
 			}
 		}
 
