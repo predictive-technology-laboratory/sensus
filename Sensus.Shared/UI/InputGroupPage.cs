@@ -137,11 +137,11 @@ namespace Sensus.UI
 			int inputSeparatorHeight = 10;
 			foreach (Input input in inputGroup.Inputs.Where(x => x != null))
 			{
+				input.InputGroupPage = this;
+
 				if (input.Display)
 				{
 					View inputView = input.GetView(viewNumber);
-
-					input.InputGroupPage = this;
 
 					if (inputView != null)
 					{
