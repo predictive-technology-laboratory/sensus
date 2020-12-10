@@ -127,6 +127,30 @@ namespace Sensus.UI.Inputs
 		public bool ShuffleInputs { get; set; }
 
 		/// <summary>
+		/// Override the text for the Previous button.
+		/// </summary>
+		[EntryStringUiProperty("Previous Button Text:", true, 5, false)]
+		public virtual string PreviousButtonText { get; set; }
+
+		/// <summary>
+		/// Override the text for the Next button.
+		/// </summary>
+		[EntryStringUiProperty("Next Button Text:", true, 6, false)]
+		public virtual string NextButtonText { get; set; }
+
+		/// <summary>
+		/// Override the text for the Next button.
+		/// </summary>
+		[EntryStringUiProperty("Submit Button Text:", true, 7, false)]
+		public virtual string SubmitButtonText { get; set; }
+
+		/// <summary>
+		/// Override the text for the Next button.
+		/// </summary>
+		[EntryStringUiProperty("Cancel Button Text:", true, 8, false)]
+		public virtual string CancelButtonText { get; set; }
+
+		/// <summary>
 		/// Gets a value indicating whether this <see cref="InputGroup"/> is valid.
 		/// A valid input group is one in which each <see cref="Input"/> in the group is valid.
 		/// An input group with no inputs is deemed valid by default.

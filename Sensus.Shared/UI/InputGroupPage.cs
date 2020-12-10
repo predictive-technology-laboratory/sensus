@@ -288,6 +288,11 @@ namespace Sensus.UI
 						Text = "Previous"
 					};
 
+					if (string.IsNullOrWhiteSpace(inputGroup.PreviousButtonText) == false)
+					{
+						previousButton.Text = inputGroup.PreviousButtonText;
+					}
+
 					previousButton.Clicked += _previousHandler;
 
 					previousNextStack.Children.Add(previousButton);
@@ -305,13 +310,24 @@ namespace Sensus.UI
 #endif
 				};
 
-				if (nextButtonTextOverride != null)
+				if (string.IsNullOrWhiteSpace(nextButtonTextOverride) == false)
 				{
 					nextButton.Text = nextButtonTextOverride;
 				}
 				else if (IsLastPage)
 				{
-					nextButton.Text = "Submit";
+					if (string.IsNullOrWhiteSpace(inputGroup.SubmitButtonText) == false)
+					{
+						nextButton.Text = "Submit";
+					}
+					else
+					{
+						nextButton.Text = inputGroup.SubmitButtonText;
+					}
+				}
+				else if (string.IsNullOrWhiteSpace(inputGroup.NextButtonText) == false)
+				{
+					nextButton.Text = inputGroup.NextButtonText;
 				}
 
 				nextButton.Clicked += _nextHandler;
@@ -329,6 +345,11 @@ namespace Sensus.UI
 						FontSize = 20,
 						Text = "Cancel"
 					};
+
+					if (string.IsNullOrWhiteSpace(inputGroup.CancelButtonText) == false)
+					{
+						cancelButton.Text = inputGroup.CancelButtonText;
+					}
 
 					// separate cancel button from previous/next with a thin visible separator
 					_navigationStack.Children.Add(new BoxView { Color = Color.Gray, HorizontalOptions = LayoutOptions.FillAndExpand, HeightRequest = 0.5 });
