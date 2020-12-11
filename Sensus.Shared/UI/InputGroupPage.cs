@@ -93,7 +93,7 @@ namespace Sensus.UI
 				}
 			};
 
-			if (string.IsNullOrWhiteSpace(title) == false)
+			if (inputGroup.HideTitle == false && string.IsNullOrWhiteSpace(title) == false)
 			{
 				contentLayout.Children.Insert(0, new Label { Text = title, FontSize = 20, HorizontalOptions = LayoutOptions.CenterAndExpand });
 			}

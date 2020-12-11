@@ -126,28 +126,31 @@ namespace Sensus.UI.Inputs
 		[OnOffUiProperty("Shuffle Inputs:", true, 5)]
 		public bool ShuffleInputs { get; set; }
 
+		[OnOffUiProperty("Show Title:", true, 6)]
+		public bool HideTitle { get; set; }
+
 		/// <summary>
 		/// Override the text for the Previous button.
 		/// </summary>
-		[EntryStringUiProperty("Previous Button Text:", true, 5, false)]
+		[EntryStringUiProperty("Previous Button Text:", true, 7, false)]
 		public virtual string PreviousButtonText { get; set; }
 
 		/// <summary>
 		/// Override the text for the Next button.
 		/// </summary>
-		[EntryStringUiProperty("Next Button Text:", true, 6, false)]
+		[EntryStringUiProperty("Next Button Text:", true, 8, false)]
 		public virtual string NextButtonText { get; set; }
 
 		/// <summary>
-		/// Override the text for the Next button.
+		/// Override the text for the Submit button.
 		/// </summary>
-		[EntryStringUiProperty("Submit Button Text:", true, 7, false)]
+		[EntryStringUiProperty("Submit Button Text:", true, 9, false)]
 		public virtual string SubmitButtonText { get; set; }
 
 		/// <summary>
-		/// Override the text for the Next button.
+		/// Override the text for the Cancel button.
 		/// </summary>
-		[EntryStringUiProperty("Cancel Button Text:", true, 8, false)]
+		[EntryStringUiProperty("Cancel Button Text:", true, 10, false)]
 		public virtual string CancelButtonText { get; set; }
 
 		/// <summary>
