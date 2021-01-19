@@ -12,8 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Microcharts;
 using Newtonsoft.Json;
 using Sensus.UI.UiProperties;
+using SkiaSharp;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -27,6 +29,7 @@ namespace Sensus.UI.Inputs
 		private IEnumerable<Input> _inputs = new List<Input>();
 		//private float _maxScore;
 		private Label _scoreLabel;
+		DonutChart _chart;
 
 		public override object Value
 		{
@@ -139,6 +142,11 @@ namespace Sensus.UI.Inputs
 			{
 				_scoreLabel.Text = $"{_score}/{CorrectScore}";
 			}
+
+			if (_chart != null)
+			{
+				_chart.Entries = new[] { new ChartEntry(Score) { Color = SKColor.Parse("#000000") }, new ChartEntry(CorrectScore) { Color = SKColor.Empty } };
+			}
 		}
 
 		public override View GetView(int index)
@@ -146,6 +154,12 @@ namespace Sensus.UI.Inputs
 			if (base.GetView(index) == null)
 			{
 				_scoreLabel = CreateLabel(-1);
+
+				_chart = new DonutChart()
+				{
+					HoleRadius = .6f,
+					BackgroundColor = SKColor.Empty
+				};
 
 				UpdateScoreText();
 
