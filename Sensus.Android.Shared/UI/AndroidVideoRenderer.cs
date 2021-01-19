@@ -3,12 +3,13 @@ using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 using Sensus.Android.UI;
 using Sensus;
-using RelativeLayout = Android.Widget.RelativeLayout;
-using Uri = Android.Net.Uri;
-using View = Xamarin.Forms.View;
 using Android.Media;
 using Android.Views;
 using System;
+using RelativeLayout = Android.Widget.RelativeLayout;
+using Uri = Android.Net.Uri;
+using View = Xamarin.Forms.View;
+using AndroidContext = Android.Content.Context;
 
 [assembly: ExportRenderer(typeof(VideoPlayer), typeof(AndroidVideoRenderer))]
 
@@ -19,7 +20,6 @@ namespace Sensus.Android.UI
 		private PrivateVideoView _videoView;
 		private VideoPlayer _videoPlayer;
 		private MediaController _mediaController;
-		private View _parent;
 
 		private class PrivateVideoView : VideoView, MediaPlayer.IOnPreparedListener, MediaPlayer.IOnCompletionListener, MediaPlayer.IOnSeekCompleteListener, ViewTreeObserver.IOnScrollChangedListener
 		{
@@ -27,7 +27,7 @@ namespace Sensus.Android.UI
 			private MediaPlayer _mediaPlayer;
 			private MediaController _mediaController;
 
-			public PrivateVideoView(global::Android.Content.Context context, VideoPlayer videoPlayer) : base(context)
+			public PrivateVideoView(AndroidContext context, VideoPlayer videoPlayer) : base(context)
 			{
 				_videoPlayer = videoPlayer;
 
@@ -120,7 +120,7 @@ namespace Sensus.Android.UI
 			}
 		}
 
-		public AndroidVideoRenderer(global::Android.Content.Context context) : base(context)
+		public AndroidVideoRenderer(AndroidContext context) : base(context)
 		{
 
 		}
@@ -132,7 +132,6 @@ namespace Sensus.Android.UI
 			if (e.NewElement != null)
 			{
 				_videoPlayer = e.NewElement;
-				_parent = e.NewElement.Parent as View;
 
 				if (Control == null)
 				{

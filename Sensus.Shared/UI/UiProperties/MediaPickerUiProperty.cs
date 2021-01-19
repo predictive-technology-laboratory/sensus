@@ -1,6 +1,5 @@
 ﻿using Plugin.Media;
 using Plugin.Media.Abstractions;
-using Sensus.Context;
 using Sensus.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -29,47 +28,47 @@ namespace Sensus.UI.UiProperties
 		public const string NONE = "None";
 		public const string CHOOSE = "Choose...";
 
-		private async Task<MediaObject> GetMediaObjectAsync(MediaFile file)
-		{
-			MediaObject media = new MediaObject();
+		//private async Task<MediaObject> GetMediaObjectAsync(MediaFile file)
+		//{
+		//	MediaObject media = new MediaObject();
 
-			byte[] data = await SensusServiceHelper.ReadAllBytesAsync(file.GetStream());
+		//	byte[] data = await SensusServiceHelper.ReadAllBytesAsync(file.GetStream());
 
-			media.Data = Convert.ToBase64String(data);
-			media.Type = SensusServiceHelper.Get().GetMimeType(file.Path);
-			media.Embeded = true;
+		//	media.Data = Convert.ToBase64String(data);
+		//	media.Type = SensusServiceHelper.Get().GetMimeType(file.Path);
+		//	media.Embeded = true;
 
-			return media;
-		}
+		//	return media;
+		//}
 
-		private async Task<MediaObject> GetMediaObjectAsync(string data, bool embed)
-		{
-			MediaObject media = new MediaObject();
+		//private async Task<MediaObject> GetMediaObjectAsync(string data, bool embed)
+		//{
+		//	MediaObject media = new MediaObject();
 
-			string mimeType = SensusServiceHelper.Get().GetMimeType(data);
+		//	string mimeType = SensusServiceHelper.Get().GetMimeType(data);
 
-			if (embed)
-			{
-				using (HttpClient client = new HttpClient())
-				{
-					using (HttpResponseMessage response = await client.GetAsync(data))
-					{
-						if (string.IsNullOrEmpty(mimeType))
-						{
-							mimeType = response.Content.Headers.ContentType.MediaType.ToLower();
-						}
+		//	if (embed)
+		//	{
+		//		using (HttpClient client = new HttpClient())
+		//		{
+		//			using (HttpResponseMessage response = await client.GetAsync(data))
+		//			{
+		//				if (string.IsNullOrEmpty(mimeType))
+		//				{
+		//					mimeType = response.Content.Headers.ContentType.MediaType.ToLower();
+		//				}
 
-						data = Convert.ToBase64String(await response.Content.ReadAsByteArrayAsync());
-					}
-				}
-			}
+		//				data = Convert.ToBase64String(await response.Content.ReadAsByteArrayAsync());
+		//			}
+		//		}
+		//	}
 
-			media.Data = data;
-			media.Type = mimeType;
-			media.Embeded = embed;
+		//	media.Data = data;
+		//	media.Type = mimeType;
+		//	media.Embeded = embed;
 
-			return media;
-		}
+		//	return media;
+		//}
 
 		private string GetButtonText(MediaObject media)
 		{
@@ -139,7 +138,7 @@ namespace Sensus.UI.UiProperties
 					sourceButton.IsEnabled = false;
 					sourceButton.Text = "Processing...";
 
-					MediaObject media = await GetMediaObjectAsync(file);
+					MediaObject media = await MediaObject.FromFileAsync(file.GetStream(), SensusServiceHelper.Get().GetMimeType(file.Path));
 
 					setMediaObject(media);
 					sourceButton.IsEnabled = true;
@@ -174,7 +173,9 @@ namespace Sensus.UI.UiProperties
 			{
 				try
 				{
-					MediaObject media = await GetMediaObjectAsync(urlEntry.Text, embed);
+					string mimeType = SensusServiceHelper.Get().GetMimeType(urlEntry.Text);
+
+					MediaObject media = await MediaObject.FromUrlAsync(urlEntry.Text, mimeType, embed);
 
 					setMediaObject(media);
 				}

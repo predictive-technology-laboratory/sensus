@@ -18,29 +18,24 @@ using System.Reflection;
 namespace Sensus.UI.UiProperties
 {
 	/// <summary>
-	/// Decorated members should be rendered as editor fields that support
+	/// The member should be hidden. This would usually be used on classes 
+	/// that need to hide certain members that their parent class and other 
+	/// derived classes show.
 	/// multi-line editing.
 	/// </summary>
-	public class EditorUiProperty : UiProperty
+	public class HiddenUiProperty : UiProperty
 	{
-		public EditorUiProperty(string labelText, bool editable, int order, bool required)
-			: base(labelText, editable, order, required)
+		public HiddenUiProperty() : base("", false, int.MaxValue, false)
 		{
+
 		}
 
 		public override View GetView(PropertyInfo property, object o, out BindableProperty bindingProperty, out IValueConverter converter)
 		{
-			bindingProperty = Editor.TextProperty;
+			bindingProperty = null;
 			converter = null;
 
-			Editor editor = new Editor
-			{
-				Keyboard = Keyboard.Default,
-				HorizontalOptions = LayoutOptions.FillAndExpand,
-				AutoSize = EditorAutoSizeOption.TextChanges
-			};
-
-			return editor;
+			return null;
 		}
 	}
 }

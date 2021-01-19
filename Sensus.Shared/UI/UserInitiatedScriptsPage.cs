@@ -37,7 +37,7 @@ namespace Sensus.UI
 		{
 			return protocol.Probes.OfType<ScriptProbe>()
 				.SelectMany(x => x.ScriptRunners)
-				.Where(x => x.Enabled && x.AllowUserInitiation && x.Script.InputGroups.SelectMany(y => y.Inputs).Any())
+				.Where(x => x.Enabled && x.AllowUserInitiation && x.Script.InputGroups.Any(x => x.HasInputs))
 				.Select(x => x.Script);
 		}
 
