@@ -30,8 +30,10 @@ namespace Sensus.UI.Inputs
 		private string _definedVariable;
 		private IEnumerable<Input> _inputs = new List<Input>();
 		//private float _maxScore;
-		private Label _scoreLabel;
-		DonutChart _chart;
+		private Span _scoreSpan;
+		private Span _maxScoreSpan;
+		private DonutChart _chart;
+		
 
 		public override object Value
 		{
@@ -96,6 +98,7 @@ namespace Sensus.UI.Inputs
 
 				foreach (Input input in _inputs)
 				{
+
 					input.PropertyChanged += ScoreChanged;
 				}
 
@@ -121,13 +124,20 @@ namespace Sensus.UI.Inputs
 				Complete = true;
 			}
 
+			if (_scoreSpan != null)
+			{
+				_scoreSpan.Text = Score.ToString();
+			}
+
+			if (_maxScoreSpan != null)
+			{
+				_maxScoreSpan.Text = CorrectScore.ToString();
+			}
+
 			if (_chart != null)
 			{
 				_chart.Entries = new[] { new ChartEntry(Score), new ChartEntry(CorrectScore - Score) { Color = SKColor.Empty } };
 			}
-
-			// if the label has been created, update its text
-			//UpdateScoreDisplay();
 		}
 
 		protected override void SetScore(float score)
@@ -143,43 +153,29 @@ namespace Sensus.UI.Inputs
 			}
 		}
 
-		//private void UpdateScoreDisplay()
-		//{
-		//	if (_scoreLabel != null)
-		//	{
-		//		_scoreLabel.Text = $"{_score}/{CorrectScore}";
-		//	}
-
-		//	if (_chart != null)
-		//	{
-		//		_chart.Entries = new[] { new ChartEntry(Score), new ChartEntry(CorrectScore - Score) { Color = SKColor.Empty } };
-		//	}
-		//}
-
 		public override View GetView(int index)
 		{
 			if (base.GetView(index) == null)
 			{
 				FormattedString scoreString = new FormattedString();
 
-				Span score = new Span()
+				_scoreSpan = new Span()
 				{
-					Text = "0",
-					BindingContext = this,
+					Text = Score.ToString(),
+					FontSize = 50
 				};
 
-				Span maxScore = new Span()
+				_maxScoreSpan = new Span()
 				{
-					Text = CorrectScore.ToString()
+					Text = CorrectScore.ToString(),
+					FontSize = 25
 				};
 
-				score.SetBinding(BindableProperty.Create("Score", typeof(float), GetType(), 0f), new Binding("Text", stringFormat: "{0}" ));
+				scoreString.Spans.Add(_scoreSpan);
+				scoreString.Spans.Add(new Span() { Text = "\n/", FontSize = 25 });
+				scoreString.Spans.Add(_maxScoreSpan);
 
-				scoreString.Spans.Add(score);
-				scoreString.Spans.Add(new Span() { Text = "/" });
-				scoreString.Spans.Add(maxScore);
-
-				_scoreLabel = new Label()
+				Label scoreLabel = new Label()
 				{
 					HorizontalOptions = LayoutOptions.FillAndExpand,
 					VerticalOptions = LayoutOptions.FillAndExpand,
@@ -205,9 +201,8 @@ namespace Sensus.UI.Inputs
 					chartView.HeightRequest = chartView.Width;
 				};
 
-				//UpdateScoreDisplay();
-				AbsoluteLayout.SetLayoutBounds(_scoreLabel, new Rectangle(0, 0, 1, 1));
-				AbsoluteLayout.SetLayoutFlags(_scoreLabel, AbsoluteLayoutFlags.All);
+				AbsoluteLayout.SetLayoutBounds(scoreLabel, new Rectangle(0, 0, 1, 1));
+				AbsoluteLayout.SetLayoutFlags(scoreLabel, AbsoluteLayoutFlags.All);
 
 				AbsoluteLayout.SetLayoutBounds(chartView, new Rectangle(0, 0, 1, AbsoluteLayout.AutoSize));
 				AbsoluteLayout.SetLayoutFlags(chartView, AbsoluteLayoutFlags.PositionProportional | AbsoluteLayoutFlags.WidthProportional);
@@ -215,14 +210,8 @@ namespace Sensus.UI.Inputs
 				AbsoluteLayout layout = new AbsoluteLayout
 				{
 					HorizontalOptions = LayoutOptions.FillAndExpand,
-					Children = {  chartView, _scoreLabel }
+					Children = {  chartView, scoreLabel }
 				};
-
-				//Grid grid = new Grid()
-				//{
-				//	HorizontalOptions = LayoutOptions.FillAndExpand,
-				//	Children = { _scoreLabel, chartView }
-				//};
 
 				base.SetView(layout);
 			}
