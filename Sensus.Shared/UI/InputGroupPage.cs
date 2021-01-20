@@ -318,11 +318,11 @@ namespace Sensus.UI
 				{
 					if (string.IsNullOrWhiteSpace(inputGroup.SubmitButtonText) == false)
 					{
-						nextButton.Text = "Submit";
+						nextButton.Text = inputGroup.SubmitButtonText;
 					}
 					else
 					{
-						nextButton.Text = inputGroup.SubmitButtonText;
+						nextButton.Text = "Submit";
 					}
 				}
 				else if (string.IsNullOrWhiteSpace(inputGroup.NextButtonText) == false)

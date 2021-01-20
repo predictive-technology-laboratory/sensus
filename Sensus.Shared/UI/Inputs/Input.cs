@@ -719,6 +719,11 @@ namespace Sensus.UI.Inputs
 
 		protected Label CreateLabel(int index)
 		{
+			if (string.IsNullOrEmpty(LabelText))
+			{
+				return new Label { IsVisible = false };
+			}
+
 			return new Label
 			{
 				Text = GetLabelText(index),
