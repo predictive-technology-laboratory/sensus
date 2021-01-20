@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using Microcharts;
+using Microcharts.Forms;
 using Newtonsoft.Json;
 using Sensus.UI.UiProperties;
 using SkiaSharp;
@@ -20,6 +21,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Xamarin.Forms;
+using Android.Util;
 
 namespace Sensus.UI.Inputs
 {
@@ -119,8 +121,13 @@ namespace Sensus.UI.Inputs
 				Complete = true;
 			}
 
+			if (_chart != null)
+			{
+				_chart.Entries = new[] { new ChartEntry(Score), new ChartEntry(CorrectScore - Score) { Color = SKColor.Empty } };
+			}
+
 			// if the label has been created, update its text
-			UpdateScoreText();
+			//UpdateScoreDisplay();
 		}
 
 		protected override void SetScore(float score)
@@ -136,34 +143,88 @@ namespace Sensus.UI.Inputs
 			}
 		}
 
-		private void UpdateScoreText()
-		{
-			if (_scoreLabel != null)
-			{
-				_scoreLabel.Text = $"{_score}/{CorrectScore}";
-			}
+		//private void UpdateScoreDisplay()
+		//{
+		//	if (_scoreLabel != null)
+		//	{
+		//		_scoreLabel.Text = $"{_score}/{CorrectScore}";
+		//	}
 
-			if (_chart != null)
-			{
-				_chart.Entries = new[] { new ChartEntry(Score) { Color = SKColor.Parse("#000000") }, new ChartEntry(CorrectScore) { Color = SKColor.Empty } };
-			}
-		}
+		//	if (_chart != null)
+		//	{
+		//		_chart.Entries = new[] { new ChartEntry(Score), new ChartEntry(CorrectScore - Score) { Color = SKColor.Empty } };
+		//	}
+		//}
 
 		public override View GetView(int index)
 		{
 			if (base.GetView(index) == null)
 			{
-				_scoreLabel = CreateLabel(-1);
+				FormattedString scoreString = new FormattedString();
+
+				Span score = new Span()
+				{
+					Text = "0",
+					BindingContext = this,
+				};
+
+				Span maxScore = new Span()
+				{
+					Text = CorrectScore.ToString()
+				};
+
+				score.SetBinding(BindableProperty.Create("Score", typeof(float), GetType(), 0f), new Binding("Text", stringFormat: "{0}" ));
+
+				scoreString.Spans.Add(score);
+				scoreString.Spans.Add(new Span() { Text = "/" });
+				scoreString.Spans.Add(maxScore);
+
+				_scoreLabel = new Label()
+				{
+					HorizontalOptions = LayoutOptions.FillAndExpand,
+					VerticalOptions = LayoutOptions.FillAndExpand,
+					HorizontalTextAlignment = TextAlignment.Center,
+					VerticalTextAlignment = TextAlignment.Center,
+					FormattedText = scoreString
+				};
 
 				_chart = new DonutChart()
 				{
 					HoleRadius = .6f,
-					BackgroundColor = SKColor.Empty
+					BackgroundColor = SKColor.Empty,
 				};
 
-				UpdateScoreText();
+				ChartView chartView = new ChartView()
+				{
+					HorizontalOptions = LayoutOptions.FillAndExpand,
+					Chart = _chart,
+				};
 
-				base.SetView(_scoreLabel);
+				chartView.SizeChanged += (s, e) =>
+				{
+					chartView.HeightRequest = chartView.Width;
+				};
+
+				//UpdateScoreDisplay();
+				AbsoluteLayout.SetLayoutBounds(_scoreLabel, new Rectangle(0, 0, 1, 1));
+				AbsoluteLayout.SetLayoutFlags(_scoreLabel, AbsoluteLayoutFlags.All);
+
+				AbsoluteLayout.SetLayoutBounds(chartView, new Rectangle(0, 0, 1, AbsoluteLayout.AutoSize));
+				AbsoluteLayout.SetLayoutFlags(chartView, AbsoluteLayoutFlags.PositionProportional | AbsoluteLayoutFlags.WidthProportional);
+
+				AbsoluteLayout layout = new AbsoluteLayout
+				{
+					HorizontalOptions = LayoutOptions.FillAndExpand,
+					Children = {  chartView, _scoreLabel }
+				};
+
+				//Grid grid = new Grid()
+				//{
+				//	HorizontalOptions = LayoutOptions.FillAndExpand,
+				//	Children = { _scoreLabel, chartView }
+				//};
+
+				base.SetView(layout);
 			}
 
 			return base.GetView(index);
