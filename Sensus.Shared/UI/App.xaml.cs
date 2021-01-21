@@ -19,11 +19,11 @@ using Microsoft.AppCenter.Crashes;
 
 namespace Sensus.UI
 {
-    public class App : Application
+    public partial class App : Application
     {
         public Page MasterPage
         {
-            get { return (MainPage as SensusMasterDetailPage).Master; }   
+            get { return (MainPage as SensusMasterDetailPage).Master; }
         }
 
         public Page DetailPage
@@ -35,6 +35,8 @@ namespace Sensus.UI
         public App()
         {
             MainPage = new SensusMasterDetailPage();
+
+            InitializeComponent();
         }
 
         protected override void OnStart()

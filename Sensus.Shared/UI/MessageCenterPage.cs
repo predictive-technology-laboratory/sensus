@@ -14,9 +14,7 @@
 
 using Sensus.Notifications;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -29,21 +27,16 @@ namespace Sensus.UI
 
 		private class TitleColorValueConverter : IValueConverter
 		{
-			private Color _defaultColor;
-
-			public TitleColorValueConverter(Color defaultColor)
-			{
-				_defaultColor = defaultColor;
-			}
-
 			public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 			{
 				if (value == null)
 				{
-					return Color.Red;
+					Application.Current.Resources.TryGetValue("UnviewedMessageColor", out object unviewedColor);
+
+					return unviewedColor;
 				}
 
-				return _defaultColor;
+				return Color.Default;
 			}
 
 			public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -61,7 +54,7 @@ namespace Sensus.UI
 			_notificationList.SetBinding(IsVisibleProperty, new Binding("Count", converter: new ViewVisibleValueConverter(), converterParameter: false));  // don't show list when there are no surveys
 			_notificationList.ItemTemplate = new DataTemplate(typeof(NotificationTextCell));
 			_notificationList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(UserMessage.DisplayTitle));
-			_notificationList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding(nameof(UserMessage.ViewedOn), converter: new TitleColorValueConverter(new TextCell().TextColor)));
+			_notificationList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding(nameof(UserMessage.ViewedOn), converter: new TitleColorValueConverter()));
 			_notificationList.ItemTemplate.SetBinding(TextCell.DetailProperty, new Binding(nameof(UserMessage.ReceivedOn), stringFormat: "{0:g}"));
 			_notificationList.ItemsSource = SensusServiceHelper.Get().UserMessages;
 

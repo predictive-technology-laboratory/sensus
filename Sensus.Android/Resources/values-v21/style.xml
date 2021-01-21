@@ -1,6 +1,16 @@
 ﻿<resources>
   <style name="SensusTheme" parent="SensusTheme.Base">
     <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-    <item name="android:statusBarColor">@android:color/transparent</item>
+    <item name="android:statusBarColor">#161f40</item>
+    <item name="android:windowLightStatusBar">false</item>
+    <item name="colorAccent">#161f40</item>
+    <item name="android:colorPressedHighlight">@color/Selected</item>
+    <item name="android:colorLongPressedHighlight">@color/Selected</item>
+    <item name="android:colorFocusedHighlight">@color/Selected</item>
+    <item name="android:colorActivatedHighlight">@color/Selected</item>
+    <item name="android:activatedBackgroundIndicator">@color/Selected</item>
+    <item name="android:buttonTint">#2e6ee6</item>
   </style>
+  <color name="Selected">#96BCE3</color>
+  <color name="Highlighted">#E39696</color>
 </resources>

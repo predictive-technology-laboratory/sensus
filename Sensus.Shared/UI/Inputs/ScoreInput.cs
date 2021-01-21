@@ -32,7 +32,60 @@ namespace Sensus.UI.Inputs
 		private Span _scoreSpan;
 		private Span _maxScoreSpan;
 		private DonutChart _chart;
-		
+
+		private static SKColor _scoreColor;
+		private static SKColor _scoreRemainingColor;
+		private static Color _scoreLabelColor;
+		private static Color _scoreLabelDividerColor;
+		private static Color _maxScoreLabelColor;
+
+		static ScoreInput()
+		{
+			if (Application.Current.Resources.TryGetValue("ScoreColor", out object scoreColor))
+			{
+				_scoreColor = SKColor.Parse(((Color)scoreColor).ToHex());
+			}
+			else
+			{
+				_scoreColor = SKColor.Parse(Color.Accent.ToHex());
+			}
+
+			if (Application.Current.Resources.TryGetValue("ScoreRemainingColor", out object scoreRemainingColor))
+			{
+				_scoreRemainingColor = SKColor.Parse(((Color)scoreRemainingColor).ToHex());
+			}
+			else
+			{
+				_scoreRemainingColor = SKColor.Empty;
+			}
+
+			if (Application.Current.Resources.TryGetValue("ScoreLabelColor", out object scoreLabelColor))
+			{
+				_scoreLabelColor = (Color)scoreLabelColor;
+			}
+			else
+			{
+				_scoreLabelColor = Color.Default;
+			}
+
+			if (Application.Current.Resources.TryGetValue("ScoreLabelDividerColor", out object scoreLabelDividerColor))
+			{
+				_scoreLabelDividerColor = (Color)scoreLabelDividerColor;
+			}
+			else
+			{
+				_scoreLabelDividerColor = _scoreLabelColor;
+			}
+
+			if (Application.Current.Resources.TryGetValue("ScoreRemainingLabelColor", out object scoreRemainingLabelColor))
+			{
+				_maxScoreLabelColor = (Color)scoreRemainingLabelColor;
+			}
+			else
+			{
+				_maxScoreLabelColor = _scoreLabelColor;
+			}
+		}
 
 		public override object Value
 		{
@@ -135,7 +188,7 @@ namespace Sensus.UI.Inputs
 
 			if (_chart != null)
 			{
-				_chart.Entries = new[] { new ChartEntry(Score), new ChartEntry(CorrectScore - Score) { Color = SKColor.Empty } };
+				_chart.Entries = new[] { new ChartEntry(Score) { Color = _scoreColor }, new ChartEntry(CorrectScore - Score) { Color = _scoreRemainingColor } };
 			}
 		}
 
@@ -161,17 +214,19 @@ namespace Sensus.UI.Inputs
 				_scoreSpan = new Span()
 				{
 					Text = Score.ToString(),
+					ForegroundColor = _scoreLabelColor,
 					FontSize = 50
 				};
 
 				_maxScoreSpan = new Span()
 				{
 					Text = CorrectScore.ToString(),
+					ForegroundColor = _maxScoreLabelColor,
 					FontSize = 25
 				};
 
 				scoreString.Spans.Add(_scoreSpan);
-				scoreString.Spans.Add(new Span() { Text = "\n/", FontSize = 25 });
+				scoreString.Spans.Add(new Span() { Text = "\n/", FontSize = 25, ForegroundColor = _scoreLabelDividerColor });
 				scoreString.Spans.Add(_maxScoreSpan);
 
 				Label scoreLabel = new Label()

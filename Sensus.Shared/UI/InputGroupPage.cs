@@ -165,11 +165,12 @@ namespace Sensus.UI
 						{
 							inputView = new Frame
 							{
+								StyleClass = new List<string> { "InputFrame" },
 								Content = inputView,
-								BorderColor = Color.Accent,
-								BackgroundColor = Color.Transparent,
+								//BorderColor = Color.Accent,
+								//BackgroundColor = Color.Transparent,
 								VerticalOptions = LayoutOptions.Start,
-								HasShadow = false,
+								//HasShadow = true,
 								Padding = new Thickness(10)
 							};
 						}
