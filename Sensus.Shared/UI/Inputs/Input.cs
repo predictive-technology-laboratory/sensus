@@ -145,6 +145,8 @@ namespace Sensus.UI.Inputs
 
 		public Color LabelTextColor { get; set; }
 
+		public TextAlignment LabelTextAlignment { get; set; }
+
 		public bool DisplayNumber
 		{
 			get
@@ -736,7 +738,8 @@ namespace Sensus.UI.Inputs
 				Text = GetLabelText(index),
 				FontSize = _labelFontSize,
 				FontAttributes = LabelFontAttributes,
-				TextColor = LabelTextColor
+				TextColor = LabelTextColor,
+				HorizontalTextAlignment = LabelTextAlignment
 
 				// set the style ID on the label so that we can retrieve it when UI testing
 #if UI_TESTING
