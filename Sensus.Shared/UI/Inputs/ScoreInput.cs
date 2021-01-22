@@ -158,6 +158,11 @@ namespace Sensus.UI.Inputs
 			}
 		}
 
+		private IEnumerable<ChartEntry> GetChartEntries()
+		{
+			return new[] { new ChartEntry(Score) { Color = _scoreColor }, new ChartEntry(CorrectScore - Score) { Color = _scoreRemainingColor } };
+		}
+
 		public void SetScore()
 		{
 			if (ScoreMethod == ScoreMethods.Total)
@@ -188,7 +193,7 @@ namespace Sensus.UI.Inputs
 
 			if (_chart != null)
 			{
-				_chart.Entries = new[] { new ChartEntry(Score) { Color = _scoreColor }, new ChartEntry(CorrectScore - Score) { Color = _scoreRemainingColor } };
+				_chart.Entries = GetChartEntries();
 			}
 		}
 
@@ -244,6 +249,7 @@ namespace Sensus.UI.Inputs
 				{
 					HoleRadius = .6f,
 					BackgroundColor = SKColor.Empty,
+					Entries = GetChartEntries()
 				};
 
 				ChartView chartView = new ChartView()
