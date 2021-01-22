@@ -84,6 +84,11 @@ namespace Sensus.UI
 				Padding = new Thickness(10, 20, 10, 20)
 			};
 
+			ScrollView scrollView = new ScrollView
+			{
+				Content = contentLayout
+			};
+
 			//if (inputGroup.HideTitle == false && string.IsNullOrWhiteSpace(title) == false)
 			//{
 			//	contentLayout.Children.Insert(0, new Label { Text = title, FontSize = 20, HorizontalOptions = LayoutOptions.CenterAndExpand });
@@ -105,7 +110,7 @@ namespace Sensus.UI
 			{
 				if (inputGroup.FreezeHeader)
 				{
-					headerLayout.Padding = new Thickness(10, 20, 10, 0);
+					headerLayout.Padding = new Thickness(10 + scrollView.Margin.Left, 20, 10 + scrollView.Margin.Right, 0);
 				}
 
 				headerLayout.Children.Add(new Label
@@ -412,11 +417,6 @@ namespace Sensus.UI
 				{
 					displayedInput.OnDisappearing(await ResponseTask);
 				}
-			};
-
-			ScrollView scrollView = new ScrollView
-			{
-				Content = contentLayout
 			};
 
 			if (inputGroup.FreezeHeader)

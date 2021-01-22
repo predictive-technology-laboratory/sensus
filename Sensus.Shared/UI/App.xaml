@@ -32,6 +32,8 @@
 		<Color x:Key="ScoreRemainingColor">Transparent</Color>
 		<!--<Color x:Key="ScoreLabelColor"></Color>-->
 
+		<!--<x:Int32 x:Key="ScrollViewPadding">4</x:Int32>-->
+		
 		<!-- Styles -->
 		<Style TargetType="{x:Type Page}" ApplyToDerivedTypes="True">
 			<Setter Property="BackgroundColor" Value="{StaticResource BackgroundColor}" />
