@@ -28,7 +28,7 @@ namespace Sensus.UI.Inputs
 	{
 		private string _definedVariable;
 		private IEnumerable<Input> _inputs = new List<Input>();
-		//private float _maxScore;
+		private Label _label;
 		private Span _scoreSpan;
 		private Span _maxScoreSpan;
 		private DonutChart _chart;
@@ -209,6 +209,8 @@ namespace Sensus.UI.Inputs
 		{
 			if (base.GetView(index) == null)
 			{
+				_label = CreateLabel(index);
+				
 				FormattedString scoreString = new FormattedString();
 
 				_scoreSpan = new Span()
@@ -264,10 +266,14 @@ namespace Sensus.UI.Inputs
 				AbsoluteLayout layout = new AbsoluteLayout
 				{
 					HorizontalOptions = LayoutOptions.FillAndExpand,
-					Children = {  chartView, scoreLabel }
+					Children = { _label, chartView, scoreLabel }
 				};
 
 				base.SetView(layout);
+			}
+			else
+			{
+				_label.Text = GetLabelText(index);
 			}
 
 			return base.GetView(index);
