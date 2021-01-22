@@ -153,6 +153,9 @@ namespace Sensus.UI.Inputs
 		[EntryStringUiProperty("Cancel Button Text:", true, 10, false)]
 		public virtual string CancelButtonText { get; set; }
 
+		[OnOffUiProperty("Hide Required Field Label:", true, 11)]
+		public bool HideRequiredFieldLabel { get; set; }
+
 		/// <summary>
 		/// Gets a value indicating whether this <see cref="InputGroup"/> is valid.
 		/// A valid input group is one in which each <see cref="Input"/> in the group is valid.

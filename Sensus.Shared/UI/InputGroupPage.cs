@@ -119,13 +119,13 @@ namespace Sensus.UI
 			#endregion
 
 			#region required field label
-			if (inputGroup.Inputs.Any(input => input.Display && input.Required))
+			if (inputGroup.HideRequiredFieldLabel == false && inputGroup.Inputs.Any(input => input.Display && input.Required))
 			{
 				contentLayout.Children.Add(new Label
 				{
 					Text = "Required fields are indicated with *",
 					FontSize = 15,
-					TextColor = Color.Red,
+					StyleClass = new[] { "RequiredFieldLabel" },
 					HorizontalOptions = LayoutOptions.Start
 				});
 			}

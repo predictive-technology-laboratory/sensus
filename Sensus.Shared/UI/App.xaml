@@ -15,6 +15,7 @@
 		<Color x:Key="FrameBackgroundColor">Transparent</Color>
 		<Color x:Key="FrameBorderColor">#e3e3e3</Color>
 		<Color x:Key="DimmedColor">#d1d1d1</Color>
+		<Color x:Key="RequiredFieldLabelColor">#ad3434</Color>
 
 		<!-- Sensus colors -->
 		<Color x:Key="ProbeOnColor">#227022</Color>
@@ -75,6 +76,10 @@
 		</Style>
 		<Style Class="NavigationButton" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
 			<Setter Property="BackgroundColor" Value="{StaticResource NavigationButtonColor}" />
+		</Style>
+
+		<Style Class="RequiredFieldLabel" TargetType="{x:Type Label}" ApplyToDerivedTypes="True">
+			<Setter Property="TextColor" Value="{StaticResource RequiredFieldLabelColor}" />
 		</Style>
 
 		<!--<Style Class="GridButton" TargetType="{x:Type rendered:ButtonWithValue}" ApplyToDerivedTypes="True">
