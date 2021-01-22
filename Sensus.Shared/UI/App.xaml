@@ -13,6 +13,7 @@
 		<Color x:Key="NavigationButtonColor">#367fc9</Color>
 		<Color x:Key="FrameBackgroundColor">Transparent</Color>
 		<Color x:Key="FrameBorderColor">#e3e3e3</Color>
+		<Color x:Key="DimmedColor">#d1d1d1</Color>
 
 		<Style TargetType="{x:Type Page}" ApplyToDerivedTypes="True">
 			<Setter Property="BackgroundColor" Value="{StaticResource BackgroundColor}" />
@@ -44,23 +45,31 @@
 		<Style TargetType="{x:Type ListView}">
 			<Setter Property="SeparatorColor" Value="{StaticResource ButtonColor}" />
 		</Style>
-		<Style Class="NavigationButton" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
-			<Setter Property="BackgroundColor" Value="{StaticResource NavigationButtonColor}" />
-		</Style>
 		<Style TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
 			<Setter Property="BackgroundColor" Value="{StaticResource ButtonColor}" />
 			<Setter Property="TextColor" Value="{StaticResource ButtonTextColor}" />
 			<Setter Property="BorderRadius" Value="6" />
 			<Setter Property="BorderWidth" Value="6" />
+			<Style.Triggers>
+				<Trigger Property="IsEnabled" Value="false" TargetType="{x:Type Button}">
+					<Setter Property="BackgroundColor" Value="{StaticResource DimmedColor}"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>
+		<Style Class="NavigationButton" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
+			<Setter Property="BackgroundColor" Value="{StaticResource NavigationButtonColor}" />
 		</Style>
 
-		<Style Class="CorrectAnswer" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
-			<Setter Property="BackgroundColor" Value="{StaticResource CorrectAnswerColor}" />
-		</Style>
-
-		<Style Class="IncorrectAnswer" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
-			<Setter Property="BackgroundColor" Value="{StaticResource IncorrectAnswerColor}" />
-		</Style>
+		<!--<Style Class="GridButton" TargetType="{x:Type rendered:ButtonWithValue}" ApplyToDerivedTypes="True">
+			<Style.Triggers>
+				<Trigger Property="ShowAs" Value="Correct" TargetType="{x:Type rendered:ButtonWithValue}">
+					<Setter Property="BackgroundColor" Value="{StaticResource CorrectAnswerColor}"/>
+				</Trigger>
+				<Trigger Property="ShowAs" Value="Incorrect" TargetType="{x:Type rendered:ButtonWithValue}">
+					<Setter Property="BackgroundColor" Value="{StaticResource IncorrectAnswerColor}"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>-->
 
 		<Style Class="ItemPickerFrame" TargetType="{x:Type Frame}" ApplyToDerivedTypes="True">
 			<Setter Property="BackgroundColor" Value="{StaticResource FrameBackgroundColor}" />
