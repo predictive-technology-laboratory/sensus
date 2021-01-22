@@ -64,21 +64,20 @@ namespace Sensus.UI.Inputs
 
 					Complete = true;
 
-					foreach (ButtonWithValue gridButton in GridButtons)
-					{
-						gridButton.StyleClass.Remove("CorrectAnswer");
-						gridButton.StyleClass.Remove("IncorrectAnswer");
-					}
-
 					if (CorrectValue != null)
 					{
+						foreach(ButtonWithValue gridButton in GridButtons)
+						{
+							gridButton.Style = null;
+						}
+
 						if (Correct)
 						{
-							button.StyleClass.Add("CorrectAnswer");
+							button.Style = (Style)Application.Current.Resources["CorrectAnswerButton"];
 						}
 						else
 						{
-							button.StyleClass.Add("IncorrectAnswer");
+							button.Style = (Style)Application.Current.Resources["IncorrectAnswerButton"];
 						}
 					}
 				});

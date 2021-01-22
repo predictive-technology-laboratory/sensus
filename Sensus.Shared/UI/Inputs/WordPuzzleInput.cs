@@ -82,7 +82,7 @@ namespace Sensus.UI.Inputs
 					{
 						_correctButton = wordGrid.AddButton("", "");
 
-						_correctButton.StyleClass.Add("MissingLetterButton");
+						_correctButton.Style = (Style)Application.Current.Resources["MissingLetterButton"];
 
 						missingLetter = letter;
 					}
@@ -106,21 +106,20 @@ namespace Sensus.UI.Inputs
 
 					foreach (ButtonWithValue gridButton in GridButtons)
 					{
-						gridButton.StyleClass.Remove("CorrectAnswer");
-						gridButton.StyleClass.Remove("IncorrectAnswer");
+						gridButton.Style = null;
 					}
 
 					if (button.Value == missingLetter)
 					{
 						_correctButton.Text = button.Text;
 
-						_correctButton.StyleClass.Add("CorrectAnswer");
+						_correctButton.Style = (Style)Application.Current.Resources["CorrectAnswerButton"];
 
 						button.IsVisible = false;
 					}
 					else
 					{
-						button.StyleClass.Add("IncorrectAnswer");
+						button.Style = (Style)Application.Current.Resources["IncorrectAnswerButton"];
 					}
 
 					_value = button.Value;

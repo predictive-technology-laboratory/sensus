@@ -65,8 +65,6 @@ namespace Sensus.UI.Inputs
 			_buttons.Add(button);
 
 			return button;
-
-			//return AddButton(text, value, Color.Default, null, Color.Default, Color.Default);
 		}
 		public ButtonWithValue AddButton(string text, string value, Color color)
 		{
@@ -75,8 +73,6 @@ namespace Sensus.UI.Inputs
 			button.BackgroundColor = color;
 
 			return button;
-
-			//return AddButton(text, value, color, null, Color.Default, color);
 		}
 		public ButtonWithValue AddButton(string text, string value, Color color, Color textColor)
 		{
@@ -86,8 +82,6 @@ namespace Sensus.UI.Inputs
 			button.TextColor = textColor;
 
 			return button;
-
-			//return AddButton(text, value, color, null, textColor, color);
 		}
 		public ButtonWithValue AddButton(string text, string value, Color color, Color textColor, Color borderColor)
 		{
@@ -98,8 +92,6 @@ namespace Sensus.UI.Inputs
 			button.BorderColor = borderColor;
 
 			return button;
-
-			//return AddButton(text, value, color, null, textColor, borderColor);
 		}
 		public ButtonWithValue AddButton(string text, string value, Color color, EventHandler clicked)
 		{
@@ -108,8 +100,6 @@ namespace Sensus.UI.Inputs
 			button.BackgroundColor = color;
 
 			return button;
-
-			//return AddButton(text, value, color, clicked, Color.Default, color);
 		}
 		public ButtonWithValue AddButton(string text, string value, Color color, EventHandler clicked, Color textColor)
 		{
@@ -119,8 +109,6 @@ namespace Sensus.UI.Inputs
 			button.TextColor = textColor;
 
 			return button;
-
-			//return AddButton(text, value, color, clicked, textColor, Color.Default);
 		}
 		public ButtonWithValue AddButton(string text, string value, Color color, EventHandler clicked, Color textColor, Color borderColor)
 		{
@@ -131,26 +119,6 @@ namespace Sensus.UI.Inputs
 			button.BorderColor = borderColor;
 
 			return button;
-
-			//ButtonWithValue button = new ButtonWithValue
-			//{
-			//	Text = text,
-			//	BackgroundColor = color,
-			//	TextColor = textColor,
-			//	BorderColor = borderColor,
-			//	Value = value
-			//};
-
-			//if (clicked != null)
-			//{
-			//	button.Clicked += clicked;
-			//}
-
-			//button.Clicked += DefaultClickEvent;
-
-			//_buttons.Add(button);
-
-			//return button;
 		}
 
 		public IEnumerable<ButtonWithValue> Buttons => _buttons.ToArray();

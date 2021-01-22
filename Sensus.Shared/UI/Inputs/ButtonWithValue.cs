@@ -12,18 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
 using Xamarin.Forms;
 
 namespace Sensus.UI.Inputs
 {
 	public class ButtonWithValue : Button
 	{
-		public ButtonWithValue()
-		{
-			StyleClass = new List<string>();
-		}
-
 		public string Value { get; set; }
 	}
 }

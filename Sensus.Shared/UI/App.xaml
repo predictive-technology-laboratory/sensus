@@ -3,6 +3,7 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
 			 x:Class="Sensus.UI.App">
 	<Application.Resources>
+		<!-- general UI colors -->
 		<Color x:Key="BackgroundColor">#ffffff</Color>
 		<Color x:Key="NavigationBarColor">#233367</Color>
 		<Color x:Key="NavigationBarTextColor">#ffffff</Color>
@@ -15,6 +16,22 @@
 		<Color x:Key="FrameBorderColor">#e3e3e3</Color>
 		<Color x:Key="DimmedColor">#d1d1d1</Color>
 
+		<!-- Sensus colors -->
+		<Color x:Key="ProbeOnColor">#227022</Color>
+		<Color x:Key="ProbeOffColor">#ad3434</Color>
+
+		<Color x:Key="UnviewedMessageColor">#ad3434</Color>
+
+		<Color x:Key="CorrectAnswerColor">#65bf65</Color>
+		<Color x:Key="IncorrectAnswerColor">#ff9187</Color>
+
+		<Color x:Key="MissingLetterButtonColor">#d1d1d1</Color>
+
+		<Color x:Key="ScoreColor">#2154c2</Color>
+		<Color x:Key="ScoreRemainingColor">Transparent</Color>
+		<!--<Color x:Key="ScoreLabelColor"></Color>-->
+
+		<!-- Styles -->
 		<Style TargetType="{x:Type Page}" ApplyToDerivedTypes="True">
 			<Setter Property="BackgroundColor" Value="{StaticResource BackgroundColor}" />
 		</Style>
@@ -71,6 +88,14 @@
 			</Style.Triggers>
 		</Style>-->
 
+		<Style x:Key="CorrectAnswerButton" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
+			<Setter Property="BackgroundColor" Value="{StaticResource CorrectAnswerColor}" />
+		</Style>
+
+		<Style x:Key="IncorrectAnswerButton" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
+			<Setter Property="BackgroundColor" Value="{StaticResource IncorrectAnswerColor}" />
+		</Style>
+
 		<Style Class="ItemPickerFrame" TargetType="{x:Type Frame}" ApplyToDerivedTypes="True">
 			<Setter Property="BackgroundColor" Value="{StaticResource FrameBackgroundColor}" />
 			<Setter Property="BorderColor" Value="{Static Color.Accent}" />
@@ -83,23 +108,9 @@
 			<Setter Property="HasShadow" Value="False" />
 		</Style>
 
-		<Style Class="MissingLetterButton" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
+		<Style x:Key="MissingLetterButton" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
 			<Setter Property="BackgroundColor" Value="{StaticResource MissingLetterButtonColor}" />
 		</Style>
-
-		<Color x:Key="ProbeOnColor">#227022</Color>
-		<Color x:Key="ProbeOffColor">#ad3434</Color>
-
-		<Color x:Key="UnviewedMessageColor">#ad3434</Color>
-
-		<Color x:Key="CorrectAnswerColor">#65bf65</Color>
-		<Color x:Key="IncorrectAnswerColor">#ff9187</Color>
-
-		<Color x:Key="MissingLetterButtonColor">#d1d1d1</Color>
-		
-		<Color x:Key="ScoreColor">#2154c2</Color>
-		<Color x:Key="ScoreRemainingColor">Transparent</Color>
-		<!--<Color x:Key="ScoreLabelColor"></Color>-->
 
 	</Application.Resources>
 </Application>
