@@ -48,12 +48,12 @@ namespace Sensus.UI.Inputs
 		[EntryIntegerUiProperty("Number of Columns:", true, 3, false)]
 		public int ColumnCount { get; set; } = 1;
 
+		public List<ButtonWithValue> GridButtons { get; }
+
 		public override View GetView(int index)
 		{
 			if (base.GetView(index) == null)
 			{
-				List<ButtonWithValue> buttons = new List<ButtonWithValue>();
-
 				ButtonGridView grid = new ButtonGridView(ColumnCount, (s, e) =>
 				{
 					ButtonWithValue button = (ButtonWithValue)s;
@@ -62,7 +62,7 @@ namespace Sensus.UI.Inputs
 
 					Complete = true;
 
-					foreach (ButtonWithValue otherButton in buttons)
+					foreach (ButtonWithValue otherButton in GridButtons)
 					{
 						otherButton.StyleClass.Remove("CorrectAnswer");
 						otherButton.StyleClass.Remove("IncorrectAnswer");
@@ -80,7 +80,7 @@ namespace Sensus.UI.Inputs
 
 				foreach (string button in Buttons)
 				{
-					buttons.Add(grid.AddButton(button, button));
+					GridButtons.Add(grid.AddButton(button, button));
 				}
 
 				grid.Arrange();
