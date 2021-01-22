@@ -81,21 +81,43 @@ namespace Sensus.UI
 			{
 				Orientation = StackOrientation.Vertical,
 				VerticalOptions = LayoutOptions.FillAndExpand,
-				Padding = new Thickness(10, 20, 10, 20),
-				Children =
-				{
-					new Label
-					{
-						Text = inputGroup.Name,
-						FontSize = 20,
-						HorizontalOptions = LayoutOptions.CenterAndExpand
-					}
-				}
+				Padding = new Thickness(10, 20, 10, 20)
 			};
 
-			if (inputGroup.HideTitle == false && string.IsNullOrWhiteSpace(title) == false)
+			//if (inputGroup.HideTitle == false && string.IsNullOrWhiteSpace(title) == false)
+			//{
+			//	contentLayout.Children.Insert(0, new Label { Text = title, FontSize = 20, HorizontalOptions = LayoutOptions.CenterAndExpand });
+			//}
+
+			StackLayout headerLayout = new StackLayout
 			{
-				contentLayout.Children.Insert(0, new Label { Text = title, FontSize = 20, HorizontalOptions = LayoutOptions.CenterAndExpand });
+				Orientation = StackOrientation.Vertical,
+				HorizontalOptions = LayoutOptions.FillAndExpand
+			};
+
+			StackLayout subHeaderLayout = new StackLayout
+			{
+				Orientation = StackOrientation.Vertical,
+				HorizontalOptions = LayoutOptions.FillAndExpand
+			};
+
+			if (inputGroup.Header == null)
+			{
+				if (inputGroup.FreezeHeader)
+				{
+					headerLayout.Padding = new Thickness(10, 20, 10, 0);
+				}
+
+				headerLayout.Children.Add(new Label
+				{
+					Text = inputGroup.Name,
+					FontSize = 20,
+					HorizontalOptions = LayoutOptions.CenterAndExpand
+				});
+			}
+			else
+			{
+				headerLayout.Children.Add(inputGroup.Header.GetView(1));
 			}
 
 			#region progress bar
@@ -103,14 +125,14 @@ namespace Sensus.UI
 			{
 				float progress = (stepNumber - 1) / (float)totalSteps;
 
-				contentLayout.Children.Add(new Label
+				subHeaderLayout.Children.Add(new Label
 				{
 					Text = "Progress:  " + Math.Round(100 * progress) + "%",
 					FontSize = 15,
 					HorizontalOptions = LayoutOptions.CenterAndExpand
 				});
 
-				contentLayout.Children.Add(new ProgressBar
+				subHeaderLayout.Children.Add(new ProgressBar
 				{
 					Progress = progress,
 					HorizontalOptions = LayoutOptions.FillAndExpand
@@ -121,7 +143,7 @@ namespace Sensus.UI
 			#region required field label
 			if (inputGroup.HideRequiredFieldLabel == false && inputGroup.Inputs.Any(input => input.Display && input.Required))
 			{
-				contentLayout.Children.Add(new Label
+				subHeaderLayout.Children.Add(new Label
 				{
 					Text = "Required fields are indicated with *",
 					FontSize = 15,
@@ -130,6 +152,11 @@ namespace Sensus.UI
 				});
 			}
 			#endregion
+
+			if (subHeaderLayout.Children.Count > 0)
+			{
+				headerLayout.Children.Add(subHeaderLayout);
+			}
 
 			#region inputs
 			List<Input> displayedInputs = new List<Input>();
@@ -281,7 +308,7 @@ namespace Sensus.UI
 				{
 					Button previousButton = new Button
 					{
-						StyleClass = new List<string> { "NavigationButton"},
+						StyleClass = new List<string> { "NavigationButton" },
 						HorizontalOptions = LayoutOptions.FillAndExpand,
 						FontSize = 20,
 						Text = "Previous"
@@ -387,10 +414,25 @@ namespace Sensus.UI
 				}
 			};
 
-			Content = new ScrollView
+			ScrollView scrollView = new ScrollView
 			{
 				Content = contentLayout
 			};
+
+			if (inputGroup.FreezeHeader)
+			{
+				Content = new StackLayout()
+				{
+					Orientation = StackOrientation.Vertical,
+					Children = { headerLayout, scrollView }
+				};
+			}
+			else
+			{
+				contentLayout.Children.Insert(0, headerLayout);
+
+				Content = scrollView;
+			}
 		}
 
 		protected EventHandler _cancelHandler;
