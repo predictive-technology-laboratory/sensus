@@ -126,7 +126,7 @@ namespace Sensus.UI.Inputs
 		[OnOffUiProperty("Shuffle Inputs:", true, 5)]
 		public bool ShuffleInputs { get; set; }
 
-		[OnOffUiProperty("Show Title:", true, 6)]
+		[OnOffUiProperty("Hide Title:", true, 6)]
 		public bool HideTitle { get; set; }
 
 		/// <summary>
