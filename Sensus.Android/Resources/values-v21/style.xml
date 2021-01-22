@@ -13,5 +13,5 @@
     <item name="android:textAllCaps">false</item>
   </style>
   <color name="Selected">#96BCE3</color>
-  <color name="Highlighted">#E39696</color>
+  <!--<color name="Highlighted">#E39696</color>-->
 </resources>
