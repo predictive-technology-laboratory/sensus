@@ -91,12 +91,9 @@ namespace Sensus.UI
 
 			Frame frame = new Frame
 			{
-				AutomationId = "MessagesFrame",
+				StyleClass =new[] { "UIFrame" },
 				Content = scrollView,
-				//BorderColor = Color.Accent,
-				//BackgroundColor = Color.Transparent,
 				VerticalOptions = LayoutOptions.FillAndExpand,
-				//HasShadow = false,
 				Padding = new Thickness(10)
 			};
 

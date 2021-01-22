@@ -64,12 +64,9 @@ namespace Sensus.UI
 
 			Frame protocolListFrame = new Frame()
 			{
-				AutomationId = "SnoozeProtocolFrame",
+				StyleClass = new[] { "UIFrame" },
 				Content = protocolListLayout,
-				//BorderColor = Color.Accent,
-				//BackgroundColor = Color.Transparent,
 				VerticalOptions = LayoutOptions.Start,
-				//HasShadow = false,
 				Padding = new Thickness(10)
 			};
 
