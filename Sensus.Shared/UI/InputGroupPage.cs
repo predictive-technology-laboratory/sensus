@@ -126,7 +126,7 @@ namespace Sensus.UI
 			}
 
 			#region progress bar
-			if (displayProgress)
+			if (displayProgress && inputGroup.HideProgress == false)
 			{
 				float progress = (stepNumber - 1) / (float)totalSteps;
 

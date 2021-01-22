@@ -133,31 +133,34 @@ namespace Sensus.UI.Inputs
 		[OnOffUiProperty("Freeze Header:", true, 6)]
 		public bool FreezeHeader { get; set; }
 
-		[OnOffUiProperty("Hide Required Field Label:", true, 7)]
+		[OnOffUiProperty("Hide Progress:", true, 7)]
+		public bool HideProgress { get; set; }
+
+		[OnOffUiProperty("Hide Required Field Label:", true, 8)]
 		public bool HideRequiredFieldLabel { get; set; }
 
 		/// <summary>
 		/// Override the text for the Previous button.
 		/// </summary>
-		[EntryStringUiProperty("Previous Button Text:", true, 8, false)]
+		[EntryStringUiProperty("Previous Button Text:", true, 9, false)]
 		public virtual string PreviousButtonText { get; set; }
 
 		/// <summary>
 		/// Override the text for the Next button.
 		/// </summary>
-		[EntryStringUiProperty("Next Button Text:", true, 9, false)]
+		[EntryStringUiProperty("Next Button Text:", true, 10, false)]
 		public virtual string NextButtonText { get; set; }
 
 		/// <summary>
 		/// Override the text for the Submit button.
 		/// </summary>
-		[EntryStringUiProperty("Submit Button Text:", true, 10, false)]
+		[EntryStringUiProperty("Submit Button Text:", true, 11, false)]
 		public virtual string SubmitButtonText { get; set; }
 
 		/// <summary>
 		/// Override the text for the Cancel button.
 		/// </summary>
-		[EntryStringUiProperty("Cancel Button Text:", true, 11, false)]
+		[EntryStringUiProperty("Cancel Button Text:", true, 12, false)]
 		public virtual string CancelButtonText { get; set; }
 
 		/// <summary>
