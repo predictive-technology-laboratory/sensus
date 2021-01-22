@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Newtonsoft.Json;
 using Sensus.UI.UiProperties;
 using System.Collections.Generic;
 using Xamarin.Forms;
@@ -48,6 +49,7 @@ namespace Sensus.UI.Inputs
 		[EntryIntegerUiProperty("Number of Columns:", true, 3, false)]
 		public int ColumnCount { get; set; } = 1;
 
+		[JsonIgnore]
 		public List<ButtonWithValue> GridButtons { get; private set; }
 
 		public override View GetView(int index)
