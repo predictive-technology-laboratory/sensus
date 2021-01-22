@@ -284,6 +284,7 @@ namespace Sensus.UI
 				{
 					Button previousButton = new Button
 					{
+						StyleClass = new List<string> { "NavigationButton"},
 						HorizontalOptions = LayoutOptions.FillAndExpand,
 						FontSize = 20,
 						Text = "Previous"
@@ -301,6 +302,7 @@ namespace Sensus.UI
 
 				Button nextButton = new Button
 				{
+					StyleClass = new List<string> { "NavigationButton" },
 					HorizontalOptions = LayoutOptions.FillAndExpand,
 					FontSize = 20,
 					Text = "Next"
@@ -342,6 +344,7 @@ namespace Sensus.UI
 				{
 					Button cancelButton = new Button
 					{
+						StyleClass = new List<string> { "NavigationButton" },
 						HorizontalOptions = LayoutOptions.FillAndExpand,
 						FontSize = 20,
 						Text = "Cancel"

@@ -639,6 +639,13 @@ namespace Sensus.UI.Inputs
 			return true;
 		}
 
+		protected virtual bool IsCorrect()
+		{
+			object inputValue = JsonConvert.DeserializeObject<object>(JsonConvert.SerializeObject(Value, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+
+			return IsCorrect(inputValue);
+		}
+
 		protected virtual void NavigateOrDelay(NavigationResult navigationResult, int delay)
 		{
 			if (InputGroupPage != null)

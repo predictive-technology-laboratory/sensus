@@ -52,19 +52,35 @@ namespace Sensus.UI.Inputs
 		{
 			if (base.GetView(index) == null)
 			{
-				ButtonGridView grid = new ButtonGridView(ColumnCount, (o, s) =>
+				List<ButtonWithValue> buttons = new List<ButtonWithValue>();
+
+				ButtonGridView grid = new ButtonGridView(ColumnCount, (s, e) =>
 				{
-					if (o is ButtonWithValue button)
-					{
-						_value = button.Value;
-					}
+					ButtonWithValue button = (ButtonWithValue)s;
+
+					_value = button.Value;
 
 					Complete = true;
+
+					foreach (ButtonWithValue otherButton in buttons)
+					{
+						otherButton.StyleClass.Remove("CorrectAnswer");
+						otherButton.StyleClass.Remove("IncorrectAnswer");
+					}
+
+					if (Correct)
+					{
+						button.StyleClass.Add("CorrectAnswer");
+					}
+					else
+					{
+						button.StyleClass.Add("IncorrectAnswer");
+					}
 				});
 
 				foreach (string button in Buttons)
 				{
-					grid.AddButton(button, button);
+					buttons.Add(grid.AddButton(button, button));
 				}
 
 				grid.Arrange();

@@ -90,6 +90,8 @@ namespace Sensus.UI.Inputs
 			return button;
 		}
 
+		public IEnumerable<ButtonWithValue> Buttons => _buttons.ToArray();
+
 		public void Arrange()
 		{
 			ColumnDefinitions.Clear();

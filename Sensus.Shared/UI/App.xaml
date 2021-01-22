@@ -17,31 +17,35 @@
 		<Style TargetType="{x:Type Page}" ApplyToDerivedTypes="True">
 			<Setter Property="BackgroundColor" Value="{StaticResource BackgroundColor}" />
 		</Style>
-		<Style TargetType="{x:Type NavigationPage}">
+		<Style TargetType="{x:Type NavigationPage}" ApplyToDerivedTypes="True">
 			<Setter Property="BarBackgroundColor" Value="{StaticResource NavigationBarColor}" />
 			<Setter Property="BarTextColor" Value="{StaticResource NavigationBarTextColor}" />
 		</Style>
-		<Style TargetType="{x:Type ScrollView}">
+		<Style TargetType="{x:Type ScrollView}" ApplyToDerivedTypes="True">
 			<Setter Property="Margin" Value="4" />
 		</Style>
-		<Style TargetType="{x:Type Label}">
+		<Style TargetType="{x:Type Label}" ApplyToDerivedTypes="True">
 			<Setter Property="TextColor" Value="{StaticResource TextColor}" />
 		</Style>
-		<Style TargetType="{x:Type Frame}">
+		<Style TargetType="{x:Type Frame}" ApplyToDerivedTypes="True">
 			<Setter Property="BackgroundColor" Value="{StaticResource FrameBackgroundColor}" />
 			<Setter Property="BorderColor" Value="{StaticResource FrameBorderColor}" />
-			<Setter Property="HasShadow" Value="True" />
+			<Setter Property="HasShadow" Value="False" />
+			<Setter Property="CornerRadius" Value="6" />
 		</Style>
-		<Style TargetType="{x:Type Entry}">
+		<Style TargetType="{x:Type Entry}" ApplyToDerivedTypes="True">
 			<Setter Property="TextColor" Value="{StaticResource TextColor}" />
 			<Setter Property="PlaceholderColor" Value="{StaticResource PlaceholderColor}" />
 		</Style>
-		<Style TargetType="{x:Type Editor}">
+		<Style TargetType="{x:Type Editor}" ApplyToDerivedTypes="True">
 			<Setter Property="TextColor" Value="{StaticResource TextColor}" />
 			<Setter Property="PlaceholderColor" Value="{StaticResource PlaceholderColor}" />
 		</Style>
 		<Style TargetType="{x:Type ListView}">
 			<Setter Property="SeparatorColor" Value="{StaticResource ButtonColor}" />
+		</Style>
+		<Style Class="NavigationButton" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
+			<Setter Property="BackgroundColor" Value="{StaticResource NavigationButtonColor}" />
 		</Style>
 		<Style TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
 			<Setter Property="BackgroundColor" Value="{StaticResource ButtonColor}" />
@@ -50,7 +54,15 @@
 			<Setter Property="BorderWidth" Value="6" />
 		</Style>
 
-		<Style Class="ItemPickerFrame" TargetType="{x:Type Frame}">
+		<Style Class="CorrectAnswer" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
+			<Setter Property="BackgroundColor" Value="{StaticResource CorrectAnswerColor}" />
+		</Style>
+
+		<Style Class="IncorrectAnswer" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
+			<Setter Property="BackgroundColor" Value="{StaticResource IncorrectAnswerColor}" />
+		</Style>
+
+		<Style Class="ItemPickerFrame" TargetType="{x:Type Frame}" ApplyToDerivedTypes="True">
 			<Setter Property="BackgroundColor" Value="{StaticResource FrameBackgroundColor}" />
 			<Setter Property="BorderColor" Value="{Static Color.Accent}" />
 			<Setter Property="HasShadow" Value="false" />
@@ -59,7 +71,7 @@
 		<Style Class="InputFrame" TargetType="{x:Type Frame}">
 			<Setter Property="BackgroundColor" Value="{StaticResource FrameBackgroundColor}" />
 			<Setter Property="BorderColor" Value="{StaticResource FrameBorderColor}" />
-			<Setter Property="HasShadow" Value="True" />
+			<Setter Property="HasShadow" Value="False" />
 		</Style>
 
 		<Color x:Key="ProbeOnColor">#227022</Color>
@@ -68,7 +80,7 @@
 		<Color x:Key="UnviewedMessageColor">#ad3434</Color>
 
 		<Color x:Key="CorrectAnswerColor">#65bf65</Color>
-		<Color x:Key="CorrectAnswerColor">#ff9187</Color>
+		<Color x:Key="IncorrectAnswerColor">#ff9187</Color>
 
 		<Color x:Key="ScoreColor">#2154c2</Color>
 		<Color x:Key="ScoreRemainingColor">Transparent</Color>
