@@ -81,18 +81,13 @@ namespace Sensus.UI
 			{
 				Orientation = StackOrientation.Vertical,
 				VerticalOptions = LayoutOptions.FillAndExpand,
-				Padding = new Thickness(10, 20, 10, 20)
+				Padding = new Thickness(10, 10, 10, 20)
 			};
 
 			ScrollView scrollView = new ScrollView
 			{
 				Content = contentLayout
 			};
-
-			//if (inputGroup.HideTitle == false && string.IsNullOrWhiteSpace(title) == false)
-			//{
-			//	contentLayout.Children.Insert(0, new Label { Text = title, FontSize = 20, HorizontalOptions = LayoutOptions.CenterAndExpand });
-			//}
 
 			StackLayout headerLayout = new StackLayout
 			{
@@ -113,15 +108,21 @@ namespace Sensus.UI
 					headerLayout.Padding = new Thickness(10 + scrollView.Margin.Left, 20, 10 + scrollView.Margin.Right, 0);
 				}
 
-				headerLayout.Children.Add(new Label
+				if (string.IsNullOrWhiteSpace(inputGroup.Name) == false)
 				{
-					Text = inputGroup.Name,
-					FontSize = 20,
-					HorizontalOptions = LayoutOptions.CenterAndExpand
-				});
+					headerLayout.Children.Add(new Label
+					{
+						Text = inputGroup.Name,
+						FontSize = 20,
+						HorizontalOptions = LayoutOptions.CenterAndExpand
+					});
+				}
 			}
 			else
 			{
+				// if there is a header provided let it handle the padding
+				contentLayout.Padding = new Thickness(10, 0, 10, 20);
+
 				headerLayout.Children.Add(inputGroup.Header.GetView(1));
 			}
 
@@ -419,18 +420,25 @@ namespace Sensus.UI
 				}
 			};
 
-			if (inputGroup.FreezeHeader)
+			if (headerLayout.Children.Count > 0)
 			{
-				Content = new StackLayout()
+				if (inputGroup.FreezeHeader)
 				{
-					Orientation = StackOrientation.Vertical,
-					Children = { headerLayout, scrollView }
-				};
+					Content = new StackLayout()
+					{
+						Orientation = StackOrientation.Vertical,
+						Children = { headerLayout, scrollView }
+					};
+				}
+				else
+				{
+					contentLayout.Children.Insert(0, headerLayout);
+
+					Content = scrollView;
+				}
 			}
 			else
 			{
-				contentLayout.Children.Insert(0, headerLayout);
-
 				Content = scrollView;
 			}
 		}
