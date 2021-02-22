@@ -19,39 +19,41 @@ using System.Collections.Generic;
 
 namespace Sensus.UI
 {
-    public class ScriptInputGroupPage : ContentPage
-    {
-        public ScriptInputGroupPage(InputGroup inputGroup, List<InputGroup> previousInputGroups)
-        {
-            Title = "Input Group";
+	public class ScriptInputGroupPage : ContentPage
+	{
+		public ScriptInputGroupPage(InputGroup inputGroup, List<InputGroup> previousInputGroups)
+		{
+			Title = "Input Group";
 
-            StackLayout contentLayout = new StackLayout
-            {
-                Orientation = StackOrientation.Vertical,
-                VerticalOptions = LayoutOptions.FillAndExpand
-            };
+			StackLayout contentLayout = new StackLayout
+			{
+				Orientation = StackOrientation.Vertical,
+				VerticalOptions = LayoutOptions.FillAndExpand
+			};
 
-            foreach (StackLayout stack in UiProperty.GetPropertyStacks(inputGroup))
-                contentLayout.Children.Add(stack);
+			foreach (StackLayout stack in UiProperty.GetPropertyStacks(inputGroup))
+			{
+				contentLayout.Children.Add(stack);
+			}
 
-            Button editInputsButton = new Button
-            {
-                Text = "Edit Inputs",
-                FontSize = 20,
-                HorizontalOptions = LayoutOptions.FillAndExpand
-            };
+			Button editInputsButton = new Button
+			{
+				Text = "Edit Inputs",
+				FontSize = 20,
+				HorizontalOptions = LayoutOptions.FillAndExpand
+			};
 
-            editInputsButton.Clicked += async (o, e) =>
-            {
-                await Navigation.PushAsync(new ScriptInputsPage(inputGroup, previousInputGroups));
-            };
+			editInputsButton.Clicked += async (o, e) =>
+			{
+				await Navigation.PushAsync(new ScriptInputsPage(inputGroup, previousInputGroups));
+			};
 
-            contentLayout.Children.Add(editInputsButton);
+			contentLayout.Children.Add(editInputsButton);
 
-            Content = new ScrollView
-            {
-                Content = contentLayout
-            };
-        }
-    }
+			Content = new ScrollView
+			{
+				Content = contentLayout
+			};
+		}
+	}
 }

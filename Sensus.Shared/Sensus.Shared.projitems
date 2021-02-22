@@ -171,8 +171,16 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\AnonymizerPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\App.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\DataStorePage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ButtonGridView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ButtonGridInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ButtonWithValue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\InputFeedbackView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ScoreInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ReadOnlyTextInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\HyperlinkInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\MediaInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ScoreMethods.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ShowNavigationOptions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\TimeInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\Input.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\InputCompletionRecord.cs" />
@@ -190,6 +198,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\SliderInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\TimerInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\VoiceInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\WordPuzzleInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\MapPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\MediaPreviewPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\MessageCenterPage.cs" />
@@ -206,6 +215,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProtocolsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProximityTriggersPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\RunScriptsPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\HiddenUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\MediaPickerUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UserInitiatedScriptsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ScriptInputGroupPage.cs" />

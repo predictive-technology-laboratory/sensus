@@ -30,7 +30,13 @@ namespace Sensus
 					}
 					else
 					{
-						_stream = await GetFromUrlAsync(media);
+						using (HttpClient client = new HttpClient())
+						{
+							using (HttpResponseMessage response = await client.GetAsync(media.Data))
+							{
+								_stream = new MemoryStream(await response.Content.ReadAsByteArrayAsync());
+							}
+						}
 					}
 
 					Content = new Image
@@ -46,6 +52,9 @@ namespace Sensus
 
 					if (media.Embeded)
 					{
+						// it should be possible to optimize this to use the same temp file name each time the video is loaded 
+						// and only copy it to the temp file if it doesn't exist or its creation time is a certain distance in 
+						// the past.
 						_filePath = Path.GetTempFileName();
 
 						_stream = new FileStream(_filePath, FileMode.Open);
@@ -67,12 +76,11 @@ namespace Sensus
 			}
 		}
 
-		public /*async*/ Task DisposeMediaAsync()
+		public async Task DisposeMediaAsync()
 		{
 			if (_stream != null)
 			{
-				//await _stream.DisposeAsync();
-				_stream.Dispose();
+				await _stream.DisposeAsync();
 
 				_stream = null;
 			}
@@ -80,19 +88,6 @@ namespace Sensus
 			if (_filePath != null && File.Exists(_filePath))
 			{
 				File.Delete(_filePath);
-			}
-
-			return Task.CompletedTask;
-		}
-
-		private async Task<Stream> GetFromUrlAsync(MediaObject media)
-		{
-			using (HttpClient client = new HttpClient())
-			{
-				using (HttpResponseMessage response = await client.GetAsync(media.Data))
-				{
-					return await response.Content.ReadAsStreamAsync();
-				}
 			}
 		}
 

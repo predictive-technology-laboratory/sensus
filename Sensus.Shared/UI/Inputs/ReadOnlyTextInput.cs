@@ -17,44 +17,39 @@ using Xamarin.Forms;
 
 namespace Sensus.UI.Inputs
 {
-	public class HyperlinkInput : Input
+	public class ReadOnlyTextInput : Input
 	{
+		public ReadOnlyTextInput()
+		{
+
+		}
+
 		public override object Value
 		{
 			get
 			{
-				return null;
+				return Text;
 			}
 		}
 
 		public override bool Enabled { get; set; }
 
-		public override string DefaultName => "Hyperlink";
+		public override string DefaultName => "Text";
 
-		[EntryStringUiProperty("Url", true, 5, true)]
-		public string Url { get; set; }
+		[EditorUiProperty("Text", true, 2, true)]
+		public string Text { get; set; }
 
 		public override View GetView(int index)
 		{
 			if (base.GetView(index) == null)
 			{
 				Label label = CreateLabel(-1);
-				
-				label.TextDecorations = TextDecorations.Underline;
 
-				TapGestureRecognizer gesture = new TapGestureRecognizer()
-				{
-					NumberOfTapsRequired = 1
-				};
+				label.Text = Text;
 
-				gesture.Tapped += (s, e) =>
-				{
-					Device.OpenUri(new System.Uri(Url));
-
-					Complete = true;
-				};
-
-				label.GestureRecognizers.Add(gesture);
+				StoreCompletionRecords = false;
+				Complete = true;
+				Required = false;
 
 				base.SetView(label);
 			}
