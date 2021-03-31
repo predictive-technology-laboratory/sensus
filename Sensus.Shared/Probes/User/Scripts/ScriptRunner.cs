@@ -375,7 +375,7 @@ namespace Sensus.Probes.User.Scripts
 		public string Caption
 		{
 			get
-			{                
+			{
 				return _name;
 			}
 		}
