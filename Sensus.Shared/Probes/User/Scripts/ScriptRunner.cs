@@ -368,6 +368,9 @@ namespace Sensus.Probes.User.Scripts
 		[EntryStringUiProperty("Script Group:", true, 22, false)]
 		public string ScriptGroup { get; set; }
 
+		[OnOffUiProperty("Keep Until Completed:", true, 23)]
+		public bool KeepUntilCompleted { get; set; }
+
 		[JsonIgnore]
 		public string Caption
 		{
