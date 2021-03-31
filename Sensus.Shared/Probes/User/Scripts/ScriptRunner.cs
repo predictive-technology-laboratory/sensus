@@ -274,6 +274,15 @@ namespace Sensus.Probes.User.Scripts
 
 		public List<DateTime> CompletionTimes { get; set; }
 
+		[JsonIgnore]
+		public List<DateTime> ScheduledTimes
+		{
+			get
+			{
+				return _scheduledCallbackTimes.Select(x => x.Item2.Trigger).ToList();
+			}
+		}
+
 		/// <summary>
 		/// Whether or not to run the survey exactly once.
 		/// </summary>
@@ -356,11 +365,17 @@ namespace Sensus.Probes.User.Scripts
 		[OnOffUiProperty("Allow User Initiation:", true, 21)]
 		public bool AllowUserInitiation { get; set; }
 
+		[EntryStringUiProperty("Script Group:", true, 22, false)]
+		public string ScriptGroup { get; set; }
+
+		[OnOffUiProperty("Keep Until Completed:", true, 23)]
+		public bool KeepUntilCompleted { get; set; }
+
 		[JsonIgnore]
 		public string Caption
 		{
 			get
-			{                
+			{
 				return _name;
 			}
 		}

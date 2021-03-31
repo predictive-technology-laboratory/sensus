@@ -45,36 +45,13 @@ namespace Sensus.UI.Inputs
 
 		public ButtonWithValue AddButton(string text, string value)
 		{
-			return AddButton(text, value, Color.Default, null, Color.Default, Color.Default);
+			return AddButton(text, value, null);
 		}
-		public ButtonWithValue AddButton(string text, string value, Color color)
-		{
-			return AddButton(text, value, color, null, Color.Default, color);
-		}
-		public ButtonWithValue AddButton(string text, string value, Color color, Color textColor)
-		{
-			return AddButton(text, value, color, null, textColor, color);
-		}
-		public ButtonWithValue AddButton(string text, string value, Color color, Color textColor, Color borderColor)
-		{
-			return AddButton(text, value, color, null, textColor, borderColor);
-		}
-		public ButtonWithValue AddButton(string text, string value, Color color, EventHandler clicked)
-		{
-			return AddButton(text, value, color, clicked, Color.Default, color);
-		}
-		public ButtonWithValue AddButton(string text, string value, Color color, EventHandler clicked, Color textColor)
-		{
-			return AddButton(text, value, color, clicked, textColor, Color.Default);
-		}
-		public ButtonWithValue AddButton(string text, string value, Color color, EventHandler clicked, Color textColor, Color borderColor)
+		public ButtonWithValue AddButton(string text, string value, EventHandler clicked)
 		{
 			ButtonWithValue button = new ButtonWithValue
 			{
 				Text = text,
-				BackgroundColor = color,
-				TextColor = textColor,
-				BorderColor = borderColor,
 				Value = value
 			};
 
@@ -89,6 +66,62 @@ namespace Sensus.UI.Inputs
 
 			return button;
 		}
+		public ButtonWithValue AddButton(string text, string value, Color color)
+		{
+			ButtonWithValue button = AddButton(text, value, null);
+
+			button.BackgroundColor = color;
+
+			return button;
+		}
+		public ButtonWithValue AddButton(string text, string value, Color color, Color textColor)
+		{
+			ButtonWithValue button = AddButton(text, value, null);
+
+			button.BackgroundColor = color;
+			button.TextColor = textColor;
+
+			return button;
+		}
+		public ButtonWithValue AddButton(string text, string value, Color color, Color textColor, Color borderColor)
+		{
+			ButtonWithValue button = AddButton(text, value, null);
+
+			button.BackgroundColor = color;
+			button.TextColor = textColor;
+			button.BorderColor = borderColor;
+
+			return button;
+		}
+		public ButtonWithValue AddButton(string text, string value, Color color, EventHandler clicked)
+		{
+			ButtonWithValue button = AddButton(text, value, clicked);
+
+			button.BackgroundColor = color;
+
+			return button;
+		}
+		public ButtonWithValue AddButton(string text, string value, Color color, EventHandler clicked, Color textColor)
+		{
+			ButtonWithValue button = AddButton(text, value, clicked);
+
+			button.BackgroundColor = color;
+			button.TextColor = textColor;
+
+			return button;
+		}
+		public ButtonWithValue AddButton(string text, string value, Color color, EventHandler clicked, Color textColor, Color borderColor)
+		{
+			ButtonWithValue button = AddButton(text, value, clicked);
+
+			button.BackgroundColor = color;
+			button.TextColor = textColor;
+			button.BorderColor = borderColor;
+
+			return button;
+		}
+
+		public IEnumerable<ButtonWithValue> Buttons => _buttons.ToArray();
 
 		public void Arrange()
 		{

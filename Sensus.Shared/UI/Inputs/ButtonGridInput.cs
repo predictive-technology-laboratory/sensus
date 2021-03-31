@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Newtonsoft.Json;
 using Sensus.UI.UiProperties;
 using System.Collections.Generic;
 using Xamarin.Forms;
@@ -48,23 +49,44 @@ namespace Sensus.UI.Inputs
 		[EntryIntegerUiProperty("Number of Columns:", true, 3, false)]
 		public int ColumnCount { get; set; } = 1;
 
+		[JsonIgnore]
+		public List<ButtonWithValue> GridButtons { get; private set; }
+
 		public override View GetView(int index)
 		{
 			if (base.GetView(index) == null)
 			{
-				ButtonGridView grid = new ButtonGridView(ColumnCount, (o, s) =>
+				GridButtons = new List<ButtonWithValue>();
+
+				ButtonGridView grid = new ButtonGridView(ColumnCount, (s, e) =>
 				{
-					if (o is ButtonWithValue button)
-					{
-						_value = button.Value;
-					}
+					ButtonWithValue button = (ButtonWithValue)s;
+
+					_value = button.Value;
 
 					Complete = true;
+
+					if (CorrectValue != null)
+					{
+						foreach(ButtonWithValue gridButton in GridButtons)
+						{
+							gridButton.Style = null;
+						}
+
+						if (Correct)
+						{
+							button.Style = (Style)Application.Current.Resources["CorrectAnswerButton"];
+						}
+						else
+						{
+							button.Style = (Style)Application.Current.Resources["IncorrectAnswerButton"];
+						}
+					}
 				});
 
 				foreach (string button in Buttons)
 				{
-					grid.AddButton(button, button);
+					GridButtons.Add(grid.AddButton(button, button));
 				}
 
 				grid.Arrange();

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Newtonsoft.Json;
 using Sensus.UI.UiProperties;
 using System;
 using System.Collections.Generic;
@@ -55,17 +56,22 @@ namespace Sensus.UI.Inputs
 		[HiddenUiProperty]
 		public override object CorrectValue { get; set; }
 
+		[JsonIgnore]
+		public List<ButtonWithValue> GridButtons { get; private set; }
+
 		public override View GetView(int index)
 		{
 			if (base.GetView(index) == null)
 			{
+				GridButtons = new List<ButtonWithValue>();
+
 				Random random = new Random();
 				string word = Words[random.Next(Words.Count)].ToLower();
 
 				int missingLetterIndex = random.Next(word.Length);
 				string missingLetter = "";
 
-				ButtonGridView wordGrid = new ButtonGridView(0, (o, s) => { })
+				ButtonGridView wordGrid = new ButtonGridView(0, (s, e) => { })
 				{
 					HorizontalOptions = LayoutOptions.FillAndExpand
 				};
@@ -76,7 +82,9 @@ namespace Sensus.UI.Inputs
 
 					if (letterIndex == missingLetterIndex)
 					{
-						_correctButton = wordGrid.AddButton("", "", Color.Default);
+						_correctButton = wordGrid.AddButton("", "");
+
+						_correctButton.Style = (Style)Application.Current.Resources["MissingLetterButton"];
 
 						missingLetter = letter;
 					}
@@ -94,19 +102,29 @@ namespace Sensus.UI.Inputs
 					HorizontalTextAlignment = TextAlignment.Center
 				};
 
-				ButtonGridView choiceGrid = new ButtonGridView(0, (o, s) =>
+				ButtonGridView choiceGrid = new ButtonGridView(0, (s, e) =>
 				{
-					if (o is ButtonWithValue button)
+					ButtonWithValue button = (ButtonWithValue)s;
+
+					foreach (ButtonWithValue gridButton in GridButtons)
 					{
-						_value = button.Value;
-
-						if (button.Value == missingLetter)
-						{
-							_correctButton.Text = button.Text;
-
-							button.IsVisible = false;
-						}
+						gridButton.Style = null;
 					}
+
+					if (button.Value == missingLetter)
+					{
+						_correctButton.Text = button.Text;
+
+						_correctButton.Style = (Style)Application.Current.Resources["CorrectAnswerButton"];
+
+						button.IsVisible = false;
+					}
+					else
+					{
+						button.Style = (Style)Application.Current.Resources["IncorrectAnswerButton"];
+					}
+
+					_value = button.Value;
 
 					Complete = true;
 				})
@@ -132,7 +150,7 @@ namespace Sensus.UI.Inputs
 
 				foreach(string choice in choices.OrderBy(x => random.Next()))
 				{
-					choiceGrid.AddButton(choice.ToUpper(), choice);
+					GridButtons.Add(choiceGrid.AddButton(choice.ToUpper(), choice));
 				}
 
 				choiceGrid.Arrange();

@@ -201,6 +201,7 @@ namespace Sensus.UI.Inputs
                     // frame the label to indicate selection
                     Frame itemFrame = new Frame
                     {
+                        StyleClass = new List<string> { "ItemPickerFrame" },
                         Content = itemLabel,
                         BackgroundColor = Color.Transparent,
                         HasShadow = false,

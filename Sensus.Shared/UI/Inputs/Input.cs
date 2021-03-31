@@ -141,6 +141,12 @@ namespace Sensus.UI.Inputs
 			}
 		}
 
+		public FontAttributes LabelFontAttributes { get; set; }
+
+		public Color LabelTextColor { get; set; }
+
+		public TextAlignment LabelTextAlignment { get; set; }
+
 		public bool DisplayNumber
 		{
 			get
@@ -635,6 +641,13 @@ namespace Sensus.UI.Inputs
 			return true;
 		}
 
+		protected virtual bool IsCorrect()
+		{
+			object inputValue = JsonConvert.DeserializeObject<object>(JsonConvert.SerializeObject(Value, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+
+			return IsCorrect(inputValue);
+		}
+
 		protected virtual void NavigateOrDelay(NavigationResult navigationResult, int delay)
 		{
 			if (InputGroupPage != null)
@@ -715,10 +728,18 @@ namespace Sensus.UI.Inputs
 
 		protected Label CreateLabel(int index)
 		{
+			if (string.IsNullOrEmpty(LabelText))
+			{
+				return new Label { IsVisible = false };
+			}
+
 			return new Label
 			{
 				Text = GetLabelText(index),
-				FontSize = _labelFontSize
+				FontSize = _labelFontSize,
+				FontAttributes = LabelFontAttributes,
+				TextColor = LabelTextColor,
+				HorizontalTextAlignment = LabelTextAlignment
 
 				// set the style ID on the label so that we can retrieve it when UI testing
 #if UI_TESTING
