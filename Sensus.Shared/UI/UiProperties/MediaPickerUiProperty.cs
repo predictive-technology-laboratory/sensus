@@ -138,9 +138,19 @@ namespace Sensus.UI.UiProperties
 					sourceButton.IsEnabled = false;
 					sourceButton.Text = "Processing...";
 
-					MediaObject media = await MediaObject.FromFileAsync(file.GetStream(), SensusServiceHelper.Get().GetMimeType(file.Path));
+					try
+					{
+						MediaObject media = await MediaObject.FromFileAsync(file.GetStream(), SensusServiceHelper.Get().GetMimeType(file.Path));
 
-					setMediaObject(media);
+						setMediaObject(media);
+					}
+					catch (Exception exception)
+					{
+						await SensusServiceHelper.Get().FlashNotificationAsync($"Failed to attach media to the {o.GetType().Name}");
+
+						SensusServiceHelper.Get().Logger.Log("Failed to attach media: " + exception.Message, LoggingLevel.Normal, GetType());
+					}
+
 					sourceButton.IsEnabled = true;
 				}
 			}
@@ -183,7 +193,7 @@ namespace Sensus.UI.UiProperties
 				{
 					await SensusServiceHelper.Get().FlashNotificationAsync($"Failed to attach media to the {o.GetType().Name}");
 
-					SensusException.Report(exception);
+					SensusServiceHelper.Get().Logger.Log("Failed to attach media: " + exception.Message, LoggingLevel.Normal, GetType());
 				}
 			};
 
