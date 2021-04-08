@@ -74,7 +74,7 @@ namespace Sensus.UI.UiProperties
 		{
 			if (media != null && string.IsNullOrWhiteSpace(media.Data) == false)
 			{
-				if (media.Embeded)
+				if (media.Embedded)
 				{
 					// using the byte count of the base64 string since it is what gets serialized to Unicode. 
 					// The file size is likely smaller by almost half due to the base64 string being encoded in Unicode, but it would not represent the actual amount of data being stored.
@@ -158,7 +158,7 @@ namespace Sensus.UI.UiProperties
 						buttons.Insert(0, PREVIEW);
 					}
 
-					if (media.Embeded)
+					if (media.Embedded)
 					{
 						urlStack.IsVisible = false;
 					}
@@ -191,7 +191,7 @@ namespace Sensus.UI.UiProperties
 			{
 				buttons.Add(PREVIEW);
 
-				if (currentMedia.Embeded == false)
+				if (currentMedia.Embedded == false)
 				{
 					urlEntry.Text = currentMedia.Data;
 					urlStack.IsVisible = true;

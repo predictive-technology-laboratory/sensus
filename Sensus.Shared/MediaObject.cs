@@ -10,14 +10,14 @@ namespace Sensus
 	{
 		public string Data { get; private set; }
 		public string Type { get; private set; }
-		public bool Embeded { get; private set; }
+		public bool Embedded { get; private set; }
 
 		// for deserialization and manual construction
-		public MediaObject(string data, string type, bool embeded)
+		public MediaObject(string data, string type, bool embedded)
 		{
 			Data = data;
 			Type = type;
-			Embeded = embeded;
+			Embedded = embedded;
 		}
 
 		public static async Task<MediaObject> FromFileAsync(Stream stream, string type)

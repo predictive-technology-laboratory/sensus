@@ -24,7 +24,7 @@ namespace Sensus
 			{
 				if (media.Type.ToLower().StartsWith("image"))
 				{
-					if (media.Embeded)
+					if (media.Embedded)
 					{
 						_stream = new MemoryStream(Convert.FromBase64String(media.Data));
 					}
@@ -50,7 +50,7 @@ namespace Sensus
 
 					player.VideoEvent += VideoEvent;
 
-					if (media.Embeded)
+					if (media.Embedded)
 					{
 						// it should be possible to optimize this to use the same temp file name each time the video is loaded 
 						// and only copy it to the temp file if it doesn't exist or its creation time is a certain distance in 
