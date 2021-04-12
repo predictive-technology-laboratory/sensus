@@ -142,6 +142,8 @@ namespace Sensus
 			#endregion
 		};
 
+		public static EventHandler OnInitialized;
+
 		/// <summary>
 		/// Initializes the sensus service helper. Must be called when app first starts, from the main / UI thread.
 		/// </summary>
@@ -162,6 +164,8 @@ namespace Sensus
 				try
 				{
 					SINGLETON = createNew();
+
+					OnInitialized?.Invoke(SINGLETON, new EventArgs());
 				}
 				catch (Exception singletonCreationException)
 				{
