@@ -142,7 +142,7 @@ namespace Sensus
 			#endregion
 		};
 
-		public static EventHandler OnInitialized;
+		public static event EventHandler OnInitialized;
 
 		/// <summary>
 		/// Initializes the sensus service helper. Must be called when app first starts, from the main / UI thread.
