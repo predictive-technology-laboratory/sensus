@@ -1954,6 +1954,8 @@ namespace Sensus
 					{
 						_completedScripts.Add(script);
 					}
+
+					await script.Runner.ScheduleNextScriptToRunAsync();
 				}
 			}
 

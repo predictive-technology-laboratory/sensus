@@ -217,6 +217,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\RunScriptsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\HiddenUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\MediaPickerUiProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\ScriptsUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UserInitiatedScriptsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ScriptInputGroupPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ScriptInputGroupsPage.cs" />

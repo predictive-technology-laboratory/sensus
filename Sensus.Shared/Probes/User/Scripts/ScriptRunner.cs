@@ -371,6 +371,12 @@ namespace Sensus.Probes.User.Scripts
 		[OnOffUiProperty("Keep Until Completed:", true, 23)]
 		public bool KeepUntilCompleted { get; set; }
 
+		[ScriptsUiProperty("Next Script:", true, 24, false)]
+		public ScriptRunner NextScript { get; set; }
+
+		[EntryStringUiProperty("Next Script Run Delay:", true, 8, false)]
+		public int NextScriptRunDelayMS { get; set; }
+
 		[JsonIgnore]
 		public string Caption
 		{
@@ -689,6 +695,24 @@ namespace Sensus.Probes.User.Scripts
 				}
 
 				SensusServiceHelper.Get().Logger.Log($"Scheduled for {triggerTime.Trigger} ({callback.Id})", LoggingLevel.Normal, GetType());
+			}
+		}
+
+		public async Task ScheduleNextScriptToRunAsync()
+		{
+			if (NextScript != null)
+			{
+				// if there is no window then run it immmediately
+				if (NextScriptRunDelayMS == 0)
+				{
+					await RunAsync(NextScript.Script.Copy(true));
+				}
+				else // schedule it to be run
+				{
+					ScriptTriggerTime triggerTime = new ScriptTriggerTime(DateTime.Now.AddMilliseconds(NextScriptRunDelayMS), null, "");
+
+					await ScheduleScriptRunAsync(triggerTime);
+				}
 			}
 		}
 
