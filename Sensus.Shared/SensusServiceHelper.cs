@@ -340,6 +340,7 @@ namespace Sensus
 		private bool _flashNotificationsEnabled;
 		private ConcurrentObservableCollection<Protocol> _registeredProtocols;
 		private ConcurrentObservableCollection<Script> _scriptsToRun;
+		private ConcurrentObservableCollection<Script> _completedScripts;
 		private ConcurrentObservableCollection<UserMessage> _notifications;
 		private bool _updatingPushNotificationRegistrations;
 		private bool _updatePushNotificationRegistrationsOnNextHealthTest;
@@ -397,6 +398,14 @@ namespace Sensus
 			set
 			{
 				_flashNotificationsEnabled = value;
+			}
+		}
+
+		public ConcurrentObservableCollection<Script> CompletedScripts
+		{
+			get
+			{
+				return _completedScripts;
 			}
 		}
 
@@ -555,6 +564,7 @@ namespace Sensus
 
 			_registeredProtocols = new ConcurrentObservableCollection<Protocol>();
 			_scriptsToRun = new ConcurrentObservableCollection<Script>();
+			_completedScripts = new ConcurrentObservableCollection<Script>();
 			_notifications = new ConcurrentObservableCollection<UserMessage>();
 			_protocolStates = new Dictionary<string, ProtocolState>();
 			_hasher = new SHA256Managed();
@@ -1938,6 +1948,11 @@ namespace Sensus
 						{
 							await IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.Badge, script.Runner.Probe.Protocol);
 						}
+					}
+
+					if (_completedScripts.Contains(script) == false)
+					{
+						_completedScripts.Add(script);
 					}
 				}
 			}
