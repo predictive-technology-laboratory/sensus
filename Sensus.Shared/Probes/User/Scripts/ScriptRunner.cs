@@ -374,8 +374,11 @@ namespace Sensus.Probes.User.Scripts
 		[ScriptsUiProperty("Next Script:", true, 24, false)]
 		public ScriptRunner NextScript { get; set; }
 
-		[EntryStringUiProperty("Next Script Run Delay:", true, 8, false)]
+		[EntryStringUiProperty("Next Script Run Delay (MS):", true, 25, false)]
 		public int NextScriptRunDelayMS { get; set; }
+
+		[OnOffUiProperty("Trigger Next Script First Time Only:", true, 26)]
+		public bool TriggerNextScriptFirstTimeOnly { get; set; }
 
 		[JsonIgnore]
 		public string Caption
@@ -700,7 +703,7 @@ namespace Sensus.Probes.User.Scripts
 
 		public async Task ScheduleNextScriptToRunAsync()
 		{
-			if (NextScript != null)
+			if (NextScript != null && (TriggerNextScriptFirstTimeOnly == false || CompletionTimes.Count == 1))
 			{
 				// if there is no window then run it immmediately
 				if (NextScriptRunDelayMS == 0)
