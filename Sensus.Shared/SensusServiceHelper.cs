@@ -164,8 +164,6 @@ namespace Sensus
 				try
 				{
 					SINGLETON = createNew();
-
-					OnInitialized?.Invoke(SINGLETON, new EventArgs());
 				}
 				catch (Exception singletonCreationException)
 				{
@@ -180,6 +178,8 @@ namespace Sensus
 				SINGLETON.Logger.Log("Repeatedly failed to deserialize service helper. Most recent exception:  " + (deserializeException?.Message ?? "No exception"), LoggingLevel.Normal, SINGLETON.GetType());
 				SINGLETON.Logger.Log("Created new service helper after failing to deserialize the old one.", LoggingLevel.Normal, SINGLETON.GetType());
 			}
+
+			OnInitialized?.Invoke(SINGLETON, new EventArgs());
 		}
 
 		private static bool TryDeserializeSingleton(out Exception ex)
