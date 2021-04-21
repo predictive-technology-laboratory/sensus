@@ -101,29 +101,31 @@ namespace Sensus.UI
 				HorizontalOptions = LayoutOptions.FillAndExpand
 			};
 
-			if (inputGroup.Header == null)
+			if (inputGroup.FreezeHeader)
 			{
-				if (inputGroup.FreezeHeader)
-				{
-					headerLayout.Padding = new Thickness(10 + scrollView.Margin.Left, 20, 10 + scrollView.Margin.Right, 0);
-				}
+				headerLayout.Padding = new Thickness(10 + scrollView.Margin.Left, 20, 10 + scrollView.Margin.Right, 0);
 
-				if (string.IsNullOrWhiteSpace(inputGroup.Name) == false)
+				Content = new StackLayout()
 				{
-					headerLayout.Children.Add(new Label
-					{
-						Text = inputGroup.Name,
-						FontSize = 20,
-						HorizontalOptions = LayoutOptions.CenterAndExpand
-					});
-				}
+					Orientation = StackOrientation.Vertical,
+					Children = { headerLayout, scrollView }
+				};
 			}
 			else
 			{
-				// if there is a header provided let it handle the padding
-				contentLayout.Padding = new Thickness(10, 0, 10, 20);
+				contentLayout.Children.Insert(0, headerLayout);
 
-				headerLayout.Children.Add(inputGroup.Header.GetView(1));
+				Content = scrollView;
+			}
+
+			if (string.IsNullOrWhiteSpace(inputGroup.Name) == false)
+			{
+				headerLayout.Children.Add(new Label
+				{
+					Text = inputGroup.Name,
+					FontSize = 20,
+					HorizontalOptions = LayoutOptions.CenterAndExpand
+				});
 			}
 
 			#region progress bar
@@ -419,28 +421,6 @@ namespace Sensus.UI
 					displayedInput.OnDisappearing(await ResponseTask);
 				}
 			};
-
-			if (headerLayout.Children.Count > 0)
-			{
-				if (inputGroup.FreezeHeader)
-				{
-					Content = new StackLayout()
-					{
-						Orientation = StackOrientation.Vertical,
-						Children = { headerLayout, scrollView }
-					};
-				}
-				else
-				{
-					contentLayout.Children.Insert(0, headerLayout);
-
-					Content = scrollView;
-				}
-			}
-			else
-			{
-				Content = scrollView;
-			}
 		}
 
 		protected EventHandler _cancelHandler;
