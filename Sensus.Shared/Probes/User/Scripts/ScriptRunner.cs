@@ -714,7 +714,7 @@ namespace Sensus.Probes.User.Scripts
 				{
 					ScriptTriggerTime triggerTime = new ScriptTriggerTime(DateTime.Now.AddMilliseconds(NextScriptRunDelayMS), null, "");
 
-					await ScheduleScriptRunAsync(triggerTime);
+					await NextScript.ScheduleScriptRunAsync(triggerTime);
 				}
 			}
 		}
