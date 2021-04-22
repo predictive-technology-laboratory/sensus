@@ -67,24 +67,36 @@ namespace Sensus.UI.Inputs
 
 				_events = new List<MediaEvent>();
 
-				if (Media.Type.ToLower().StartsWith("image"))
+				if (Media != null)
 				{
-					_events.Add(new MediaEvent { Timestamp = DateTimeOffset.UtcNow, Position = 0, Event = "View" });
-
-					Complete = true;
-				}
-				else if (Media.Type.ToLower().StartsWith("video"))
-				{
-					// the MediaView should be set after SetView is called
-					_mediaView.VideoEvent += (o, e) =>
+					if (Media.Type.ToLower().StartsWith("image"))
 					{
-						_events.Add(new MediaEvent { Timestamp = DateTimeOffset.UtcNow, Position = (int)e.Position.TotalMilliseconds, Event = e.Event });
+						_events.Add(new MediaEvent { Timestamp = DateTimeOffset.UtcNow, Position = 0, Event = "View" });
 
-						if (e.Event == VideoPlayer.END)
+						Complete = true;
+					}
+					else if (Media.Type.ToLower().StartsWith("video"))
+					{
+						// the MediaView should be set after SetView is called
+						_mediaView.VideoEvent += (o, e) =>
 						{
-							Complete = true;
-						}
-					};
+							_events.Add(new MediaEvent { Timestamp = DateTimeOffset.UtcNow, Position = (int)e.Position.TotalMilliseconds, Event = e.Event });
+
+							if (e.Event == VideoPlayer.END)
+							{
+								Complete = true;
+							}
+						};
+					}
+				}
+				else
+				{
+					_mediaView.Content = new Label() { Text = "There is no media to display", TextColor = Color.Red };
+
+					if (Required == false)
+					{
+						Complete = true;
+					}
 				}
 			}
 			else
