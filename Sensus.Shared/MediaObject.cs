@@ -50,6 +50,8 @@ namespace Sensus
 				{
 					using (HttpResponseMessage response = await client.GetAsync(url))
 					{
+						response.EnsureSuccessStatusCode();
+
 						if (string.IsNullOrEmpty(mimeType))
 						{
 							mimeType = response.Content.Headers.ContentType.MediaType.ToLower();
