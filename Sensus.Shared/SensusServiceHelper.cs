@@ -179,7 +179,10 @@ namespace Sensus
 				SINGLETON.Logger.Log("Created new service helper after failing to deserialize the old one.", LoggingLevel.Normal, SINGLETON.GetType());
 			}
 
-			Task.Factory.FromAsync((a, _) => OnInitialized.BeginInvoke(SINGLETON, EventArgs.Empty, a, _), OnInitialized.EndInvoke, null);
+			if (OnInitialized != null)
+			{
+				Task.Factory.FromAsync((a, _) => OnInitialized.BeginInvoke(SINGLETON, EventArgs.Empty, a, _), OnInitialized.EndInvoke, null);
+			}
 		}
 
 		private static bool TryDeserializeSingleton(out Exception ex)
