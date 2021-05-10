@@ -24,7 +24,8 @@ namespace Sensus.UI.UiProperties
 		public const string CAPTURE_VIDEO = "Capture Video";
 		public const string CHOOSE_VIDEO = "Choose Video";
 		public const string URL = "Url";
-		public const string FROM_URL = "From Url";
+		public const string URL_CACHED = "Url (Cached)";
+		public const string URL_EMBEDDED = "Url (Embed)";
 		public const string NONE = "None";
 		public const string CHOOSE = "Choose...";
 
@@ -74,13 +75,17 @@ namespace Sensus.UI.UiProperties
 		{
 			if (media != null && string.IsNullOrWhiteSpace(media.Data) == false)
 			{
-				if (media.Embedded)
+				if (media.StorageMethod == MediaStorageMethods.Embed)
 				{
 					// using the byte count of the base64 string since it is what gets serialized to Unicode. 
 					// The file size is likely smaller by almost half due to the base64 string being encoded in Unicode, but it would not represent the actual amount of data being stored.
 					int size = Encoding.Unicode.GetByteCount(media.Data);
 
 					return $"{media.Type} ({size} B)";
+				}
+				else if (media.StorageMethod == MediaStorageMethods.Cache)
+				{
+					return URL_CACHED;
 				}
 				else
 				{
@@ -104,7 +109,7 @@ namespace Sensus.UI.UiProperties
 			List<string> buttons = new List<string>();
 			StackLayout urlLayout = new StackLayout();
 			MediaObject currentMedia = (MediaObject)property.GetValue(o);
-			bool embed = false;
+			MediaStorageMethods storageMethod = currentMedia.StorageMethod;
 
 			Button sourceButton = new Button()
 			{
@@ -168,7 +173,7 @@ namespace Sensus.UI.UiProperties
 						buttons.Insert(0, PREVIEW);
 					}
 
-					if (media.Embedded)
+					if (media.StorageMethod == MediaStorageMethods.Embed)
 					{
 						urlStack.IsVisible = false;
 					}
@@ -185,7 +190,7 @@ namespace Sensus.UI.UiProperties
 				{
 					string mimeType = SensusServiceHelper.Get().GetMimeType(urlEntry.Text);
 
-					MediaObject media = await MediaObject.FromUrlAsync(urlEntry.Text, mimeType, embed);
+					MediaObject media = await MediaObject.FromUrlAsync(urlEntry.Text, mimeType, storageMethod);
 
 					setMediaObject(media);
 				}
@@ -201,7 +206,7 @@ namespace Sensus.UI.UiProperties
 			{
 				buttons.Add(PREVIEW);
 
-				if (currentMedia.Embedded == false)
+				if (currentMedia.StorageMethod != MediaStorageMethods.Embed)
 				{
 					urlEntry.Text = currentMedia.Data;
 					urlStack.IsVisible = true;
@@ -263,14 +268,21 @@ namespace Sensus.UI.UiProperties
 					}
 					else if (source == URL)
 					{
-						embed = false;
+						storageMethod = MediaStorageMethods.URL;
 
 						urlStack.IsVisible = true;
 						urlEntry.Focus();
 					}
-					else if (source == FROM_URL)
+					else if (source == URL_CACHED)
 					{
-						embed = true;
+						storageMethod = MediaStorageMethods.Cache;
+
+						urlStack.IsVisible = true;
+						urlEntry.Focus();
+					}
+					else if (source == URL_EMBEDDED)
+					{
+						storageMethod = MediaStorageMethods.Embed;
 
 						urlStack.IsVisible = true;
 						urlEntry.Focus();
@@ -314,7 +326,8 @@ namespace Sensus.UI.UiProperties
 			}
 
 			buttons.Add(URL);
-			buttons.Add(FROM_URL);
+			buttons.Add(URL_CACHED);
+			buttons.Add(URL_EMBEDDED);
 			buttons.Add(NONE);
 
 			StackLayout layout = new StackLayout()

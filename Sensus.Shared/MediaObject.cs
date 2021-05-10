@@ -10,14 +10,15 @@ namespace Sensus
 	{
 		public string Data { get; private set; }
 		public string Type { get; private set; }
-		public bool Embedded { get; private set; }
+		public MediaStorageMethods StorageMethod { get; private set; }
+		public string CacheFileName { get; private set; }
 
 		// for deserialization and manual construction
-		public MediaObject(string data, string type, bool embedded)
+		public MediaObject(string data, string type, MediaStorageMethods storageMethod)
 		{
 			Data = data;
 			Type = type;
-			Embedded = embedded;
+			StorageMethod = storageMethod;
 		}
 
 		public static async Task<MediaObject> FromFileAsync(Stream stream, string type)
@@ -35,16 +36,16 @@ namespace Sensus
 				totalBytesRead += bytesRead;
 			}
 
-			MediaObject media = new MediaObject(Convert.ToBase64String(fileBuffer), type, true);
+			MediaObject media = new MediaObject(Convert.ToBase64String(fileBuffer), type, MediaStorageMethods.Embed);
 
 			return media;
 		}
 
-		public static async Task<MediaObject> FromUrlAsync(string url, string mimeType, bool embed)
+		public static async Task<MediaObject> FromUrlAsync(string url, string mimeType, MediaStorageMethods storageMethod)
 		{
 			string data = url;
 
-			if (embed)
+			if (storageMethod != MediaStorageMethods.URL)
 			{
 				using (HttpClient client = new HttpClient())
 				{
@@ -62,9 +63,17 @@ namespace Sensus
 				}
 			}
 
-			MediaObject media = new MediaObject(data, mimeType, embed);
+			MediaObject media = new MediaObject(data, mimeType, storageMethod);
 
 			return media;
+		}
+
+		public bool IsCached
+		{
+			get
+			{
+				return File.Exists(CacheFileName);
+			}
 		}
 	}
 }

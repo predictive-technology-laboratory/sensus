@@ -18,61 +18,92 @@ namespace Sensus
 
 		public async Task SetMediaAsync(MediaObject media)
 		{
-			await DisposeMediaAsync();
-
-			if (media != null)
+			try
 			{
-				if (media.Type.ToLower().StartsWith("image"))
+				await DisposeMediaAsync();
+
+				if (media != null)
 				{
-					if (media.Embedded)
+					if (media.Type.ToLower().StartsWith("image"))
 					{
-						_stream = new MemoryStream(Convert.FromBase64String(media.Data));
-					}
-					else
-					{
-						using (HttpClient client = new HttpClient())
+						if (media.StorageMethod == MediaStorageMethods.Embed)
 						{
-							using (HttpResponseMessage response = await client.GetAsync(media.Data))
+							_stream = new MemoryStream(Convert.FromBase64String(media.Data));
+						}
+						else
+						{
+							bool createCache = File.Exists(media.CacheFileName) == false;
+
+							if (media.StorageMethod == MediaStorageMethods.URL || createCache)
 							{
-								_stream = new MemoryStream(await response.Content.ReadAsByteArrayAsync());
+								using (HttpClient client = new HttpClient())
+								{
+									using (HttpResponseMessage response = await client.GetAsync(media.Data))
+									{
+										_stream = new MemoryStream(await response.Content.ReadAsByteArrayAsync());
+									}
+								}
+
+								if (createCache)
+								{
+									Stream stream = _stream;
+
+									media.CacheFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), Guid.NewGuid().ToString());
+
+									_stream = new FileStream(media.CacheFileName, FileMode.Create);
+
+									stream.CopyTo(_stream);
+
+									_stream.Position = 0;
+
+									stream.Dispose();
+								}
+								else
+								{
+									_stream = new FileStream(media.CacheFileName, FileMode.Open);
+								}
 							}
 						}
-					}
 
-					Content = new Image
-					{
-						Source = ImageSource.FromStream(() => _stream)
-					};
-				}
-				else if (media.Type.ToLower().StartsWith("video"))
-				{
-					VideoPlayer player = new VideoPlayer();
-
-					player.VideoEvent += VideoEvent;
-
-					if (media.Embedded)
-					{
-						// it should be possible to optimize this to use the same temp file name each time the video is loaded 
-						// and only copy it to the temp file if it doesn't exist or its creation time is a certain distance in 
-						// the past.
-						_filePath = Path.GetTempFileName();
-
-						_stream = new FileStream(_filePath, FileMode.Open);
-
-						using (BinaryWriter writer = new BinaryWriter(_stream))
+						Content = new Image
 						{
-							writer.Write(Convert.FromBase64String(media.Data));
+							Source = ImageSource.FromStream(() => _stream)
+						};
+					}
+					else if (media.Type.ToLower().StartsWith("video"))
+					{
+						VideoPlayer player = new VideoPlayer();
+
+						player.VideoEvent += VideoEvent;
+
+						if (media.StorageMethod == MediaStorageMethods.Embed)
+						{
+							// it should be possible to optimize this to use the same temp file name each time the video is loaded 
+							// and only copy it to the temp file if it doesn't exist or its creation time is a certain distance in 
+							// the past.
+							_filePath = Path.GetTempFileName();
+
+							_stream = new FileStream(_filePath, FileMode.Open);
+
+							using (BinaryWriter writer = new BinaryWriter(_stream))
+							{
+								writer.Write(Convert.FromBase64String(media.Data));
+							}
+
+							player.Source = new VideoPlayer.FileSource(_filePath);
+						}
+						else
+						{
+							player.Source = new VideoPlayer.UrlSource(media.Data);
 						}
 
-						player.Source = new VideoPlayer.FileSource(_filePath);
+						Content = player;
 					}
-					else
-					{
-						player.Source = new VideoPlayer.UrlSource(media.Data);
-					}
-
-					Content = player;
 				}
+			}
+			catch (Exception error)
+			{
+				SensusServiceHelper.Get().Logger.Log($"Unable to set MediaView media object. Exception: {error.Message}", LoggingLevel.Normal, GetType());
 			}
 		}
 

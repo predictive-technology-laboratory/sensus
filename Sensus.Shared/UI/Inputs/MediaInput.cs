@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Sensus.Probes.User.Scripts;
 using Sensus.UI.UiProperties;
 using System;
 using System.Collections.Generic;
@@ -109,6 +110,8 @@ namespace Sensus.UI.Inputs
 
 		[MediaPickerUiProperty("Media:", true, 7)]
 		public MediaObject Media { get; set; }
+
+		public string CachePath { get; set; }
 
 		public bool HasMedia
 		{
