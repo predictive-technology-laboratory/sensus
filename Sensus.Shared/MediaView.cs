@@ -26,7 +26,7 @@ namespace Sensus
 				{
 					if (media.Type.ToLower().StartsWith("image"))
 					{
-						if (media.StorageMethod == MediaStorageMethods.Embed)
+						/*if (media.StorageMethod == MediaStorageMethods.Embed)
 						{
 							_stream = new MemoryStream(Convert.FromBase64String(media.Data));
 						}
@@ -63,7 +63,9 @@ namespace Sensus
 									_stream = new FileStream(media.CacheFileName, FileMode.Open);
 								}
 							}
-						}
+						}*/
+
+						_stream = await media.GetMediaStreamAsync();
 
 						Content = new Image
 						{
@@ -76,25 +78,13 @@ namespace Sensus
 
 						player.VideoEvent += VideoEvent;
 
-						if (media.StorageMethod == MediaStorageMethods.Embed)
+						if (media.StorageMethod != MediaStorageMethods.URL)
 						{
-							// it should be possible to optimize this to use the same temp file name each time the video is loaded 
-							// and only copy it to the temp file if it doesn't exist or its creation time is a certain distance in 
-							// the past.
-							_filePath = Path.GetTempFileName();
-
-							_stream = new FileStream(_filePath, FileMode.Open);
-
-							using (BinaryWriter writer = new BinaryWriter(_stream))
-							{
-								writer.Write(Convert.FromBase64String(media.Data));
-							}
-
-							player.Source = new VideoPlayer.FileSource(_filePath);
+							player.Source = new VideoPlayer.UrlSource(media.Data);
 						}
 						else
 						{
-							player.Source = new VideoPlayer.UrlSource(media.Data);
+							player.Source = new VideoPlayer.FileSource(media.CacheFileName);
 						}
 
 						Content = player;

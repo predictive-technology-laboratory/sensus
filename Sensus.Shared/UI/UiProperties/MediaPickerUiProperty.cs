@@ -1,6 +1,7 @@
 ﻿using Plugin.Media;
 using Plugin.Media.Abstractions;
 using Sensus.Exceptions;
+using Sensus.UI.Inputs;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -110,6 +111,7 @@ namespace Sensus.UI.UiProperties
 			StackLayout urlLayout = new StackLayout();
 			MediaObject currentMedia = (MediaObject)property.GetValue(o);
 			MediaStorageMethods storageMethod = currentMedia.StorageMethod;
+			MediaInput input = (MediaInput)o;
 
 			Button sourceButton = new Button()
 			{
@@ -190,7 +192,7 @@ namespace Sensus.UI.UiProperties
 				{
 					string mimeType = SensusServiceHelper.Get().GetMimeType(urlEntry.Text);
 
-					MediaObject media = await MediaObject.FromUrlAsync(urlEntry.Text, mimeType, storageMethod);
+					MediaObject media = await MediaObject.FromUrlAsync(urlEntry.Text, mimeType, storageMethod, input.CachePath);
 
 					setMediaObject(media);
 				}
