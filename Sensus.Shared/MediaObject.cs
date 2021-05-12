@@ -58,7 +58,7 @@ namespace Sensus
 			}
 
 			public byte[] Data { get; }
-			public string MimeType { get; } 
+			public string MimeType { get; }
 
 		}
 
@@ -104,21 +104,38 @@ namespace Sensus
 			}
 		}
 
-		private async Task<Stream> WriteCacheFile(byte[] buffer)
+		private async Task<Stream> WriteCacheFileAsync()
 		{
+			DownloadResult result = await DownloadMediaAsync(Data);
+
+			Directory.CreateDirectory(Path.GetDirectoryName(CacheFileName));
+
 			Stream stream = new FileStream(CacheFileName, FileMode.Create);
 
-			await stream.WriteAsync(buffer);
+			await stream.WriteAsync(result.Data);
 
 			stream.Position = 0;
 
 			return stream;
 		}
-		private async Task<Stream> WriteCacheFile()
-		{
-			DownloadResult result = await DownloadMediaAsync(Data);
 
-			return await WriteCacheFile(result.Data);
+		public void WriteCacheFile(byte[] buffer)
+		{
+			Directory.CreateDirectory(Path.GetDirectoryName(CacheFileName));
+
+			Stream stream = new FileStream(CacheFileName, FileMode.Create);
+
+			stream.Write(buffer);
+
+			stream.Position = 0;
+
+			stream.Close();
+		}
+		public void WriteCacheFile()
+		{
+			DownloadResult result = DownloadMediaAsync(Data).Result;
+
+			WriteCacheFile(result.Data);
 		}
 
 		public async Task<Stream> GetMediaStreamAsync()
@@ -147,25 +164,42 @@ namespace Sensus
 				}
 				else
 				{
-					stream = await WriteCacheFile();
+					stream = await WriteCacheFileAsync();
 				}
 			}
 
 			return stream;
 		}
 
-		[OnSerializing]
-		[OnDeserializing]
-		internal async Task OnSerializingMethod(StreamingContext context)
+		private void CacheOnSerialization()
 		{
-			if ((StorageMethod == MediaStorageMethods.Cache && IsCached == false))
+			try
 			{
-				await WriteCacheFile();
+				if ((StorageMethod == MediaStorageMethods.Cache && IsCached == false))
+				{
+					WriteCacheFile();
+				}
+				else if (Type.ToLower().StartsWith("video") && StorageMethod == MediaStorageMethods.Embed)
+				{
+					WriteCacheFile(Convert.FromBase64String(Data));
+				}
 			}
-			else if (Type.ToLower().StartsWith("video") && StorageMethod == MediaStorageMethods.Embed)
+			catch (Exception error)
 			{
-				await WriteCacheFile(Convert.FromBase64String(Data));
+				SensusServiceHelper.Get().Logger.Log($"Failed to cache MediaInput media. Exception: {error.Message}", LoggingLevel.Normal, GetType());
 			}
+		}
+
+		[OnSerialized]
+		internal void OnSerializedMethod(StreamingContext context)
+		{
+			CacheOnSerialization();
+		}
+
+		[OnDeserialized]
+		internal void OnDeserializedMethod(StreamingContext context)
+		{
+			CacheOnSerialization();
 		}
 	}
 }

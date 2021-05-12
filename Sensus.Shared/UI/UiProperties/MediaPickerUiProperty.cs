@@ -110,7 +110,7 @@ namespace Sensus.UI.UiProperties
 			List<string> buttons = new List<string>();
 			StackLayout urlLayout = new StackLayout();
 			MediaObject currentMedia = (MediaObject)property.GetValue(o);
-			MediaStorageMethods storageMethod = currentMedia.StorageMethod;
+			MediaStorageMethods storageMethod = currentMedia?.StorageMethod ?? MediaStorageMethods.URL;
 			MediaInput input = (MediaInput)o;
 
 			Button sourceButton = new Button()
