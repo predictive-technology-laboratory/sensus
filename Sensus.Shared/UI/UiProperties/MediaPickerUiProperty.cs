@@ -4,7 +4,6 @@ using Sensus.Exceptions;
 using Sensus.UI.Inputs;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,48 +28,6 @@ namespace Sensus.UI.UiProperties
 		public const string URL_EMBEDDED = "Url (Embed)";
 		public const string NONE = "None";
 		public const string CHOOSE = "Choose...";
-
-		//private async Task<MediaObject> GetMediaObjectAsync(MediaFile file)
-		//{
-		//	MediaObject media = new MediaObject();
-
-		//	byte[] data = await SensusServiceHelper.ReadAllBytesAsync(file.GetStream());
-
-		//	media.Data = Convert.ToBase64String(data);
-		//	media.Type = SensusServiceHelper.Get().GetMimeType(file.Path);
-		//	media.Embeded = true;
-
-		//	return media;
-		//}
-
-		//private async Task<MediaObject> GetMediaObjectAsync(string data, bool embed)
-		//{
-		//	MediaObject media = new MediaObject();
-
-		//	string mimeType = SensusServiceHelper.Get().GetMimeType(data);
-
-		//	if (embed)
-		//	{
-		//		using (HttpClient client = new HttpClient())
-		//		{
-		//			using (HttpResponseMessage response = await client.GetAsync(data))
-		//			{
-		//				if (string.IsNullOrEmpty(mimeType))
-		//				{
-		//					mimeType = response.Content.Headers.ContentType.MediaType.ToLower();
-		//				}
-
-		//				data = Convert.ToBase64String(await response.Content.ReadAsByteArrayAsync());
-		//			}
-		//		}
-		//	}
-
-		//	media.Data = data;
-		//	media.Type = mimeType;
-		//	media.Embeded = embed;
-
-		//	return media;
-		//}
 
 		private string GetButtonText(MediaObject media)
 		{
