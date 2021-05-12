@@ -102,10 +102,10 @@ namespace Sensus
 		/// </summary>
 		public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromSeconds(30);
 #elif RELEASE
-        /// <summary>
-        /// The health test interval.
-        /// </summary>
-        public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromHours(3);
+		/// <summary>
+		/// The health test interval.
+		/// </summary>
+		public static readonly TimeSpan HEALTH_TEST_DELAY = TimeSpan.FromHours(3);
 #endif
 
 		public static readonly JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings
@@ -482,65 +482,65 @@ namespace Sensus
 		#region iOS GPS listener settings
 
 #if __IOS__
-        [JsonIgnore]
-        public bool GpsPauseLocationUpdatesAutomatically
-        {
-            get
-            {
-                List<Protocol> runningProtocols = GetRunningProtocols();
-                return runningProtocols.Count == 0 ? false : runningProtocols.All(p => p.GpsPauseLocationUpdatesAutomatically);
-            }
-        }
+		[JsonIgnore]
+		public bool GpsPauseLocationUpdatesAutomatically
+		{
+			get
+			{
+				List<Protocol> runningProtocols = GetRunningProtocols();
+				return runningProtocols.Count == 0 ? false : runningProtocols.All(p => p.GpsPauseLocationUpdatesAutomatically);
+			}
+		}
 
-        [JsonIgnore]
-        public ActivityType GpsActivityType
-        {
-            get
-            {
-                List<Protocol> runningProtocols = GetRunningProtocols();
-                return runningProtocols.Count == 0 || runningProtocols.Select(p => p.GpsPauseActivityType).Distinct().Count() > 1 ? ActivityType.Other : runningProtocols.First().GpsPauseActivityType;
-            }
-        }
+		[JsonIgnore]
+		public ActivityType GpsActivityType
+		{
+			get
+			{
+				List<Protocol> runningProtocols = GetRunningProtocols();
+				return runningProtocols.Count == 0 || runningProtocols.Select(p => p.GpsPauseActivityType).Distinct().Count() > 1 ? ActivityType.Other : runningProtocols.First().GpsPauseActivityType;
+			}
+		}
 
-        [JsonIgnore]
-        public bool GpsListenForSignificantChanges
-        {
-            get
-            {
-                List<Protocol> runningProtocols = GetRunningProtocols();
-                return runningProtocols.Count == 0 ? false : runningProtocols.All(p => p.GpsListenForSignificantChanges);
-            }
-        }
+		[JsonIgnore]
+		public bool GpsListenForSignificantChanges
+		{
+			get
+			{
+				List<Protocol> runningProtocols = GetRunningProtocols();
+				return runningProtocols.Count == 0 ? false : runningProtocols.All(p => p.GpsListenForSignificantChanges);
+			}
+		}
 
-        [JsonIgnore]
-        public bool GpsDeferLocationUpdates
-        {
-            get
-            {
-                List<Protocol> runningProtocols = GetRunningProtocols();
-                return runningProtocols.Count == 0 ? false : runningProtocols.All(p => p.GpsDeferLocationUpdates);
-            }
-        }
+		[JsonIgnore]
+		public bool GpsDeferLocationUpdates
+		{
+			get
+			{
+				List<Protocol> runningProtocols = GetRunningProtocols();
+				return runningProtocols.Count == 0 ? false : runningProtocols.All(p => p.GpsDeferLocationUpdates);
+			}
+		}
 
-        [JsonIgnore]
-        public float GpsDeferralDistanceMeters
-        {
-            get
-            {
-                List<Protocol> runningProtocols = GetRunningProtocols();
-                return runningProtocols.Count == 0 ? -1 : runningProtocols.Min(p => p.GpsDeferralDistanceMeters);
-            }
-        }
+		[JsonIgnore]
+		public float GpsDeferralDistanceMeters
+		{
+			get
+			{
+				List<Protocol> runningProtocols = GetRunningProtocols();
+				return runningProtocols.Count == 0 ? -1 : runningProtocols.Min(p => p.GpsDeferralDistanceMeters);
+			}
+		}
 
-        [JsonIgnore]
-        public float GpsDeferralTimeMinutes
-        {
-            get
-            {
-                List<Protocol> runningProtocols = GetRunningProtocols();
-                return runningProtocols.Count == 0 ? -1 : runningProtocols.Min(p => p.GpsDeferralTimeMinutes);
-            }
-        }
+		[JsonIgnore]
+		public float GpsDeferralTimeMinutes
+		{
+			get
+			{
+				List<Protocol> runningProtocols = GetRunningProtocols();
+				return runningProtocols.Count == 0 ? -1 : runningProtocols.Min(p => p.GpsDeferralTimeMinutes);
+			}
+		}
 #endif
 
 		#endregion
@@ -582,7 +582,7 @@ namespace Sensus
 #if DEBUG || UI_TESTING
 			LoggingLevel loggingLevel = LoggingLevel.Debug;
 #elif RELEASE
-            LoggingLevel loggingLevel = LoggingLevel.Normal;
+			LoggingLevel loggingLevel = LoggingLevel.Normal;
 #else
 #error "Unrecognized configuration."
 #endif
@@ -910,10 +910,10 @@ namespace Sensus
 			foreach (Protocol registeredProtocol in _registeredProtocols)
 			{
 				/*if (registeredProtocol.State == ProtocolState.Stopped && _protocolStates.Contains(registeredProtocol.Id))
-                {
-                    // don't present the user with an interface. just start up in the background.
-                    await registeredProtocol.StartAsync(CancellationToken.None);
-                }*/
+				{
+					// don't present the user with an interface. just start up in the background.
+					await registeredProtocol.StartAsync(CancellationToken.None);
+				}*/
 
 				if (_protocolStates.TryGetValue(registeredProtocol.Id, out ProtocolState state))
 				{
@@ -1126,11 +1126,11 @@ namespace Sensus
 			SensusContext.Current.Notifier.CancelNotification(Notifier.PENDING_SURVEY_BADGE_NOTIFICATION_ID);
 
 #if __IOS__
-            // clear the budge -- must be done from UI thread
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-            {
-                UIKit.UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
-            });
+			// clear the budge -- must be done from UI thread
+			SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+			{
+				UIKit.UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
+			});
 #endif
 		}
 
