@@ -147,7 +147,7 @@ namespace Sensus.UI.UiProperties
 
 					try
 					{
-						MediaObject media = await MediaObject.FromFileAsync(file.GetStream(), SensusServiceHelper.Get().GetMimeType(file.Path));
+						MediaObject media = await MediaObject.FromFileAsync(file.GetStream(), SensusServiceHelper.Get().GetMimeType(file.Path), input.CachePath);
 
 						setMediaObject(media);
 					}
