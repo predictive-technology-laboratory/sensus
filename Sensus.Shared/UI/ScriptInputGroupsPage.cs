@@ -65,7 +65,7 @@ namespace Sensus.UI
                 else if (selectedAction == "Edit")
                 {
                     List<InputGroup> previousInputGroups = script.InputGroups.Where((inputGroup, index) => index < selectedIndex).ToList();
-                    ScriptInputGroupPage inputGroupPage = new ScriptInputGroupPage(selectedInputGroup, previousInputGroups);
+                    ScriptInputGroupPage inputGroupPage = new ScriptInputGroupPage(selectedInputGroup, previousInputGroups, script);
                     await Navigation.PushAsync(inputGroupPage);
                     groupsList.SelectedItem = null;
                 }
