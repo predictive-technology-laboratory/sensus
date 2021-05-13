@@ -204,12 +204,11 @@ namespace Sensus
 			}
 			else if (StorageMethod == MediaStorageMethods.URL)
 			{
-				using (HttpClient client = new HttpClient())
+				HttpClient client = SensusServiceHelper.HttpClient;
+
+				using (HttpResponseMessage response = await client.GetAsync(Data))
 				{
-					using (HttpResponseMessage response = await client.GetAsync(Data))
-					{
-						stream = new MemoryStream(await response.Content.ReadAsByteArrayAsync());
-					}
+					stream = new MemoryStream(await response.Content.ReadAsByteArrayAsync());
 				}
 			}
 			else if (StorageMethod == MediaStorageMethods.Cache)
