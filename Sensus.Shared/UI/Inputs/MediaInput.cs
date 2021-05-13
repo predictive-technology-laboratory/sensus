@@ -16,6 +16,7 @@ using Sensus.Probes.User.Scripts;
 using Sensus.UI.UiProperties;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -112,6 +113,11 @@ namespace Sensus.UI.Inputs
 		public MediaObject Media { get; set; }
 
 		public string CachePath { get; set; }
+
+		public void SetCachePath(ScriptRunner scriptRunner, InputGroup inputGroup)
+		{
+			CachePath = MediaObject.GetCachePath(scriptRunner, inputGroup, this);
+		}
 
 		public void ClearCache()
 		{

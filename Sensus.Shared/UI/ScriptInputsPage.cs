@@ -30,8 +30,6 @@ namespace Sensus.UI
 		{
 			Title = "Inputs";
 
-			string cachePath = Path.Combine(script.Runner.Probe.Protocol.Id, script.Id, inputGroup.Id);
-
 			ListView inputsList = new ListView(ListViewCachingStrategy.RecycleElement);
 			inputsList.ItemTemplate = new DataTemplate(typeof(TextCell));
 			inputsList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(Input.Caption));
@@ -161,7 +159,7 @@ namespace Sensus.UI
 					{
 						if (selectedInput is MediaInput mediaInput)
 						{
-							mediaInput.ClearCache();
+							MediaObject.ClearCache(script.Runner, inputGroup, mediaInput);
 						}
 
 						inputGroup.Inputs.Remove(selectedInput);
@@ -194,7 +192,7 @@ namespace Sensus.UI
 					{
 						if (input is MediaInput mediaInput)
 						{
-							mediaInput.CachePath = cachePath;
+							mediaInput.SetCachePath(script.Runner, inputGroup);
 						}
 
 						inputGroup.Inputs.Add(input);

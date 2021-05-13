@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -9,7 +8,6 @@ namespace Sensus
 	public class MediaView : ContentView
 	{
 		private Stream _stream;
-		private string _filePath;
 
 		public MediaView()
 		{
@@ -80,11 +78,11 @@ namespace Sensus
 
 						if (media.StorageMethod != MediaStorageMethods.URL)
 						{
-							player.Source = new VideoPlayer.UrlSource(media.Data);
+							player.Source = new VideoPlayer.UrlSource(media.GetMediaPath());
 						}
 						else
 						{
-							player.Source = new VideoPlayer.FileSource(media.CacheFileName);
+							player.Source = new VideoPlayer.FileSource(media.GetMediaPath());
 						}
 
 						Content = player;
@@ -104,11 +102,6 @@ namespace Sensus
 				await _stream.DisposeAsync();
 
 				_stream = null;
-			}
-
-			if (_filePath != null && File.Exists(_filePath))
-			{
-				File.Delete(_filePath);
 			}
 		}
 

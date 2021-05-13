@@ -28,9 +28,29 @@ namespace Sensus
 			CacheFileName = cacheFileName;
 		}
 
+		public static string GetFullCachePath(string cachePath)
+		{
+			return Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), cachePath));
+		}
+		public static string GetCachePath(ScriptRunner scriptRunner, InputGroup inputGroup = null, Input input = null)
+		{
+			string path = Path.Combine(scriptRunner.Probe.Protocol.Id, $"{nameof(MediaObject)}Cache", scriptRunner.Script.Id);
+
+			if (inputGroup != null)
+			{
+				path = Path.Combine(path, inputGroup.Id);
+			}
+
+			if (input != null)
+			{
+				path = Path.Combine(path, input.Id);
+			}
+
+			return path;
+		}
 		private static string GetCacheFileName(string cachePath)
 		{
-			return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), cachePath, "MediaInputCache", Guid.NewGuid().ToString());
+			return Path.Combine(cachePath, Guid.NewGuid().ToString());
 		}
 
 		public static async Task<MediaObject> FromFileAsync(Stream stream, string type, string cachePath)
@@ -63,19 +83,29 @@ namespace Sensus
 
 			public byte[] Data { get; }
 			public string MimeType { get; }
-
 		}
 
 		private static async Task<DownloadResult> DownloadMediaAsync(string url)
 		{
-			using (HttpClient client = new HttpClient())
-			{
-				using (HttpResponseMessage response = await client.GetAsync(url))
-				{
-					response.EnsureSuccessStatusCode();
+			HttpClient client = SensusServiceHelper.HttpClient;
 
-					return new DownloadResult(await response.Content.ReadAsByteArrayAsync(), response.Content.Headers.ContentType.MediaType.ToLower());
-				}
+			using (HttpResponseMessage response = await client.GetAsync(url))
+			{
+				response.EnsureSuccessStatusCode();
+
+				return new DownloadResult(await response.Content.ReadAsByteArrayAsync(), response.Content.Headers.ContentType.MediaType.ToLower());
+			}
+		}
+
+		private static DownloadResult DownloadMedia(string url)
+		{
+			HttpClient client = SensusServiceHelper.HttpClient;
+
+			using (HttpResponseMessage response = client.GetAsync(url).ConfigureAwait(false).GetAwaiter().GetResult())
+			{
+				response.EnsureSuccessStatusCode();
+
+				return new DownloadResult(response.Content.ReadAsByteArrayAsync().ConfigureAwait(false).GetAwaiter().GetResult(), response.Content.Headers.ContentType.MediaType.ToLower());
 			}
 		}
 
@@ -104,17 +134,19 @@ namespace Sensus
 		{
 			get
 			{
-				return File.Exists(CacheFileName);
+				return File.Exists(GetFullCachePath(CacheFileName));
 			}
 		}
 
 		public async Task<Stream> WriteCacheFileAsync()
 		{
+			string fileName = GetFullCachePath(CacheFileName);
+
 			DownloadResult result = await DownloadMediaAsync(Data);
 
-			Directory.CreateDirectory(Path.GetDirectoryName(CacheFileName));
+			Directory.CreateDirectory(Path.GetDirectoryName(fileName));
 
-			Stream stream = new FileStream(CacheFileName, FileMode.Create);
+			Stream stream = new FileStream(fileName, FileMode.Create);
 
 			await stream.WriteAsync(result.Data);
 
@@ -125,9 +157,11 @@ namespace Sensus
 
 		private void WriteCacheFile(byte[] buffer)
 		{
-			Directory.CreateDirectory(Path.GetDirectoryName(CacheFileName));
+			string fileName = GetFullCachePath(CacheFileName);
 
-			Stream stream = new FileStream(CacheFileName, FileMode.Create);
+			Directory.CreateDirectory(Path.GetDirectoryName(fileName));
+
+			Stream stream = new FileStream(fileName, FileMode.Create);
 
 			stream.Write(buffer);
 
@@ -137,7 +171,7 @@ namespace Sensus
 		}
 		public void WriteCacheFile()
 		{
-			DownloadResult result = DownloadMediaAsync(Data).Result;
+			DownloadResult result = DownloadMedia(Data);
 
 			WriteCacheFile(result.Data);
 		}
@@ -146,18 +180,13 @@ namespace Sensus
 		{
 			if (IsCached)
 			{
-				File.Delete(CacheFileName);
+				File.Delete(GetFullCachePath(CacheFileName));
 			}
 		}
 
-		public static void ClearCache(ScriptRunner scriptRunner, InputGroup inputGroup = null)
+		public static void ClearCache(ScriptRunner scriptRunner, InputGroup inputGroup = null, Input input = null)
 		{
-			string path = Path.Combine(scriptRunner.Probe.Protocol.Id, scriptRunner.Script.Id);
-
-			if (inputGroup != null)
-			{
-				path = Path.Combine(path, inputGroup.Id);
-			}
+			string path = GetFullCachePath(GetCachePath(scriptRunner, inputGroup, input));
 
 			if (Directory.Exists(path))
 			{
@@ -187,7 +216,7 @@ namespace Sensus
 			{
 				if (IsCached)
 				{
-					stream = new FileStream(CacheFileName, FileMode.Open);
+					stream = new FileStream(GetFullCachePath(CacheFileName), FileMode.Open);
 				}
 				else
 				{
@@ -198,11 +227,23 @@ namespace Sensus
 			return stream;
 		}
 
+		public string GetMediaPath()
+		{
+			if (StorageMethod != MediaStorageMethods.URL)
+			{
+				return Data;
+			}
+			else
+			{
+				return GetFullCachePath(CacheFileName);
+			}
+		}
+
 		private void CacheOnSerialization()
 		{
 			try
 			{
-				if ((StorageMethod == MediaStorageMethods.Cache && IsCached == false))
+				if (StorageMethod == MediaStorageMethods.Cache && IsCached == false)
 				{
 					WriteCacheFile();
 				}

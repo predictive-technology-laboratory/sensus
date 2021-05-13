@@ -50,6 +50,7 @@ using Plugin.FilePicker;
 using Plugin.FilePicker.Abstractions;
 using Plugin.ContactService.Shared;
 using System.Text.RegularExpressions;
+using System.Net.Http;
 
 namespace Sensus
 {
@@ -143,6 +144,13 @@ namespace Sensus
 		};
 
 		public static event EventHandler OnInitialized;
+
+		public static HttpClient HttpClient { get; private set; }
+
+		static SensusServiceHelper()
+		{
+			HttpClient = new HttpClient();
+		}
 
 		/// <summary>
 		/// Initializes the sensus service helper. Must be called when app first starts, from the main / UI thread.

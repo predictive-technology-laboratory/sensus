@@ -71,8 +71,6 @@ namespace Sensus.UI.UiProperties
 			MediaStorageMethods storageMethod = currentMedia?.StorageMethod ?? MediaStorageMethods.URL;
 			MediaInput input = (MediaInput)o;
 
-			string cachePath = Path.Combine("MediaInputCache", input.Id);
-
 			Button sourceButton = new Button()
 			{
 				Text = GetButtonText(currentMedia),
@@ -107,7 +105,7 @@ namespace Sensus.UI.UiProperties
 
 					try
 					{
-						MediaObject media = await MediaObject.FromFileAsync(file.GetStream(), SensusServiceHelper.Get().GetMimeType(file.Path), cachePath);
+						MediaObject media = await MediaObject.FromFileAsync(file.GetStream(), SensusServiceHelper.Get().GetMimeType(file.Path), input.CachePath);
 
 						setMediaObject(media);
 					}
@@ -157,7 +155,7 @@ namespace Sensus.UI.UiProperties
 				{
 					string mimeType = SensusServiceHelper.Get().GetMimeType(urlEntry.Text);
 
-					MediaObject media = await MediaObject.FromUrlAsync(urlEntry.Text, mimeType, storageMethod, cachePath);
+					MediaObject media = await MediaObject.FromUrlAsync(urlEntry.Text, mimeType, storageMethod, input.CachePath);
 
 					setMediaObject(media);
 				}
