@@ -113,6 +113,14 @@ namespace Sensus.UI.Inputs
 
 		public string CachePath { get; set; }
 
+		public void ClearCache()
+		{
+			if (Media != null)
+			{
+				Media.ClearCache();
+			}
+		}
+
 		public bool HasMedia
 		{
 			get

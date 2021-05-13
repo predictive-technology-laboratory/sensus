@@ -4,6 +4,7 @@ using Sensus.Exceptions;
 using Sensus.UI.Inputs;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -70,6 +71,8 @@ namespace Sensus.UI.UiProperties
 			MediaStorageMethods storageMethod = currentMedia?.StorageMethod ?? MediaStorageMethods.URL;
 			MediaInput input = (MediaInput)o;
 
+			string cachePath = Path.Combine("MediaInputCache", input.Id);
+
 			Button sourceButton = new Button()
 			{
 				Text = GetButtonText(currentMedia),
@@ -104,7 +107,7 @@ namespace Sensus.UI.UiProperties
 
 					try
 					{
-						MediaObject media = await MediaObject.FromFileAsync(file.GetStream(), SensusServiceHelper.Get().GetMimeType(file.Path), input.CachePath);
+						MediaObject media = await MediaObject.FromFileAsync(file.GetStream(), SensusServiceHelper.Get().GetMimeType(file.Path), cachePath);
 
 						setMediaObject(media);
 					}
@@ -121,6 +124,11 @@ namespace Sensus.UI.UiProperties
 
 			void setMediaObject(MediaObject media)
 			{
+				if (currentMedia != null)
+				{
+					currentMedia.ClearCache();
+				}
+
 				property.SetValue(o, media);
 
 				Device.BeginInvokeOnMainThread(() =>
@@ -149,7 +157,7 @@ namespace Sensus.UI.UiProperties
 				{
 					string mimeType = SensusServiceHelper.Get().GetMimeType(urlEntry.Text);
 
-					MediaObject media = await MediaObject.FromUrlAsync(urlEntry.Text, mimeType, storageMethod, input.CachePath);
+					MediaObject media = await MediaObject.FromUrlAsync(urlEntry.Text, mimeType, storageMethod, cachePath);
 
 					setMediaObject(media);
 				}
@@ -229,12 +237,16 @@ namespace Sensus.UI.UiProperties
 					{
 						storageMethod = MediaStorageMethods.URL;
 
+						sourceButton.Text = URL;
+
 						urlStack.IsVisible = true;
 						urlEntry.Focus();
 					}
 					else if (source == URL_CACHED)
 					{
 						storageMethod = MediaStorageMethods.Cache;
+
+						sourceButton.Text = URL_CACHED;
 
 						urlStack.IsVisible = true;
 						urlEntry.Focus();
@@ -249,6 +261,11 @@ namespace Sensus.UI.UiProperties
 					else if (source == NONE)
 					{
 						buttons.Remove(PREVIEW);
+
+						if (currentMedia != null)
+						{
+							currentMedia.ClearCache();
+						}
 
 						property.SetValue(o, null);
 

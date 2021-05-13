@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Sensus.UI.Inputs;
 using Sensus.Probes.User.Scripts;
+using System.IO;
 
 namespace Sensus.UI
 {
@@ -28,6 +29,8 @@ namespace Sensus.UI
 		public ScriptInputsPage(InputGroup inputGroup, List<InputGroup> previousInputGroups, Script script)
 		{
 			Title = "Inputs";
+
+			string cachePath = Path.Combine(script.Runner.Probe.Protocol.Id, script.Id, inputGroup.Id);
 
 			ListView inputsList = new ListView(ListViewCachingStrategy.RecycleElement);
 			inputsList.ItemTemplate = new DataTemplate(typeof(TextCell));
@@ -156,6 +159,11 @@ namespace Sensus.UI
 				{
 					if (await DisplayAlert("Delete " + selectedInput.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
 					{
+						if (selectedInput is MediaInput mediaInput)
+						{
+							mediaInput.ClearCache();
+						}
+
 						inputGroup.Inputs.Remove(selectedInput);
 						inputsList.SelectedItem = null;  // manually reset, since it isn't done automatically.
 					}
@@ -186,7 +194,7 @@ namespace Sensus.UI
 					{
 						if (input is MediaInput mediaInput)
 						{
-							mediaInput.CachePath = script.Runner.Probe.Protocol.Id;
+							mediaInput.CachePath = cachePath;
 						}
 
 						inputGroup.Inputs.Add(input);

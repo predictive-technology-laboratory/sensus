@@ -14,40 +14,41 @@
 
 using Sensus.Probes.User.Scripts;
 using System;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Xamarin.Forms;
 
 namespace Sensus.UI
 {
-    /// <summary>
-    /// Displays script runners for a script probe.
-    /// </summary>
-    public class ScriptRunnersPage : ContentPage
-    {
-        public ScriptRunnersPage(ScriptProbe probe)
-        {
-            Title = "Scripts";
+	/// <summary>
+	/// Displays script runners for a script probe.
+	/// </summary>
+	public class ScriptRunnersPage : ContentPage
+	{
+		public ScriptRunnersPage(ScriptProbe probe)
+		{
+			Title = "Scripts";
 
-            ListView scriptRunnersList = new ListView(ListViewCachingStrategy.RecycleElement);
-            scriptRunnersList.ItemTemplate = new DataTemplate(typeof(TextCell));
-            scriptRunnersList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(ScriptRunner.Caption));
-            scriptRunnersList.ItemsSource = probe.ScriptRunners;
-            scriptRunnersList.ItemTapped += async (o, e) =>
-            {
-                if (scriptRunnersList.SelectedItem == null)
-                {
-                    return;
-                }
+			ListView scriptRunnersList = new ListView(ListViewCachingStrategy.RecycleElement);
+			scriptRunnersList.ItemTemplate = new DataTemplate(typeof(TextCell));
+			scriptRunnersList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(ScriptRunner.Caption));
+			scriptRunnersList.ItemsSource = probe.ScriptRunners;
+			scriptRunnersList.ItemTapped += async (o, e) =>
+			{
+				if (scriptRunnersList.SelectedItem == null)
+				{
+					return;
+				}
 
-                ScriptRunner selectedScriptRunner = scriptRunnersList.SelectedItem as ScriptRunner;
+				ScriptRunner selectedScriptRunner = scriptRunnersList.SelectedItem as ScriptRunner;
 
-                string selectedAction = await DisplayActionSheet(selectedScriptRunner.Name, "Cancel", null, "Edit", "Copy", "Delete");
+				string selectedAction = await DisplayActionSheet(selectedScriptRunner.Name, "Cancel", null, "Edit", "Copy", "Delete");
 
-                if (selectedAction == "Edit")
-                {
-                    await Navigation.PushAsync(new ScriptRunnerPage(selectedScriptRunner));
-                }
+				if (selectedAction == "Edit")
+				{
+					await Navigation.PushAsync(new ScriptRunnerPage(selectedScriptRunner));
+				}
 				else if (selectedAction == "Copy")
 				{
 					ScriptRunner copy = selectedScriptRunner.Copy();
@@ -56,28 +57,30 @@ namespace Sensus.UI
 
 					probe.ScriptRunners.Add(copy);
 				}
-                else if (selectedAction == "Delete")
-                {
-                    if (await DisplayAlert("Delete " + selectedScriptRunner.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
-                    {
-                        await selectedScriptRunner.StopAsync();
-                        selectedScriptRunner.Enabled = false;
-                        selectedScriptRunner.Triggers.Clear();
+				else if (selectedAction == "Delete")
+				{
+					if (await DisplayAlert("Delete " + selectedScriptRunner.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
+					{
+						await selectedScriptRunner.StopAsync();
+						selectedScriptRunner.Enabled = false;
+						selectedScriptRunner.Triggers.Clear();
 
-                        probe.ScriptRunners.Remove(selectedScriptRunner);
+						MediaObject.ClearCache(selectedScriptRunner);
 
-                        scriptRunnersList.SelectedItem = null;  // reset manually since it's not done automatically
-                    }
-                }
-            };
+						probe.ScriptRunners.Remove(selectedScriptRunner);
 
-            ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
-            {
-                probe.ScriptRunners.Add(new ScriptRunner("New Script", probe));
-            }));
+						scriptRunnersList.SelectedItem = null;  // reset manually since it's not done automatically
+					}
+				}
+			};
 
-            Content = scriptRunnersList;
-        }
+			ToolbarItems.Add(new ToolbarItem(null, "plus.png", () =>
+			{
+				probe.ScriptRunners.Add(new ScriptRunner("New Script", probe));
+			}));
+
+			Content = scriptRunnersList;
+		}
 
 		public void MakeNameUnique(ScriptRunner runner, ScriptProbe probe)
 		{

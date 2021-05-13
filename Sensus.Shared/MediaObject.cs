@@ -1,6 +1,10 @@
 ﻿
+using Sensus.Probes.User.Scripts;
+using Sensus.UI.Inputs;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Runtime.Serialization;
 using System.Text;
@@ -104,7 +108,7 @@ namespace Sensus
 			}
 		}
 
-		private async Task<Stream> WriteCacheFileAsync()
+		public async Task<Stream> WriteCacheFileAsync()
 		{
 			DownloadResult result = await DownloadMediaAsync(Data);
 
@@ -119,7 +123,7 @@ namespace Sensus
 			return stream;
 		}
 
-		public void WriteCacheFile(byte[] buffer)
+		private void WriteCacheFile(byte[] buffer)
 		{
 			Directory.CreateDirectory(Path.GetDirectoryName(CacheFileName));
 
@@ -136,6 +140,29 @@ namespace Sensus
 			DownloadResult result = DownloadMediaAsync(Data).Result;
 
 			WriteCacheFile(result.Data);
+		}
+
+		public void ClearCache()
+		{
+			if (IsCached)
+			{
+				File.Delete(CacheFileName);
+			}
+		}
+
+		public static void ClearCache(ScriptRunner scriptRunner, InputGroup inputGroup = null)
+		{
+			string path = Path.Combine(scriptRunner.Probe.Protocol.Id, scriptRunner.Script.Id);
+
+			if (inputGroup != null)
+			{
+				path = Path.Combine(path, inputGroup.Id);
+			}
+
+			if (Directory.Exists(path))
+			{
+				Directory.Delete(path, true);
+			}
 		}
 
 		public async Task<Stream> GetMediaStreamAsync()
