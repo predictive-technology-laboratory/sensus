@@ -24,45 +24,6 @@ namespace Sensus
 				{
 					if (media.Type.ToLower().StartsWith("image"))
 					{
-						/*if (media.StorageMethod == MediaStorageMethods.Embed)
-						{
-							_stream = new MemoryStream(Convert.FromBase64String(media.Data));
-						}
-						else
-						{
-							bool createCache = File.Exists(media.CacheFileName) == false;
-
-							if (media.StorageMethod == MediaStorageMethods.URL || createCache)
-							{
-								using (HttpClient client = new HttpClient())
-								{
-									using (HttpResponseMessage response = await client.GetAsync(media.Data))
-									{
-										_stream = new MemoryStream(await response.Content.ReadAsByteArrayAsync());
-									}
-								}
-
-								if (createCache)
-								{
-									Stream stream = _stream;
-
-									media.CacheFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), Guid.NewGuid().ToString());
-
-									_stream = new FileStream(media.CacheFileName, FileMode.Create);
-
-									stream.CopyTo(_stream);
-
-									_stream.Position = 0;
-
-									stream.Dispose();
-								}
-								else
-								{
-									_stream = new FileStream(media.CacheFileName, FileMode.Open);
-								}
-							}
-						}*/
-
 						_stream = await media.GetMediaStreamAsync();
 
 						Content = new Image
