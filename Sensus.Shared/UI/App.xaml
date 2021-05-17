@@ -67,6 +67,7 @@
 		</Style>
 		<Style TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
 			<Setter Property="BackgroundColor" Value="{StaticResource ButtonColor}" />
+			<Setter Property="BorderColor" Value="{StaticResource ButtonColor}" />
 			<Setter Property="TextColor" Value="{StaticResource ButtonTextColor}" />
 			<Setter Property="BorderRadius" Value="6" />
 			<Setter Property="BorderWidth" Value="6" />
