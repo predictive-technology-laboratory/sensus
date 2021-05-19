@@ -1349,7 +1349,7 @@ namespace Sensus
 
 						InputGroupPage inputGroupPage = new InputGroupPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupNumBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, title);
 
-						// do not display prompts page under the following conditions:  
+						// do not display prompts page under the following conditions:
 						//
 						// 1) there are no inputs displayed on it
 						// 2) the cancellation token has requested a cancellation.
@@ -1375,7 +1375,14 @@ namespace Sensus
 							INavigation navigation = (Application.Current as App).DetailPage.Navigation;
 
 							// display page. only animate the display for the first page.
-							await navigation.PushModalAsync(inputGroupPage, firstPageDisplay);
+							if (inputGroup.UseNavigationBar)
+							{
+								await navigation.PushModalAsync(new NavigationPage(inputGroupPage), firstPageDisplay);
+							}
+							else
+							{
+								await navigation.PushModalAsync(inputGroupPage, firstPageDisplay);
+							}
 
 							// only run the post-display callback the first time a page is displayed. the caller expects the callback
 							// to fire only once upon first display.
@@ -1393,8 +1400,10 @@ namespace Sensus
 							// on the page rather than the local 'navigation' variable. this is necessary because the navigation
 							// context may have changed (e.g., if prior to the pop the user reopens the app via pending survey 
 							// notification.
-							await inputGroupPage.Navigation.PopModalAsync(navigationResult == InputGroupPage.NavigationResult.Submit ||
-																		  navigationResult == InputGroupPage.NavigationResult.Cancel);
+
+							bool animate = navigationResult == InputGroupPage.NavigationResult.Submit || navigationResult == InputGroupPage.NavigationResult.Cancel;
+
+							await navigation.PopModalAsync();
 
 							if (navigationResult == InputGroupPage.NavigationResult.Backward)
 							{

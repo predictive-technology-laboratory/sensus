@@ -76,6 +76,8 @@ namespace Sensus.UI
 			_showNavigationButtons = inputGroup.ShowNavigationButtons;
 
 			IsLastPage = totalSteps <= stepNumber;
+			Title = inputGroup.Title ?? title;
+			NavigationPage.SetHasBackButton(this, false);
 
 			StackLayout contentLayout = new StackLayout
 			{
@@ -118,14 +120,26 @@ namespace Sensus.UI
 				Content = scrollView;
 			}
 
-			if (string.IsNullOrWhiteSpace(inputGroup.Name) == false)
+			if (inputGroup.UseNavigationBar == false)
 			{
-				headerLayout.Children.Add(new Label
+				if (string.IsNullOrWhiteSpace(inputGroup.Title) == false)
 				{
-					Text = inputGroup.Name,
-					FontSize = 20,
-					HorizontalOptions = LayoutOptions.CenterAndExpand
-				});
+					headerLayout.Children.Add(new Label
+					{
+						Text = inputGroup.Title,
+						FontSize = 20,
+						HorizontalOptions = LayoutOptions.CenterAndExpand
+					});
+				}
+				else
+				{
+					headerLayout.Children.Add(new Label
+					{
+						Text = title,
+						FontSize = 20,
+						HorizontalOptions = LayoutOptions.CenterAndExpand
+					});
+				}
 			}
 
 			#region progress bar

@@ -126,9 +126,6 @@ namespace Sensus.UI.Inputs
 		[OnOffUiProperty("Shuffle Inputs:", true, 5)]
 		public bool ShuffleInputs { get; set; }
 
-		//[OnOffUiProperty("Hide Title:", true, 6)]
-		//public bool HideTitle { get; set; }
-		
 		[OnOffUiProperty("Freeze Header:", true, 6)]
 		public bool FreezeHeader { get; set; }
 
@@ -161,6 +158,12 @@ namespace Sensus.UI.Inputs
 		/// </summary>
 		[EntryStringUiProperty("Cancel Button Text:", true, 12, false)]
 		public virtual string CancelButtonText { get; set; }
+
+		[EntryStringUiProperty("Title:", true, 13, false)]
+		public virtual string Title { get; set; }
+
+		[OnOffUiProperty("Use Navigation View", true, 14)]
+		public virtual bool UseNavigationBar { get; set; }
 
 		/// <summary>
 		/// Gets a value indicating whether this <see cref="InputGroup"/> is valid.
