@@ -239,7 +239,7 @@ namespace Sensus
 			}
 		}
 
-		private void CacheOnSerialization()
+		public void CacheMedia()
 		{
 			try
 			{
@@ -263,7 +263,7 @@ namespace Sensus
 		{
 			if (CacheMode.HasFlag(MediaCacheModes.OnSerialization))
 			{
-				CacheOnSerialization();
+				CacheMedia();
 			}
 		}
 
@@ -272,7 +272,7 @@ namespace Sensus
 		{
 			if (CacheMode.HasFlag(MediaCacheModes.OnDeserialization))
 			{
-				CacheOnSerialization();
+				CacheMedia();
 			}
 		}
 	}
