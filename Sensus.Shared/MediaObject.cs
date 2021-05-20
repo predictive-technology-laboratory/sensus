@@ -139,30 +139,35 @@ namespace Sensus
 			}
 		}
 
-		public async Task<Stream> WriteCacheFileAsync()
+		private Stream GetCacheFileStream()
 		{
 			string fileName = GetFullCachePath(CacheFileName);
 
-			DownloadResult result = await DownloadMediaAsync(Data);
-
 			Directory.CreateDirectory(Path.GetDirectoryName(fileName));
 
-			Stream stream = new FileStream(fileName, FileMode.Create);
+			return new FileStream(fileName, FileMode.Create);
+		}
 
-			await stream.WriteAsync(result.Data);
+		private async Task<Stream> WriteCacheFileAsync(byte[] buffer)
+		{
+			Stream stream = GetCacheFileStream();
+
+			await stream.WriteAsync(buffer);
 
 			stream.Position = 0;
 
 			return stream;
 		}
+		private async Task<Stream> WriteCacheFileAsync()
+		{
+			DownloadResult result = await DownloadMediaAsync(Data);
+
+			return await WriteCacheFileAsync(result.Data);
+		}
 
 		private void WriteCacheFile(byte[] buffer)
 		{
-			string fileName = GetFullCachePath(CacheFileName);
-
-			Directory.CreateDirectory(Path.GetDirectoryName(fileName));
-
-			Stream stream = new FileStream(fileName, FileMode.Create);
+			Stream stream = GetCacheFileStream();
 
 			stream.Write(buffer);
 
@@ -239,7 +244,26 @@ namespace Sensus
 			}
 		}
 
-		public void CacheMedia()
+		public async Task CacheMediaAsync()
+		{
+			try
+			{
+				if (StorageMethod == MediaStorageMethods.Cache && IsCached == false)
+				{
+					await WriteCacheFileAsync();
+				}
+				else if (Type.ToLower().StartsWith("video") && StorageMethod == MediaStorageMethods.Embed)
+				{
+					await WriteCacheFileAsync(Convert.FromBase64String(Data));
+				}
+			}
+			catch (Exception error)
+			{
+				SensusServiceHelper.Get().Logger.Log($"Failed to cache MediaInput media. Exception: {error.Message}", LoggingLevel.Normal, GetType());
+			}
+		}
+
+		private void CacheMedia()
 		{
 			try
 			{
