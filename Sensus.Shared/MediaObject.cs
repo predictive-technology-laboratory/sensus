@@ -18,6 +18,7 @@ namespace Sensus
 		public string Type { get; private set; }
 		public MediaStorageMethods StorageMethod { get; private set; }
 		public string CacheFileName { get; private set; }
+		public MediaCacheModes CacheMode { get; set; }
 
 		// for deserialization and manual construction
 		public MediaObject(string data, string type, MediaStorageMethods storageMethod, string cacheFileName)
@@ -260,13 +261,19 @@ namespace Sensus
 		[OnSerialized]
 		internal void OnSerializedMethod(StreamingContext context)
 		{
-			CacheOnSerialization();
+			if (CacheMode.HasFlag(MediaCacheModes.OnSerialization))
+			{
+				CacheOnSerialization();
+			}
 		}
 
 		[OnDeserialized]
 		internal void OnDeserializedMethod(StreamingContext context)
 		{
-			CacheOnSerialization();
+			if (CacheMode.HasFlag(MediaCacheModes.OnDeserialization))
+			{
+				CacheOnSerialization();
+			}
 		}
 	}
 }
