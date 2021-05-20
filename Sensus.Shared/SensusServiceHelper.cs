@@ -189,7 +189,10 @@ namespace Sensus
 
 			if (OnInitialized != null)
 			{
-				Task.Factory.FromAsync((a, _) => OnInitialized.BeginInvoke(SINGLETON, EventArgs.Empty, a, _), OnInitialized.EndInvoke, null);
+				foreach (EventHandler onInitialized in OnInitialized.GetInvocationList())
+				{
+					Task.Factory.FromAsync((a, _) => onInitialized.BeginInvoke(SINGLETON, EventArgs.Empty, a, _), onInitialized.EndInvoke, null);
+				}
 			}
 		}
 
