@@ -90,10 +90,48 @@ namespace Sensus.UI.UiProperties
 				HorizontalOptions = LayoutOptions.FillAndExpand
 			};
 
+			Label cacheLabel = new Label
+			{
+				Text = "Cache Mode:",
+				FontSize = 20
+			};
+
+			Picker cachePicker = new Picker()
+			{
+				Title = "Select Cache Mode",
+				HorizontalOptions = LayoutOptions.FillAndExpand
+			};
+
+			foreach (string cacheMode in Enum.GetNames(typeof(MediaCacheModes)))
+			{
+				cachePicker.Items.Add(cacheMode);
+			}
+
+			if (currentMedia != null)
+			{
+				cachePicker.SelectedItem = currentMedia.CacheMode.ToString();
+			}
+
+			cachePicker.SelectedIndexChanged += (s, e) =>
+			{
+				Enum.TryParse(typeof(MediaCacheModes), (string)cachePicker.SelectedItem, out object result);
+
+				if (currentMedia != null)
+				{
+					currentMedia.CacheMode = (MediaCacheModes)result;
+				}
+			};
+
+			StackLayout cacheLayout = new StackLayout()
+			{
+				IsVisible = false,
+				Children = { cacheLabel, cachePicker }
+			};
+
 			StackLayout urlStack = new StackLayout
 			{
 				IsVisible = false,
-				Children = { urlLabel, urlEntry }
+				Children = { urlLabel, urlEntry, cacheLayout }
 			};
 
 			async Task setMediaObjectAsync(MediaFile file)
@@ -127,7 +165,15 @@ namespace Sensus.UI.UiProperties
 					currentMedia.ClearCache();
 				}
 
+				currentMedia = media;
 				property.SetValue(o, media);
+
+				if (media.StorageMethod == MediaStorageMethods.Cache)
+				{
+					Enum.TryParse(typeof(MediaCacheModes), (string)cachePicker.SelectedItem, out object result);
+
+					currentMedia.CacheMode = (MediaCacheModes)result;
+				}
 
 				Device.BeginInvokeOnMainThread(() =>
 				{
@@ -145,6 +191,11 @@ namespace Sensus.UI.UiProperties
 					else
 					{
 						urlStack.IsVisible = true;
+
+						if (media.StorageMethod == MediaStorageMethods.Cache)
+						{
+							cacheLayout.IsVisible = true;
+						}
 					}
 				});
 			}
@@ -175,6 +226,11 @@ namespace Sensus.UI.UiProperties
 				{
 					urlEntry.Text = currentMedia.Data;
 					urlStack.IsVisible = true;
+
+					if (currentMedia.StorageMethod == MediaStorageMethods.Cache)
+					{
+						cacheLayout.IsVisible = true;
+					}
 				}
 			}
 
@@ -239,6 +295,8 @@ namespace Sensus.UI.UiProperties
 
 						urlStack.IsVisible = true;
 						urlEntry.Focus();
+
+						cacheLayout.IsVisible = false;
 					}
 					else if (source == URL_CACHED)
 					{
@@ -248,6 +306,8 @@ namespace Sensus.UI.UiProperties
 
 						urlStack.IsVisible = true;
 						urlEntry.Focus();
+
+						cacheLayout.IsVisible = true;
 					}
 					else if (source == URL_EMBEDDED)
 					{
@@ -255,6 +315,8 @@ namespace Sensus.UI.UiProperties
 
 						urlStack.IsVisible = true;
 						urlEntry.Focus();
+
+						cacheLayout.IsVisible = false;
 					}
 					else if (source == NONE)
 					{
