@@ -67,10 +67,10 @@
 		</Style>
 		<Style TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
 			<Setter Property="BackgroundColor" Value="{StaticResource ButtonColor}" />
-			<Setter Property="BorderColor" Value="{StaticResource ButtonColor}" />
+			<!--<Setter Property="BorderColor" Value="{StaticResource ButtonColor}" />-->
 			<Setter Property="TextColor" Value="{StaticResource ButtonTextColor}" />
+			<Setter Property="Padding" Value="6" />
 			<Setter Property="BorderRadius" Value="6" />
-			<Setter Property="BorderWidth" Value="6" />
 			<Style.Triggers>
 				<Trigger Property="IsEnabled" Value="false" TargetType="{x:Type Button}">
 					<Setter Property="BackgroundColor" Value="{StaticResource DimmedColor}"/>
@@ -79,7 +79,7 @@
 		</Style>
 		<Style Class="NavigationButton" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
 			<Setter Property="BackgroundColor" Value="{StaticResource NavigationButtonColor}" />
-			<Setter Property="BorderColor" Value="{StaticResource NavigationButtonColor}" />
+			<!--<Setter Property="BorderColor" Value="{StaticResource NavigationButtonColor}" />-->
 		</Style>
 
 		<Style Class="RequiredFieldLabel" TargetType="{x:Type Label}" ApplyToDerivedTypes="True">
