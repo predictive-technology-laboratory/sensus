@@ -1406,7 +1406,7 @@ namespace Sensus
 
 							bool animate = navigationResult == InputGroupPage.NavigationResult.Submit || navigationResult == InputGroupPage.NavigationResult.Cancel;
 
-							await navigation.PopModalAsync();
+							await navigation.PopModalAsync(animate);
 
 							if (navigationResult == InputGroupPage.NavigationResult.Backward)
 							{
