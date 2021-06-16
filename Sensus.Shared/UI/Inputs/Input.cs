@@ -63,6 +63,7 @@ namespace Sensus.UI.Inputs
 		protected float _score;
 		private InputFeedbackView _feedbackView;
 		private Timer _delayTimer;
+		private bool _enabled;
 
 		public InputGroupPage InputGroupPage { get; set; }
 
@@ -433,7 +434,22 @@ namespace Sensus.UI.Inputs
 		}
 
 		[JsonIgnore]
-		public abstract bool Enabled { get; set; }
+		public virtual bool Enabled
+		{
+			get
+			{
+				return _enabled;
+			}
+			set
+			{
+				if (_view != null)
+				{
+					_view.IsEnabled = value;
+				}
+
+				_enabled = value;
+			}
+		}
 
 		[JsonIgnore]
 		public abstract string DefaultName { get; }
@@ -704,6 +720,7 @@ namespace Sensus.UI.Inputs
 			_frame = true;
 			_completionRecords = new List<InputCompletionRecord>();
 			_submissionTimestamp = null;
+			_enabled = true;
 
 			StoreCompletionRecords = true;
 		}
@@ -823,6 +840,11 @@ namespace Sensus.UI.Inputs
 
 		public virtual View GetView(int index)
 		{
+			if (_view != null)
+			{
+				_view.IsEnabled = _enabled;
+			}
+
 			return _view;
 		}
 

@@ -16,12 +16,13 @@ using Xamarin.Forms;
 using Sensus.UI.Inputs;
 using Sensus.UI.UiProperties;
 using System.Collections.Generic;
+using Sensus.Probes.User.Scripts;
 
 namespace Sensus.UI
 {
 	public class ScriptInputGroupPage : ContentPage
 	{
-		public ScriptInputGroupPage(InputGroup inputGroup, List<InputGroup> previousInputGroups)
+		public ScriptInputGroupPage(InputGroup inputGroup, List<InputGroup> previousInputGroups, Script script)
 		{
 			Title = "Input Group";
 
@@ -45,7 +46,7 @@ namespace Sensus.UI
 
 			editInputsButton.Clicked += async (o, e) =>
 			{
-				await Navigation.PushAsync(new ScriptInputsPage(inputGroup, previousInputGroups));
+				await Navigation.PushAsync(new ScriptInputsPage(inputGroup, previousInputGroups, script));
 			};
 
 			contentLayout.Children.Add(editInputsButton);
