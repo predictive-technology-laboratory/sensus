@@ -19,84 +19,105 @@ using Newtonsoft.Json;
 
 namespace Sensus.Probes.User.Scripts
 {
-    public class ScheduleTrigger
-    {
-        private readonly List<TriggerWindow> _windows;
-        private int _nonDowTriggerIntervalDays;
+	public class ScheduleTrigger
+	{
+		private readonly List<TriggerWindow> _windows;
+		private int _nonDowTriggerIntervalDays;
 
-        public int WindowCount => _windows.Count;
+		public int WindowCount => _windows.Count;
 
-        public string WindowsString
-        {
-            get
-            {
-                lock (_windows)
-                {
-                    return string.Join(", ", _windows);
-                }
-            }
-            set
-            {
-                if (value == WindowsString)
-                {
-                    return;
-                }
+		public string WindowsString
+		{
+			get
+			{
+				lock (_windows)
+				{
+					return string.Join(", ", _windows);
+				}
+			}
+			set
+			{
+				if (value == WindowsString)
+				{
+					return;
+				}
 
-                lock (_windows)
-                {
-                    _windows.Clear();
+				lock (_windows)
+				{
+					_windows.Clear();
 
-                    try
-                    {
-                        _windows.AddRange(value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(windowString => new TriggerWindow(windowString)));
-                    }
-                    catch
-                    {
-                        // ignore improperly formatted trigger windows
-                    }
+					try
+					{
+						_windows.AddRange(value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(windowString => new TriggerWindow(windowString)));
+					}
+					catch
+					{
+						// ignore improperly formatted trigger windows
+					}
 
-                    _windows.Sort();
-                }
-            }
-        }
+					_windows.Sort();
+				}
+			}
+		}
 
-        public int NonDowTriggerIntervalDays
-        {
-            get
-            {
-                return _nonDowTriggerIntervalDays;
-            }
-            set
-            {
-                _nonDowTriggerIntervalDays = value;
-            }
-        }
+		public int NonDowTriggerIntervalDays
+		{
+			get
+			{
+				return _nonDowTriggerIntervalDays;
+			}
+			set
+			{
+				_nonDowTriggerIntervalDays = value;
+			}
+		}
 
-        public bool WindowExpiration { get; set; }
+		public bool WindowExpiration { get; set; }
 
-        [JsonIgnore]
-        public string ReadableDescription
-        {
-            get
-            {
-                if (_windows.Count == 0)
-                {
-                    return "";
-                }
-                else if (_windows.Count == 1)
-                {
-                    return _windows[0].GetReadableDescription(_nonDowTriggerIntervalDays);
-                }
-                else if (_windows.Count == 2)
-                {
-                    return _windows[0].GetReadableDescription(_nonDowTriggerIntervalDays) + " and " + _windows[1].GetReadableDescription(_nonDowTriggerIntervalDays);
-                }
-                else
-                {
-                    return string.Concat(_windows.Take(_windows.Count - 1).Select(window => window.GetReadableDescription(_nonDowTriggerIntervalDays) + ", ")) + " and " + _windows.Last().GetReadableDescription(_nonDowTriggerIntervalDays);
-                }
-            }
-        }
+		[JsonIgnore]
+		public string ReadableDescription
+		{
+			get
+			{
+				//if (_windows.Count == 0)
+				//{
+				//	return "";
+				//}
+				//else if (_windows.Count == 1)
+				//{
+				//	return _windows[0].GetReadableDescription(_nonDowTriggerIntervalDays);
+				//}
+				//else if (_windows.Count == 2)
+				//{
+				//	return _windows[0].GetReadableDescription(_nonDowTriggerIntervalDays) + " and " + _windows[1].GetReadableDescription(_nonDowTriggerIntervalDays);
+				//}
+				//else
+				//{
+				//	return string.Concat(_windows.Take(_windows.Count - 1).Select(window => window.GetReadableDescription(_nonDowTriggerIntervalDays) + ", ")) + " and " + _windows.Last().GetReadableDescription(_nonDowTriggerIntervalDays);
+				//}
+
+				int dowRunsPerWeek = _windows.Count(x => x.DayOfTheWeek != null);
+				int totalRunsPerWeek = dowRunsPerWeek + (_windows.Count - dowRunsPerWeek) * (7 / _nonDowTriggerIntervalDays);
+				int average = Math.Max(totalRunsPerWeek / 7, 1);
+				int high = _windows.Count;
+
+				string description = $"avg: {average}, max: {high} times";
+
+				if (average == high)
+				{
+					string plural = "";
+
+					if (high > 1)
+					{
+						plural = "s";
+					}
+
+					description = $"{high} time{plural}";
+				}
+
+				return $"{description} a day";
+			}
+		}
 
         public ScheduleTrigger()
         {
