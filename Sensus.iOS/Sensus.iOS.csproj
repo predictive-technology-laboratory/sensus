@@ -101,6 +101,9 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <CodesignKey>iPhone Developer</CodesignKey>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.9.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>..\packages\BouncyCastle.1.8.9\lib\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
     <Reference Include="Microcharts, Version=0.9.5.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Microcharts.Forms.0.9.5.9\lib\netstandard2.0\Microcharts.dll</HintPath>
     </Reference>
@@ -215,9 +218,6 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     </Reference>
     <Reference Include="Plugin.Clipboard">
       <HintPath>..\packages\Xamarin.Plugins.Clipboard.2.2.1\lib\Xamarin.iOS10\Plugin.Clipboard.dll</HintPath>
-    </Reference>
-    <Reference Include="BouncyCastle.Crypto">
-      <HintPath>..\packages\BouncyCastle.1.8.3\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="GetiOSModel">
       <HintPath>..\packages\dannycabrera.GetiOSModel.1.5.0\lib\xamarinios10\GetiOSModel.dll</HintPath>
