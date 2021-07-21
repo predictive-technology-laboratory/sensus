@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Xamarin.Forms.4.7.0.1351\build\Xamarin.Forms.props" Condition="Exists('..\packages\Xamarin.Forms.4.7.0.1351\build\Xamarin.Forms.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
@@ -104,74 +103,17 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <Reference Include="BouncyCastle.Crypto, Version=1.8.9.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
       <HintPath>..\packages\BouncyCastle.1.8.9\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
-    <Reference Include="Microcharts, Version=0.9.5.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microcharts.Forms.0.9.5.9\lib\netstandard2.0\Microcharts.dll</HintPath>
-    </Reference>
-    <Reference Include="Microcharts.Forms, Version=0.9.5.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microcharts.Forms.0.9.5.9\lib\netstandard2.0\Microcharts.Forms.dll</HintPath>
-    </Reference>
-    <Reference Include="Microcharts.iOS, Version=1.0.7596.36946, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microcharts.0.9.5.9\lib\xamarinios1.0\Microcharts.iOS.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Band.iOS">
       <HintPath>..\dependencies\msband\ios\Microsoft.Band.iOS.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Band.Portable">
       <HintPath>..\dependencies\msband\ios\Microsoft.Band.Portable.dll</HintPath>
     </Reference>
-    <Reference Include="Plugin.Connectivity, Version=3.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xam.Plugin.Connectivity.3.2.0\lib\Xamarin.iOS10\Plugin.Connectivity.dll</HintPath>
-    </Reference>
-    <Reference Include="Plugin.Connectivity.Abstractions, Version=3.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xam.Plugin.Connectivity.3.2.0\lib\Xamarin.iOS10\Plugin.Connectivity.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Sensus.Shared.NuGet, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sensus.1.55.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
-    </Reference>
-    <Reference Include="SkiaSharp, Version=2.80.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <HintPath>..\packages\SkiaSharp.2.80.2\lib\xamarinios1.0\SkiaSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="SkiaSharp.Views.Forms, Version=2.80.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SkiaSharp.Views.Forms.2.80.2\lib\xamarinios1.0\SkiaSharp.Views.Forms.dll</HintPath>
-    </Reference>
-    <Reference Include="SkiaSharp.Views.iOS, Version=2.80.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <HintPath>..\packages\SkiaSharp.Views.2.80.2\lib\xamarinios1.0\SkiaSharp.Views.iOS.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
-    <Reference Include="Xamarin.Forms.Core, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xamarin.Forms.4.7.0.1351\lib\Xamarin.iOS10\Xamarin.Forms.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Forms.Platform, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xamarin.Forms.4.7.0.1351\lib\Xamarin.iOS10\Xamarin.Forms.Platform.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Forms.Xaml, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xamarin.Forms.4.7.0.1351\lib\Xamarin.iOS10\Xamarin.Forms.Xaml.dll</HintPath>
-    </Reference>
     <Reference Include="Xamarin.iOS" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="Plugin.ContactService, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xamarin.Forms.Contacts.1.0.5\lib\Xamarin.iOS10\Plugin.ContactService.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.Primitives">
-      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\Xamarin.iOS10\System.Net.Http.Primitives.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.Extensions">
-      <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\Xamarin.iOS10\System.Net.Http.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="ExifLib">
-      <HintPath>..\packages\ExifLib.PCL.1.0.1\lib\portable-net45+sl50+win+WindowsPhoneApp81+wp80+Xamarin.iOS10+MonoAndroid10+MonoTouch10\ExifLib.dll</HintPath>
-    </Reference>
-    <Reference Include="PCLStorage">
-      <HintPath>..\packages\PCLStorage.1.0.2\lib\portable-Xamarin.iOS+Xamarin.Mac\PCLStorage.dll</HintPath>
-    </Reference>
-    <Reference Include="PCLStorage.Abstractions">
-      <HintPath>..\packages\PCLStorage.1.0.2\lib\portable-Xamarin.iOS+Xamarin.Mac\PCLStorage.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="PCLCrypto">
-      <HintPath>..\packages\PCLCrypto.2.0.147\lib\xamarinios10\PCLCrypto.dll</HintPath>
-    </Reference>
     <Reference Include="Syncfusion.SfChart.iOS">
       <HintPath>..\dependencies\Syncfusion\14.2.0.26\Xamarin\lib\ios-unified\Syncfusion.SfChart.iOS.dll</HintPath>
     </Reference>
@@ -183,186 +125,6 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.IO.Compression" />
-    <Reference Include="Validation">
-      <HintPath>..\packages\Validation.2.4.18\lib\netstandard1.3\Validation.dll</HintPath>
-    </Reference>
-    <Reference Include="TTGSnackbar">
-      <HintPath>..\packages\TTGSnackbar.1.3.5\lib\Xamarin.iOS10\TTGSnackbar.dll</HintPath>
-    </Reference>
-    <Reference Include="ZXing.Net.Mobile.Core">
-      <HintPath>..\packages\ZXing.Net.Mobile.2.4.1\lib\Xamarin.iOS10\ZXing.Net.Mobile.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="zxing.portable">
-      <HintPath>..\packages\ZXing.Net.Mobile.2.4.1\lib\Xamarin.iOS10\zxing.portable.dll</HintPath>
-    </Reference>
-    <Reference Include="ZXingNetMobile">
-      <HintPath>..\packages\ZXing.Net.Mobile.2.4.1\lib\Xamarin.iOS10\ZXingNetMobile.dll</HintPath>
-    </Reference>
-    <Reference Include="ZXing.Net.Mobile.Forms">
-      <HintPath>..\packages\ZXing.Net.Mobile.Forms.2.4.1\lib\Xamarin.iOS10\ZXing.Net.Mobile.Forms.dll</HintPath>
-    </Reference>
-    <Reference Include="ZXing.Net.Mobile.Forms.iOS">
-      <HintPath>..\packages\ZXing.Net.Mobile.Forms.2.4.1\lib\Xamarin.iOS10\ZXing.Net.Mobile.Forms.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="Plugin.Permissions">
-      <HintPath>..\packages\Plugin.Permissions.3.0.0.12\lib\xamarinios10\Plugin.Permissions.dll</HintPath>
-    </Reference>
-    <Reference Include="Plugin.Geolocator">
-      <HintPath>..\packages\Xam.Plugin.Geolocator.4.5.0.6\lib\xamarinios10\Plugin.Geolocator.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Azure.NotificationHubs.iOS">
-      <HintPath>..\packages\Xamarin.Azure.NotificationHubs.iOS.1.2.5.2\lib\Xamarin.iOS10\Xamarin.Azure.NotificationHubs.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="Plugin.Clipboard.Abstractions">
-      <HintPath>..\packages\Xamarin.Plugins.Clipboard.2.2.1\lib\Xamarin.iOS10\Plugin.Clipboard.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Plugin.Clipboard">
-      <HintPath>..\packages\Xamarin.Plugins.Clipboard.2.2.1\lib\Xamarin.iOS10\Plugin.Clipboard.dll</HintPath>
-    </Reference>
-    <Reference Include="GetiOSModel">
-      <HintPath>..\packages\dannycabrera.GetiOSModel.1.5.0\lib\xamarinios10\GetiOSModel.dll</HintPath>
-    </Reference>
-    <Reference Include="PInvoke.Windows.Core">
-      <HintPath>..\packages\PInvoke.Windows.Core.0.5.155\lib\portable-net45+win8+wpa81\PInvoke.Windows.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="PInvoke.Kernel32">
-      <HintPath>..\packages\PInvoke.Kernel32.0.5.155\lib\portable-net45+win8+wpa81\PInvoke.Kernel32.dll</HintPath>
-    </Reference>
-    <Reference Include="PInvoke.BCrypt">
-      <HintPath>..\packages\PInvoke.BCrypt.0.5.155\lib\portable-net45+win8+wpa81\PInvoke.BCrypt.dll</HintPath>
-    </Reference>
-    <Reference Include="PInvoke.NCrypt">
-      <HintPath>..\packages\PInvoke.NCrypt.0.5.155\lib\portable-net45+win8+wpa81\PInvoke.NCrypt.dll</HintPath>
-    </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib">
-      <HintPath>..\packages\SharpZipLib.1.0.0\lib\netstandard2.0\ICSharpCode.SharpZipLib.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Forms.Maps">
-      <HintPath>..\packages\Xamarin.Forms.Maps.3.2.0.839982\lib\Xamarin.iOS10\Xamarin.Forms.Maps.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Forms.Maps.iOS">
-      <HintPath>..\packages\Xamarin.Forms.Maps.3.2.0.839982\lib\Xamarin.iOS10\Xamarin.Forms.Maps.iOS.dll</HintPath>
-    </Reference>
-    <Reference Include="Calabash">
-      <HintPath>..\packages\Xamarin.TestCloud.Agent.0.21.7\lib\Xamarin.iOS\Calabash.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4">
-      <HintPath>..\packages\Xamarin.Swift4.4.0.0.1\lib\xamarinios10\Xamarin.Swift4.dll</HintPath>
-    </Reference>
-    <Reference Include="Estimote.iOS.Proximity">
-      <HintPath>..\packages\Estimote.iOS.Proximity.1.2.0\lib\xamarinios10\Estimote.iOS.Proximity.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter">
-      <HintPath>..\packages\Microsoft.AppCenter.1.11.0\lib\Xamarin.iOS10\Microsoft.AppCenter.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter.iOS.Bindings">
-      <HintPath>..\packages\Microsoft.AppCenter.1.11.0\lib\Xamarin.iOS10\Microsoft.AppCenter.iOS.Bindings.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter.Analytics">
-      <HintPath>..\packages\Microsoft.AppCenter.Analytics.1.11.0\lib\Xamarin.iOS10\Microsoft.AppCenter.Analytics.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter.Analytics.iOS.Bindings">
-      <HintPath>..\packages\Microsoft.AppCenter.Analytics.1.11.0\lib\Xamarin.iOS10\Microsoft.AppCenter.Analytics.iOS.Bindings.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter.Crashes">
-      <HintPath>..\packages\Microsoft.AppCenter.Crashes.1.11.0\lib\Xamarin.iOS10\Microsoft.AppCenter.Crashes.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.AppCenter.Crashes.iOS.Bindings">
-      <HintPath>..\packages\Microsoft.AppCenter.Crashes.1.11.0\lib\Xamarin.iOS10\Microsoft.AppCenter.Crashes.iOS.Bindings.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\netstandard2.0\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.ARKit">
-      <HintPath>..\packages\Xamarin.Swift4.ARKit.4.2.1.1\lib\xamarinios10\Xamarin.Swift4.ARKit.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.AVFoundation">
-      <HintPath>..\packages\Xamarin.Swift4.AVFoundation.4.2.1.1\lib\xamarinios10\Xamarin.Swift4.AVFoundation.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.Core">
-      <HintPath>..\packages\Xamarin.Swift4.Core.4.2.1.1\lib\xamarinios10\Xamarin.Swift4.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.CoreAudio">
-      <HintPath>..\packages\Xamarin.Swift4.CoreAudio.4.2.1.1\lib\xamarinios10\Xamarin.Swift4.CoreAudio.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.CoreFoundation">
-      <HintPath>..\packages\Xamarin.Swift4.CoreFoundation.4.2.1.1\lib\xamarinios10\Xamarin.Swift4.CoreFoundation.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.CoreGraphics">
-      <HintPath>..\packages\Xamarin.Swift4.CoreGraphics.4.2.1.1\lib\xamarinios10\Xamarin.Swift4.CoreGraphics.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.CoreImage">
-      <HintPath>..\packages\Xamarin.Swift4.CoreImage.4.2.1.1\lib\xamarinios10\Xamarin.Swift4.CoreImage.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.CoreLocation">
-      <HintPath>..\packages\Xamarin.Swift4.CoreLocation.4.2.1.1\lib\xamarinios10\Xamarin.Swift4.CoreLocation.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.CoreMedia">
-      <HintPath>..\packages\Xamarin.Swift4.CoreMedia.4.2.1.1\lib\xamarinios10\Xamarin.Swift4.CoreMedia.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.Darwin">
-      <HintPath>..\packages\Xamarin.Swift4.Darwin.4.2.1.1\lib\xamarinios10\Xamarin.Swift4.Darwin.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.Dispatch">
-      <HintPath>..\packages\Xamarin.Swift4.Dispatch.4.2.1.1\lib\xamarinios10\Xamarin.Swift4.Dispatch.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.Foundation">
-      <HintPath>..\packages\Xamarin.Swift4.Foundation.4.2.1.1\lib\xamarinios10\Xamarin.Swift4.Foundation.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.GLKit">
-      <HintPath>..\packages\Xamarin.Swift4.GLKit.4.2.1.1\lib\xamarinios10\Xamarin.Swift4.GLKit.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.Metal">
-      <HintPath>..\packages\Xamarin.Swift4.Metal.4.2.1.1\lib\xamarinios10\Xamarin.Swift4.Metal.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.ModelIO">
-      <HintPath>..\packages\Xamarin.Swift4.ModelIO.4.2.1.1\lib\xamarinios10\Xamarin.Swift4.ModelIO.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.ObjectiveC">
-      <HintPath>..\packages\Xamarin.Swift4.ObjectiveC.4.2.1.1\lib\xamarinios10\Xamarin.Swift4.ObjectiveC.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.OS">
-      <HintPath>..\packages\Xamarin.Swift4.OS.4.2.1.1\lib\xamarinios10\Xamarin.Swift4.OS.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.QuartzCore">
-      <HintPath>..\packages\Xamarin.Swift4.QuartzCore.4.2.1.1\lib\xamarinios10\Xamarin.Swift4.QuartzCore.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.SceneKit">
-      <HintPath>..\packages\Xamarin.Swift4.SceneKit.4.2.1.1\lib\xamarinios10\Xamarin.Swift4.SceneKit.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.SIMD">
-      <HintPath>..\packages\Xamarin.Swift4.SIMD.4.2.1.1\lib\xamarinios10\Xamarin.Swift4.SIMD.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.SpriteKit">
-      <HintPath>..\packages\Xamarin.Swift4.SpriteKit.4.2.1.1\lib\xamarinios10\Xamarin.Swift4.SpriteKit.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.SwiftOnoneSupport">
-      <HintPath>..\packages\Xamarin.Swift4.SwiftOnoneSupport.4.2.1.1\lib\xamarinios10\Xamarin.Swift4.SwiftOnoneSupport.dll</HintPath>
-    </Reference>
-    <Reference Include="Xamarin.Swift4.UIKit">
-      <HintPath>..\packages\Xamarin.Swift4.UIKit.4.2.1.1\lib\xamarinios10\Xamarin.Swift4.UIKit.dll</HintPath>
-    </Reference>
-    <Reference Include="AWSSDK.Core">
-      <HintPath>..\packages\AWSSDK.Core.3.3.29.12\lib\Xamarin.iOS10\AWSSDK.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="AWSSDK.KeyManagementService">
-      <HintPath>..\packages\AWSSDK.KeyManagementService.3.3.6.26\lib\Xamarin.iOS10\AWSSDK.KeyManagementService.dll</HintPath>
-    </Reference>
-    <Reference Include="AWSSDK.S3">
-      <HintPath>..\packages\AWSSDK.S3.3.3.28\lib\Xamarin.iOS10\AWSSDK.S3.dll</HintPath>
-    </Reference>
-    <Reference Include="Estimote.iOS.Indoor">
-      <HintPath>..\packages\Estimote.iOS.Indoor.3.0.0\lib\xamarinios10\Estimote.iOS.Indoor.dll</HintPath>
-    </Reference>
-    <Reference Include="Plugin.FilePicker.Abstractions">
-      <HintPath>..\packages\Xamarin.Plugin.FilePicker.2.0.135\lib\Xamarin.iOS10\Plugin.FilePicker.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Plugin.FilePicker">
-      <HintPath>..\packages\Xamarin.Plugin.FilePicker.2.0.135\lib\Xamarin.iOS10\Plugin.FilePicker.dll</HintPath>
-    </Reference>
-    <Reference Include="Plugin.Media, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Xam.Plugin.Media.4.0.1.5\lib\xamarinios10\Plugin.Media.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
@@ -371,9 +133,6 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <None Include="app.config" />
     <None Include="Info.plist" />
     <None Include="EntitlementsProduction.plist" />
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
     <None Include="EntitlementsDevelopment.plist" />
   </ItemGroup>
   <ItemGroup>
@@ -455,21 +214,310 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <BundleResource Include="Resources\x.png" />
     <BundleResource Include="Resources\account.png" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.KeyManagementService">
+      <Version>3.3.6.26</Version>
+    </PackageReference>
+    <PackageReference Include="AWSSDK.S3">
+      <Version>3.3.28</Version>
+    </PackageReference>
+    <PackageReference Include="dannycabrera.GetiOSModel">
+      <Version>1.5.0</Version>
+    </PackageReference>
+    <PackageReference Include="Estimote.iOS.Indoor">
+      <Version>3.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="Estimote.iOS.Proximity">
+      <Version>1.2.0</Version>
+    </PackageReference>
+    <PackageReference Include="ExifLib.PCL">
+      <Version>1.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="Microcharts.Forms">
+      <Version>0.9.5.9</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AppCenter.Analytics">
+      <Version>1.11.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AppCenter.Crashes">
+      <Version>1.11.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Bcl.Build">
+      <Version>1.0.21</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CSharp">
+      <Version>4.5.0</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Net.Http">
+      <Version>2.2.29</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NETCore.Platforms">
+      <Version>2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Win32.Primitives">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="NETStandard.Library">
+      <Version>2.0.3</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>12.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="PCLCrypto">
+      <Version>2.0.147</Version>
+    </PackageReference>
+    <PackageReference Include="PInvoke.NCrypt">
+      <Version>0.5.155</Version>
+    </PackageReference>
+    <PackageReference Include="Sensus">
+      <Version>1.55.0</Version>
+    </PackageReference>
+    <PackageReference Include="SharpZipLib">
+      <Version>1.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.AppContext">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Collections">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Collections.Concurrent">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.ComponentModel.TypeConverter">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Console">
+      <Version>4.3.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.Diagnostics.Debug">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Diagnostics.Tools">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Diagnostics.Tracing">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Globalization">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Globalization.Calendars">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.IO">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.IO.Compression">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.IO.FileSystem">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.IO.FileSystem.Primitives">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Linq">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Linq.Expressions">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Net.Http">
+      <Version>4.3.3</Version>
+    </PackageReference>
+    <PackageReference Include="System.Net.Primitives">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Net.Sockets">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.ObjectModel">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Reflection">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Reflection.Extensions">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Reflection.Primitives">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Resources.ResourceManager">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Runtime">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Runtime.Extensions">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Runtime.Handles">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Runtime.InteropServices">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Runtime.Numerics">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Runtime.Serialization.Formatters">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Runtime.Serialization.Primitives">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Security.Cryptography.Algorithms">
+      <Version>4.3.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.Security.Cryptography.Encoding">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Security.Cryptography.Primitives">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Security.Cryptography.X509Certificates">
+      <Version>4.3.2</Version>
+    </PackageReference>
+    <PackageReference Include="System.Text.Encoding">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Text.Encoding.Extensions">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Text.RegularExpressions">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Threading">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Threading.Tasks">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Threading.Timer">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Xml.ReaderWriter">
+      <Version>4.3.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.Xml.XDocument">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Xml.XmlDocument">
+      <Version>4.3.0</Version>
+    </PackageReference>
+    <PackageReference Include="TTGSnackbar">
+      <Version>1.3.5</Version>
+    </PackageReference>
+    <PackageReference Include="Validation">
+      <Version>2.4.18</Version>
+    </PackageReference>
+    <PackageReference Include="Xam.Plugin.Connectivity">
+      <Version>3.2.0</Version>
+    </PackageReference>
+    <PackageReference Include="Xam.Plugin.Geolocator">
+      <Version>4.5.0.6</Version>
+    </PackageReference>
+    <PackageReference Include="Xam.Plugin.Media">
+      <Version>4.0.1.5</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Azure.NotificationHubs.iOS">
+      <Version>1.2.5.2</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Forms.Contacts">
+      <Version>1.0.5</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Forms.Maps">
+      <Version>3.2.0.839982</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Plugin.FilePicker">
+      <Version>2.0.135</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Plugins.Clipboard">
+      <Version>2.2.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Swift4.ARKit">
+      <Version>4.2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Swift4.AVFoundation">
+      <Version>4.2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Swift4.Core">
+      <Version>4.2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Swift4.CoreAudio">
+      <Version>4.2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Swift4.CoreFoundation">
+      <Version>4.2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Swift4.CoreGraphics">
+      <Version>4.2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Swift4.CoreImage">
+      <Version>4.2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Swift4.CoreLocation">
+      <Version>4.2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Swift4.CoreMedia">
+      <Version>4.2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Swift4.Darwin">
+      <Version>4.2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Swift4.Dispatch">
+      <Version>4.2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Swift4.Foundation">
+      <Version>4.2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Swift4.GLKit">
+      <Version>4.2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Swift4.Metal">
+      <Version>4.2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Swift4.ModelIO">
+      <Version>4.2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Swift4.ObjectiveC">
+      <Version>4.2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Swift4.OS">
+      <Version>4.2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Swift4.QuartzCore">
+      <Version>4.2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Swift4.SceneKit">
+      <Version>4.2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Swift4.SIMD">
+      <Version>4.2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Swift4.SpriteKit">
+      <Version>4.2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Swift4.SwiftOnoneSupport">
+      <Version>4.2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.Swift4.UIKit">
+      <Version>4.2.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Xamarin.TestCloud.Agent">
+      <Version>0.21.7</Version>
+    </PackageReference>
+    <PackageReference Include="ZXing.Net.Mobile.Forms">
+      <Version>2.4.1</Version>
+    </PackageReference>
+  </ItemGroup>
   <Import Project="..\ExampleSensingAgent.Shared\ExampleSensingAgent.Shared.projitems" Label="Shared" Condition="Exists('..\ExampleSensingAgent.Shared\ExampleSensingAgent.Shared.projitems')" />
   <Import Project="..\ExampleScriptProbeAgent.Shared\ExampleScriptProbeAgent.Shared.projitems" Label="Shared" Condition="Exists('..\ExampleScriptProbeAgent.Shared\ExampleScriptProbeAgent.Shared.projitems')" />
   <Import Project="..\Sensus.iOS.Shared\Sensus.iOS.Shared.projitems" Label="Shared" Condition="Exists('..\Sensus.iOS.Shared\Sensus.iOS.Shared.projitems')" />
   <Import Project="..\Sensus.Shared\Sensus.Shared.projitems" Label="Shared" Condition="Exists('..\Sensus.Shared\Sensus.Shared.projitems')" />
-  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
-  <Import Project="..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('..\packages\NETStandard.Library.2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
-  <Import Project="..\packages\Xamarin.Swift4.4.0.0.1\build\Xamarin.Swift4.targets" Condition="Exists('..\packages\Xamarin.Swift4.4.0.0.1\build\Xamarin.Swift4.targets')" />
-  <Import Project="..\packages\SkiaSharp.2.80.2\build\xamarinios1.0\SkiaSharp.targets" Condition="Exists('..\packages\SkiaSharp.2.80.2\build\xamarinios1.0\SkiaSharp.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\SkiaSharp.2.80.2\build\xamarinios1.0\SkiaSharp.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SkiaSharp.2.80.2\build\xamarinios1.0\SkiaSharp.targets'))" />
-    <Error Condition="!Exists('..\packages\Xamarin.Forms.4.7.0.1351\build\Xamarin.Forms.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Forms.4.7.0.1351\build\Xamarin.Forms.props'))" />
-    <Error Condition="!Exists('..\packages\Xamarin.Forms.4.7.0.1351\build\Xamarin.Forms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xamarin.Forms.4.7.0.1351\build\Xamarin.Forms.targets'))" />
-  </Target>
-  <Import Project="..\packages\Xamarin.Forms.4.7.0.1351\build\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.4.7.0.1351\build\Xamarin.Forms.targets')" />
 </Project>
