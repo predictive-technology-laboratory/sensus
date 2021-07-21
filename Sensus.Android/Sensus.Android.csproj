@@ -20,7 +20,7 @@
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <DevInstrumentationEnabled>True</DevInstrumentationEnabled>
     <ReleaseVersion>2.0.0</ReleaseVersion>
-    <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v10.0</TargetFrameworkVersion>
     <AssemblyName>SensusAndroid</AssemblyName>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <Description>Endpoint for the Sensus Android application. This is what gets built and distributed to the Android Play

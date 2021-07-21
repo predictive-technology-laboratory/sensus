@@ -14,7 +14,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Sensus.Android.Tests</RootNamespace>
     <AssemblyName>Sensus.Android.Tests</AssemblyName>
-    <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v10.0</TargetFrameworkVersion>
     <AndroidApplication>True</AndroidApplication>
     <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
     <AndroidResgenClass>Resource</AndroidResgenClass>
