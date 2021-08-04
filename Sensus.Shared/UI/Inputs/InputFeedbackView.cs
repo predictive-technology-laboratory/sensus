@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Sensus.Context;
 using System.Timers;
 using Xamarin.Forms;
 
@@ -66,7 +67,10 @@ namespace Sensus.UI.Inputs
 				_progressTimer = new Timer(delay * _progressIncrement);
 				_progressTimer.Elapsed += (s, o) =>
 				{
-					_progressBar.Progress += _progressIncrement;
+					SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+					{
+						_progressBar.Progress += _progressIncrement;
+					});
 				};
 				_progressTimer.Start();
 			}
