@@ -701,20 +701,67 @@ namespace Sensus.Probes.User.Scripts
 			}
 		}
 
+		private async Task ScheduleScriptRunAsync(DateTime triggerDateTime)
+		{
+			ScriptTriggerTime triggerTime = new ScriptTriggerTime(triggerDateTime, null, "");
+
+			await NextScript.ScheduleScriptRunAsync(triggerTime);
+		}
+
 		public async Task ScheduleNextScriptToRunAsync()
 		{
-			if (NextScript != null && (TriggerNextScriptFirstTimeOnly == false || CompletionTimes.Count == 1))
+			bool scheduleNextScript = true;
+
+			if (Script.InputGroups.SelectMany(x => x.Inputs).OfType<ScriptSchedulerInput>().FirstOrDefault() is ScriptSchedulerInput scheduler)
+			{
+				ScriptRunner scriptToSchedule = null;
+				DateTime runTime;
+
+				if (scheduler.ScheduleMode == ScheduleModes.Self)
+				{
+					scriptToSchedule = Script.Runner;
+				}
+				else if (scheduler.ScheduleMode == ScheduleModes.Next && NextScript != null)
+				{
+					scriptToSchedule = NextScript;
+
+					scheduleNextScript = false;
+				}
+
+				if (scheduler.Value is DateTime schedulerTime)
+				{
+					runTime = schedulerTime;
+
+					if (scheduler.TimeOnly)
+					{
+						int daysFromNow = 0;
+
+						if (scheduler.DaysFromNow > 0)
+						{
+							daysFromNow = scheduler.DaysFromNow;
+						}
+						else if (schedulerTime.TimeOfDay < DateTime.Now.TimeOfDay)
+						{
+							daysFromNow = 1;
+						}
+
+						runTime = DateTime.Now.Date.AddDays(daysFromNow).Add(schedulerTime.TimeOfDay);
+					}
+
+					await scriptToSchedule.ScheduleScriptRunAsync(runTime);
+				}
+			}
+		
+			if (scheduleNextScript && NextScript != null && (TriggerNextScriptFirstTimeOnly == false || CompletionTimes.Count == 1))
 			{
 				// if there is no window then run it immmediately
 				if (NextScriptRunDelayMS == 0)
 				{
-					await RunAsync(NextScript.Script.Copy(true));
+					await NextScript.RunAsync(NextScript.Script.Copy(true));
 				}
 				else // schedule it to be run
 				{
-					ScriptTriggerTime triggerTime = new ScriptTriggerTime(DateTime.Now.AddMilliseconds(NextScriptRunDelayMS), null, "");
-
-					await NextScript.ScheduleScriptRunAsync(triggerTime);
+					await NextScript.ScheduleScriptRunAsync(DateTime.Now.AddMilliseconds(NextScriptRunDelayMS));
 				}
 			}
 		}
