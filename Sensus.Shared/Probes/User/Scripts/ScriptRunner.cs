@@ -727,9 +727,9 @@ namespace Sensus.Probes.User.Scripts
 				{
 					int daysFromNow = 0;
 
-					if (scheduler.DaysFromNow > 0)
+					if (scheduler.DaysInFuture > 0)
 					{
-						daysFromNow = scheduler.DaysFromNow;
+						daysFromNow = scheduler.DaysInFuture;
 					}
 					else if (scheduledTime.TimeOfDay < DateTime.Now.TimeOfDay)
 					{

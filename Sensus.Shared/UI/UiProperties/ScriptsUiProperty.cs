@@ -39,6 +39,29 @@ namespace Sensus.UI.UiProperties
 				HorizontalOptions = LayoutOptions.FillAndExpand
 			};
 
+			Button clearButton = new Button
+			{
+				Padding = new Thickness(0),
+				FontSize = 30,
+				Text = "\x00D7"
+			};
+
+			clearButton.SizeChanged += (s, e) =>
+			{
+				clearButton.WidthRequest = clearButton.Height;
+			};
+
+			clearButton.Clicked += (s, e) =>
+			{
+				picker.SelectedIndex = -1;
+			};
+
+			StackLayout view = new StackLayout
+			{
+				Orientation = StackOrientation.Horizontal,
+				Children = { picker, clearButton }
+			};
+
 			bindingProperty = null;
 			converter = null;
 
@@ -59,10 +82,14 @@ namespace Sensus.UI.UiProperties
 					{
 						property.SetValue(scriptRunner, scripts[picker.SelectedIndex]);
 					}
+					else
+					{
+						property.SetValue(scriptRunner, null);
+					}
 				};
 			}
 
-			return picker;
+			return view;
 		}
 	}
 }
