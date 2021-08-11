@@ -74,18 +74,18 @@ namespace Sensus.Probes.User.Scripts
 		/// </summary>
 		/// <value>The name.</value>
 		[EntryStringUiProperty("Name:", true, 1, true)]
-		public string Name 
+		public string Name
 		{
 			get { return _name; }
 			set
 			{
-				if(value != _name)
+				if (value != _name)
 				{
 					_name = value;
 					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Caption)));
 				}
 			}
-		}            
+		}
 
 		/// <summary>
 		/// Whether or not the survey is enabled.
@@ -701,58 +701,55 @@ namespace Sensus.Probes.User.Scripts
 			}
 		}
 
-		private async Task ScheduleScriptRunAsync(DateTime triggerDateTime)
+		private async Task ScheduleScriptRunAsync(DateTime triggerDateTime, string scriptId = null)
 		{
 			ScriptTriggerTime triggerTime = new ScriptTriggerTime(triggerDateTime, null, "");
 
-			await NextScript.ScheduleScriptRunAsync(triggerTime);
+			await ScheduleScriptRunAsync(triggerTime, scriptId);
+		}
+
+		public async Task<bool> ScheduleScriptFromInputAsync(Script script)
+		{
+			if (script.InputGroups.SelectMany(x => x.Inputs).OfType<ScriptSchedulerInput>().FirstOrDefault() is ScriptSchedulerInput scheduler && scheduler.Value is DateTime scheduledTime)
+			{
+				ScriptRunner runner = null;
+
+				if (scheduler.ScheduleMode == ScheduleModes.Self)
+				{
+					runner = Script.Runner;
+				}
+				else if (scheduler.ScheduleMode == ScheduleModes.Next && NextScript != null)
+				{
+					runner = NextScript;
+				}
+
+				if (scheduler.TimeOnly)
+				{
+					int daysFromNow = 0;
+
+					if (scheduler.DaysFromNow > 0)
+					{
+						daysFromNow = scheduler.DaysFromNow;
+					}
+					else if (scheduledTime.TimeOfDay < DateTime.Now.TimeOfDay)
+					{
+						daysFromNow = 1;
+					}
+
+					scheduledTime = DateTime.Now.Date.AddDays(daysFromNow).Add(scheduledTime.TimeOfDay);
+				}
+
+				await runner.ScheduleScriptRunAsync(scheduledTime);
+
+				return scheduler.ScheduleMode != ScheduleModes.Next;
+			}
+
+			return true;
 		}
 
 		public async Task ScheduleNextScriptToRunAsync()
 		{
-			bool scheduleNextScript = true;
-
-			if (Script.InputGroups.SelectMany(x => x.Inputs).OfType<ScriptSchedulerInput>().FirstOrDefault() is ScriptSchedulerInput scheduler)
-			{
-				ScriptRunner scriptToSchedule = null;
-				DateTime runTime;
-
-				if (scheduler.ScheduleMode == ScheduleModes.Self)
-				{
-					scriptToSchedule = Script.Runner;
-				}
-				else if (scheduler.ScheduleMode == ScheduleModes.Next && NextScript != null)
-				{
-					scriptToSchedule = NextScript;
-
-					scheduleNextScript = false;
-				}
-
-				if (scheduler.Value is DateTime schedulerTime)
-				{
-					runTime = schedulerTime;
-
-					if (scheduler.TimeOnly)
-					{
-						int daysFromNow = 0;
-
-						if (scheduler.DaysFromNow > 0)
-						{
-							daysFromNow = scheduler.DaysFromNow;
-						}
-						else if (schedulerTime.TimeOfDay < DateTime.Now.TimeOfDay)
-						{
-							daysFromNow = 1;
-						}
-
-						runTime = DateTime.Now.Date.AddDays(daysFromNow).Add(schedulerTime.TimeOfDay);
-					}
-
-					await scriptToSchedule.ScheduleScriptRunAsync(runTime);
-				}
-			}
-		
-			if (scheduleNextScript && NextScript != null && (TriggerNextScriptFirstTimeOnly == false || CompletionTimes.Count == 1))
+			if (NextScript != null && (TriggerNextScriptFirstTimeOnly == false || CompletionTimes.Count == 1))
 			{
 				// if there is no window then run it immmediately
 				if (NextScriptRunDelayMS == 0)
