@@ -143,7 +143,30 @@ namespace Sensus
 			#endregion
 		};
 
-		public static event EventHandler OnInitialized;
+		private static event EventHandler OnInitialized;
+
+		public static void WhenInitialized(Action<SensusServiceHelper> onInitialized)
+		{
+			if (SINGLETON == null)
+			{
+				OnInitialized += (s, e) => onInitialized(SINGLETON);
+			}
+			else
+			{
+				onInitialized(SINGLETON);
+			}
+		}
+		public async static Task WhenInitializedAsync(Func<SensusServiceHelper, Task> onInitialized)
+		{
+			if (SINGLETON == null)
+			{
+				OnInitialized += async (s, e) => await onInitialized(SINGLETON);
+			}
+			else
+			{
+				await onInitialized(SINGLETON);
+			}
+		}
 
 		public static HttpClient HttpClient { get; private set; }
 
