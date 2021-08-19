@@ -1986,7 +1986,10 @@ namespace Sensus
 						}
 					}
 
-					await script.Runner.ScheduleNextScriptToRunAsync();
+					if (await script.Runner.ScheduleScriptFromInputAsync(script))
+					{
+						await script.Runner.ScheduleNextScriptToRunAsync();
+					}
 				}
 			}
 

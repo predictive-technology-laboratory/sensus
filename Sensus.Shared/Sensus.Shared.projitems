@@ -177,11 +177,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ButtonGridInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ButtonWithValue.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\InputFeedbackView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ScheduleModes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ScoreInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ReadOnlyTextInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\HyperlinkInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\MediaInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ScoreMethods.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ScriptSchedulerInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ShowNavigationOptions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\TimeInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\Input.cs" />
