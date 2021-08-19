@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using Sensus.Probes.User.Scripts;
+using Sensus.UI.Inputs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,29 +66,35 @@ namespace Sensus.UI.UiProperties
 			bindingProperty = null;
 			converter = null;
 
+			List<ScriptRunner> scripts = new List<ScriptRunner>();
+
 			if (o is ScriptRunner scriptRunner)
 			{
-				List<ScriptRunner> scripts = scriptRunner.Probe.ScriptRunners.Except(new[] { scriptRunner }).ToList();
-
-				foreach (ScriptRunner item in scripts)
-				{
-					picker.Items.Add(item.Caption);
-				}
-
-				picker.SelectedIndex = scripts.IndexOf((ScriptRunner)property.GetValue(scriptRunner));
-
-				picker.SelectedIndexChanged += (o, e) =>
-				{
-					if (picker.SelectedIndex >= 0)
-					{
-						property.SetValue(scriptRunner, scripts[picker.SelectedIndex]);
-					}
-					else
-					{
-						property.SetValue(scriptRunner, null);
-					}
-				};
+				scripts = scriptRunner.Probe.ScriptRunners.Except(new[] { scriptRunner }).ToList();
 			}
+			else if (o is ScriptSchedulerInput scriptSchedulerInput)
+			{
+				scripts = scriptSchedulerInput.Runner.Probe.ScriptRunners.Except(new[] { scriptSchedulerInput.Runner, scriptSchedulerInput.Runner.NextScript }).ToList();
+			}
+
+			foreach (ScriptRunner item in scripts)
+			{
+				picker.Items.Add(item.Caption);
+			}
+
+			picker.SelectedIndex = scripts.IndexOf((ScriptRunner)property.GetValue(o));
+
+			picker.SelectedIndexChanged += (s, e) =>
+			{
+				if (picker.SelectedIndex >= 0)
+				{
+					property.SetValue(o, scripts[picker.SelectedIndex]);
+				}
+				else
+				{
+					property.SetValue(o, null);
+				}
+			};
 
 			return view;
 		}

@@ -7,6 +7,7 @@ namespace Sensus.UI.Inputs
 	public enum ScheduleModes
 	{
 		Self,
-		Next
+		Next,
+		Select
 	}
 }
