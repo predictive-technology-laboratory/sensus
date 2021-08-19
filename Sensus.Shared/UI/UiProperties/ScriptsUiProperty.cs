@@ -33,6 +33,8 @@ namespace Sensus.UI.UiProperties
 
 		}
 
+		private const string NEW_STRING = "New...";
+
 		public override View GetView(PropertyInfo property, object o, out BindableProperty bindingProperty, out IValueConverter converter)
 		{
 			Picker picker = new Picker
@@ -67,14 +69,17 @@ namespace Sensus.UI.UiProperties
 			converter = null;
 
 			List<ScriptRunner> scripts = new List<ScriptRunner>();
+			ScriptRunner runner = null;
 
 			if (o is ScriptRunner scriptRunner)
 			{
-				scripts = scriptRunner.Probe.ScriptRunners.Except(new[] { scriptRunner }).ToList();
+				runner = scriptRunner;
+				scripts = runner.Probe.ScriptRunners.Except(new[] { scriptRunner }).ToList();
 			}
 			else if (o is ScriptSchedulerInput scriptSchedulerInput)
 			{
-				scripts = scriptSchedulerInput.Runner.Probe.ScriptRunners.Except(new[] { scriptSchedulerInput.Runner, scriptSchedulerInput.Runner.NextScript }).ToList();
+				runner = scriptSchedulerInput.Runner;
+				scripts = runner.Probe.ScriptRunners.Except(new[] { scriptSchedulerInput.Runner, scriptSchedulerInput.Runner.NextScript }).ToList();
 			}
 
 			foreach (ScriptRunner item in scripts)
@@ -82,19 +87,36 @@ namespace Sensus.UI.UiProperties
 				picker.Items.Add(item.Caption);
 			}
 
+			picker.Items.Add(NEW_STRING);
+
 			picker.SelectedIndex = scripts.IndexOf((ScriptRunner)property.GetValue(o));
 
-			picker.SelectedIndexChanged += (s, e) =>
+			if (runner != null)
 			{
-				if (picker.SelectedIndex >= 0)
+				picker.SelectedIndexChanged += async (s, e) =>
 				{
-					property.SetValue(o, scripts[picker.SelectedIndex]);
-				}
-				else
-				{
-					property.SetValue(o, null);
-				}
-			};
+					if (picker.Items[picker.SelectedIndex] == NEW_STRING)
+					{
+						ScriptRunner newScriptRunner = new ScriptRunner("New Script", runner.Probe);
+
+						await (Application.Current as App).DetailPage.Navigation.PushAsync(new ScriptRunnerPage(newScriptRunner));
+
+						runner.Probe.ScriptRunners.Add(newScriptRunner);
+
+						property.SetValue(o, newScriptRunner);
+
+						picker.Items.Insert(picker.Items.IndexOf(NEW_STRING), newScriptRunner.Caption);
+					}
+					else if (picker.SelectedIndex >= 0)
+					{
+						property.SetValue(o, scripts[picker.SelectedIndex]);
+					}
+					else
+					{
+						property.SetValue(o, null);
+					}
+				};
+			}
 
 			return view;
 		}
