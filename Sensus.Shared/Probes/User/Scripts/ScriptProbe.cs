@@ -204,6 +204,8 @@ namespace Sensus.Probes.User.Scripts
                 {
                     if (scriptRunner.Enabled)
                     {
+                        int currentLength = collectionDescription.Length;
+
                         foreach (Trigger trigger in scriptRunner.Triggers)
                         {
                             collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  When " + trigger.Probe.DisplayName + " is " + uppercaseSplitter.Replace(trigger.Condition.ToString(), " ").ToLower() + " " + trigger.ConditionValue + ".");
@@ -218,6 +220,11 @@ namespace Sensus.Probes.User.Scripts
                         {
                             collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  " + scriptRunner.ScheduleTriggerReadableDescription + ".");
                         }
+
+                        if (collectionDescription.Length == currentLength)
+						{
+                            collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ": Manually triggered or scheduled.");
+						}
                     }
                 }
 

@@ -194,6 +194,10 @@ namespace Sensus.UI
 						{
 							mediaInput.SetCachePath(script.Runner, inputGroup);
 						}
+						else if (input is ScriptSchedulerInput scriptSchedulerInput)
+						{
+							scriptSchedulerInput.Runner = script.Runner;
+						}
 
 						inputGroup.Inputs.Add(input);
 						await Navigation.PushAsync(new ScriptInputPage(input));
