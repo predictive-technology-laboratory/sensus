@@ -55,12 +55,15 @@ namespace Sensus.UI.Inputs
 				Value = value
 			};
 
+			if (DefaultClickEvent != null)
+			{
+				button.Clicked += DefaultClickEvent;
+			}
+
 			if (clicked != null)
 			{
 				button.Clicked += clicked;
 			}
-
-			button.Clicked += DefaultClickEvent;
 
 			_buttons.Add(button);
 

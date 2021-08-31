@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Newtonsoft.Json;
 using Sensus.UI.UiProperties;
 using System;
 using System.Collections.Generic;
@@ -24,9 +23,8 @@ namespace Sensus.UI.Inputs
 	public class WordPuzzleInput : Input, IVariableDefiningInput
 	{
 		private string _definedVariable;
-		private string _value;
-
-		private ButtonWithValue _correctButton;
+		private List<string> _value;
+		private HashSet<int> _missingLetterIndexes;
 
 		public override object Value => _value;
 
@@ -50,28 +48,58 @@ namespace Sensus.UI.Inputs
 		[EditableListUiProperty("Words:", true, 2, true)]
 		public List<string> Words { get; set; }
 
+		[EntryIntegerUiProperty("Number of Missing Letters:", true, 3, true)]
+		public int MissingLetterCount { get; set; } = 1;
+
 		[EntryIntegerUiProperty("Number of Choices:", true, 3, true)]
 		public int ChoiceCount { get; set; } = 4;
 
 		[HiddenUiProperty]
 		public override object CorrectValue { get; set; }
 
-		[JsonIgnore]
-		public List<ButtonWithValue> GridButtons { get; private set; }
-
 		public override View GetView(int index)
 		{
 			if (base.GetView(index) == null)
 			{
-				GridButtons = new List<ButtonWithValue>();
+				_value = new List<string>();
+				_missingLetterIndexes = new HashSet<int>();
 
 				Random random = new Random();
 				string word = Words[random.Next(Words.Count)].ToLower();
 
-				int missingLetterIndex = random.Next(word.Length);
-				string missingLetter = "";
+				List<(int Index, string Letter)> choices = new List<(int, string)>();
 
-				ButtonGridView wordGrid = new ButtonGridView(0, (s, e) => { })
+				int missingLetterCount = Math.Min(MissingLetterCount, ChoiceCount - 1);
+
+				while (choices.Count < ChoiceCount)
+				{
+					if (choices.Count < missingLetterCount)
+					{
+						int missingLetterIndex = random.Next(word.Length);
+						string missingLetter = word[missingLetterIndex].ToString();
+
+						if (choices.Any(x => x.Index == missingLetterIndex) == false && choices.Any(x => x.Letter == missingLetter) == false)
+						{
+
+							_missingLetterIndexes.Add(missingLetterIndex);
+
+							choices.Add((missingLetterIndex, missingLetter));
+						}
+					}
+					else
+					{
+						string missingLetter = ((char)('a' + random.Next(0, 26))).ToString();
+
+						if (choices.Any(x => x.Letter == missingLetter) == false)
+						{
+							choices.Add((-1, missingLetter));
+						}
+					}
+				}
+
+				choices = choices.OrderBy(x => random.Next()).ToList();
+
+				ButtonGridView wordGrid = new ButtonGridView(0, null)
 				{
 					HorizontalOptions = LayoutOptions.FillAndExpand
 				};
@@ -80,13 +108,11 @@ namespace Sensus.UI.Inputs
 				{
 					string letter = word[letterIndex].ToString();
 
-					if (letterIndex == missingLetterIndex)
+					if (choices.Any(x => x.Index == letterIndex))
 					{
-						_correctButton = wordGrid.AddButton("", "");
+						ButtonWithValue wordButton = wordGrid.AddButton("", "");
 
-						_correctButton.Style = (Style)Application.Current.Resources["MissingLetterButton"];
-
-						missingLetter = letter;
+						wordButton.Style = (Style)Application.Current.Resources["MissingLetterButton"];
 					}
 					else
 					{
@@ -96,61 +122,67 @@ namespace Sensus.UI.Inputs
 
 				wordGrid.Arrange();
 
+				ButtonWithValue[] wordButtons = wordGrid.Buttons.ToArray();
+
+				ButtonGridView choiceGrid = new ButtonGridView(0, null)
+				{
+					HorizontalOptions = LayoutOptions.FillAndExpand
+				};
+
+				foreach ((int letterIndex, string choice) in choices)
+				{
+					ButtonWithValue button = choiceGrid.AddButton(choice.ToUpper(), choice);
+
+					if (letterIndex < 0)
+					{
+						button.Clicked += (s, e) =>
+						{
+							_value = _value.Union(new[] { button.Value }).OrderBy(x => x).ToList();
+
+							button.Style = (Style)Application.Current.Resources["IncorrectAnswerButton"];
+
+							if (_value.Count >= MissingLetterCount)
+							{
+								Complete = true;
+							}
+							else
+							{
+								Attempts += 1;
+							}
+						};
+					}
+					else
+					{
+						button.Clicked += (s, e) =>
+						{
+							_value = _value.Union(new[] { button.Value }).OrderBy(x => x).ToList();
+							_missingLetterIndexes.Remove(letterIndex);
+
+							wordButtons[letterIndex].Style = (Style)Application.Current.Resources["CorrectAnswerButton"];
+
+							wordButtons[letterIndex].Text = choice.ToUpper();
+
+							if (_value.Count >= MissingLetterCount)
+							{
+								Complete = true;
+							}
+							else
+							{
+								Attempts += 1;
+							}
+						};
+					}
+				}
+
 				Label label = new Label()
 				{
 					Text = "Select a Tile:",
 					HorizontalTextAlignment = TextAlignment.Center
 				};
 
-				ButtonGridView choiceGrid = new ButtonGridView(0, (s, e) =>
+				if (MissingLetterCount > 1)
 				{
-					ButtonWithValue button = (ButtonWithValue)s;
-
-					foreach (ButtonWithValue gridButton in GridButtons)
-					{
-						gridButton.Style = null;
-					}
-
-					if (button.Value == missingLetter)
-					{
-						_correctButton.Text = button.Text;
-
-						_correctButton.Style = (Style)Application.Current.Resources["CorrectAnswerButton"];
-
-						button.IsVisible = false;
-					}
-					else
-					{
-						button.Style = (Style)Application.Current.Resources["IncorrectAnswerButton"];
-					}
-
-					_value = button.Value;
-
-					Complete = true;
-				})
-				{
-					HorizontalOptions = LayoutOptions.FillAndExpand
-				};
-
-				HashSet<string> choices = new HashSet<string>();
-
-				CorrectValue = missingLetter;
-
-				choices.Add(missingLetter);
-
-				while (choices.Count < ChoiceCount)
-				{
-					string choice = ((char)('a' + random.Next(0, 26))).ToString();
-
-					if (choices.Contains(choice) == false)
-					{
-						choices.Add(choice);
-					}
-				}
-
-				foreach(string choice in choices.OrderBy(x => random.Next()))
-				{
-					GridButtons.Add(choiceGrid.AddButton(choice.ToUpper(), choice));
+					label.Text = "Select Tiles:";
 				}
 
 				choiceGrid.Arrange();
@@ -164,6 +196,18 @@ namespace Sensus.UI.Inputs
 			}
 
 			return base.GetView(index);
+		}
+
+		public override void Reset()
+		{
+			_value = new List<string>();
+
+			base.Reset();
+		}
+
+		protected override bool IsCorrect(object deserializedValue)
+		{
+			return _missingLetterIndexes.Count == 0;
 		}
 	}
 }

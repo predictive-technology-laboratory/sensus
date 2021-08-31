@@ -219,6 +219,7 @@ namespace Sensus.UI.Inputs
 		/// <summary>
 		/// The number of attempts the user has made to provide the correct value to the <see cref="Input"/>. The input is disabled after (<see cref="Retries"/> + 1) attempts.
 		/// </summary>
+		[JsonIgnore]
 		public int Attempts
 		{
 			get
@@ -646,7 +647,7 @@ namespace Sensus.UI.Inputs
 
 					return false;
 				}
-				else if (CorrectValue.ToString() == Value.ToString() || CorrectValue.ToString() == deserializedValue?.ToString())
+				else if (CorrectValue.ToString() == Value.ToString() || JsonConvert.SerializeObject(CorrectValue) == deserializedValue?.ToString() || CorrectValue.ToString() == deserializedValue?.ToString())
 				{
 					return true;
 				}
@@ -880,7 +881,7 @@ namespace Sensus.UI.Inputs
 			_view = viewContainer;
 		}
 
-		public void Reset()
+		public virtual void Reset()
 		{
 			_view = null;
 			_complete = false;
