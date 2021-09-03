@@ -68,7 +68,7 @@ namespace Sensus.UI.Inputs
 
 					if (CorrectValue != null)
 					{
-						foreach(ButtonWithValue gridButton in GridButtons)
+						foreach (ButtonWithValue gridButton in GridButtons)
 						{
 							gridButton.Style = null;
 						}
