@@ -103,23 +103,6 @@ namespace Sensus.UI
 				HorizontalOptions = LayoutOptions.FillAndExpand
 			};
 
-			if (inputGroup.FreezeHeader)
-			{
-				headerLayout.Padding = new Thickness(10 + scrollView.Margin.Left, 20, 10 + scrollView.Margin.Right, 0);
-
-				Content = new StackLayout()
-				{
-					Orientation = StackOrientation.Vertical,
-					Children = { headerLayout, scrollView }
-				};
-			}
-			else
-			{
-				contentLayout.Children.Insert(0, headerLayout);
-
-				Content = scrollView;
-			}
-
 			if (inputGroup.UseNavigationBar == false)
 			{
 				if (string.IsNullOrWhiteSpace(inputGroup.Title) == false)
@@ -178,6 +161,26 @@ namespace Sensus.UI
 			if (subHeaderLayout.Children.Count > 0)
 			{
 				headerLayout.Children.Add(subHeaderLayout);
+			}
+
+			if (inputGroup.FreezeHeader && headerLayout.Children.Count > 0)
+			{
+				headerLayout.Padding = new Thickness(10 + scrollView.Margin.Left, 20, 10 + scrollView.Margin.Right, 0);
+
+				Content = new StackLayout()
+				{
+					Orientation = StackOrientation.Vertical,
+					Children = { headerLayout, scrollView }
+				};
+			}
+			else
+			{
+				if (headerLayout.Children.Count > 0)
+				{
+					contentLayout.Children.Insert(0, headerLayout);
+				}
+
+				Content = scrollView;
 			}
 
 			#region inputs
