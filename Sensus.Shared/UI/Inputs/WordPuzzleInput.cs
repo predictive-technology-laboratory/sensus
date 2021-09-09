@@ -78,12 +78,11 @@ namespace Sensus.UI.Inputs
 						int missingLetterIndex = random.Next(word.Length);
 						string missingLetter = word[missingLetterIndex].ToString();
 
-						if (choices.Any(x => x.Index == missingLetterIndex) == false && choices.Any(x => x.Letter == missingLetter) == false)
+						if (choices.Any(x => x.Index == missingLetterIndex) == false && choices.Any(x => x.Letter == missingLetter.ToUpper()) == false)
 						{
-
 							_missingLetterIndexes.Add(missingLetterIndex);
 
-							choices.Add((missingLetterIndex, missingLetter));
+							choices.Add((missingLetterIndex, missingLetter.ToUpper()));
 						}
 					}
 					else
