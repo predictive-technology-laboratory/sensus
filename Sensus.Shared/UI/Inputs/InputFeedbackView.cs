@@ -53,30 +53,30 @@ namespace Sensus.UI.Inputs
 
 		protected virtual void StartProgress(double delay)
 		{
-			if (_progressTimer != null)
+			if (_progressTimer != null && _progressBar != null)
 			{
 				_progressTimer.Dispose();
-			}
 
-			_progressBar.Progress = 0;
+				_progressBar.Progress = 0;
 
-			if (delay > 0)
-			{
-				_progressBar.IsVisible = true;
-
-				_progressTimer = new Timer(delay * _progressIncrement);
-				_progressTimer.Elapsed += (s, o) =>
+				if (delay > 0)
 				{
-					SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+					_progressBar.IsVisible = true;
+
+					_progressTimer = new Timer(delay * _progressIncrement);
+					_progressTimer.Elapsed += (s, o) =>
 					{
-						_progressBar.Progress += _progressIncrement;
-					});
-				};
-				_progressTimer.Start();
-			}
-			else
-			{
-				_progressBar.IsVisible = false;
+						SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+						{
+							_progressBar.Progress += _progressIncrement;
+						});
+					};
+					_progressTimer.Start();
+				}
+				else
+				{
+					_progressBar.IsVisible = false;
+				}
 			}
 		}
 

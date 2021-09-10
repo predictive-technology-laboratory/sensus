@@ -148,6 +148,8 @@ namespace Sensus.UI.Inputs
 							{
 								Attempts += 1;
 							}
+
+							SetFeedback(false);
 						};
 					}
 					else
@@ -169,6 +171,8 @@ namespace Sensus.UI.Inputs
 							{
 								Attempts += 1;
 							}
+
+							SetFeedback(true);
 						};
 					}
 				}

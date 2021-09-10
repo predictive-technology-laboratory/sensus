@@ -388,6 +388,14 @@ namespace Sensus.UI.Inputs
 			}
 		}
 
+		protected void SetFeedback(bool isCorrect)
+		{
+			if (_feedbackView != null)
+			{
+				_feedbackView.SetFeedback(isCorrect);
+			}
+		}
+
 		/// <summary>
 		/// Gets a value indicating whether this <see cref="Input"/> is valid. A valid <see cref="Input"/> 
 		/// is one that is complete, one that has been viewed but is not required, or one that isn't 
