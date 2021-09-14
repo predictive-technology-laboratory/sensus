@@ -112,7 +112,10 @@ namespace Sensus.UI.UiProperties
 				{
 					if (picker.Items[picker.SelectedIndex] == NEW_STRING)
 					{
-						ScriptRunner newScriptRunner = new ScriptRunner("New Script", probe);
+						ScriptRunner newScriptRunner = new ScriptRunner("New Script", probe)
+						{
+							ScriptGroup = _scriptGroup
+						};
 
 						await (Application.Current as App).DetailPage.Navigation.PushAsync(new ScriptRunnerPage(newScriptRunner));
 
