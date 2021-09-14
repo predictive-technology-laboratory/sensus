@@ -28,9 +28,11 @@ namespace Sensus.UI.UiProperties
 	/// </summary>
 	public class ScriptsUiProperty : UiProperty
 	{
-		public ScriptsUiProperty(string labelText, bool editable, int order, bool required) : base(labelText, editable, order, required)
-		{
+		private string _scriptGroup;
 
+		public ScriptsUiProperty(string labelText, bool editable, int order, bool required, string scriptGroup = null) : base(labelText, editable, order, required)
+		{
+			_scriptGroup = scriptGroup;
 		}
 
 		private const string NEW_STRING = "New...";
@@ -69,17 +71,30 @@ namespace Sensus.UI.UiProperties
 			converter = null;
 
 			List<ScriptRunner> scripts = new List<ScriptRunner>();
-			ScriptRunner runner = null;
+			//ScriptRunner runner = null;
+			ScriptProbe probe = null;
 
 			if (o is ScriptRunner scriptRunner)
 			{
-				runner = scriptRunner;
-				scripts = runner.Probe.ScriptRunners.Except(new[] { scriptRunner }).ToList();
+				//runner = scriptRunner;
+				probe = scriptRunner.Probe;
+				scripts = probe.ScriptRunners.Except(new[] { scriptRunner }).ToList();
 			}
 			else if (o is ScriptSchedulerInput scriptSchedulerInput)
 			{
-				runner = scriptSchedulerInput.Runner;
-				scripts = runner.Probe.ScriptRunners.Except(new[] { scriptSchedulerInput.Runner, scriptSchedulerInput.Runner.NextScript }).ToList();
+				//runner = scriptSchedulerInput.Runner;
+				probe = scriptSchedulerInput.Runner.Probe;
+				scripts = probe.ScriptRunners.ToList(); //.Except(new[] { scriptSchedulerInput.Runner }).ToList();
+			}
+			else if (o is Protocol protocol)
+			{
+				probe = protocol.Probes.OfType<ScriptProbe>().First();
+				scripts = probe.ScriptRunners.ToList();
+			}
+
+			if (string.IsNullOrWhiteSpace(_scriptGroup) == false)
+			{
+				scripts = scripts.Where(x => x.ScriptGroup == _scriptGroup).ToList();
 			}
 
 			foreach (ScriptRunner item in scripts)
@@ -91,17 +106,17 @@ namespace Sensus.UI.UiProperties
 
 			picker.SelectedIndex = scripts.IndexOf((ScriptRunner)property.GetValue(o));
 
-			if (runner != null)
+			if (probe != null)
 			{
 				picker.SelectedIndexChanged += async (s, e) =>
 				{
 					if (picker.Items[picker.SelectedIndex] == NEW_STRING)
 					{
-						ScriptRunner newScriptRunner = new ScriptRunner("New Script", runner.Probe);
+						ScriptRunner newScriptRunner = new ScriptRunner("New Script", probe);
 
 						await (Application.Current as App).DetailPage.Navigation.PushAsync(new ScriptRunnerPage(newScriptRunner));
 
-						runner.Probe.ScriptRunners.Add(newScriptRunner);
+						probe.ScriptRunners.Add(newScriptRunner);
 
 						property.SetValue(o, newScriptRunner);
 
