@@ -234,14 +234,16 @@ namespace Sensus
 
 		public string GetMediaPath()
 		{
-			if (StorageMethod != MediaStorageMethods.URL)
+			if (StorageMethod == MediaStorageMethods.URL)
 			{
 				return Data;
 			}
-			else
+			else if (StorageMethod == MediaStorageMethods.Cache)
 			{
 				return GetFullCachePath(CacheFileName);
 			}
+
+			return null;
 		}
 
 		public async Task CacheMediaAsync()

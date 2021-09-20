@@ -170,9 +170,7 @@ namespace Sensus.UI.UiProperties
 
 				if (media.StorageMethod == MediaStorageMethods.Cache)
 				{
-					Enum.TryParse(typeof(MediaCacheModes), (string)cachePicker.SelectedItem, out object result);
-
-					currentMedia.CacheMode = (MediaCacheModes)result;
+					cachePicker.SelectedItem = currentMedia.CacheMode.ToString();
 				}
 
 				Device.BeginInvokeOnMainThread(() =>
@@ -206,9 +204,29 @@ namespace Sensus.UI.UiProperties
 				{
 					string mimeType = SensusServiceHelper.Get().GetMimeType(urlEntry.Text);
 
+					if (mimeType?.StartsWith("video") == true && storageMethod == MediaStorageMethods.Embed)
+					{
+						storageMethod = MediaStorageMethods.Cache;
+
+						sourceButton.Text = URL_CACHED;
+
+						await SensusServiceHelper.Get().FlashNotificationAsync($"You cannot embed videos. The video will be cached instead.");
+					}
+
 					MediaObject media = await MediaObject.FromUrlAsync(urlEntry.Text, mimeType, storageMethod, input.CachePath);
 
-					setMediaObject(media);
+					if (media.Type.StartsWith("video") && storageMethod == MediaStorageMethods.Embed)
+					{
+						storageMethod = MediaStorageMethods.Cache;
+
+						sourceButton.Text = URL_CACHED;
+
+						await SensusServiceHelper.Get().FlashNotificationAsync($"You cannot embed videos. The video will be cached instead.");
+					}
+					else
+					{
+						setMediaObject(media);
+					}
 				}
 				catch (Exception exception)
 				{
@@ -312,6 +330,8 @@ namespace Sensus.UI.UiProperties
 					else if (source == URL_EMBEDDED)
 					{
 						storageMethod = MediaStorageMethods.Embed;
+
+						sourceButton.Text = URL_EMBEDDED;
 
 						urlStack.IsVisible = true;
 						urlEntry.Focus();

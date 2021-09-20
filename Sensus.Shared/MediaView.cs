@@ -37,11 +37,11 @@ namespace Sensus
 
 						player.VideoEvent += VideoEvent;
 
-						if (media.StorageMethod != MediaStorageMethods.URL)
+						if (media.StorageMethod == MediaStorageMethods.URL)
 						{
 							player.Source = new VideoPlayer.UrlSource(media.GetMediaPath());
 						}
-						else
+						else if (media.StorageMethod == MediaStorageMethods.Cache)
 						{
 							player.Source = new VideoPlayer.FileSource(media.GetMediaPath());
 						}
