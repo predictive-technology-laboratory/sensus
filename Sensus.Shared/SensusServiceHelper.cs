@@ -1307,12 +1307,12 @@ namespace Sensus
 				inputGroup.Inputs.Add(input);
 			}
 
-			IEnumerable<InputGroup> inputGroups = await PromptForInputsAsync(null, null, new[] { inputGroup }, cancellationToken, showCancelButton, nextButtonText, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, null);
+			IEnumerable<InputGroup> inputGroups = await PromptForInputsAsync(null, null, new[] { inputGroup }, cancellationToken, showCancelButton, nextButtonText, true, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, null);
 
 			return inputGroups?.SelectMany(g => g.Inputs).ToList();
 		}
 
-		public async Task<IEnumerable<InputGroup>> PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, string title, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action postDisplayCallback)
+		public async Task<IEnumerable<InputGroup>> PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, string title, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, bool confirmNavigation, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action postDisplayCallback)
 		{
 			bool firstPageDisplay = true;
 
@@ -1373,7 +1373,7 @@ namespace Sensus
 					{
 						int stepNumber = inputGroupNum + 1;
 
-						InputGroupPage inputGroupPage = new InputGroupPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupNumBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, title);
+						InputGroupPage inputGroupPage = new InputGroupPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupNumBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, confirmNavigation, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, title);
 
 						// do not display prompts page under the following conditions:
 						//
@@ -1390,6 +1390,7 @@ namespace Sensus
 							if (inputGroupNum >= inputGroups.Count() - 1 &&                                                     // this is the final input group
 								inputGroupNumBackStack.Count > 0 &&                                                             // there is an input group to go back to (the current one was not displayed)
 								!string.IsNullOrWhiteSpace(submitConfirmation) &&                                               // we have a submit confirmation
+								confirmNavigation &&                                                                            // we should confirm submission
 								!(await Application.Current.MainPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No"))) // user is not ready to submit
 							{
 								inputGroupNum = inputGroupNumBackStack.Pop() - 1;
@@ -1951,7 +1952,7 @@ namespace Sensus
 			await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Opened) ?? Task.CompletedTask);
 			script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Opened, DateTimeOffset.UtcNow, script), CancellationToken.None);
 
-			IEnumerable<InputGroup> inputGroups = await PromptForInputsAsync(script.RunTime, script.Runner.Name, script.InputGroups, null, script.Runner.AllowCancel, null, null, script.Runner.IncompleteSubmissionConfirmation, "Are you ready to submit your responses?", script.Runner.DisplayProgress, null);
+			IEnumerable<InputGroup> inputGroups = await PromptForInputsAsync(script.RunTime, script.Runner.Name, script.InputGroups, null, script.Runner.AllowCancel, null, script.Runner.ConfirmNavigation, null, script.Runner.IncompleteSubmissionConfirmation, "Are you ready to submit your responses?", script.Runner.DisplayProgress, null);
 
 			bool userCancelled = inputGroups == null;
 

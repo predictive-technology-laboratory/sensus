@@ -39,6 +39,7 @@ namespace Sensus.UI
 		private int _displayedInputCount;
 		private TaskCompletionSource<NavigationResult> _responseTaskCompletionSource;
 		private ShowNavigationOptions _showNavigationButtons;
+		private bool _confirmNavigation;
 
 		public int DisplayedInputCount
 		{
@@ -62,6 +63,7 @@ namespace Sensus.UI
 							  bool showCancelButton,
 							  string nextButtonTextOverride,
 							  CancellationToken? cancellationToken,
+							  bool confirmNavigation,
 							  string cancelConfirmation,
 							  string incompleteSubmissionConfirmation,
 							  string submitConfirmation,
@@ -74,6 +76,7 @@ namespace Sensus.UI
 			_displayedInputCount = 0;
 			_responseTaskCompletionSource = new TaskCompletionSource<NavigationResult>();
 			_showNavigationButtons = inputGroup.ShowNavigationButtons;
+			_confirmNavigation = confirmNavigation;
 
 			IsLastPage = totalSteps <= stepNumber;
 			Title = inputGroup.Title ?? title;
@@ -252,7 +255,7 @@ namespace Sensus.UI
 
 			_cancelHandler = async (o, e) =>
 			{
-				if (string.IsNullOrWhiteSpace(cancelConfirmation) || await DisplayAlert("Confirm", cancelConfirmation, "Yes", "No"))
+				if (_confirmNavigation == false || string.IsNullOrWhiteSpace(cancelConfirmation) || await DisplayAlert("Confirm", cancelConfirmation, "Yes", "No"))
 				{
 					_responseTaskCompletionSource.TrySetResult(NavigationResult.Cancel);
 				}
@@ -301,7 +304,7 @@ namespace Sensus.UI
 						navigationResult = NavigationResult.Submit;
 					}
 
-					if (string.IsNullOrWhiteSpace(confirmationMessage) || await DisplayAlert("Confirm", confirmationMessage, "Yes", "No"))
+					if (_confirmNavigation == false || string.IsNullOrWhiteSpace(confirmationMessage) || await DisplayAlert("Confirm", confirmationMessage, "Yes", "No"))
 					{
 						_responseTaskCompletionSource.TrySetResult(navigationResult);
 					}

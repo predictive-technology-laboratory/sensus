@@ -380,6 +380,9 @@ namespace Sensus.Probes.User.Scripts
 		[OnOffUiProperty("Trigger Next Script First Time Only:", true, 26)]
 		public bool TriggerNextScriptFirstTimeOnly { get; set; }
 
+		[OnOffUiProperty("Confirm Navigation:", true, 27)]
+		public bool ConfirmNavigation { get; set; }
+
 		[JsonIgnore]
 		public string Caption
 		{
@@ -407,6 +410,7 @@ namespace Sensus.Probes.User.Scripts
 			RunMode = RunMode.SingleKeepNewest;
 			IncompleteSubmissionConfirmation = "You have not completed all required fields on the current page. Do you want to continue?";
 			ShuffleInputGroups = false;
+			ConfirmNavigation = true;
 
 			Triggers.CollectionChanged += (o, e) =>
 			{
