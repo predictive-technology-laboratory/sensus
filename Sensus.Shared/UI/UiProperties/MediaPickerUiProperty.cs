@@ -262,7 +262,11 @@ namespace Sensus.UI.UiProperties
 					{
 						INavigation navigation = (Application.Current as App).DetailPage.Navigation;
 
-						await navigation.PushAsync(new MediaPreviewPage((MediaObject)property.GetValue(o)), true);
+						MediaObject media = (MediaObject)property.GetValue(o);
+
+						await media.CacheMediaAsync();
+
+						await navigation.PushAsync(new MediaPreviewPage(media), true);
 					}
 					else if (source == CAPTURE_IMAGE)
 					{
