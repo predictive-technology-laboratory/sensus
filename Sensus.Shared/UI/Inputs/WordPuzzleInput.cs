@@ -76,18 +76,18 @@ namespace Sensus.UI.Inputs
 					if (choices.Count < missingLetterCount)
 					{
 						int missingLetterIndex = random.Next(word.Length);
-						string missingLetter = word[missingLetterIndex].ToString();
+						string missingLetter = word[missingLetterIndex].ToString().ToUpper();
 
-						if (choices.Any(x => x.Index == missingLetterIndex) == false && choices.Any(x => x.Letter == missingLetter.ToUpper()) == false)
+						if (choices.Any(x => x.Index == missingLetterIndex) == false && choices.Any(x => x.Letter == missingLetter) == false)
 						{
 							_missingLetterIndexes.Add(missingLetterIndex);
 
-							choices.Add((missingLetterIndex, missingLetter.ToUpper()));
+							choices.Add((missingLetterIndex, missingLetter));
 						}
 					}
 					else
 					{
-						string missingLetter = ((char)('a' + random.Next(0, 26))).ToString();
+						string missingLetter = ((char)('a' + random.Next(0, 26))).ToString().ToUpper();
 
 						if (choices.Any(x => x.Letter == missingLetter) == false)
 						{
@@ -98,7 +98,7 @@ namespace Sensus.UI.Inputs
 
 				choices = choices.OrderBy(x => random.Next()).ToList();
 
-				ButtonGridView wordGrid = new ButtonGridView(0, null)
+				ButtonGridView wordGrid = new ButtonGridView(8, null)
 				{
 					HorizontalOptions = LayoutOptions.FillAndExpand
 				};
