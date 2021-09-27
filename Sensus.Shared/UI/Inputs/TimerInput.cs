@@ -162,7 +162,7 @@ namespace Sensus.UI.Inputs
 			{
 				_timer.Stop();
 
-				if (result == InputGroupPage.NavigationResult.Submit)
+				if (result == NavigationResult.Submit)
 				{
 					_events.Add(new TimerEvent { Timestamp = DateTimeOffset.UtcNow, ElapsedTime = _elapsedTime, Event = USER_SUBMITTED });
 

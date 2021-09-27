@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using Sensus.UI.UiProperties;
+using System.Collections.Generic;
 using Xamarin.Forms;
 
 namespace Sensus.UI.Inputs
@@ -45,13 +46,22 @@ namespace Sensus.UI.Inputs
 			{
 				Label label = CreateLabel(-1);
 
-				label.Text = Text;
+				Label textLabel = new Label()
+				{
+					StyleClass = new List<string> { "InputContent" },
+					HorizontalOptions = LayoutOptions.FillAndExpand,
+					Text = Text
+				};
 
 				StoreCompletionRecords = false;
 				Complete = true;
 				Required = false;
 
-				base.SetView(label);
+				base.SetView(new StackLayout
+				{
+					Orientation = StackOrientation.Vertical,
+					Children = { label, textLabel }
+				});
 			}
 
 			return base.GetView(index);

@@ -761,6 +761,7 @@ namespace Sensus.UI.Inputs
 
 			return new Label
 			{
+				StyleClass = new List<string> { "InputLabel" },
 				Text = GetLabelText(index),
 				FontSize = _labelFontSize,
 				FontAttributes = LabelFontAttributes,

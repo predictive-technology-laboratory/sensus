@@ -86,6 +86,16 @@
 			<Setter Property="TextColor" Value="{StaticResource RequiredFieldLabelColor}" />
 		</Style>
 
+		<Style Class="InputLabel" TargetType="{x:Type Label}">
+			<Setter Property="TextColor" Value="{StaticResource TextColor}" />
+			<Setter Property="FontSize" Value="20"/>
+		</Style>
+
+		<Style Class="InputContent" TargetType="{x:Type Label}">
+			<Setter Property="TextColor" Value="{StaticResource TextColor}" />
+			<Setter Property="FontSize" Value="20"/>
+		</Style>
+
 		<Style Class="UIFrame" TargetType="{x:Type Frame}">
 			<Setter Property="BackgroundColor" Value="{StaticResource FrameBackgroundColor}" />
 			<Setter Property="BorderColor" Value="{StaticResource FrameBorderColor}" />
