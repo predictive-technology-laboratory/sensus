@@ -23,10 +23,37 @@ namespace Sensus.UI.Inputs
 	{
 		private string _definedVariable;
 		private string _value;
+		protected ButtonGridView _grid;
+
+		public ButtonGridInput() : base()
+		{
+			ColumnCount = 1;
+		}
 
 		public override object Value => _value;
 
-		public override bool Enabled { get; set; }
+		public override bool Enabled
+		{
+			get
+			{
+				return _grid?.IsEnabled ?? false;
+			}
+			set
+			{
+				if (_grid != null)
+				{
+					_grid.IsEnabled = value;
+
+					if (GridButtons != null)
+					{
+						foreach (ButtonWithValue button in GridButtons)
+						{
+							button.IsEnabled = value;
+						}
+					}
+				}
+			}
+		}
 
 		public override string DefaultName => "Button Grid";
 
@@ -47,7 +74,7 @@ namespace Sensus.UI.Inputs
 		public List<string> Buttons { get; set; }
 
 		[EntryIntegerUiProperty("Number of Columns:", true, 3, false)]
-		public int ColumnCount { get; set; } = 1;
+		public int ColumnCount { get; set; }
 
 		[JsonIgnore]
 		public List<ButtonWithValue> GridButtons { get; private set; }
@@ -58,7 +85,7 @@ namespace Sensus.UI.Inputs
 			{
 				GridButtons = new List<ButtonWithValue>();
 
-				ButtonGridView grid = new ButtonGridView(ColumnCount, (s, e) =>
+				_grid = new ButtonGridView(ColumnCount, (s, e) =>
 				{
 					ButtonWithValue button = (ButtonWithValue)s;
 
@@ -86,12 +113,12 @@ namespace Sensus.UI.Inputs
 
 				foreach (string button in Buttons)
 				{
-					GridButtons.Add(grid.AddButton(button, button));
+					GridButtons.Add(_grid.AddButton(button, button));
 				}
 
-				grid.Arrange();
+				_grid.Arrange();
 
-				base.SetView(grid);
+				base.SetView(_grid);
 			}
 
 			return base.GetView(index);

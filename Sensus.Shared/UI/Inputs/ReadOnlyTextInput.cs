@@ -33,7 +33,7 @@ namespace Sensus.UI.Inputs
 			}
 		}
 
-		public override bool Enabled { get; set; }
+		public override bool Enabled => true;
 
 		public override string DefaultName => "Text";
 
