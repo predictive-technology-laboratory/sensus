@@ -10,7 +10,7 @@ namespace Sensus.UI.Inputs
 {
 	public class TimedTextInput : Input
 	{
-		protected Label _textLable;
+		protected Label _textLabel;
 		protected Timer _timer;
 		protected List<string> _textList;
 		protected int _index;
@@ -19,6 +19,7 @@ namespace Sensus.UI.Inputs
 		public TimedTextInput() : base()
 		{
 			Duration = 30;
+			CenterText = true;
 		}
 
 		public override object Value
@@ -33,10 +34,12 @@ namespace Sensus.UI.Inputs
 
 		public override string DefaultName => "Timed Text";
 
-		[EntryIntegerUiProperty("Duration", true, 10, false)]
+		[EntryIntegerUiProperty("Duration:", true, 10, false)]
 		public int Duration { get; set; }
-		[EditorUiProperty("Text", true, 11, true)]
+		[EditorUiProperty("Text:", true, 11, true)]
 		public object TextCollection { get; set; }
+		[OnOffUiProperty("Center Text:", true, 12)]
+		public bool CenterText { get; set; }
 
 		public override View GetView(int index)
 		{
@@ -44,11 +47,16 @@ namespace Sensus.UI.Inputs
 			{
 				Label label = CreateLabel(-1);
 
-				_textLable = new Label()
+				_textLabel = new Label()
 				{
 					StyleClass = new List<string> { "InputContent" },
 					HorizontalOptions = LayoutOptions.FillAndExpand
 				};
+
+				if (CenterText)
+				{
+					_textLabel.HorizontalTextAlignment = TextAlignment.Center;
+				}
 
 				_textList = TextCollection as List<string>;
 
@@ -76,7 +84,7 @@ namespace Sensus.UI.Inputs
 				base.SetView(new StackLayout
 				{
 					Orientation = StackOrientation.Vertical,
-					Children = { label, _textLable }
+					Children = { label, _textLabel }
 				});
 			}
 
@@ -87,7 +95,7 @@ namespace Sensus.UI.Inputs
 		{
 			SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
 			{
-				_textLable.Text = _textList[_index % _textList.Count];
+				_textLabel.Text = _textList[_index % _textList.Count];
 
 				_index += 1;
 				_elapsed += interval;
