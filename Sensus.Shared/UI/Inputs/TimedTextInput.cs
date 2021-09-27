@@ -8,7 +8,7 @@ using Xamarin.Forms;
 
 namespace Sensus.UI.Inputs
 {
-	public class TimedText : Input
+	public class TimedTextInput : Input
 	{
 		protected Label _textLable;
 		protected Timer _timer;
@@ -16,7 +16,7 @@ namespace Sensus.UI.Inputs
 		protected int _index;
 		protected double _elapsed;
 
-		public TimedText() : base()
+		public TimedTextInput() : base()
 		{
 			Duration = 30;
 		}
