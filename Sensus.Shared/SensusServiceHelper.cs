@@ -1437,7 +1437,7 @@ namespace Sensus
 								// we only allow backward navigation when we have something on the back stack. so the following is safe.
 								inputGroupNum = inputGroupNumBackStack.Pop() - 1;
 							}
-							else if (navigationResult == InputGroupPage.NavigationResult.Forward)
+							else if (navigationResult == InputGroupPage.NavigationResult.Forward || navigationResult == InputGroupPage.NavigationResult.Timeout)
 							{
 								// keep the group in the back stack.
 								inputGroupNumBackStack.Push(inputGroupNum);

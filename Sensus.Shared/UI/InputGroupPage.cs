@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using Sensus.UI.Inputs;
 using Xamarin.Forms;
 using System.Threading.Tasks;
+using Timer = System.Timers.Timer;
 
 namespace Sensus.UI
 {
@@ -30,7 +31,8 @@ namespace Sensus.UI
 			Backward,
 			Forward,
 			Submit,
-			Cancel
+			Cancel,
+			Timeout
 		}
 
 		private InputGroup _inputGroup;
@@ -40,6 +42,7 @@ namespace Sensus.UI
 		private TaskCompletionSource<NavigationResult> _responseTaskCompletionSource;
 		private ShowNavigationOptions _showNavigationButtons;
 		private bool _confirmNavigation;
+		private Timer _timer;
 
 		public int DisplayedInputCount
 		{
@@ -431,6 +434,18 @@ namespace Sensus.UI
 				{
 					displayedInput.Viewed = true;
 				}
+
+				if (inputGroup.Timeout != null)
+				{
+					_timer = new Timer(inputGroup.Timeout.Value * 1000);
+
+					_timer.Elapsed += (s, e) =>
+					{
+						_responseTaskCompletionSource.TrySetResult(NavigationResult.Timeout);
+					};
+
+					_timer.Start();
+				}
 			};
 
 			Disappearing += async (o, e) =>
@@ -439,6 +454,11 @@ namespace Sensus.UI
 				foreach (Input displayedInput in displayedInputs)
 				{
 					displayedInput.OnDisappearing(await ResponseTask);
+				}
+
+				if (_timer != null)
+				{
+					_timer.Stop();
 				}
 			};
 		}

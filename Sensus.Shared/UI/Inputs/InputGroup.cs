@@ -165,6 +165,9 @@ namespace Sensus.UI.Inputs
 		[OnOffUiProperty("Use Navigation View", true, 14)]
 		public virtual bool UseNavigationBar { get; set; }
 
+		[EntryIntegerUiProperty("Timeout (S):", true, 15, false)]
+		public virtual int? Timeout { get; set; }
+
 		/// <summary>
 		/// Gets a value indicating whether this <see cref="InputGroup"/> is valid.
 		/// A valid input group is one in which each <see cref="Input"/> in the group is valid.
