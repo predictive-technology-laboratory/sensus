@@ -134,6 +134,7 @@ namespace Sensus.UI.Inputs
 		public override void OnDisappearing(InputGroupPage.NavigationResult result)
 		{
 			_timer.Stop();
+			_timer.Dispose();
 
 			base.OnDisappearing(result);
 		}

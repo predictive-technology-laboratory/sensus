@@ -90,9 +90,7 @@ namespace Sensus.UI.Inputs
 
 		public TimerInput()
 		{
-			_timer = new Timer(1);
 
-			_timer.Elapsed += TimerElapsed;
 		}
 
 		private void TimerElapsed(object sender, ElapsedEventArgs e)
@@ -161,6 +159,7 @@ namespace Sensus.UI.Inputs
 			if (_timer.Enabled)
 			{
 				_timer.Stop();
+				_timer.Dispose();
 
 				if (result == NavigationResult.Submit)
 				{
@@ -175,6 +174,10 @@ namespace Sensus.UI.Inputs
 		{
 			if (base.GetView(index) == null)
 			{
+				_timer = new Timer(1);
+
+				_timer.Elapsed += TimerElapsed;
+
 				_elapsedTime = 0;
 				_events = new List<TimerEvent>();
 

@@ -59,7 +59,7 @@ namespace Sensus.UI.Inputs
 
 		public override View GetView(int index)
 		{
-			if (base.GetView(index) == null)
+			if (base.GetView(index) == null && Words.Count > 0)
 			{
 				_value = new List<string>();
 				_missingLetterIndexes = new HashSet<int>();
