@@ -1,4 +1,5 @@
-﻿using Sensus.Context;
+﻿using Newtonsoft.Json;
+using Sensus.Context;
 using Sensus.UI.UiProperties;
 using System;
 using System.Collections.Generic;
@@ -12,8 +13,8 @@ namespace Sensus.UI.Inputs
 	{
 		protected Label _textLabel;
 		protected Timer _timer;
-		protected List<string> _textList;
 		protected int _index;
+		protected List<string> _textCollection;
 		protected double _elapsed;
 
 		public TimedTextInput() : base()
@@ -26,7 +27,7 @@ namespace Sensus.UI.Inputs
 		{
 			get
 			{
-				return _textList[_index % _textList.Count];
+				return _textCollection;
 			}
 		}
 
@@ -37,9 +38,39 @@ namespace Sensus.UI.Inputs
 		[EntryIntegerUiProperty("Duration:", true, 10, false)]
 		public int Duration { get; set; }
 		[EditorUiProperty("Text:", true, 11, true)]
-		public object TextCollection { get; set; }
+		[JsonIgnore]
+		public string Text
+		{
+			get
+			{
+				return string.Join('\n', _textCollection);
+			}
+			set
+			{
+				if (value != null)
+				{
+					_textCollection = value.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+				}
+				else
+				{
+					_textCollection = new List<string>();
+				}
+			}
+		}
 		[OnOffUiProperty("Center Text:", true, 12)]
 		public bool CenterText { get; set; }
+
+		public List<string> TextCollection
+		{
+			get
+			{
+				return _textCollection;
+			}
+			set
+			{
+				_textCollection = value;
+			}
+		}
 
 		public override View GetView(int index)
 		{
@@ -58,17 +89,10 @@ namespace Sensus.UI.Inputs
 					_textLabel.HorizontalTextAlignment = TextAlignment.Center;
 				}
 
-				_textList = TextCollection as List<string>;
-
 				_index = 0;
 				_elapsed = 0;
 
-				if (_textList == null && TextCollection is string textString)
-				{
-					_textList = textString.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
-				}
-
-				double interval = (double)Duration / _textList.Count;
+				double interval = (double)Duration / _textCollection.Count;
 
 				_timer = new Timer(interval * 1000);
 
@@ -95,7 +119,7 @@ namespace Sensus.UI.Inputs
 		{
 			SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
 			{
-				_textLabel.Text = _textList[_index % _textList.Count];
+				_textLabel.Text = _textCollection[_index % _textCollection.Count];
 
 				_index += 1;
 				_elapsed += interval;
