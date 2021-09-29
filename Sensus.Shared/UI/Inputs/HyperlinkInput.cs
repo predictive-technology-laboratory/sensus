@@ -13,6 +13,8 @@
 // limitations under the License.
 
 using Sensus.UI.UiProperties;
+using System.Collections.Generic;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace Sensus.UI.Inputs
@@ -39,24 +41,32 @@ namespace Sensus.UI.Inputs
 			if (base.GetView(index) == null)
 			{
 				Label label = CreateLabel(-1);
-				
-				label.TextDecorations = TextDecorations.Underline;
+
+				Label urlLabel = new Label
+				{
+					Text = Url,
+					StyleClass = new List<string> { "HyperlinkUrl" }
+				};
 
 				TapGestureRecognizer gesture = new TapGestureRecognizer()
 				{
 					NumberOfTapsRequired = 1
 				};
 
-				gesture.Tapped += (s, e) =>
+				gesture.Tapped += async (s, e) =>
 				{
-					Device.OpenUri(new System.Uri(Url));
+					await Launcher.OpenAsync(Url);
 
 					Complete = true;
 				};
 
-				label.GestureRecognizers.Add(gesture);
+				urlLabel.GestureRecognizers.Add(gesture);
 
-				base.SetView(label);
+				base.SetView(new StackLayout
+				{
+					Orientation = StackOrientation.Vertical,
+					Children = { label, urlLabel }
+				});
 			}
 
 			return base.GetView(index);
