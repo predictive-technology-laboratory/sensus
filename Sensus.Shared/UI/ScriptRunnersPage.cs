@@ -14,6 +14,7 @@
 
 using Sensus.Probes.User.Scripts;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -42,10 +43,31 @@ namespace Sensus.UI
 				}
 
 				ScriptRunner selectedScriptRunner = scriptRunnersList.SelectedItem as ScriptRunner;
+				int selectedIndex = probe.ScriptRunners.IndexOf(selectedScriptRunner);
 
-				string selectedAction = await DisplayActionSheet(selectedScriptRunner.Name, "Cancel", null, "Edit", "Copy", "Delete");
+				List<string> actions = new string[] { "Edit", "Copy", "Delete" }.ToList();
 
-				if (selectedAction == "Edit")
+				if (selectedIndex < probe.ScriptRunners.Count - 1)
+				{
+					actions.Insert(0, "Move Down");
+				}
+
+				if (selectedIndex > 0)
+				{
+					actions.Insert(0, "Move Up");
+				}
+
+				string selectedAction = await DisplayActionSheet(selectedScriptRunner.Name, "Cancel", null, actions.ToArray());
+
+				if (selectedAction == "Move Up")
+				{
+					probe.ScriptRunners.Move(selectedIndex, selectedIndex - 1);
+				}
+				else if (selectedAction == "Move Down")
+				{
+					probe.ScriptRunners.Move(selectedIndex, selectedIndex + 1);
+				}
+				else if (selectedAction == "Edit")
 				{
 					await Navigation.PushAsync(new ScriptRunnerPage(selectedScriptRunner));
 				}
