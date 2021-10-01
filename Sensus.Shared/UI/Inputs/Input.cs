@@ -268,6 +268,9 @@ namespace Sensus.UI.Inputs
 		[EntryFloatUiProperty("Incorrect Score:", true, 32, false)]
 		public virtual float IncorrectScore { get; set; }
 
+		[EntryStringUiProperty("Required Group:", true, 33, false)]
+		public virtual string RequiredGroup { get; set; }
+
 		/// <summary>
 		/// The current score of the <see cref="Input"/>.
 		/// </summary>

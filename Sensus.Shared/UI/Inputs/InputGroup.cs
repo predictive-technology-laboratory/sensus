@@ -174,7 +174,7 @@ namespace Sensus.UI.Inputs
 		/// An input group with no inputs is deemed valid by default.
 		/// </summary>
 		[JsonIgnore]
-		public bool Valid => Inputs.All(input => input?.Valid ?? true);
+		public bool Valid => Inputs.GroupBy(x => x?.RequiredGroup).All(x => (string.IsNullOrWhiteSpace(x.Key) && x.All(y => y?.Valid ?? true)) || (string.IsNullOrWhiteSpace(x.Key) == false && x.Any(y => y?.Valid ?? true))); //Inputs.All(input => input?.Valid ?? true);
 
 		public InputGroup()
 		{
