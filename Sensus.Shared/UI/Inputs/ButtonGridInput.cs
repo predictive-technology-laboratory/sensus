@@ -76,6 +76,9 @@ namespace Sensus.UI.Inputs
 		[EntryIntegerUiProperty("Number of Columns:", true, 3, false)]
 		public int ColumnCount { get; set; }
 
+		[OnOffUiProperty("Selectable:", true, 4)]
+		public bool Selectable { get; set; }
+
 		[JsonIgnore]
 		public List<ButtonWithValue> GridButtons { get; private set; }
 
@@ -93,13 +96,13 @@ namespace Sensus.UI.Inputs
 
 					Complete = true;
 
+					foreach (ButtonWithValue gridButton in GridButtons)
+					{
+						gridButton.Style = null;
+					}
+
 					if (CorrectValue != null)
 					{
-						foreach (ButtonWithValue gridButton in GridButtons)
-						{
-							gridButton.Style = null;
-						}
-
 						if (Correct)
 						{
 							button.Style = (Style)Application.Current.Resources["CorrectAnswerButton"];
@@ -109,11 +112,19 @@ namespace Sensus.UI.Inputs
 							button.Style = (Style)Application.Current.Resources["IncorrectAnswerButton"];
 						}
 					}
+					else if (Selectable)
+					{
+						button.Style = (Style)Application.Current.Resources["SelectedButton"];
+					}
 				});
 
-				foreach (string button in Buttons)
+				foreach (string buttonValue in Buttons)
 				{
-					GridButtons.Add(_grid.AddButton(button, button));
+					ButtonWithValue button = _grid.AddButton(buttonValue, buttonValue);
+
+					button.StyleClass = new List<string>();
+
+					GridButtons.Add(button);
 				}
 
 				_grid.Arrange();

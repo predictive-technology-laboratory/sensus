@@ -17,7 +17,8 @@
 		<Color x:Key="DimmedColor">#d1d1d1</Color>
 		<Color x:Key="RequiredFieldLabelColor">#ad3434</Color>
 		<Color x:Key="UrlLabelColor">#0047b3</Color>
-
+		<Color x:Key="SelectedButtonColor">#367fc9</Color>
+		
 		<!-- Sensus colors -->
 		<Color x:Key="ProbeOnColor">#227022</Color>
 		<Color x:Key="ProbeOffColor">#ad3434</Color>
@@ -85,9 +86,10 @@
 		</Style>
 		<Style Class="NavigationButton" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
 			<Setter Property="BackgroundColor" Value="{StaticResource NavigationButtonColor}" />
-			<!--<Setter Property="BorderColor" Value="{StaticResource NavigationButtonColor}" />-->
 		</Style>
-
+		<Style x:Key="SelectedButton" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
+			<Setter Property="BackgroundColor" Value="{StaticResource SelectedButtonColor}" />
+		</Style>
 		<Style Class="RequiredFieldLabel" TargetType="{x:Type Label}" ApplyToDerivedTypes="True">
 			<Setter Property="TextColor" Value="{StaticResource RequiredFieldLabelColor}" />
 		</Style>
