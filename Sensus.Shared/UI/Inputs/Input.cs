@@ -271,6 +271,9 @@ namespace Sensus.UI.Inputs
 		[EntryStringUiProperty("Required Group:", true, 33, false)]
 		public virtual string RequiredGroup { get; set; }
 
+		[OnOffUiProperty("Keep Feedback after Delay:", true, 34)]
+		public virtual bool KeepFeedback { get; set; }
+
 		/// <summary>
 		/// The current score of the <see cref="Input"/>.
 		/// </summary>
@@ -867,7 +870,7 @@ namespace Sensus.UI.Inputs
 
 			if (CorrectDelay > 0 || IncorrectDelay > 0 || string.IsNullOrWhiteSpace(CorrectFeedbackMessage) == false || string.IsNullOrWhiteSpace(IncorrectFeedbackMessage) == false)
 			{
-				_feedbackView = new InputFeedbackView(PROGRESS_INCREMENT, CorrectFeedbackMessage, CorrectDelay, IncorrectFeedbackMessage, IncorrectDelay);
+				_feedbackView = new InputFeedbackView(PROGRESS_INCREMENT, CorrectFeedbackMessage, CorrectDelay, IncorrectFeedbackMessage, IncorrectDelay, KeepFeedback);
 
 				view = new StackLayout()
 				{

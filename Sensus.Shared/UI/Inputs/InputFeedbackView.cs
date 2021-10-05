@@ -21,29 +21,35 @@ namespace Sensus.UI.Inputs
 	public class InputFeedbackView : StackLayout
 	{
 		private readonly double _progressIncrement;
+		private readonly string _correctFeedbackMessage;
+		private readonly double _correctDelay;
+		private readonly string _incorrectFeedbackMessage;
+		private readonly double _incorrectDelay;
+		private readonly bool _persistAfterDelay;
+
 		private Label _feedbackLabel;
 		private Timer _progressTimer;
 		private ProgressBar _progressBar;
 
-		public InputFeedbackView(double progressIncrement, string correctFeedbackMessage, double correctDelay, string incorrectFeedbackMessage, double incorrectDelay)
+		public InputFeedbackView(double progressIncrement, string correctFeedbackMessage, double correctDelay, string incorrectFeedbackMessage, double incorrectDelay, bool persistAfterDelay)
 		{
 			_progressIncrement = progressIncrement;
-
-			CorrectFeedbackMessage = correctFeedbackMessage;
-			CorrectDelay = correctDelay;
-			IncorrectFeedbackMessage = incorrectFeedbackMessage;
-			IncorrectDelay = incorrectDelay;
+			_correctFeedbackMessage = correctFeedbackMessage;
+			_correctDelay = correctDelay;
+			_incorrectFeedbackMessage = incorrectFeedbackMessage;
+			_incorrectDelay = incorrectDelay;
+			_persistAfterDelay = persistAfterDelay;
 
 			IsVisible = false;
 
-			if (CorrectDelay > 0 || IncorrectDelay > 0)
+			if (_correctDelay > 0 || _incorrectDelay > 0)
 			{
 				_progressBar = new ProgressBar();
 
 				Children.Add(_progressBar);
 			}
 
-			if (string.IsNullOrWhiteSpace(CorrectFeedbackMessage) == false || string.IsNullOrWhiteSpace(IncorrectFeedbackMessage) == false)
+			if (string.IsNullOrWhiteSpace(_correctFeedbackMessage) == false || string.IsNullOrWhiteSpace(_incorrectFeedbackMessage) == false)
 			{
 				_feedbackLabel = new Label();
 
@@ -72,6 +78,13 @@ namespace Sensus.UI.Inputs
 						SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
 						{
 							_progressBar.Progress += _progressIncrement;
+
+							if (_progressBar.Progress >= 1)
+							{
+								_progressTimer.Stop();
+
+								IsVisible = _persistAfterDelay;
+							}
 						});
 					};
 					_progressTimer.Start();
@@ -87,15 +100,15 @@ namespace Sensus.UI.Inputs
 		{
 			bool isVisible = false;
 
-			if (isCorrect && CorrectDelay > 0)
+			if (isCorrect && _correctDelay > 0)
 			{
-				StartProgress(CorrectDelay);
+				StartProgress(_correctDelay);
 
 				isVisible = true;
 			}
-			else if (isCorrect == false && IncorrectDelay > 0)
+			else if (isCorrect == false && _incorrectDelay > 0)
 			{
-				StartProgress(IncorrectDelay);
+				StartProgress(_incorrectDelay);
 
 				isVisible = true;
 			}
@@ -104,15 +117,15 @@ namespace Sensus.UI.Inputs
 				StartProgress(0);
 			}
 
-			if (isCorrect && (string.IsNullOrWhiteSpace(CorrectFeedbackMessage) == false))
+			if (isCorrect && (string.IsNullOrWhiteSpace(_correctFeedbackMessage) == false))
 			{
-				_feedbackLabel.Text = CorrectFeedbackMessage;
+				_feedbackLabel.Text = _correctFeedbackMessage;
 
 				isVisible = true;
 			}
-			else if (isCorrect == false && string.IsNullOrWhiteSpace(IncorrectFeedbackMessage) == false)
+			else if (isCorrect == false && string.IsNullOrWhiteSpace(_incorrectFeedbackMessage) == false)
 			{
-				_feedbackLabel.Text = IncorrectFeedbackMessage;
+				_feedbackLabel.Text = _incorrectFeedbackMessage;
 
 				isVisible = true;
 			}
@@ -143,10 +156,5 @@ namespace Sensus.UI.Inputs
 
 			IsVisible = false;
 		}
-
-		public string CorrectFeedbackMessage { get; }
-		public double CorrectDelay { get; }
-		public string IncorrectFeedbackMessage { get; }
-		public double IncorrectDelay { get; }
 	}
 }
