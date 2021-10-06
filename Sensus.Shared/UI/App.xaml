@@ -62,10 +62,12 @@
 			<Setter Property="CornerRadius" Value="6" />
 		</Style>
 		<Style TargetType="{x:Type Entry}" ApplyToDerivedTypes="True">
+			<Setter Property="BackgroundColor" Value="{StaticResource BackgroundColor}" />
 			<Setter Property="TextColor" Value="{StaticResource TextColor}" />
 			<Setter Property="PlaceholderColor" Value="{StaticResource PlaceholderColor}" />
 		</Style>
 		<Style TargetType="{x:Type Editor}" ApplyToDerivedTypes="True">
+			<Setter Property="BackgroundColor" Value="{StaticResource BackgroundColor}" />
 			<Setter Property="TextColor" Value="{StaticResource TextColor}" />
 			<Setter Property="PlaceholderColor" Value="{StaticResource PlaceholderColor}" />
 		</Style>
