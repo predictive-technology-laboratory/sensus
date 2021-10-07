@@ -18,6 +18,7 @@
 		<Color x:Key="RequiredFieldLabelColor">#ad3434</Color>
 		<Color x:Key="UrlLabelColor">#0047b3</Color>
 		<Color x:Key="SelectedButtonColor">#367fc9</Color>
+		<Color x:Key="SliderTrackBarColor">#acacac</Color>
 		
 		<!-- Sensus colors -->
 		<Color x:Key="ProbeOnColor">#227022</Color>
@@ -110,6 +111,10 @@
 			<Setter Property="BackgroundColor" Value="{StaticResource FrameBackgroundColor}" />
 			<Setter Property="BorderColor" Value="{StaticResource FrameBorderColor}" />
 			<Setter Property="HasShadow" Value="False" />
+		</Style>
+
+		<Style TargetType="{x:Type Slider}">
+			<Setter Property="MinimumTrackColor" Value="{StaticResource SliderTrackBarColor}" />
 		</Style>
 
 		<!--<Style Class="GridButton" TargetType="{x:Type rendered:ButtonWithValue}" ApplyToDerivedTypes="True">

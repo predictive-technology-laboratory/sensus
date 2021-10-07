@@ -15,6 +15,7 @@
 using Newtonsoft.Json;
 using Sensus.UI.UiProperties;
 using System.Collections.Generic;
+using System.Linq;
 using Xamarin.Forms;
 
 namespace Sensus.UI.Inputs
@@ -80,23 +81,17 @@ namespace Sensus.UI.Inputs
 		public bool Selectable { get; set; }
 
 		[JsonIgnore]
-		public List<ButtonWithValue> GridButtons { get; private set; }
+		public List<ButtonWithValue> GridButtons => _grid?.Buttons.ToList() ?? new List<ButtonWithValue>();
 
 		public override View GetView(int index)
 		{
 			if (base.GetView(index) == null)
 			{
-				GridButtons = new List<ButtonWithValue>();
-
 				_grid = new ButtonGridView(ColumnCount, (s, e) =>
 				{
 					ButtonWithValue button = (ButtonWithValue)s;
 
-					_value = button.Value;
-
-					Complete = true;
-
-					foreach (ButtonWithValue gridButton in GridButtons)
+					foreach (ButtonWithValue gridButton in _grid.Buttons)
 					{
 						gridButton.Style = null;
 					}
@@ -116,15 +111,15 @@ namespace Sensus.UI.Inputs
 					{
 						button.Style = (Style)Application.Current.Resources["SelectedButton"];
 					}
+
+					_value = button.Value;
+
+					Complete = true;
 				});
 
 				foreach (string buttonValue in Buttons)
 				{
 					ButtonWithValue button = _grid.AddButton(buttonValue, buttonValue);
-
-					button.StyleClass = new List<string>();
-
-					GridButtons.Add(button);
 				}
 
 				_grid.Arrange();
