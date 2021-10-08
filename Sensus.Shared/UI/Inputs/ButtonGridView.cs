@@ -132,17 +132,19 @@ namespace Sensus.UI.Inputs
 			RowDefinitions.Clear();
 			Children.Clear();
 
-			if (ColumnCount <= 0)
+			int columnCount = ColumnCount;
+
+			if (columnCount <= 0 || _buttons.Count < columnCount)
 			{
-				ColumnCount = _buttons.Count;
+				columnCount = _buttons.Count;
 			}
 
-			for (int column = 0; column < ColumnCount; column++)
+			for (int column = 0; column < columnCount; column++)
 			{
 				ColumnDefinitions.Add(new ColumnDefinition());
 			}
 
-			int rowCount = (int)Math.Ceiling((double)_buttons.Count / ColumnCount);
+			int rowCount = (int)Math.Ceiling((double)_buttons.Count / columnCount);
 
 			for (int row = 0; row < rowCount; row++)
 			{
@@ -151,7 +153,7 @@ namespace Sensus.UI.Inputs
 
 			for(int button = 0; button < _buttons.Count; button++)
 			{
-				Children.Add(_buttons[button], button % ColumnCount, button / ColumnCount);
+				Children.Add(_buttons[button], button % columnCount, button / columnCount);
 			}
 		}
 	}

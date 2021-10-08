@@ -54,6 +54,9 @@ namespace Sensus.UI.Inputs
 		[EntryIntegerUiProperty("Number of Choices:", true, 3, true)]
 		public int ChoiceCount { get; set; } = 4;
 
+		[EntryIntegerUiProperty("Column Count:", true, 4, true)]
+		public int ColumnCount { get; set; } = 8;
+
 		[HiddenUiProperty]
 		public override object CorrectValue { get; set; }
 
@@ -98,7 +101,7 @@ namespace Sensus.UI.Inputs
 
 				choices = choices.OrderBy(x => random.Next()).ToList();
 
-				ButtonGridView wordGrid = new ButtonGridView(8, null)
+				ButtonGridView wordGrid = new ButtonGridView(ColumnCount, null)
 				{
 					HorizontalOptions = LayoutOptions.FillAndExpand
 				};
