@@ -55,6 +55,11 @@ namespace Sensus.UI.Inputs
 				Value = value
 			};
 
+			if (AutoSize)
+			{
+				button.HeightRequest = -1;
+			}
+
 			if (DefaultClickEvent != null)
 			{
 				button.Clicked += DefaultClickEvent;
@@ -125,6 +130,8 @@ namespace Sensus.UI.Inputs
 		}
 
 		public IEnumerable<ButtonWithValue> Buttons => _buttons.ToArray();
+
+		public bool AutoSize { get; set; }
 
 		public void Arrange()
 		{

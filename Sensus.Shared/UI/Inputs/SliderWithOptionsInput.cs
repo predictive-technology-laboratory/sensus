@@ -285,7 +285,11 @@ namespace Sensus.UI.Inputs
 					sliderValueLabel.IsVisible = false;
 
 					Complete = true;
-				});
+				})
+				{
+					AutoSize = true
+				};
+				
 
 				foreach (string buttonValue in OtherOptions)
 				{
