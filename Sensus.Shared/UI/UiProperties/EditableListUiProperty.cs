@@ -36,13 +36,9 @@ namespace Sensus.UI.UiProperties
                     return "";
                 }
 
-                StringBuilder text = new StringBuilder();
-                foreach (object item in value as IEnumerable<object>)
-                {
-                    text.AppendLine(item.ToString());
-                }
+                object[] values = (value as IEnumerable<object>).ToArray();
 
-                return text.ToString();
+                return string.Join(Environment.NewLine, values);
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
