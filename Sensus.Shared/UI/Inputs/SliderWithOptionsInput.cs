@@ -106,6 +106,8 @@ namespace Sensus.UI.Inputs
 		[EditableListUiProperty("Other Options:", true, 17, true)]
 		public List<string> OtherOptions { get; set; }
 
+		public bool AutoSizeOptionButtons { get; set; }
+
 		/// <summary>
 		/// The name of the variable in <see cref="Protocol.VariableValueUiProperty"/> that this input should
 		/// define the value for. For example, if you wanted this input to supply the value for a variable
@@ -287,9 +289,8 @@ namespace Sensus.UI.Inputs
 					Complete = true;
 				})
 				{
-					AutoSize = true
+					AutoSize = AutoSizeOptionButtons
 				};
-				
 
 				foreach (string buttonValue in OtherOptions)
 				{
