@@ -38,6 +38,7 @@ namespace Sensus.iOS.UI
 				_visibleThumbImage = _nativeSlider.ThumbImage(UIControlState.Normal);
 			}
 
+			_nativeSlider.Value = _nativeSlider.MaxValue;
 			_nativeSlider.SetThumbImage(new UIImage(), UIControlState.Normal);
 		}
 
