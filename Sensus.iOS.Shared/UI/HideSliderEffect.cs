@@ -38,13 +38,19 @@ namespace Sensus.iOS.UI
 				_visibleThumbImage = _nativeSlider.ThumbImage(UIControlState.Normal);
 			}
 
-			_nativeSlider.Value = _nativeSlider.MaxValue;
-			_nativeSlider.SetThumbImage(new UIImage(), UIControlState.Normal);
+			/*_nativeSlider.SetValue(_nativeSlider.MaxValue, false);
+			_nativeSlider.SetThumbImage(new UIImage(), UIControlState.Normal);*/
+
+			_nativeSlider.AddGestureRecognizer(new UILongPressGestureRecognizer(pressRecognizer =>
+			{
+				_nativeSlider.SetThumbImage(_visibleThumbImage, UIControlState.Normal);
+			})
+			{ MinimumPressDuration = 0 });
 		}
 
 		protected override void OnDetached()
 		{
-			_nativeSlider.SetThumbImage(_visibleThumbImage, UIControlState.Normal);
+			//_nativeSlider.SetThumbImage(_visibleThumbImage, UIControlState.Normal);
 		}
 	}
 }
