@@ -32,25 +32,31 @@ namespace Sensus.iOS.UI
 		protected override void OnAttached()
 		{
 			_nativeSlider = Control as UISlider;
+			Slider formsSlider = Element as Slider;
 
 			if (_visibleThumbImage == null)
 			{
 				_visibleThumbImage = _nativeSlider.ThumbImage(UIControlState.Normal);
 			}
 
-			/*_nativeSlider.SetValue(_nativeSlider.MaxValue, false);
-			_nativeSlider.SetThumbImage(new UIImage(), UIControlState.Normal);*/
+			_nativeSlider.SetValue(_nativeSlider.MinValue, false);
+			_nativeSlider.SetThumbImage(new UIImage(), UIControlState.Normal);
 
 			_nativeSlider.AddGestureRecognizer(new UILongPressGestureRecognizer(pressRecognizer =>
 			{
+				float percent = (float)pressRecognizer.LocationInView(pressRecognizer.View).X / (float)(pressRecognizer.View.Frame.Width - 25);
+				float value = _nativeSlider.MinValue + (percent * (_nativeSlider.MaxValue - _nativeSlider.MinValue));
+
 				_nativeSlider.SetThumbImage(_visibleThumbImage, UIControlState.Normal);
+
+				formsSlider.Value = value;
 			})
 			{ MinimumPressDuration = 0 });
 		}
 
 		protected override void OnDetached()
 		{
-			//_nativeSlider.SetThumbImage(_visibleThumbImage, UIControlState.Normal);
+			_nativeSlider.SetThumbImage(_visibleThumbImage, UIControlState.Normal);
 		}
 	}
 }
