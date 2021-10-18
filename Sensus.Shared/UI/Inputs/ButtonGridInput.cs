@@ -91,6 +91,10 @@ namespace Sensus.UI.Inputs
 				{
 					ButtonWithValue button = (ButtonWithValue)s;
 
+					_value = button.Value;
+
+					Complete = true;
+
 					foreach (ButtonWithValue gridButton in _grid.Buttons)
 					{
 						gridButton.Style = null;
@@ -111,10 +115,6 @@ namespace Sensus.UI.Inputs
 					{
 						button.Style = (Style)Application.Current.Resources["SelectedButton"];
 					}
-
-					_value = button.Value;
-
-					Complete = true;
 				});
 
 				foreach (string buttonValue in Buttons)

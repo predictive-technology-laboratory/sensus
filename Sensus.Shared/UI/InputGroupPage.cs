@@ -20,6 +20,7 @@ using Sensus.UI.Inputs;
 using Xamarin.Forms;
 using System.Threading.Tasks;
 using Timer = System.Timers.Timer;
+using Sensus.Context;
 
 namespace Sensus.UI
 {
@@ -274,44 +275,47 @@ namespace Sensus.UI
 
 			_nextHandler = async (o, e) =>
 			{
-				if (!inputGroup.Valid && inputGroup.ForceValidInputs)
+				SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
 				{
-					await DisplayAlert("Mandatory", "You must provide values for all required fields before proceeding.", "Back");
-				}
-				else
-				{
-					string confirmationMessage = "";
-					NavigationResult navigationResult = NavigationResult.Forward;
-
-					// warn about incomplete inputs if a message is provided
-					if (!inputGroup.Valid && !string.IsNullOrWhiteSpace(incompleteSubmissionConfirmation))
+					if (!inputGroup.Valid && inputGroup.ForceValidInputs)
 					{
-						confirmationMessage += incompleteSubmissionConfirmation;
+						await DisplayAlert("Mandatory", "You must provide values for all required fields before proceeding.", "Back");
 					}
-
-					if (IsLastPage)
+					else
 					{
-						// confirm submission if a message is provided
-						if (!string.IsNullOrWhiteSpace(submitConfirmation))
-						{
-							// if we already warned about incomplete fields, make the submit confirmation sound natural.
-							if (!string.IsNullOrWhiteSpace(confirmationMessage))
-							{
-								confirmationMessage += " Also, this is the final page. ";
-							}
+						string confirmationMessage = "";
+						NavigationResult navigationResult = NavigationResult.Forward;
 
-							// confirm submission
-							confirmationMessage += submitConfirmation;
+						// warn about incomplete inputs if a message is provided
+						if (!inputGroup.Valid && !string.IsNullOrWhiteSpace(incompleteSubmissionConfirmation))
+						{
+							confirmationMessage += incompleteSubmissionConfirmation;
 						}
 
-						navigationResult = NavigationResult.Submit;
-					}
+						if (IsLastPage)
+						{
+							// confirm submission if a message is provided
+							if (!string.IsNullOrWhiteSpace(submitConfirmation))
+							{
+								// if we already warned about incomplete fields, make the submit confirmation sound natural.
+								if (!string.IsNullOrWhiteSpace(confirmationMessage))
+								{
+									confirmationMessage += " Also, this is the final page. ";
+								}
 
-					if (_confirmNavigation == false || string.IsNullOrWhiteSpace(confirmationMessage) || await DisplayAlert("Confirm", confirmationMessage, "Yes", "No"))
-					{
-						_responseTaskCompletionSource.TrySetResult(navigationResult);
+								// confirm submission
+								confirmationMessage += submitConfirmation;
+							}
+
+							navigationResult = NavigationResult.Submit;
+						}
+
+						if (_confirmNavigation == false || string.IsNullOrWhiteSpace(confirmationMessage) || await DisplayAlert("Confirm", confirmationMessage, "Yes", "No"))
+						{
+							_responseTaskCompletionSource.TrySetResult(navigationResult);
+						}
 					}
-				}
+				});
 			};
 
 			if (inputGroup.ShowNavigationButtons != ShowNavigationOptions.Never)
@@ -450,8 +454,8 @@ namespace Sensus.UI
 
 			Disappearing += async (o, e) =>
 			{
-				// the page is disappearing, so dispose of inputs
-				foreach (Input displayedInput in displayedInputs)
+	// the page is disappearing, so dispose of inputs
+	foreach (Input displayedInput in displayedInputs)
 				{
 					displayedInput.OnDisappearing(await ResponseTask);
 				}
