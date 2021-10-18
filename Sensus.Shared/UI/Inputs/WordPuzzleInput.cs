@@ -139,20 +139,23 @@ namespace Sensus.UI.Inputs
 					{
 						button.Clicked += (s, e) =>
 						{
-							_value = _value.Union(new[] { button.Value }).OrderBy(x => x).ToList();
-
-							button.Style = (Style)Application.Current.Resources["IncorrectAnswerButton"];
-
-							if (_value.Count >= MissingLetterCount)
+							if (Correct == false)
 							{
-								Complete = true;
-							}
-							else
-							{
-								Attempts += 1;
-							}
+								_value = _value.Union(new[] { button.Value }).OrderBy(x => x).ToList();
 
-							SetFeedback(false);
+								button.Style = (Style)Application.Current.Resources["IncorrectAnswerButton"];
+
+								if (_value.Count >= MissingLetterCount)
+								{
+									Complete = true;
+								}
+								else
+								{
+									Attempts += 1;
+								}
+
+								SetFeedback(false);
+							}
 						};
 					}
 					else
