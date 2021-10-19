@@ -454,8 +454,8 @@ namespace Sensus.UI
 
 			Disappearing += async (o, e) =>
 			{
-	// the page is disappearing, so dispose of inputs
-	foreach (Input displayedInput in displayedInputs)
+				// the page is disappearing, so dispose of inputs
+				foreach (Input displayedInput in displayedInputs)
 				{
 					displayedInput.OnDisappearing(await ResponseTask);
 				}
