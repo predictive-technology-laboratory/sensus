@@ -15,6 +15,7 @@
 		<Color x:Key="FrameBackgroundColor">Transparent</Color>
 		<Color x:Key="FrameBorderColor">#e3e3e3</Color>
 		<Color x:Key="DimmedColor">#d1d1d1</Color>
+		<Color x:Key="LessDimmedColor">#5b5b5b</Color>
 		<Color x:Key="RequiredFieldLabelColor">#ad3434</Color>
 		<Color x:Key="UrlLabelColor">#0047b3</Color>
 		<Color x:Key="SelectedButtonColor">#367fc9</Color>

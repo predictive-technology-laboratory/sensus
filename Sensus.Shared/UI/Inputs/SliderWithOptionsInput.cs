@@ -220,6 +220,35 @@ namespace Sensus.UI.Inputs
 					IsVisible = false
 				};
 
+				Label optionsLabel = new Label
+				{
+					HorizontalOptions = LayoutOptions.CenterAndExpand,
+					FontSize = 18,
+					Text = "More options...",
+					TextColor = (Color)Application.Current.Resources["LessDimmedColor"],
+					TextDecorations = TextDecorations.Underline,
+				};
+
+				TapGestureRecognizer gesture = new TapGestureRecognizer()
+				{
+					NumberOfTapsRequired = 1
+				};
+
+				gesture.Tapped += (s, e) =>
+				{
+					if (_slider.Effects.Contains(_effect) == false)
+					{
+						_slider.Effects.Add(_effect);
+					}
+
+					sliderValueLabel.IsVisible = false;
+
+					optionsLabel.IsVisible = false;
+					_grid.IsVisible = true;
+				};
+
+				optionsLabel.GestureRecognizers.Add(gesture);
+
 				_incrementalValue = double.NaN;  // need this to ensure that the initial value selected by the user registers as a change.
 				_incrementalValueHasChanged = false;
 
@@ -249,6 +278,8 @@ namespace Sensus.UI.Inputs
 						_value = _incrementalValue;
 						_slider.Value = _incrementalValue;
 
+						Complete = true;
+
 						_slider.Effects.Remove(_effect);
 
 						foreach (ButtonWithValue gridButton in _grid.Buttons)
@@ -256,10 +287,11 @@ namespace Sensus.UI.Inputs
 							gridButton.Style = null;
 						}
 
+						optionsLabel.IsVisible = true;
+						_grid.IsVisible = false;
+
 						sliderValueLabel.IsVisible = DisplaySliderValue;
 						sliderValueLabel.Text = _incrementalValue.ToString();
-
-						Complete = true;
 					}
 				};
 
@@ -272,10 +304,7 @@ namespace Sensus.UI.Inputs
 
 					_value = button.Value;
 
-					if (_slider.Effects.Contains(_effect) == false)
-					{
-						_slider.Effects.Add(_effect);
-					}
+					Complete = true;
 
 					foreach (ButtonWithValue gridButton in _grid.Buttons)
 					{
@@ -283,13 +312,18 @@ namespace Sensus.UI.Inputs
 					}
 
 					button.Style = (Style)Application.Current.Resources["SelectedButton"];
-
-					sliderValueLabel.IsVisible = false;
-
-					Complete = true;
 				})
 				{
-					AutoSize = AutoSizeOptionButtons
+					AutoSize = AutoSizeOptionButtons,
+					IsVisible = false
+				};
+
+				StackLayout optionsLayout = new StackLayout
+				{
+					HorizontalOptions = LayoutOptions.FillAndExpand,
+					Orientation = StackOrientation.Vertical,
+					IsVisible = OtherOptions.Any(),
+					Children = { optionsLabel, _grid }
 				};
 
 				foreach (string buttonValue in OtherOptions)
@@ -298,8 +332,6 @@ namespace Sensus.UI.Inputs
 
 					button.StyleClass = new List<string>();
 				}
-
-				_grid.IsVisible = OtherOptions.Any();
 
 				_grid.Arrange();
 
@@ -353,7 +385,7 @@ namespace Sensus.UI.Inputs
 							},
 							IsVisible = !string.IsNullOrWhiteSpace(LeftLabel) || !string.IsNullOrWhiteSpace(RightLabel)
 						},
-						_grid
+						optionsLayout
 					}
 				});
 			}
