@@ -275,7 +275,7 @@ namespace Sensus.UI
 
 			_nextHandler = async (o, e) =>
 			{
-				SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+				await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
 				{
 					if (!inputGroup.Valid && inputGroup.ForceValidInputs)
 					{
