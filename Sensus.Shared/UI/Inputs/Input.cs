@@ -864,13 +864,18 @@ namespace Sensus.UI.Inputs
 			return _view;
 		}
 
+		[JsonIgnore]
+		public EventHandler<FeedbackEventArgs> DelayStarted { get; set; }
+		[JsonIgnore]
+		public EventHandler<FeedbackEventArgs> DelayEnded { get; set; }
+
 		protected virtual void SetView(View value)
 		{
 			View view = value;
 
 			if (CorrectDelay > 0 || IncorrectDelay > 0 || string.IsNullOrWhiteSpace(CorrectFeedbackMessage) == false || string.IsNullOrWhiteSpace(IncorrectFeedbackMessage) == false)
 			{
-				_feedbackView = new InputFeedbackView(PROGRESS_INCREMENT, CorrectFeedbackMessage, CorrectDelay, IncorrectFeedbackMessage, IncorrectDelay, KeepFeedback);
+				_feedbackView = new InputFeedbackView(PROGRESS_INCREMENT, CorrectFeedbackMessage, CorrectDelay, IncorrectFeedbackMessage, IncorrectDelay, KeepFeedback, DelayStarted, DelayEnded);
 
 				view = new StackLayout()
 				{

@@ -13,11 +13,18 @@
 // limitations under the License.
 
 using Sensus.Context;
+using System;
+using System.Threading.Tasks;
 using System.Timers;
 using Xamarin.Forms;
 
 namespace Sensus.UI.Inputs
 {
+	public class FeedbackEventArgs : EventArgs
+	{
+		public bool IsCorrect { get; set; }
+	}
+
 	public class InputFeedbackView : StackLayout
 	{
 		private readonly double _progressIncrement;
@@ -26,12 +33,27 @@ namespace Sensus.UI.Inputs
 		private readonly string _incorrectFeedbackMessage;
 		private readonly double _incorrectDelay;
 		private readonly bool _persistAfterDelay;
-
+		private readonly EventHandler<FeedbackEventArgs> _delayStarted;
+		private readonly EventHandler<FeedbackEventArgs> _delayEnded;
+		
+		private bool _isCorrect;
+		
 		private Label _feedbackLabel;
 		private Timer _progressTimer;
 		private ProgressBar _progressBar;
 
-		public InputFeedbackView(double progressIncrement, string correctFeedbackMessage, double correctDelay, string incorrectFeedbackMessage, double incorrectDelay, bool persistAfterDelay)
+		private void InvokeEventHandler(EventHandler<FeedbackEventArgs> handler)
+		{
+			if (handler != null)
+			{
+				foreach (EventHandler<FeedbackEventArgs> h in handler.GetInvocationList())
+				{
+					Task.Factory.FromAsync((a, _) => h.BeginInvoke(this, new FeedbackEventArgs { IsCorrect = _isCorrect }, a, _), h.EndInvoke, null);
+				}
+			}
+		}
+
+		public InputFeedbackView(double progressIncrement, string correctFeedbackMessage, double correctDelay, string incorrectFeedbackMessage, double incorrectDelay, bool persistAfterDelay, EventHandler<FeedbackEventArgs> delayStarted = null, EventHandler<FeedbackEventArgs> delayEnded = null)
 		{
 			_progressIncrement = progressIncrement;
 			_correctFeedbackMessage = correctFeedbackMessage;
@@ -39,6 +61,8 @@ namespace Sensus.UI.Inputs
 			_incorrectFeedbackMessage = incorrectFeedbackMessage;
 			_incorrectDelay = incorrectDelay;
 			_persistAfterDelay = persistAfterDelay;
+			_delayStarted = delayStarted;
+			_delayEnded = delayEnded;
 
 			IsVisible = false;
 
@@ -59,6 +83,8 @@ namespace Sensus.UI.Inputs
 
 		protected virtual void StartProgress(double delay)
 		{
+			InvokeEventHandler(_delayStarted);
+
 			if (_progressBar != null)
 			{
 				_progressBar.Progress = 0;
@@ -81,9 +107,18 @@ namespace Sensus.UI.Inputs
 
 							if (_progressBar.Progress >= 1)
 							{
-								_progressTimer.Stop();
+								try
+								{
+									_progressTimer.Stop();
 
-								IsVisible = _persistAfterDelay;
+									IsVisible = _persistAfterDelay;
+
+									InvokeEventHandler(_delayEnded);
+								}
+								catch
+								{
+
+								}
 							}
 						});
 					};
@@ -99,6 +134,9 @@ namespace Sensus.UI.Inputs
 		public virtual void SetFeedback(bool isCorrect)
 		{
 			bool isVisible = false;
+			string feedbackText = null;
+
+			_isCorrect = isCorrect;
 
 			if (isCorrect && _correctDelay > 0)
 			{
@@ -119,26 +157,27 @@ namespace Sensus.UI.Inputs
 
 			if (isCorrect && (string.IsNullOrWhiteSpace(_correctFeedbackMessage) == false))
 			{
-				_feedbackLabel.Text = _correctFeedbackMessage;
-
 				isVisible = true;
+				feedbackText = _correctFeedbackMessage;
 			}
 			else if (isCorrect == false && string.IsNullOrWhiteSpace(_incorrectFeedbackMessage) == false)
 			{
-				_feedbackLabel.Text = _incorrectFeedbackMessage;
-
 				isVisible = true;
-			}
-			else
-			{
-				_feedbackLabel.Text = null;
+				feedbackText = _incorrectFeedbackMessage;
 			}
 
 			IsVisible = isVisible;
+
+			if (_feedbackLabel != null)
+			{
+				_feedbackLabel.Text = feedbackText;
+			}
 		}
 
 		public virtual void Reset()
 		{
+			_isCorrect = false;
+
 			if (_progressTimer != null)
 			{
 				_progressTimer.Dispose();

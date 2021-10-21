@@ -25,10 +25,21 @@ namespace Sensus.UI.Inputs
 		private string _definedVariable;
 		private string _value;
 		protected ButtonGridView _grid;
+		static private Style _correctStyle;
+		static private Style _incorrectStyle;
+		static private Style _selectedStyle;
+
+		static ButtonGridInput()
+		{
+			_correctStyle = (Style)Application.Current.Resources["CorrectAnswerButton"];
+			_incorrectStyle = (Style)Application.Current.Resources["IncorrectAnswerButton"];
+			_selectedStyle = (Style)Application.Current.Resources["SelectedButton"];
+		}
 
 		public ButtonGridInput() : base()
 		{
 			ColumnCount = 1;
+
 		}
 
 		public override object Value => _value;
@@ -87,6 +98,20 @@ namespace Sensus.UI.Inputs
 		{
 			if (base.GetView(index) == null)
 			{
+				DelayEnded += (s, e) =>
+				{
+					foreach (ButtonWithValue gridButton in _grid.Buttons)
+					{
+						if (gridButton.Style != null)
+						{
+							if (gridButton.Style == _incorrectStyle)
+							{
+								gridButton.Style = null;
+							}
+						}
+					}
+				};
+
 				_grid = new ButtonGridView(ColumnCount, (s, e) =>
 				{
 					ButtonWithValue button = (ButtonWithValue)s;
@@ -104,16 +129,16 @@ namespace Sensus.UI.Inputs
 					{
 						if (Correct)
 						{
-							button.Style = (Style)Application.Current.Resources["CorrectAnswerButton"];
+							button.Style = _correctStyle; // (Style)Application.Current.Resources["CorrectAnswerButton"];
 						}
 						else
 						{
-							button.Style = (Style)Application.Current.Resources["IncorrectAnswerButton"];
+							button.Style = _incorrectStyle; // (Style)Application.Current.Resources["IncorrectAnswerButton"];
 						}
 					}
 					else if (Selectable)
 					{
-						button.Style = (Style)Application.Current.Resources["SelectedButton"];
+						button.Style = _selectedStyle; // (Style)Application.Current.Resources["SelectedButton"];
 					}
 				});
 
