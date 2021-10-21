@@ -91,6 +91,9 @@ namespace Sensus.UI.Inputs
 		[OnOffUiProperty("Selectable:", true, 4)]
 		public bool Selectable { get; set; }
 
+		[OnOffUiProperty("Leave Incorrect Value:", true, 4)]
+		public bool LeaveIncorrectValue { get; set; }
+
 		[JsonIgnore]
 		public List<ButtonWithValue> GridButtons => _grid?.Buttons.ToList() ?? new List<ButtonWithValue>();
 
@@ -98,19 +101,22 @@ namespace Sensus.UI.Inputs
 		{
 			if (base.GetView(index) == null)
 			{
-				DelayEnded += (s, e) =>
+				if (LeaveIncorrectValue == false)
 				{
-					foreach (ButtonWithValue gridButton in _grid.Buttons)
+					DelayEnded += (s, e) =>
 					{
-						if (gridButton.Style != null)
+						foreach (ButtonWithValue gridButton in _grid.Buttons)
 						{
-							if (gridButton.Style == _incorrectStyle)
+							if (gridButton.Style != null)
 							{
-								gridButton.Style = null;
+								if (gridButton.Style == _incorrectStyle)
+								{
+									gridButton.Style = null;
+								}
 							}
 						}
-					}
-				};
+					};
+				}
 
 				_grid = new ButtonGridView(ColumnCount, (s, e) =>
 				{
