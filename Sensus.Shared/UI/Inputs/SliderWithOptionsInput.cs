@@ -224,7 +224,7 @@ namespace Sensus.UI.Inputs
 				{
 					HorizontalOptions = LayoutOptions.CenterAndExpand,
 					FontSize = 18,
-					Text = "More options...",
+					Text = "More choices ...",
 					TextColor = (Color)Application.Current.Resources["LessDimmedColor"],
 					TextDecorations = TextDecorations.Underline,
 				};
