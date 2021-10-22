@@ -16,7 +16,6 @@ using Sensus.Probes.User.Scripts;
 using Sensus.UI.UiProperties;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -60,10 +59,18 @@ namespace Sensus.UI.Inputs
 					VerticalOptions = LayoutOptions.FillAndExpand
 				};
 
+				double height = -1;
+				
+				if (Height > 0)
+				{
+					height = Height.Value;
+				}
+
 				base.SetView(new StackLayout
 				{
 					Orientation = StackOrientation.Vertical,
-					HorizontalOptions = LayoutOptions.CenterAndExpand,
+					HorizontalOptions = LayoutOptions.FillAndExpand,
+					HeightRequest = height,
 					Children = { _label, _mediaView }
 				});
 
@@ -111,6 +118,9 @@ namespace Sensus.UI.Inputs
 
 		[MediaPickerUiProperty("Media:", true, 7)]
 		public MediaObject Media { get; set; }
+
+		[EntryIntegerUiProperty("Height:", true, 8, false)]
+		public int? Height { get; set; }
 
 		public string CachePath { get; set; }
 
