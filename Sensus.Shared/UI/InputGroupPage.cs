@@ -84,7 +84,6 @@ namespace Sensus.UI
 
 			IsLastPage = totalSteps <= stepNumber;
 			Title = inputGroup.Title ?? title;
-			NavigationPage.SetHasBackButton(this, false);
 
 			StackLayout contentLayout = new StackLayout
 			{
