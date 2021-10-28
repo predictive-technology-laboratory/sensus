@@ -1315,6 +1315,7 @@ namespace Sensus
 		public async Task<IEnumerable<InputGroup>> PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, string title, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, bool confirmNavigation, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action postDisplayCallback)
 		{
 			bool firstPageDisplay = true;
+			INavigation navigation = (Application.Current as App).DetailPage.Navigation;
 
 			// keep a stack of input groups that were displayed so that the user can navigate backward. not all groups are displayed due to display
 			// conditions, so we can't simply decrement the index to navigate backwards.
@@ -1399,17 +1400,15 @@ namespace Sensus
 						// display the page if we've not been canceled
 						else if (!cancellationToken.GetValueOrDefault().IsCancellationRequested)
 						{
-							INavigation navigation = (Application.Current as App).DetailPage.Navigation;
+							Page currentPage = inputGroupPage;
 
 							// display page. only animate the display for the first page.
 							if (inputGroup.UseNavigationBar)
 							{
-								await navigation.PushModalAsync(new NavigationPage(inputGroupPage), firstPageDisplay);
+								currentPage = new NavigationPage(currentPage);
 							}
-							else
-							{
-								await navigation.PushModalAsync(inputGroupPage, firstPageDisplay);
-							}
+
+							await navigation.PushModalAsync(currentPage, firstPageDisplay);
 
 							// only run the post-display callback the first time a page is displayed. the caller expects the callback
 							// to fire only once upon first display.
@@ -1428,9 +1427,9 @@ namespace Sensus
 							// context may have changed (e.g., if prior to the pop the user reopens the app via pending survey 
 							// notification.
 
-							bool animate = navigationResult == InputGroupPage.NavigationResult.Submit || navigationResult == InputGroupPage.NavigationResult.Cancel;
+							//bool animate = navigationResult == InputGroupPage.NavigationResult.Submit || navigationResult == InputGroupPage.NavigationResult.Cancel;
 
-							await navigation.PopModalAsync(animate);
+							//await navigation.PopModalAsync(animate);
 
 							if (navigationResult == InputGroupPage.NavigationResult.Backward)
 							{
@@ -1452,6 +1451,11 @@ namespace Sensus
 						}
 					});
 				}
+			}
+
+			foreach(Page modalPage in navigation.ModalStack.ToList())
+			{
+				await navigation.PopModalAsync(navigation.ModalStack.Count == 1);
 			}
 
 			// process the inputs if the user didn't cancel
