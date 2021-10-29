@@ -453,6 +453,8 @@ namespace Sensus.UI
 
 			Disappearing += async (o, e) =>
 			{
+				_responseTaskCompletionSource.TrySetResult(NavigationResult.Cancel);
+
 				// the page is disappearing, so dispose of inputs
 				foreach (Input displayedInput in displayedInputs)
 				{

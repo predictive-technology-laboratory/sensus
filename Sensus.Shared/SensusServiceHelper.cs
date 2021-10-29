@@ -1307,15 +1307,17 @@ namespace Sensus
 				inputGroup.Inputs.Add(input);
 			}
 
-			IEnumerable<InputGroup> inputGroups = await PromptForInputsAsync(null, null, new[] { inputGroup }, cancellationToken, showCancelButton, nextButtonText, true, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, null);
+			IEnumerable<InputGroup> inputGroups = await PromptForInputsAsync(null, null, new[] { inputGroup }, cancellationToken, showCancelButton, nextButtonText, true, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, false, null);
 
 			return inputGroups?.SelectMany(g => g.Inputs).ToList();
 		}
 
-		public async Task<IEnumerable<InputGroup>> PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, string title, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, bool confirmNavigation, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, Action postDisplayCallback)
+		public async Task<IEnumerable<InputGroup>> PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, string title, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, bool confirmNavigation, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, bool useDetailPage, Action postDisplayCallback)
 		{
 			bool firstPageDisplay = true;
-			INavigation navigation = (Application.Current as App).DetailPage.Navigation;
+			App app = Application.Current as App;
+			INavigation navigation = app.DetailPage.Navigation;
+			Page returnPage = app.DetailPage;
 
 			// keep a stack of input groups that were displayed so that the user can navigate backward. not all groups are displayed due to display
 			// conditions, so we can't simply decrement the index to navigate backwards.
@@ -1408,7 +1410,14 @@ namespace Sensus
 								currentPage = new NavigationPage(currentPage);
 							}
 
-							await navigation.PushModalAsync(currentPage, firstPageDisplay);
+							if (useDetailPage)
+							{
+								app.DetailPage = currentPage;
+							}
+							else
+							{
+								await navigation.PushModalAsync(currentPage, firstPageDisplay);
+							}
 
 							// only run the post-display callback the first time a page is displayed. the caller expects the callback
 							// to fire only once upon first display.
@@ -1453,9 +1462,16 @@ namespace Sensus
 				}
 			}
 
-			foreach(Page modalPage in navigation.ModalStack.ToList())
+			if (useDetailPage)
 			{
-				await navigation.PopModalAsync(navigation.ModalStack.Count == 1);
+				app.DetailPage = returnPage;
+			}
+			else
+			{
+				foreach (Page modalPage in navigation.ModalStack.ToList())
+				{
+					await navigation.PopModalAsync(navigation.ModalStack.Count == 1);
+				}
 			}
 
 			// process the inputs if the user didn't cancel
@@ -1956,7 +1972,7 @@ namespace Sensus
 			await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Opened) ?? Task.CompletedTask);
 			script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Opened, DateTimeOffset.UtcNow, script), CancellationToken.None);
 
-			IEnumerable<InputGroup> inputGroups = await PromptForInputsAsync(script.RunTime, script.Runner.Name, script.InputGroups, null, script.Runner.AllowCancel, null, script.Runner.ConfirmNavigation, null, script.Runner.IncompleteSubmissionConfirmation, "Are you ready to submit your responses?", script.Runner.DisplayProgress, null);
+			IEnumerable<InputGroup> inputGroups = await PromptForInputsAsync(script.RunTime, script.Runner.Name, script.InputGroups, null, script.Runner.AllowCancel, null, script.Runner.ConfirmNavigation, null, script.Runner.IncompleteSubmissionConfirmation, "Are you ready to submit your responses?", script.Runner.DisplayProgress, script.Runner.UseDetailPage, null);
 
 			bool userCancelled = inputGroups == null;
 

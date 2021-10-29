@@ -383,6 +383,9 @@ namespace Sensus.Probes.User.Scripts
 		[OnOffUiProperty("Confirm Navigation:", true, 27)]
 		public bool ConfirmNavigation { get; set; }
 
+		[OnOffUiProperty("Use Detail Page:", true, 28)]
+		public bool UseDetailPage { get; set; }
+
 		[JsonIgnore]
 		public string Caption
 		{

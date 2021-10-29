@@ -325,6 +325,7 @@ namespace Sensus.UI
                         null,
                         null,
                         false,
+                        false,
                         async () =>
                         {
                             ParticipationRewardDatum participationRewardDatum = new ParticipationRewardDatum(DateTimeOffset.UtcNow, selectedProtocol.Participation)
@@ -396,6 +397,7 @@ namespace Sensus.UI
                                 null,
                                 null,
                                 null,
+                                false,
                                 false,
                                 async () =>
                                 {
