@@ -94,7 +94,11 @@ namespace Sensus.UI
 
                 if (scriptRunner.AllowUserInitiation)
                 {
-                    scriptRunner.Probe.UserInitiatedScripts.Add(scriptRunner.Script.Copy(true));
+                    Script copy = scriptRunner.Script.Copy(true);
+
+                    copy.Shuffle();
+
+                    scriptRunner.Probe.UserInitiatedScripts.Add(copy);
                 }
             };
 
