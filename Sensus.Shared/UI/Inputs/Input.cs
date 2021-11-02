@@ -365,19 +365,32 @@ namespace Sensus.UI.Inputs
 					string definedVariable = input.DefinedVariable;
 					if (definedVariable != null)
 					{
-						Protocol protocolForInput = GetProtocol();
+						ScriptRunner runner = GetScriptRunner();
+						Protocol protocolForInput = runner.Probe.Protocol; // GetProtocol();
 
 						if (protocolForInput != null)
 						{
 							// if the input is complete, set the variable on the protocol
 							if (_complete)
 							{
-								protocolForInput.VariableValue[definedVariable] = inputValue.ToString();
+								string stringValue = inputValue.ToString();
+
+								protocolForInput.VariableValue[definedVariable] = stringValue;
+								
+								if (runner.SaveState && runner.SavedRunState != null)
+								{
+									runner.SavedRunState.Variables[definedVariable] = stringValue;
+								}
 							}
 							// if the input is incomplete, set the value to null on the protocol
 							else
 							{
 								protocolForInput.VariableValue[definedVariable] = null;
+
+								if (runner.SaveState && runner.SavedRunState != null)
+								{
+									runner.SavedRunState.Variables[definedVariable] = null;
+								}
 							}
 						}
 					}
@@ -776,7 +789,7 @@ namespace Sensus.UI.Inputs
 
 				// set the style ID on the label so that we can retrieve it when UI testing
 #if UI_TESTING
-                , StyleId = Name + " Label"
+				, StyleId = Name + " Label"
 #endif
 			};
 		}
@@ -850,6 +863,33 @@ namespace Sensus.UI.Inputs
 				// a new id. this is by design in the use case where authentication servers wish to push out an updated
 				// protocol.
 				SensusServiceHelper.Get().Logger.Log("Exception while getting protocol for input:  " + ex.Message, LoggingLevel.Normal, GetType());
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// Gets the <see cref="ScriptRunner"/> containing the current input.
+		/// </summary>
+		/// <returns>The <see cref="ScriptRunner"/>.</returns>
+		private ScriptRunner GetScriptRunner()
+		{
+			try
+			{
+				return SensusServiceHelper.Get().RegisteredProtocols.SelectMany(protocol => protocol.Probes.OfType<ScriptProbe>())					// get script probes
+																								 .Single()											// must be only 1 script probe
+																								 .ScriptRunners										// get runners
+																								 .First(runner => runner.Script.InputGroups			// get input groups for each runner
+																									.SelectMany(inputGroup => inputGroup.Inputs)	// get inputs for each input group
+																									.Any(input => input.Id == _id));				// check if any inputs are the current one. must check ids rather than object references, as we make deep copies of inputs when instantiating scripts to run.
+			}
+			catch (Exception ex)
+			{
+				// there is only one known situation in which multiple protocols may contain inputs with the same
+				// ids:  when the user manually set the protocol id and loads both protocols (one with the original
+				// id and one with the new id. when manually setting the protocol id, any script inputs do not receive
+				// a new id. this is by design in the use case where authentication servers wish to push out an updated
+				// protocol.
+				SensusServiceHelper.Get().Logger.Log("Exception while getting script runner for input:  " + ex.Message, LoggingLevel.Normal, GetType());
 				return null;
 			}
 		}

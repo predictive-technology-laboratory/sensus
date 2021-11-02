@@ -34,6 +34,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)MediaCacheModes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MediaObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MediaStorageMethods.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\SavedScriptRunState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\SliderWithOptionsInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\TimedTextInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\MediaView.cs" />

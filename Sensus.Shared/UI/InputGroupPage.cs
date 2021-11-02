@@ -33,7 +33,8 @@ namespace Sensus.UI
 			Forward,
 			Submit,
 			Cancel,
-			Timeout
+			Timeout,
+			Paused
 		}
 
 		private InputGroup _inputGroup;
@@ -453,7 +454,7 @@ namespace Sensus.UI
 
 			Disappearing += async (o, e) =>
 			{
-				_responseTaskCompletionSource.TrySetResult(NavigationResult.Cancel);
+				_responseTaskCompletionSource.TrySetResult(NavigationResult.Paused);
 
 				// the page is disappearing, so dispose of inputs
 				foreach (Input displayedInput in displayedInputs)
@@ -510,7 +511,7 @@ namespace Sensus.UI
 		protected override bool OnBackButtonPressed()
 		{
 			// the only applies to phones with a hard/soft back button. iOS does not have this button. on 
-			// android, allow the user to cancel the page with the back button.
+			// android, allow the user to cancel/pause the page with the back button.
 			_responseTaskCompletionSource.TrySetResult(NavigationResult.Cancel);
 
 			return base.OnBackButtonPressed();

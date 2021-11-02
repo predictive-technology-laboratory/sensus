@@ -30,6 +30,7 @@ using Sensus.Notifications;
 using Sensus.Exceptions;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Serialization;
+using Xamarin.Forms;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -57,6 +58,54 @@ namespace Sensus.Probes.User.Scripts
 		/// </summary>
 		/// <value>The script.</value>
 		public Script Script { get; set; }
+
+		public SavedScriptRunState SavedRunState { get; set; }
+
+		public static async Task<SavedScriptRunState> ManageStateAsync(Script script)
+		{
+			ScriptRunner runner = script.Runner;
+
+			if (runner.SaveState)
+			{
+				if (runner.SavedRunState != null)
+				{
+					string continuePrompt = runner.ContinuePrompt;
+
+					if (string.IsNullOrWhiteSpace(continuePrompt))
+					{
+						continuePrompt = "Do you want to Continue from where you stopped previously or Start Over?";
+					}
+
+					if (await Application.Current.MainPage.DisplayAlert("Continue?", continuePrompt, "Continue", "Start Over"))
+					{
+						foreach (KeyValuePair<string, string> pair in runner.SavedRunState.Variables)
+						{
+							runner.Probe.Protocol.VariableValue[pair.Key] = pair.Value;
+						}
+					}
+					else
+					{
+						foreach (InputGroup inputGroup in script.InputGroups)
+						{
+							foreach (Input input in inputGroup.Inputs)
+							{
+								input.Reset();
+							}
+						}
+
+						runner.SavedRunState = new SavedScriptRunState();
+					}
+				}
+				else
+				{
+					runner.SavedRunState = new SavedScriptRunState();
+				}
+
+				return runner.SavedRunState;
+			}
+
+			return null;
+		}
 
 		/// <summary>
 		/// Gets the <see cref="IScript"/> that this <see cref="IScriptRunner"/> is configured to run (for NuGet interfacing).
@@ -385,6 +434,12 @@ namespace Sensus.Probes.User.Scripts
 
 		[OnOffUiProperty("Use Detail Page:", true, 28)]
 		public bool UseDetailPage { get; set; }
+
+		[OnOffUiProperty("Save State:", true, 29)]
+		public bool SaveState { get; set; }
+
+		[EntryStringUiProperty("Continue Prompt:", true, 30, false)]
+		public string ContinuePrompt { get; set; }
 
 		[JsonIgnore]
 		public string Caption

@@ -75,8 +75,6 @@ namespace Sensus.UI
 				{
 					ScriptRunner copy = selectedScriptRunner.Copy();
 
-					//MakeNameUnique(copy, probe);
-
 					probe.ScriptRunners.Add(copy);
 				}
 				else if (selectedAction == "Delete")

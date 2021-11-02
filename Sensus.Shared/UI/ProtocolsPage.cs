@@ -105,7 +105,7 @@ namespace Sensus.UI
 						actions.Add("Snooze");
 					}
 
-					if (UserInitiatedScriptsPage.GetProtocolScripts(selectedProtocol).Any())
+					if (UserInitiatedScriptsPage.GetUserInitiatedScripts(selectedProtocol).Any())
 					{
 						actions.Add("Take Surveys");
 					}

@@ -1314,10 +1314,25 @@ namespace Sensus
 
 		public async Task<IEnumerable<InputGroup>> PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, string title, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, bool confirmNavigation, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, bool useDetailPage, Action postDisplayCallback)
 		{
+			PromptForInputsResult result = await PromptForInputsAsync(firstPromptTimestamp, title, inputGroups, cancellationToken, showCancelButton, nextButtonText, confirmNavigation, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, useDetailPage, postDisplayCallback, null);
+
+			return result.InputGroups;
+		}
+
+		protected class PromptForInputsResult
+		{
+			public IEnumerable<InputGroup> InputGroups { get; set; }
+			public InputGroupPage.NavigationResult NavigationResult { get; set; }
+		}
+
+		protected async Task<PromptForInputsResult> PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, string title, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, bool confirmNavigation, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, bool useDetailPage, Action postDisplayCallback, SavedScriptRunState savedState)
+		{
 			bool firstPageDisplay = true;
 			App app = Application.Current as App;
 			INavigation navigation = app.DetailPage.Navigation;
 			Page returnPage = app.DetailPage;
+			InputGroupPage.NavigationResult lastNavigationResult = InputGroupPage.NavigationResult.None;
+			int startInputGroupIndex = 0;
 
 			// keep a stack of input groups that were displayed so that the user can navigate backward. not all groups are displayed due to display
 			// conditions, so we can't simply decrement the index to navigate backwards.
@@ -1346,9 +1361,14 @@ namespace Sensus
 				}
 			}
 
-			for (int inputGroupNum = 0; inputGroups != null && inputGroupNum < inputGroups.Count() && !cancellationToken.GetValueOrDefault().IsCancellationRequested; ++inputGroupNum)
+			if (savedState != null)
 			{
-				InputGroup inputGroup = inputGroups.ElementAt(inputGroupNum);
+				startInputGroupIndex = savedState.Position;
+			}
+
+			for (int inputGroupIndex = startInputGroupIndex; inputGroups != null && inputGroupIndex < inputGroups.Count() && !cancellationToken.GetValueOrDefault().IsCancellationRequested; ++inputGroupIndex)
+			{
+				InputGroup inputGroup = inputGroups.ElementAt(inputGroupIndex);
 
 				// run voice inputs by themselves, and only if the input group contains exactly one input and that input is a voice input.
 				if (inputGroup.Inputs.Count == 1 && inputGroup.Inputs[0] is VoiceInput)
@@ -1374,7 +1394,7 @@ namespace Sensus
 				{
 					await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
 					{
-						int stepNumber = inputGroupNum + 1;
+						int stepNumber = inputGroupIndex + 1;
 
 						InputGroupPage inputGroupPage = new InputGroupPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupNumBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, confirmNavigation, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, title);
 
@@ -1390,13 +1410,13 @@ namespace Sensus
 							// if we're on the final input group and no inputs were shown, then we're at the end and we're ready to submit the 
 							// users' responses. first check that the user is ready to submit. if the user isn't ready then move back to the previous 
 							// input group in the backstack, if there is one.
-							if (inputGroupNum >= inputGroups.Count() - 1 &&                                                     // this is the final input group
+							if (inputGroupIndex >= inputGroups.Count() - 1 &&                                                     // this is the final input group
 								inputGroupNumBackStack.Count > 0 &&                                                             // there is an input group to go back to (the current one was not displayed)
 								!string.IsNullOrWhiteSpace(submitConfirmation) &&                                               // we have a submit confirmation
 								confirmNavigation &&                                                                            // we should confirm submission
 								!(await Application.Current.MainPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No"))) // user is not ready to submit
 							{
-								inputGroupNum = inputGroupNumBackStack.Pop() - 1;
+								inputGroupIndex = inputGroupNumBackStack.Pop() - 1;
 							}
 						}
 						// display the page if we've not been canceled
@@ -1427,9 +1447,9 @@ namespace Sensus
 								firstPageDisplay = false;
 							}
 
-							InputGroupPage.NavigationResult navigationResult = await inputGroupPage.ResponseTask;
+							lastNavigationResult = await inputGroupPage.ResponseTask;
 
-							_logger.Log("Input group page navigation result:  " + navigationResult, LoggingLevel.Normal, GetType());
+							_logger.Log("Input group page navigation result:  " + lastNavigationResult, LoggingLevel.Normal, GetType());
 
 							// animate pop if the user submitted or canceled. when doing this, reference the navigation context
 							// on the page rather than the local 'navigation' variable. this is necessary because the navigation
@@ -1440,17 +1460,17 @@ namespace Sensus
 
 							//await navigation.PopModalAsync(animate);
 
-							if (navigationResult == InputGroupPage.NavigationResult.Backward)
+							if (lastNavigationResult == InputGroupPage.NavigationResult.Backward)
 							{
 								// we only allow backward navigation when we have something on the back stack. so the following is safe.
-								inputGroupNum = inputGroupNumBackStack.Pop() - 1;
+								inputGroupIndex = inputGroupNumBackStack.Pop() - 1;
 							}
-							else if (navigationResult == InputGroupPage.NavigationResult.Forward || navigationResult == InputGroupPage.NavigationResult.Timeout)
+							else if (lastNavigationResult == InputGroupPage.NavigationResult.Forward || lastNavigationResult == InputGroupPage.NavigationResult.Timeout)
 							{
 								// keep the group in the back stack.
-								inputGroupNumBackStack.Push(inputGroupNum);
+								inputGroupNumBackStack.Push(inputGroupIndex);
 							}
-							else if (navigationResult == InputGroupPage.NavigationResult.Cancel)
+							else if (lastNavigationResult == InputGroupPage.NavigationResult.Cancel)
 							{
 								inputGroups = null;
 							}
@@ -1459,6 +1479,11 @@ namespace Sensus
 							// group and we are about to return.
 						}
 					});
+				}
+
+				if (savedState != null)
+				{
+					savedState.Position = inputGroupIndex;
 				}
 			}
 
@@ -1539,7 +1564,7 @@ namespace Sensus
 				#endregion
 			}
 
-			return inputGroups;
+			return new PromptForInputsResult { InputGroups = inputGroups, NavigationResult = lastNavigationResult }; // inputGroups;
 		}
 
 		public void GetPositionsFromMapAsync(Xamarin.Forms.Maps.Position address, string newPinName, Action<List<Xamarin.Forms.Maps.Position>> callback)
@@ -1972,112 +1997,127 @@ namespace Sensus
 			await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Opened) ?? Task.CompletedTask);
 			script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Opened, DateTimeOffset.UtcNow, script), CancellationToken.None);
 
-			IEnumerable<InputGroup> inputGroups = await PromptForInputsAsync(script.RunTime, script.Runner.Name, script.InputGroups, null, script.Runner.AllowCancel, null, script.Runner.ConfirmNavigation, null, script.Runner.IncompleteSubmissionConfirmation, "Are you ready to submit your responses?", script.Runner.DisplayProgress, script.Runner.UseDetailPage, null);
+			// determine what happens with the script state.
+			SavedScriptRunState savedState = await ScriptRunner.ManageStateAsync(script);
 
-			bool userCancelled = inputGroups == null;
+			PromptForInputsResult result = await PromptForInputsAsync(script.RunTime, script.Runner.Name, script.InputGroups, null, script.Runner.AllowCancel, null, script.Runner.ConfirmNavigation, null, script.Runner.IncompleteSubmissionConfirmation, "Are you ready to submit your responses?", script.Runner.DisplayProgress, script.Runner.UseDetailPage, null, savedState);
 
-			// track script state and completions. do this immediately so that all timestamps are as accurate as possible.
-			if (userCancelled)
+			if (result.NavigationResult == InputGroupPage.NavigationResult.Paused)
 			{
-				// let the script agent know and store a datum to record the event
+				Logger.Log("\"" + script.Runner.Name + "\" was paused.", LoggingLevel.Normal, typeof(Script));
+
 				await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Cancelled) ?? Task.CompletedTask);
-				script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Cancelled, DateTimeOffset.UtcNow, script), CancellationToken.None);
+				// temporary ScriptState value until the Nuget package is updated
+				script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum((ScriptState)9, DateTimeOffset.UtcNow, script), CancellationToken.None);
 			}
-			else
+			else if (result.NavigationResult == InputGroupPage.NavigationResult.Submit || result.NavigationResult == InputGroupPage.NavigationResult.Cancel)
 			{
-				// let the script agent know and store a datum to record the event
-				await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Submitted) ?? Task.CompletedTask);
-				script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Submitted, DateTimeOffset.UtcNow, script), CancellationToken.None);
+				// the script has either been canceled or submitted, so the state can be cleared.
+				script.Runner.SavedRunState = null;
 
-				// track times when script is completely valid and wasn't cancelled by the user
-				if (script.Valid)
+				// track script state and completions. do this immediately so that all timestamps are as accurate as possible.
+				if (result.NavigationResult == InputGroupPage.NavigationResult.Cancel)
 				{
-					// add completion time and remove all completion times before the participation horizon
-					lock (script.Runner.CompletionTimes)
-					{
-						script.Runner.CompletionTimes.Add(DateTime.Now);
-						script.Runner.CompletionTimes.RemoveAll(completionTime => completionTime < script.Runner.Probe.Protocol.ParticipationHorizon);
-					}
+					// let the script agent know and store a datum to record the event
+					await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Cancelled) ?? Task.CompletedTask);
+					script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Cancelled, DateTimeOffset.UtcNow, script), CancellationToken.None);
+				}
+				else if (result.NavigationResult == InputGroupPage.NavigationResult.Submit)
+				{
+					// let the script agent know and store a datum to record the event
+					await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Submitted) ?? Task.CompletedTask);
+					script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Submitted, DateTimeOffset.UtcNow, script), CancellationToken.None);
 
-					if (script.Runner.KeepUntilCompleted)
+					// track times when script is completely valid and wasn't cancelled by the user
+					if (script.Valid)
 					{
-						if (RemoveScripts(script))
+						// add completion time and remove all completion times before the participation horizon
+						lock (script.Runner.CompletionTimes)
 						{
-							await IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.Badge, script.Runner.Probe.Protocol);
+							script.Runner.CompletionTimes.Add(DateTime.Now);
+							script.Runner.CompletionTimes.RemoveAll(completionTime => completionTime < script.Runner.Probe.Protocol.ParticipationHorizon);
+						}
+
+						if (script.Runner.KeepUntilCompleted)
+						{
+							if (RemoveScripts(script))
+							{
+								await IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.Badge, script.Runner.Probe.Protocol);
+							}
+						}
+
+						if (await script.Runner.ScheduleScriptFromInputAsync(script))
+						{
+							await script.Runner.ScheduleNextScriptToRunAsync();
 						}
 					}
-
-					if (await script.Runner.ScheduleScriptFromInputAsync(script))
-					{
-						await script.Runner.ScheduleNextScriptToRunAsync();
-					}
 				}
-			}
 
-			// process/store all inputs in the script
-			bool inputStored = false;
-			foreach (InputGroup inputGroup in script.InputGroups)
-			{
-				foreach (Input input in inputGroup.Inputs)
+				// process/store all inputs in the script
+				bool inputStored = false;
+				foreach (InputGroup inputGroup in script.InputGroups)
 				{
-					if (userCancelled)
+					foreach (Input input in inputGroup.Inputs)
 					{
-						input.Reset();
-					}
-					else if (input.Store)
-					{
-						// the _script.Id allows us to link the data to the script that the user created. it never changes. on the other hand, the script
-						// that is passed into this method is always a copy of the user-created script. the script.Id allows us to link the various data
-						// collected from the user into a single logical response. each run of the script has its own script.Id so that responses can be
-						// grouped across runs. this is the difference between scriptId and runId in the following line.
-						await script.Runner.Probe.StoreDatumAsync(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow),
-																						  script.Runner.Script.Id,
-																						  script.Runner.Name,
-																						  input.GroupId,
-																						  input.Id,
-																						  script.Id,
-																						  input.LabelText,
-																						  input.Name,
-																						  input.Value,
-																						  script.CurrentDatum?.Id,
-																						  input.Latitude,
-																						  input.Longitude,
-																						  input.LocationUpdateTimestamp,
-																						  script.RunTime.Value,
-																						  input.CompletionRecords,
-																						  input.SubmissionTimestamp.Value,
-																						  manualRun), CancellationToken.None);
+						if (result.NavigationResult == InputGroupPage.NavigationResult.Cancel)
+						{
+							input.Reset();
+						}
+						else if (input.Store)
+						{
+							// the _script.Id allows us to link the data to the script that the user created. it never changes. on the other hand, the script
+							// that is passed into this method is always a copy of the user-created script. the script.Id allows us to link the various data
+							// collected from the user into a single logical response. each run of the script has its own script.Id so that responses can be
+							// grouped across runs. this is the difference between scriptId and runId in the following line.
+							await script.Runner.Probe.StoreDatumAsync(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow),
+																							  script.Runner.Script.Id,
+																							  script.Runner.Name,
+																							  input.GroupId,
+																							  input.Id,
+																							  script.Id,
+																							  input.LabelText,
+																							  input.Name,
+																							  input.Value,
+																							  script.CurrentDatum?.Id,
+																							  input.Latitude,
+																							  input.Longitude,
+																							  input.LocationUpdateTimestamp,
+																							  script.RunTime.Value,
+																							  input.CompletionRecords,
+																							  input.SubmissionTimestamp.Value,
+																							  manualRun), CancellationToken.None);
 
-						inputStored = true;
+							inputStored = true;
+						}
 					}
 				}
-			}
 
-			// remove the submitted script. this should be done before the script is marked 
-			// as not submitting in order to prevent the user from reopening it.
-			if (userCancelled == false && script.Runner.KeepUntilCompleted == false)
-			{
-				if (RemoveScripts(script))
+				// remove the submitted script. this should be done before the script is marked 
+				// as not submitting in order to prevent the user from reopening it.
+				if (result.NavigationResult != InputGroupPage.NavigationResult.Cancel && script.Runner.KeepUntilCompleted == false)
 				{
-					await IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.Badge, script.Runner.Probe.Protocol);
+					if (RemoveScripts(script))
+					{
+						await IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.Badge, script.Runner.Probe.Protocol);
+					}
+
+					submitted = true;
 				}
 
-				submitted = true;
+				// update UI to indicate that the script is no longer being submitted. this should 
+				// be done after the script is removed in order to prevent the user from retaking the script.
+				script.Submitting = false;
+
+				// run a local-to-remote transfer if desired, respecting wifi requirements. do this after everything above, as it may take
+				// quite some time to transfer the data depending on its size.
+				if (inputStored && script.Runner.ForceRemoteStorageOnSurveySubmission)
+				{
+					Logger.Log("Forcing a local-to-remote transfer.", LoggingLevel.Normal, typeof(Script));
+					await script.Runner.Probe.Protocol.RemoteDataStore.WriteLocalDataStoreAsync(CancellationToken.None);
+				}
+
+				Logger.Log("\"" + script.Runner.Name + "\" has completed processing.", LoggingLevel.Normal, typeof(Script));
 			}
-
-			// update UI to indicate that the script is no longer being submitted. this should 
-			// be done after the script is removed in order to prevent the user from retaking the script.
-			script.Submitting = false;
-
-			// run a local-to-remote transfer if desired, respecting wifi requirements. do this after everything above, as it may take
-			// quite some time to transfer the data depending on its size.
-			if (inputStored && script.Runner.ForceRemoteStorageOnSurveySubmission)
-			{
-				Logger.Log("Forcing a local-to-remote transfer.", LoggingLevel.Normal, typeof(Script));
-				await script.Runner.Probe.Protocol.RemoteDataStore.WriteLocalDataStoreAsync(CancellationToken.None);
-			}
-
-			Logger.Log("\"" + script.Runner.Name + "\" has completed processing.", LoggingLevel.Normal, typeof(Script));
 
 			return submitted;
 		}
