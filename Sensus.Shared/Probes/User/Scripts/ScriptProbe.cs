@@ -151,6 +151,7 @@ namespace Sensus.Probes.User.Scripts
 			get { return _scriptRunners; }
 		}
 
+		[JsonIgnore]
 		public ObservableCollection<Script> UserInitiatedScripts { get; set; }
 
 		public sealed override string DisplayName
