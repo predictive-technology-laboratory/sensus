@@ -1338,7 +1338,7 @@ namespace Sensus
 
 			// keep a stack of input groups that were displayed so that the user can navigate backward. not all groups are displayed due to display
 			// conditions, so we can't simply decrement the index to navigate backwards.
-			Stack<int> inputGroupNumBackStack = new Stack<int>();
+			Stack<int> inputGroupBackStack = new Stack<int>();
 
 			// assign inputs to scoreinputs by scoregroup
 			IEnumerable<Input> allInputs = inputGroups.SelectMany(x => x.Inputs);
@@ -1365,7 +1365,9 @@ namespace Sensus
 
 			if (savedState != null)
 			{
-				startInputGroupIndex = savedState.Position;
+				inputGroupBackStack = new Stack<int>(savedState.PresentedInputGroupPositions);
+
+				startInputGroupIndex = savedState.PresentedInputGroupPositions.Count;
 			}
 
 			for (int inputGroupIndex = startInputGroupIndex; inputGroups != null && inputGroupIndex < inputGroups.Count() && !cancellationToken.GetValueOrDefault().IsCancellationRequested; ++inputGroupIndex)
@@ -1398,7 +1400,7 @@ namespace Sensus
 					{
 						int stepNumber = inputGroupIndex + 1;
 
-						InputGroupPage inputGroupPage = new InputGroupPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupNumBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, confirmNavigation, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, title);
+						InputGroupPage inputGroupPage = new InputGroupPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, confirmNavigation, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, title);
 
 						// do not display prompts page under the following conditions:
 						//
@@ -1413,12 +1415,12 @@ namespace Sensus
 							// users' responses. first check that the user is ready to submit. if the user isn't ready then move back to the previous 
 							// input group in the backstack, if there is one.
 							if (inputGroupIndex >= inputGroups.Count() - 1 &&                                                     // this is the final input group
-								inputGroupNumBackStack.Count > 0 &&                                                             // there is an input group to go back to (the current one was not displayed)
+								inputGroupBackStack.Count > 0 &&                                                             // there is an input group to go back to (the current one was not displayed)
 								!string.IsNullOrWhiteSpace(submitConfirmation) &&                                               // we have a submit confirmation
 								confirmNavigation &&                                                                            // we should confirm submission
 								!(await Application.Current.MainPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No"))) // user is not ready to submit
 							{
-								inputGroupIndex = inputGroupNumBackStack.Pop() - 1;
+								inputGroupIndex = inputGroupBackStack.Pop() - 1;
 							}
 						}
 						// display the page if we've not been canceled
@@ -1465,12 +1467,12 @@ namespace Sensus
 							if (lastNavigationResult == InputGroupPage.NavigationResult.Backward)
 							{
 								// we only allow backward navigation when we have something on the back stack. so the following is safe.
-								inputGroupIndex = inputGroupNumBackStack.Pop() - 1;
+								inputGroupIndex = inputGroupBackStack.Pop() - 1;
 							}
 							else if (lastNavigationResult == InputGroupPage.NavigationResult.Forward || lastNavigationResult == InputGroupPage.NavigationResult.Timeout)
 							{
 								// keep the group in the back stack.
-								inputGroupNumBackStack.Push(inputGroupIndex);
+								inputGroupBackStack.Push(inputGroupIndex);
 							}
 							else if (lastNavigationResult == InputGroupPage.NavigationResult.Cancel)
 							{
@@ -1485,7 +1487,7 @@ namespace Sensus
 
 				if (savedState != null)
 				{
-					savedState.Position = inputGroupIndex;
+					savedState.PresentedInputGroupPositions = inputGroupBackStack.ToList();
 				}
 			}
 

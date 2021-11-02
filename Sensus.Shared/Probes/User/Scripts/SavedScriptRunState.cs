@@ -7,12 +7,11 @@ namespace Sensus.Probes.User.Scripts
 	{
 		public SavedScriptRunState()
 		{
-			Inputs = new List<Input>();
+			PresentedInputGroupPositions = new List<int>();
 			Variables = new Dictionary<string, string>();
 		}
 
-		public int Position { get; set; }
-		public List<Input> Inputs { get; set; }
+		public List<int> PresentedInputGroupPositions { get; set; }
 		public Dictionary<string, string> Variables { get; set; }
 	}
 }
