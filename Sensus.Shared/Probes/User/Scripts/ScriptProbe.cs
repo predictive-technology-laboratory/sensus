@@ -247,7 +247,11 @@ namespace Sensus.Probes.User.Scripts
 					{
 						if (runner.AllowUserInitiation)
 						{
-							UserInitiatedScripts.Add(runner.Script.Copy(true));
+							Script copy = runner.Script.Copy(true);
+
+							copy.Shuffle();
+
+							UserInitiatedScripts.Add(copy);
 						}
 					}
 				}

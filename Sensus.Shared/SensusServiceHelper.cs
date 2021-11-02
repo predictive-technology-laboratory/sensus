@@ -973,28 +973,30 @@ namespace Sensus
 
 		public async Task AddScriptAsync(Script script, RunMode runMode)
 		{
-			// shuffle input groups if needed, but only if there are no display conditions involved. display
-			// conditions assume that the input groups will be displayed in a particular order (i.e., non-shuffled).
-			// if a display condition is present and the groups are shuffled, then it could happen that a group's
-			// inputs (being conditioned on a subsequent group) are not shown.
-			Random random = new Random();
-			if (script.Runner.ShuffleInputGroups &&
-				!script.InputGroups.SelectMany(inputGroup => inputGroup.Inputs)
-								   .SelectMany(input => input.DisplayConditions)
-								   .Any())
-			{
-				random.Shuffle(script.InputGroups);
-			}
+			//// shuffle input groups if needed, but only if there are no display conditions involved. display
+			//// conditions assume that the input groups will be displayed in a particular order (i.e., non-shuffled).
+			//// if a display condition is present and the groups are shuffled, then it could happen that a group's
+			//// inputs (being conditioned on a subsequent group) are not shown.
+			//Random random = new Random();
+			//if (script.Runner.ShuffleInputGroups &&
+			//	!script.InputGroups.SelectMany(inputGroup => inputGroup.Inputs)
+			//					   .SelectMany(input => input.DisplayConditions)
+			//					   .Any())
+			//{
+			//	random.Shuffle(script.InputGroups);
+			//}
 
-			// shuffle inputs in groups if needed. it's fine to shuffle the inputs within a group even when there
-			// are display conditions, as display conditions only hold between inputs in different groups.
-			foreach (InputGroup inputGroup in script.InputGroups)
-			{
-				if (inputGroup.ShuffleInputs)
-				{
-					random.Shuffle(inputGroup.Inputs);
-				}
-			}
+			//// shuffle inputs in groups if needed. it's fine to shuffle the inputs within a group even when there
+			//// are display conditions, as display conditions only hold between inputs in different groups.
+			//foreach (InputGroup inputGroup in script.InputGroups)
+			//{
+			//	if (inputGroup.ShuffleInputs)
+			//	{
+			//		random.Shuffle(inputGroup.Inputs);
+			//	}
+			//}
+
+			script.Shuffle();
 
 			bool modifiedScriptsToRun = false;
 
