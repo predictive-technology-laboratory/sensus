@@ -61,6 +61,8 @@ namespace Sensus.UI
 
 		public bool IsLastPage { get; }
 
+		public string InputGroupId => _inputGroup.Id;
+
 		public InputGroupPage(InputGroup inputGroup,
 							  int stepNumber,
 							  int totalSteps,

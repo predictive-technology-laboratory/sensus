@@ -59,15 +59,15 @@ namespace Sensus.Probes.User.Scripts
 		/// <value>The script.</value>
 		public Script Script { get; set; }
 
-		public SavedScriptRunState SavedRunState { get; set; }
+		public SavedScriptState SavedState { get; set; }
 
-		public static async Task<SavedScriptRunState> ManageStateAsync(Script script)
+		public static async Task<SavedScriptState> ManageStateAsync(Script script)
 		{
 			ScriptRunner runner = script.Runner;
 
 			if (runner.SaveState)
 			{
-				if (runner.SavedRunState != null)
+				if (runner.SavedState != null)
 				{
 					string continuePrompt = runner.ContinuePrompt;
 
@@ -78,7 +78,7 @@ namespace Sensus.Probes.User.Scripts
 
 					if (await Application.Current.MainPage.DisplayAlert("Continue?", continuePrompt, "Continue", "Start Over"))
 					{
-						foreach (KeyValuePair<string, string> pair in runner.SavedRunState.Variables)
+						foreach (KeyValuePair<string, string> pair in runner.SavedState.Variables)
 						{
 							runner.Probe.Protocol.VariableValue[pair.Key] = pair.Value;
 						}
@@ -93,15 +93,15 @@ namespace Sensus.Probes.User.Scripts
 							}
 						}
 
-						runner.SavedRunState = new SavedScriptRunState();
+						runner.SavedState = new SavedScriptState();
 					}
 				}
 				else
 				{
-					runner.SavedRunState = new SavedScriptRunState();
+					runner.SavedState = new SavedScriptState();
 				}
 
-				return runner.SavedRunState;
+				return runner.SavedState;
 			}
 
 			return null;

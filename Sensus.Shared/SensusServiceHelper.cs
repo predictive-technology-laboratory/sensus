@@ -1327,7 +1327,7 @@ namespace Sensus
 			public InputGroupPage.NavigationResult NavigationResult { get; set; }
 		}
 
-		protected async Task<PromptForInputsResult> PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, string title, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, bool confirmNavigation, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, bool useDetailPage, Action postDisplayCallback, SavedScriptRunState savedState)
+		protected async Task<PromptForInputsResult> PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, string title, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, bool confirmNavigation, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, bool useDetailPage, Action postDisplayCallback, SavedScriptState savedState)
 		{
 			bool firstPageDisplay = true;
 			App app = Application.Current as App;
@@ -1365,9 +1365,10 @@ namespace Sensus
 
 			if (savedState != null)
 			{
-				inputGroupBackStack = new Stack<int>(savedState.PresentedInputGroupPositions);
+				// put the saved input group positions onto the local stack and have the saved managed by the presentation loop.
+				inputGroupBackStack = savedState.InputGroupStack;
 
-				startInputGroupIndex = savedState.PresentedInputGroupPositions.Count;
+				startInputGroupIndex = savedState.InputGroupStack.Count;
 			}
 
 			for (int inputGroupIndex = startInputGroupIndex; inputGroups != null && inputGroupIndex < inputGroups.Count() && !cancellationToken.GetValueOrDefault().IsCancellationRequested; ++inputGroupIndex)
@@ -1484,11 +1485,6 @@ namespace Sensus
 						}
 					});
 				}
-
-				if (savedState != null)
-				{
-					savedState.PresentedInputGroupPositions = inputGroupBackStack.ToList();
-				}
 			}
 
 			if (useDetailPage)
@@ -1568,7 +1564,7 @@ namespace Sensus
 				#endregion
 			}
 
-			return new PromptForInputsResult { InputGroups = inputGroups, NavigationResult = lastNavigationResult }; // inputGroups;
+			return new PromptForInputsResult { InputGroups = inputGroups, NavigationResult = lastNavigationResult };
 		}
 
 		public void GetPositionsFromMapAsync(Xamarin.Forms.Maps.Position address, string newPinName, Action<List<Xamarin.Forms.Maps.Position>> callback)
@@ -2002,7 +1998,7 @@ namespace Sensus
 			script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Opened, DateTimeOffset.UtcNow, script), CancellationToken.None);
 
 			// determine what happens with the script state.
-			SavedScriptRunState savedState = await ScriptRunner.ManageStateAsync(script);
+			SavedScriptState savedState = await ScriptRunner.ManageStateAsync(script);
 
 			PromptForInputsResult result = await PromptForInputsAsync(script.RunTime, script.Runner.Name, script.InputGroups, null, script.Runner.AllowCancel, null, script.Runner.ConfirmNavigation, null, script.Runner.IncompleteSubmissionConfirmation, "Are you ready to submit your responses?", script.Runner.DisplayProgress, script.Runner.UseDetailPage, null, savedState);
 
@@ -2013,11 +2009,44 @@ namespace Sensus
 				await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Cancelled) ?? Task.CompletedTask);
 				// temporary ScriptState value until the Nuget package is updated
 				script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum((ScriptState)9, DateTimeOffset.UtcNow, script), CancellationToken.None);
+
+				if (savedState != null && result.InputGroups != null)
+				{
+					InputGroup[] inputGroups = result.InputGroups.ToArray();
+
+					foreach(int index in savedState.InputGroupStack)
+					{
+						InputGroup inputGroup = inputGroups[index];
+
+						foreach (Input input in inputGroup.Inputs)
+						{
+							string key = $"{inputGroup.Id}.{input.Id}";
+							
+							savedState.SavedInputs[key] = new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow),
+																			script.Runner.Script.Id,
+																			script.Runner.Name,
+																			input.GroupId,
+																			input.Id,
+																			script.Id,
+																			input.LabelText,
+																			input.Name,
+																			input.Value,
+																			script.CurrentDatum?.Id,
+																			input.Latitude,
+																			input.Longitude,
+																			input.LocationUpdateTimestamp,
+																			script.RunTime.Value,
+																			input.CompletionRecords,
+																			input.SubmissionTimestamp.Value,
+																			manualRun);
+						}
+					}
+				}
 			}
 			else if (result.NavigationResult == InputGroupPage.NavigationResult.Submit || result.NavigationResult == InputGroupPage.NavigationResult.Cancel)
 			{
 				// the script has either been canceled or submitted, so the state can be cleared.
-				script.Runner.SavedRunState = null;
+				script.Runner.SavedState = null;
 
 				// track script state and completions. do this immediately so that all timestamps are as accurate as possible.
 				if (result.NavigationResult == InputGroupPage.NavigationResult.Cancel)
@@ -2069,27 +2098,37 @@ namespace Sensus
 						}
 						else if (input.Store)
 						{
-							// the _script.Id allows us to link the data to the script that the user created. it never changes. on the other hand, the script
-							// that is passed into this method is always a copy of the user-created script. the script.Id allows us to link the various data
-							// collected from the user into a single logical response. each run of the script has its own script.Id so that responses can be
-							// grouped across runs. this is the difference between scriptId and runId in the following line.
-							await script.Runner.Probe.StoreDatumAsync(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow),
-																							  script.Runner.Script.Id,
-																							  script.Runner.Name,
-																							  input.GroupId,
-																							  input.Id,
-																							  script.Id,
-																							  input.LabelText,
-																							  input.Name,
-																							  input.Value,
-																							  script.CurrentDatum?.Id,
-																							  input.Latitude,
-																							  input.Longitude,
-																							  input.LocationUpdateTimestamp,
-																							  script.RunTime.Value,
-																							  input.CompletionRecords,
-																							  input.SubmissionTimestamp.Value,
-																							  manualRun), CancellationToken.None);
+							if (input.Complete == false && savedState != null)
+							{
+								if (savedState.SavedInputs.TryGetValue($"{inputGroup.Id}.{input.Id}", out ScriptDatum savedInput))
+								{
+									await script.Runner.Probe.StoreDatumAsync(savedInput, CancellationToken.None);
+								}
+							}
+							else
+							{
+								// the _script.Id allows us to link the data to the script that the user created. it never changes. on the other hand, the script
+								// that is passed into this method is always a copy of the user-created script. the script.Id allows us to link the various data
+								// collected from the user into a single logical response. each run of the script has its own script.Id so that responses can be
+								// grouped across runs. this is the difference between scriptId and runId in the following line.
+								await script.Runner.Probe.StoreDatumAsync(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow),
+																								  script.Runner.Script.Id,
+																								  script.Runner.Name,
+																								  input.GroupId,
+																								  input.Id,
+																								  script.Id,
+																								  input.LabelText,
+																								  input.Name,
+																								  input.Value,
+																								  script.CurrentDatum?.Id,
+																								  input.Latitude,
+																								  input.Longitude,
+																								  input.LocationUpdateTimestamp,
+																								  script.RunTime.Value,
+																								  input.CompletionRecords,
+																								  input.SubmissionTimestamp.Value,
+																								  manualRun), CancellationToken.None);
+							}
 
 							inputStored = true;
 						}

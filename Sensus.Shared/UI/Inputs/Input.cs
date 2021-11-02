@@ -373,13 +373,13 @@ namespace Sensus.UI.Inputs
 							// if the input is complete, set the variable on the protocol
 							if (_complete)
 							{
-								string stringValue = inputValue.ToString();
+								string variableValue = inputValue.ToString();
 
-								protocolForInput.VariableValue[definedVariable] = stringValue;
-								
-								if (runner.SaveState && runner.SavedRunState != null)
+								protocolForInput.VariableValue[definedVariable] = variableValue;
+
+								if (runner.SaveState && runner.SavedState != null)
 								{
-									runner.SavedRunState.Variables[definedVariable] = stringValue;
+									runner.SavedState.Variables[definedVariable] = variableValue;
 								}
 							}
 							// if the input is incomplete, set the value to null on the protocol
@@ -387,9 +387,9 @@ namespace Sensus.UI.Inputs
 							{
 								protocolForInput.VariableValue[definedVariable] = null;
 
-								if (runner.SaveState && runner.SavedRunState != null)
+								if (runner.SaveState && runner.SavedState != null)
 								{
-									runner.SavedRunState.Variables[definedVariable] = null;
+									runner.SavedState.Variables[definedVariable] = null;
 								}
 							}
 						}
@@ -875,12 +875,12 @@ namespace Sensus.UI.Inputs
 		{
 			try
 			{
-				return SensusServiceHelper.Get().RegisteredProtocols.SelectMany(protocol => protocol.Probes.OfType<ScriptProbe>())					// get script probes
-																								 .Single()											// must be only 1 script probe
-																								 .ScriptRunners										// get runners
-																								 .First(runner => runner.Script.InputGroups			// get input groups for each runner
-																									.SelectMany(inputGroup => inputGroup.Inputs)	// get inputs for each input group
-																									.Any(input => input.Id == _id));				// check if any inputs are the current one. must check ids rather than object references, as we make deep copies of inputs when instantiating scripts to run.
+				return SensusServiceHelper.Get().RegisteredProtocols.SelectMany(protocol => protocol.Probes.OfType<ScriptProbe>())                  // get script probes
+																								 .Single()                                          // must be only 1 script probe
+																								 .ScriptRunners                                     // get runners
+																								 .First(runner => runner.Script.InputGroups         // get input groups for each runner
+																									.SelectMany(inputGroup => inputGroup.Inputs)    // get inputs for each input group
+																									.Any(input => input.Id == _id));                // check if any inputs are the current one. must check ids rather than object references, as we make deep copies of inputs when instantiating scripts to run.
 			}
 			catch (Exception ex)
 			{
