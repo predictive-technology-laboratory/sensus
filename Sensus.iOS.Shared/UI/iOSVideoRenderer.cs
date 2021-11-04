@@ -8,6 +8,7 @@ using AVKit;
 using Foundation;
 using CoreGraphics;
 using System;
+using System.Linq;
 
 [assembly: ExportRenderer(typeof(VideoPlayer), typeof(iOSVideoRenderer))]
 
@@ -60,7 +61,7 @@ namespace Sensus.iOS.UI
 
 						if (Element.Parent is View parent && parent.Parent is ContentView == false)
 						{
-							CGSize size = _playerItem.Asset.Tracks[0].NaturalSize;
+							CGSize size = _playerItem.Asset.Tracks.FirstOrDefault()?.NaturalSize ?? CGSize.Empty;
 
 							double ratio = size.Width / parent.Width;
 
