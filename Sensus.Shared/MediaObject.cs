@@ -60,7 +60,7 @@ namespace Sensus
 				byte[] hash = sha.ComputeHash(Encoding.UTF8.GetBytes(fileName));
 				Guid guid = new Guid(hash);
 
-				cacheName = $"{guid}.{extension}";
+				cacheName = $"{guid}{extension}";
 			}
 
 			return Path.Combine(cachePath, cacheName);
