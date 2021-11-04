@@ -52,6 +52,12 @@ namespace Sensus.iOS.UI
 				{
 					if (_player.Status == AVPlayerStatus.ReadyToPlay)
 					{
+						AVAudioSession audioSession = AVAudioSession.SharedInstance();
+
+						audioSession.SetCategory(AVAudioSessionCategory.Playback);
+						audioSession.SetMode(AVAudioSession.ModeMoviePlayback, out _);
+						audioSession.SetActive(true);
+
 						if (Element.Parent is View parent && parent.Parent is ContentView == false)
 						{
 							CGSize size = _playerItem.Asset.Tracks[0].NaturalSize;
