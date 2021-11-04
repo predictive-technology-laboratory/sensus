@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Runtime.Serialization;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -49,12 +50,23 @@ namespace Sensus
 
 			return path;
 		}
-		private static string GetCacheFileName(string cachePath)
+		private static string GetCacheFileName(string fileName, string cachePath)
 		{
-			return Path.Combine(cachePath, Guid.NewGuid().ToString());
+			string extension = Path.GetExtension(fileName);
+			string cacheName = null;
+
+			using (SHA256 sha = SHA256.Create())
+			{
+				byte[] hash = sha.ComputeHash(Encoding.UTF8.GetBytes(fileName));
+				Guid guid = new Guid(hash);
+
+				cacheName = $"{guid}.{extension}";
+			}
+
+			return Path.Combine(cachePath, cacheName);
 		}
 
-		public static async Task<MediaObject> FromFileAsync(Stream stream, string type, string cachePath)
+		public static async Task<MediaObject> FromFileAsync(string path, Stream stream, string type, string cachePath)
 		{
 			const int BUFFER_SIZE = 1024;
 			byte[] fileBuffer = new byte[stream.Length];
@@ -69,7 +81,7 @@ namespace Sensus
 				totalBytesRead += bytesRead;
 			}
 
-			MediaObject media = new MediaObject(Convert.ToBase64String(fileBuffer), type, MediaStorageMethods.Embed, GetCacheFileName(cachePath));
+			MediaObject media = new MediaObject(Convert.ToBase64String(fileBuffer), type, MediaStorageMethods.Embed, GetCacheFileName(path, cachePath));
 
 			return media;
 		}
@@ -126,7 +138,7 @@ namespace Sensus
 				data = Convert.ToBase64String(result.Data);
 			}
 
-			MediaObject media = new MediaObject(data, mimeType, storageMethod, GetCacheFileName(cachePath));
+			MediaObject media = new MediaObject(data, mimeType, storageMethod, GetCacheFileName(url, cachePath));
 
 			return media;
 		}
