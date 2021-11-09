@@ -16,10 +16,13 @@ namespace Sensus.iOS.UI
 {
 	public class iOSVideoRenderer : ViewRenderer<VideoPlayer, UIView>
 	{
+		private VideoPlayer _videoPlayer;
 		private AVPlayer _player;
 		private AVPlayerItem _playerItem;
 		private AVPlayerViewController _playerViewController;
 		private IDisposable _statusObserver;
+		private IDisposable _rateObserver;
+		private IDisposable _playedToEndObserver;
 
 		protected override void OnElementChanged(ElementChangedEventArgs<VideoPlayer> e)
 		{
@@ -27,6 +30,8 @@ namespace Sensus.iOS.UI
 
 			if (e.NewElement != null)
 			{
+				_videoPlayer = e.NewElement;
+
 				if (Control == null)
 				{
 					_playerViewController = new AVPlayerViewController()
@@ -75,6 +80,25 @@ namespace Sensus.iOS.UI
 					}
 				});
 
+				_rateObserver = _playerItem.AddObserver("rate", NSKeyValueObservingOptions.New, o =>
+				{
+					if (_player.Rate == 0)
+					{
+						_videoPlayer.OnVideoEnd(new VideoEventArgs(VideoPlayer.PAUSE, TimeSpan.FromSeconds(_playerItem.CurrentTime.Seconds)));
+					}
+					else if (_player.Rate > 0)
+					{
+
+					}
+
+					//_videoPlayer.On
+				});
+
+				_playedToEndObserver = _playerItem.AddObserver(AVPlayerItem.DidPlayToEndTimeNotification, NSKeyValueObservingOptions.New, o =>
+				{
+					_videoPlayer.OnVideoEnd(new VideoEventArgs(VideoPlayer.END, TimeSpan.FromSeconds(_playerItem.CurrentTime.Seconds)));
+				});
+
 				_player.ReplaceCurrentItemWithPlayerItem(_playerItem);
 			}
 
@@ -89,6 +113,8 @@ namespace Sensus.iOS.UI
 				AVAudioSession.SharedInstance().SetActive(false);
 
 				_statusObserver.Dispose();
+				_rateObserver.Dispose();
+				_playedToEndObserver.Dispose();
 			}
 		}
 	}
