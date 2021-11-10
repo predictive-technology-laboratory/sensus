@@ -9,6 +9,8 @@ using Foundation;
 using CoreGraphics;
 using System;
 using System.Linq;
+using CoreMedia;
+using ObjCRuntime;
 
 [assembly: ExportRenderer(typeof(VideoPlayer), typeof(iOSVideoRenderer))]
 
@@ -21,8 +23,25 @@ namespace Sensus.iOS.UI
 		private AVPlayerItem _playerItem;
 		private AVPlayerViewController _playerViewController;
 		private IDisposable _statusObserver;
-		private IDisposable _rateObserver;
+		private IDisposable _timeControlStatusObserver;
 		private IDisposable _playedToEndObserver;
+
+		private class PrivateAVPlayer : AVPlayer
+		{
+			private VideoPlayer _videoPlayer;
+
+			public PrivateAVPlayer(VideoPlayer videoPlayer)
+			{
+				_videoPlayer = videoPlayer;
+			}
+
+			public override void Seek(CMTime time, CMTime toleranceBefore, CMTime toleranceAfter, AVCompletion completion)
+			{
+				_videoPlayer.OnVideoSeek(new VideoEventArgs(VideoPlayer.PAUSE, TimeSpan.FromSeconds(time.Seconds)));
+
+				base.Seek(time, toleranceBefore, toleranceAfter, completion);
+			}
+		}
 
 		protected override void OnElementChanged(ElementChangedEventArgs<VideoPlayer> e)
 		{
@@ -39,7 +58,7 @@ namespace Sensus.iOS.UI
 						ShowsPlaybackControls = true
 					};
 
-					_player = new AVPlayer();
+					_player = new PrivateAVPlayer(_videoPlayer);
 					_playerViewController.Player = _player;
 
 					SetNativeControl(_playerViewController.View);
@@ -80,23 +99,30 @@ namespace Sensus.iOS.UI
 					}
 				});
 
-				_rateObserver = _playerItem.AddObserver("rate", NSKeyValueObservingOptions.New, o =>
+				_timeControlStatusObserver = _player.AddObserver("timeControlStatus", NSKeyValueObservingOptions.New, o =>
 				{
-					if (_player.Rate == 0)
-					{
-						_videoPlayer.OnVideoEnd(new VideoEventArgs(VideoPlayer.PAUSE, TimeSpan.FromSeconds(_playerItem.CurrentTime.Seconds)));
-					}
-					else if (_player.Rate > 0)
-					{
+					double time = _playerItem.CurrentTime.Seconds;
 
+					if (_player.TimeControlStatus == AVPlayerTimeControlStatus.Playing && time == 0)
+					{
+						_videoPlayer.OnVideoStart(new VideoEventArgs(VideoPlayer.START, TimeSpan.FromSeconds(time)));
 					}
-
-					//_videoPlayer.On
+					else if (_player.TimeControlStatus == AVPlayerTimeControlStatus.Playing && time > 0)
+					{
+						_videoPlayer.OnVideoResume(new VideoEventArgs(VideoPlayer.RESUME, TimeSpan.FromSeconds(time)));
+					}
+					else if (_player.TimeControlStatus == AVPlayerTimeControlStatus.Paused && time > 0 && time < _playerItem.Duration.Seconds)
+					{
+						_videoPlayer.OnVideoPause(new VideoEventArgs(VideoPlayer.PAUSE, TimeSpan.FromSeconds(time)));
+					}
 				});
 
-				_playedToEndObserver = _playerItem.AddObserver(AVPlayerItem.DidPlayToEndTimeNotification, NSKeyValueObservingOptions.New, o =>
+				_playedToEndObserver = AVPlayerItem.Notifications.ObserveDidPlayToEndTime((s, e) =>
 				{
-					_videoPlayer.OnVideoEnd(new VideoEventArgs(VideoPlayer.END, TimeSpan.FromSeconds(_playerItem.CurrentTime.Seconds)));
+					if (e.Notification.Object == _playerItem)
+					{
+						_videoPlayer.OnVideoEnd(new VideoEventArgs(VideoPlayer.END, TimeSpan.FromSeconds(_playerItem.CurrentTime.Seconds)));
+					}
 				});
 
 				_player.ReplaceCurrentItemWithPlayerItem(_playerItem);
@@ -113,7 +139,7 @@ namespace Sensus.iOS.UI
 				AVAudioSession.SharedInstance().SetActive(false);
 
 				_statusObserver.Dispose();
-				_rateObserver.Dispose();
+				_timeControlStatusObserver.Dispose();
 				_playedToEndObserver.Dispose();
 			}
 		}
