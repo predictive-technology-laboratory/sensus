@@ -791,7 +791,6 @@ namespace Sensus.UI.Inputs
 				Text = GetLabelText(index),
 				FontSize = _labelFontSize,
 				FontAttributes = LabelFontAttributes,
-				TextColor = LabelTextColor,
 				HorizontalTextAlignment = LabelTextAlignment,
 
 				// set the style ID on the label so that we can retrieve it when UI testing
@@ -803,6 +802,11 @@ namespace Sensus.UI.Inputs
 			if (IsLabelTextHtml)
 			{
 				label.TextType = TextType.Html;
+			}
+
+			if (LabelTextColor != Color.Default)
+			{
+				label.TextColor = LabelTextColor;
 			}
 
 			return label;
