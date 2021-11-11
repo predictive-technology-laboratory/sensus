@@ -130,6 +130,10 @@ namespace Sensus.UI.Inputs
 			}
 		}
 
+		[OnOffUiProperty("Label Text is HTML:", true, 2)]
+		public bool IsLabelTextHtml { get; set; }
+
+		//[EntryIntegerUiProperty("Label Font Size:", true, 2, false)]
 		public int LabelFontSize
 		{
 			get
@@ -142,10 +146,13 @@ namespace Sensus.UI.Inputs
 			}
 		}
 
-		public FontAttributes LabelFontAttributes { get; set; }
-
+		//[EntryStringUiProperty("Label Text Color:", true, 1, false, typeof(ColorConverter))]
 		public Color LabelTextColor { get; set; }
 
+		//[ListUiProperty("Label Text Attributes:", true, 3, new object[] { FontAttributes.None, FontAttributes.Bold, FontAttributes.Italic }, false)]
+		public FontAttributes LabelFontAttributes { get; set; }
+
+		//[ListUiProperty("Label Text Alignment:", true, 4, new object[] { TextAlignment.Start, TextAlignment.Center, TextAlignment.End }, false)]
 		public TextAlignment LabelTextAlignment { get; set; }
 
 		public bool DisplayNumber
@@ -778,20 +785,27 @@ namespace Sensus.UI.Inputs
 				return new Label { IsVisible = false };
 			}
 
-			return new Label
+			Label label = new Label
 			{
 				StyleClass = new List<string> { "InputLabel" },
 				Text = GetLabelText(index),
 				FontSize = _labelFontSize,
 				FontAttributes = LabelFontAttributes,
 				TextColor = LabelTextColor,
-				HorizontalTextAlignment = LabelTextAlignment
+				HorizontalTextAlignment = LabelTextAlignment,
 
 				// set the style ID on the label so that we can retrieve it when UI testing
 #if UI_TESTING
 				, StyleId = Name + " Label"
 #endif
 			};
+
+			if (IsLabelTextHtml)
+			{
+				label.TextType = TextType.Html;
+			}
+
+			return label;
 		}
 
 		protected string GetLabelText(int index)

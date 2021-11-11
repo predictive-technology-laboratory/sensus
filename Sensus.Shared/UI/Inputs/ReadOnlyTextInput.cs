@@ -40,6 +40,9 @@ namespace Sensus.UI.Inputs
 		[EditorUiProperty("Text", true, 2, true)]
 		public string Text { get; set; }
 
+		[OnOffUiProperty("Text is HTML:", true, 3)]
+		public bool IsTextHtml { get; set; }
+
 		public override View GetView(int index)
 		{
 			if (base.GetView(index) == null)
@@ -52,6 +55,11 @@ namespace Sensus.UI.Inputs
 					HorizontalOptions = LayoutOptions.FillAndExpand,
 					Text = Text
 				};
+
+				if (IsTextHtml)
+				{
+					textLabel.TextType = TextType.Html;
+				}
 
 				StoreCompletionRecords = false;
 				Complete = true;
