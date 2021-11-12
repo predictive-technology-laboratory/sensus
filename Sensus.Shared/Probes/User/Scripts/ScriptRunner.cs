@@ -30,6 +30,7 @@ using Sensus.Notifications;
 using Sensus.Exceptions;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Serialization;
+using Xamarin.Forms;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -58,6 +59,54 @@ namespace Sensus.Probes.User.Scripts
 		/// <value>The script.</value>
 		public Script Script { get; set; }
 
+		public SavedScriptState SavedState { get; set; }
+
+		public static async Task<SavedScriptState> ManageStateAsync(Script script)
+		{
+			ScriptRunner runner = script.Runner;
+
+			if (runner.SaveState)
+			{
+				if (runner.SavedState != null)
+				{
+					string continuePrompt = runner.ContinuePrompt;
+
+					if (string.IsNullOrWhiteSpace(continuePrompt))
+					{
+						continuePrompt = "Do you want to Continue from where you stopped previously or Start Over?";
+					}
+
+					if (await Application.Current.MainPage.DisplayAlert("Continue?", continuePrompt, "Continue", "Start Over"))
+					{
+						foreach (KeyValuePair<string, string> pair in runner.SavedState.Variables)
+						{
+							runner.Probe.Protocol.VariableValue[pair.Key] = pair.Value;
+						}
+					}
+					else
+					{
+						foreach (InputGroup inputGroup in script.InputGroups)
+						{
+							foreach (Input input in inputGroup.Inputs)
+							{
+								input.Reset();
+							}
+						}
+
+						runner.SavedState = new SavedScriptState();
+					}
+				}
+				else
+				{
+					runner.SavedState = new SavedScriptState();
+				}
+
+				return runner.SavedState;
+			}
+
+			return null;
+		}
+
 		/// <summary>
 		/// Gets the <see cref="IScript"/> that this <see cref="IScriptRunner"/> is configured to run (for NuGet interfacing).
 		/// </summary>
@@ -74,18 +123,18 @@ namespace Sensus.Probes.User.Scripts
 		/// </summary>
 		/// <value>The name.</value>
 		[EntryStringUiProperty("Name:", true, 1, true)]
-		public string Name 
+		public string Name
 		{
 			get { return _name; }
 			set
 			{
-				if(value != _name)
+				if (value != _name)
 				{
 					_name = value;
 					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Caption)));
 				}
 			}
-		}            
+		}
 
 		/// <summary>
 		/// Whether or not the survey is enabled.
@@ -371,6 +420,27 @@ namespace Sensus.Probes.User.Scripts
 		[OnOffUiProperty("Keep Until Completed:", true, 23)]
 		public bool KeepUntilCompleted { get; set; }
 
+		[ScriptsUiProperty("Next Script:", true, 24, false)]
+		public ScriptRunner NextScript { get; set; }
+
+		[EntryStringUiProperty("Next Script Run Delay (MS):", true, 25, false)]
+		public int NextScriptRunDelayMS { get; set; }
+
+		[OnOffUiProperty("Trigger Next Script First Time Only:", true, 26)]
+		public bool TriggerNextScriptFirstTimeOnly { get; set; }
+
+		[OnOffUiProperty("Confirm Navigation:", true, 27)]
+		public bool ConfirmNavigation { get; set; }
+
+		[OnOffUiProperty("Use Detail Page:", true, 28)]
+		public bool UseDetailPage { get; set; }
+
+		[OnOffUiProperty("Save State:", true, 29)]
+		public bool SaveState { get; set; }
+
+		[EntryStringUiProperty("Continue Prompt:", true, 30, false)]
+		public string ContinuePrompt { get; set; }
+
 		[JsonIgnore]
 		public string Caption
 		{
@@ -398,6 +468,7 @@ namespace Sensus.Probes.User.Scripts
 			RunMode = RunMode.SingleKeepNewest;
 			IncompleteSubmissionConfirmation = "You have not completed all required fields on the current page. Do you want to continue?";
 			ShuffleInputGroups = false;
+			ConfirmNavigation = true;
 
 			Triggers.CollectionChanged += (o, e) =>
 			{
@@ -689,6 +760,68 @@ namespace Sensus.Probes.User.Scripts
 				}
 
 				SensusServiceHelper.Get().Logger.Log($"Scheduled for {triggerTime.Trigger} ({callback.Id})", LoggingLevel.Normal, GetType());
+			}
+		}
+
+		private async Task ScheduleScriptRunAsync(DateTime triggerDateTime, string scriptId = null)
+		{
+			ScriptTriggerTime triggerTime = new ScriptTriggerTime(triggerDateTime, null, "");
+
+			await ScheduleScriptRunAsync(triggerTime, scriptId);
+		}
+
+		public async Task<bool> ScheduleScriptFromInputAsync(Script script)
+		{
+			if (script.InputGroups.SelectMany(x => x.Inputs).OfType<ScriptSchedulerInput>().FirstOrDefault() is ScriptSchedulerInput scheduler && scheduler.Value is DateTime scheduledTime)
+			{
+				ScriptRunner runner = null;
+
+				if (scheduler.ScheduleMode == ScheduleModes.Self)
+				{
+					runner = Script.Runner;
+				}
+				else if (scheduler.ScheduleMode == ScheduleModes.Next && NextScript != null)
+				{
+					runner = NextScript;
+				}
+
+				if (scheduler.TimeOnly)
+				{
+					int daysFromNow = 0;
+
+					if (scheduler.DaysInFuture > 0)
+					{
+						daysFromNow = scheduler.DaysInFuture;
+					}
+					else if (scheduledTime.TimeOfDay < DateTime.Now.TimeOfDay)
+					{
+						daysFromNow = 1;
+					}
+
+					scheduledTime = DateTime.Now.Date.AddDays(daysFromNow).Add(scheduledTime.TimeOfDay);
+				}
+
+				await runner.ScheduleScriptRunAsync(scheduledTime);
+
+				return scheduler.ScheduleMode != ScheduleModes.Next;
+			}
+
+			return true;
+		}
+
+		public async Task ScheduleNextScriptToRunAsync()
+		{
+			if (NextScript != null && (TriggerNextScriptFirstTimeOnly == false || CompletionTimes.Count == 1))
+			{
+				// if there is no window then run it immmediately
+				if (NextScriptRunDelayMS == 0)
+				{
+					await NextScript.RunAsync(NextScript.Script.Copy(true));
+				}
+				else // schedule it to be run
+				{
+					await NextScript.ScheduleScriptRunAsync(DateTime.Now.AddMilliseconds(NextScriptRunDelayMS));
+				}
 			}
 		}
 

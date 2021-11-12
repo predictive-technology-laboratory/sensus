@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using Sensus.UI.UiProperties;
+using System.Collections.Generic;
 using Xamarin.Forms;
 
 namespace Sensus.UI.Inputs
@@ -32,12 +33,15 @@ namespace Sensus.UI.Inputs
 			}
 		}
 
-		public override bool Enabled { get; set; }
+		public override bool Enabled => true;
 
 		public override string DefaultName => "Text";
 
 		[EditorUiProperty("Text", true, 2, true)]
 		public string Text { get; set; }
+
+		[OnOffUiProperty("Text is HTML:", true, 3)]
+		public bool IsTextHtml { get; set; }
 
 		public override View GetView(int index)
 		{
@@ -45,13 +49,27 @@ namespace Sensus.UI.Inputs
 			{
 				Label label = CreateLabel(-1);
 
-				label.Text = Text;
+				Label textLabel = new Label()
+				{
+					StyleClass = new List<string> { "InputContent" },
+					HorizontalOptions = LayoutOptions.FillAndExpand,
+					Text = Text
+				};
+
+				if (IsTextHtml)
+				{
+					textLabel.TextType = TextType.Html;
+				}
 
 				StoreCompletionRecords = false;
 				Complete = true;
 				Required = false;
 
-				base.SetView(label);
+				base.SetView(new StackLayout
+				{
+					Orientation = StackOrientation.Vertical,
+					Children = { label, textLabel }
+				});
 			}
 
 			return base.GetView(index);

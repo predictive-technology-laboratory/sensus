@@ -105,7 +105,7 @@ namespace Sensus.UI
 						actions.Add("Snooze");
 					}
 
-					if (UserInitiatedScriptsPage.GetProtocolScripts(selectedProtocol).Any())
+					if (UserInitiatedScriptsPage.GetUserInitiatedScripts(selectedProtocol).Any())
 					{
 						actions.Add("Take Surveys");
 					}
@@ -320,9 +320,11 @@ namespace Sensus.UI
                         cancellationTokenSource.Token,
                         false,
                         "Cancel",
+                        false,
                         null,
                         null,
                         null,
+                        false,
                         false,
                         async () =>
                         {
@@ -391,9 +393,11 @@ namespace Sensus.UI
                                 cancellationTokenSource.Token,
                                 false,
                                 "Cancel",
+                                false,
                                 null,
                                 null,
                                 null,
+                                false,
                                 false,
                                 async () =>
                                 {

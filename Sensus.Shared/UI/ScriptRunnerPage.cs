@@ -85,6 +85,23 @@ namespace Sensus.UI
 
             contentLayout.Children.Add(viewScheduledTriggersButton);
 
+            Disappearing += (s, e) =>
+            {
+                // a script copy will have the same Runner
+                Script existingScript = scriptRunner.Probe.UserInitiatedScripts.FirstOrDefault(x => x.Runner == scriptRunner);
+
+                scriptRunner.Probe.UserInitiatedScripts.Remove(existingScript);
+
+                if (scriptRunner.AllowUserInitiation)
+                {
+                    Script copy = scriptRunner.Script.Copy(true);
+
+                    copy.Shuffle();
+
+                    scriptRunner.Probe.UserInitiatedScripts.Add(copy);
+                }
+            };
+
             Content = new ScrollView
             {
                 Content = contentLayout

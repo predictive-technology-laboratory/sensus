@@ -23,193 +23,193 @@ using System.Collections.Generic;
 
 namespace Sensus.Probes.User.Scripts
 {
-    public class Script : INotifyPropertyChanged, IComparable<Script>, IScript
-    {
-        /// <summary>
-        /// Contract resolver for copying <see cref="Script"/>s. This is necessary because each <see cref="Script"/> contains
-        /// a reference to its associated <see cref="ScriptRunner"/>, which contains other references that make JSON 
-        /// serialization and deserialization an expensive operation. We use JSON serialization/deserialization for <see cref="Script"/>s
-        /// because there are complicated objective references between the <see cref="InputGroup"/>s and <see cref="Input"/>s
-        /// that are associated with the <see cref="Script"/>. We use the contract resolver to prevent copying of the 
-        /// <see cref="ScriptRunner"/>.
-        /// </summary>
-        private class CopyContractResolver : DefaultContractResolver
-        {
-            protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
-            {
-                // copy all properties except the script runner
-                IList<JsonProperty> properties = base.CreateProperties(type, memberSerialization);
-                return properties.Where(p => p.PropertyName != nameof(Runner)).ToList();
-            }
-        }
+	public class Script : INotifyPropertyChanged, IComparable<Script>, IScript
+	{
+		/// <summary>
+		/// Contract resolver for copying <see cref="Script"/>s. This is necessary because each <see cref="Script"/> contains
+		/// a reference to its associated <see cref="ScriptRunner"/>, which contains other references that make JSON 
+		/// serialization and deserialization an expensive operation. We use JSON serialization/deserialization for <see cref="Script"/>s
+		/// because there are complicated objective references between the <see cref="InputGroup"/>s and <see cref="Input"/>s
+		/// that are associated with the <see cref="Script"/>. We use the contract resolver to prevent copying of the 
+		/// <see cref="ScriptRunner"/>.
+		/// </summary>
+		private class CopyContractResolver : DefaultContractResolver
+		{
+			protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+			{
+				// copy all properties except the script runner
+				IList<JsonProperty> properties = base.CreateProperties(type, memberSerialization);
+				return properties.Where(p => p.PropertyName != nameof(Runner)).ToList();
+			}
+		}
 
-        private static readonly JsonSerializerSettings COPY_SETTINGS = new JsonSerializerSettings
-        {
-            PreserveReferencesHandling = PreserveReferencesHandling.Objects,
-            ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
-            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
-            TypeNameHandling = TypeNameHandling.All,
-            ContractResolver = new CopyContractResolver()
-        };
+		private static readonly JsonSerializerSettings COPY_SETTINGS = new JsonSerializerSettings
+		{
+			PreserveReferencesHandling = PreserveReferencesHandling.Objects,
+			ReferenceLoopHandling = ReferenceLoopHandling.Serialize,
+			ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+			TypeNameHandling = TypeNameHandling.All,
+			ContractResolver = new CopyContractResolver()
+		};
 
-        public event PropertyChangedEventHandler PropertyChanged;
+		public event PropertyChangedEventHandler PropertyChanged;
 
-        private bool _submitting;
-        private Datum _currentDatum;
+		private bool _submitting;
+		private Datum _currentDatum;
 
-        public string Id { get; set; }
-        public ScriptRunner Runner { get; set; }
-        public ObservableCollection<InputGroup> InputGroups { get; }
-        public DateTimeOffset? ScheduledRunTime { get; set; }
-        public DateTimeOffset? RunTime { get; set; }
-        public Datum PreviousDatum { get; set; }
-        public DateTime? ExpirationDate { get; set; }
+		public string Id { get; set; }
+		public ScriptRunner Runner { get; set; }
+		public ObservableCollection<InputGroup> InputGroups { get; }
+		public DateTimeOffset? ScheduledRunTime { get; set; }
+		public DateTimeOffset? RunTime { get; set; }
+		public Datum PreviousDatum { get; set; }
+		public DateTime? ExpirationDate { get; set; }
 
-        /// <summary>
-        /// Gets the <see cref="IScriptRunner"/> associated with the current <see cref="Script"/> (for NuGet interfacing).
-        /// </summary>
-        /// <value>The runner interface.</value>
-        [JsonIgnore]
-        public IScriptRunner IRunner => Runner;
+		/// <summary>
+		/// Gets the <see cref="IScriptRunner"/> associated with the current <see cref="Script"/> (for NuGet interfacing).
+		/// </summary>
+		/// <value>The runner interface.</value>
+		[JsonIgnore]
+		public IScriptRunner IRunner => Runner;
 
-        public Datum CurrentDatum
-        {
-            get
-            {
-                return _currentDatum;
-            }
-            set
-            {
-                _currentDatum = value;
-                FireCaptionChanged();
+		public Datum CurrentDatum
+		{
+			get
+			{
+				return _currentDatum;
+			}
+			set
+			{
+				_currentDatum = value;
+				FireCaptionChanged();
 
-                // update the triggering datum on all inputs
-                foreach (InputGroup inputGroup in InputGroups)
-                {
-                    foreach (Input input in inputGroup.Inputs)
-                    {
-                        input.TriggeringDatum = _currentDatum;
-                    }
-                }
-            }
-        }
+				// update the triggering datum on all inputs
+				foreach (InputGroup inputGroup in InputGroups)
+				{
+					foreach (Input input in inputGroup.Inputs)
+					{
+						input.TriggeringDatum = _currentDatum;
+					}
+				}
+			}
+		}
 
-        [JsonIgnore]
-        public bool Submitting
-        {
-            get
-            {
-                return _submitting;
-            }
-            set
-            {
-                _submitting = value;
-                FireCaptionChanged();
-            }
-        }
+		[JsonIgnore]
+		public bool Submitting
+		{
+			get
+			{
+				return _submitting;
+			}
+			set
+			{
+				_submitting = value;
+				FireCaptionChanged();
+			}
+		}
 
-        /// <summary>
-        /// Gets a value indicating whether this <see cref="T:Sensus.Probes.User.Scripts.Script"/> is valid. A valid <see cref="Script"/> is
-        /// one in which each <see cref="InputGroup"/> is <see cref="InputGroup.Valid"/>.
-        /// </summary>
-        /// <value><c>true</c> if valid; otherwise, <c>false</c>.</value>
-        [JsonIgnore]
-        public bool Valid => InputGroups.Count == 0 || InputGroups.All(inputGroup => inputGroup.Valid);
+		/// <summary>
+		/// Gets a value indicating whether this <see cref="T:Sensus.Probes.User.Scripts.Script"/> is valid. A valid <see cref="Script"/> is
+		/// one in which each <see cref="InputGroup"/> is <see cref="InputGroup.Valid"/>.
+		/// </summary>
+		/// <value><c>true</c> if valid; otherwise, <c>false</c>.</value>
+		[JsonIgnore]
+		public bool Valid => InputGroups.Count == 0 || InputGroups.All(inputGroup => inputGroup.Valid);
 
-        [JsonIgnore]
-        public bool Expired => ExpirationDate < DateTime.Now;
+		[JsonIgnore]
+		public bool Expired => ExpirationDate < DateTime.Now;
 
-        /// <summary>
-        /// Gets the birthdate of the script, which is when it was first made available to the user for completion.
-        /// </summary>
-        /// <value>The birthdate.</value>
-        /// <remarks>
-        /// The scheduled time will always be slightly before the run time, depending on latencies in the android/ios alarm/notification systems.
-        /// Furthermore, on ios notifications are delivered to the tray and not to the app when the app is backgrounded. The user must open the 
-        /// notification in order for the script to run. In this case the scheduled time could significantly precede the run time. In any case, 
-        /// the scheduled time is the right thing to use as the script's birthdate. On the other hand, not all scripts are scheduled (e.g., those
-        /// that are triggered by other probes). For such scripts the only thing we'll have is the run time.
-        /// </remarks>
-        [JsonIgnore]
-        public DateTime Birthdate => (ScheduledRunTime ?? RunTime).Value.LocalDateTime;
+		/// <summary>
+		/// Gets the birthdate of the script, which is when it was first made available to the user for completion.
+		/// </summary>
+		/// <value>The birthdate.</value>
+		/// <remarks>
+		/// The scheduled time will always be slightly before the run time, depending on latencies in the android/ios alarm/notification systems.
+		/// Furthermore, on ios notifications are delivered to the tray and not to the app when the app is backgrounded. The user must open the 
+		/// notification in order for the script to run. In this case the scheduled time could significantly precede the run time. In any case, 
+		/// the scheduled time is the right thing to use as the script's birthdate. On the other hand, not all scripts are scheduled (e.g., those
+		/// that are triggered by other probes). For such scripts the only thing we'll have is the run time.
+		/// </remarks>
+		[JsonIgnore]
+		public DateTime Birthdate => (ScheduledRunTime ?? RunTime).Value.LocalDateTime;
 
-        [JsonIgnore]
-        public string Caption
-        {
-            get
-            {
-                // format the runner's name to replace any {0} references with the current datum's placeholder value. there won't be a current datum for
-                // scheduled or run-on-start scripts.
-                return string.Format(Runner.Name, CurrentDatum?.StringPlaceholderValue.ToString().ToLower()) + (Submitting ? " (Submitting...)" : "");
-            }
-        }
+		[JsonIgnore]
+		public string Caption
+		{
+			get
+			{
+				// format the runner's name to replace any {0} references with the current datum's placeholder value. there won't be a current datum for
+				// scheduled or run-on-start scripts.
+				return string.Format(Runner.Name, CurrentDatum?.StringPlaceholderValue.ToString().ToLower()) + (Submitting ? " (Submitting...)" : "");
+			}
+		}
 
-        [JsonIgnore]
-        public DateTime DisplayDateTime
-        {
-            get
-            {
-                DateTime displayDateTime = Birthdate;
+		[JsonIgnore]
+		public DateTime DisplayDateTime
+		{
+			get
+			{
+				DateTime displayDateTime = Birthdate;
 
-                if (Runner.UseTriggerDatumTimestampInSubcaption && _currentDatum != null)
-                {
-                    displayDateTime = _currentDatum.Timestamp.ToLocalTime().DateTime;
-                }
+				if (Runner.UseTriggerDatumTimestampInSubcaption && _currentDatum != null)
+				{
+					displayDateTime = _currentDatum.Timestamp.ToLocalTime().DateTime;
+				}
 
-                return displayDateTime;
-            }
-        }
+				return displayDateTime;
+			}
+		}
 
-        [JsonIgnore]
-        public string SubCaption
-        {
-            get
-            {
-                return Runner.Probe.Protocol.Name + " - " + DisplayDateTime;
-            }
-        }
+		[JsonIgnore]
+		public string SubCaption
+		{
+			get
+			{
+				return Runner.Probe.Protocol.Name + " - " + DisplayDateTime;
+			}
+		}
 
-        /// <summary>
-        /// For JSON.NET deserialization.
-        /// </summary>
-        private Script()
-        {
-            Id = Guid.NewGuid().ToString();
-            InputGroups = new ObservableCollection<InputGroup>();
-        }
+		/// <summary>
+		/// For JSON.NET deserialization.
+		/// </summary>
+		private Script()
+		{
+			Id = Guid.NewGuid().ToString();
+			InputGroups = new ObservableCollection<InputGroup>();
+		}
 
-        public Script(ScriptRunner runner)
-            : this()
-        {
-            Runner = runner;
-        }
+		public Script(ScriptRunner runner)
+			: this()
+		{
+			Runner = runner;
+		}
 
-        private void FireCaptionChanged()
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Caption)));
-        }
+		private void FireCaptionChanged()
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Caption)));
+		}
 
-        /// <summary>
-        /// Creates a copy of the current <see cref="Script"/>.
-        /// </summary>
-        /// <returns>The copy.</returns>
-        /// <param name="newId">If set to <c>true</c>, set a new random <see cref="Id"/> on the script. Doing so does not change
-        /// the <see cref="InputGroup.Id"/> or <see cref="Input.Id"/> values associated with this <see cref="Script"/>.</param>
-        public Script Copy(bool newId)
-        {
-            // copy the script except for the script runner
-            Script copy = JsonConvert.DeserializeObject<Script>(JsonConvert.SerializeObject(this, COPY_SETTINGS), COPY_SETTINGS);
+		/// <summary>
+		/// Creates a copy of the current <see cref="Script"/>.
+		/// </summary>
+		/// <returns>The copy.</returns>
+		/// <param name="newId">If set to <c>true</c>, set a new random <see cref="Id"/> on the script. Doing so does not change
+		/// the <see cref="InputGroup.Id"/> or <see cref="Input.Id"/> values associated with this <see cref="Script"/>.</param>
+		public Script Copy(bool newId)
+		{
+			// copy the script except for the script runner
+			Script copy = JsonConvert.DeserializeObject<Script>(JsonConvert.SerializeObject(this, COPY_SETTINGS), COPY_SETTINGS);
 
-            if (newId)
-            {
-                copy.Id = Guid.NewGuid().ToString();
-            }
+			if (newId)
+			{
+				copy.Id = Guid.NewGuid().ToString();
+			}
 
-            // attach the script runner to the copy
-            copy.Runner = Runner;
+			// attach the script runner to the copy
+			copy.Runner = Runner;
 
-            return copy;
-        }
+			return copy;
+		}
 
 		public Script Copy(bool newId, ScriptTriggerTime triggerTime)
 		{
@@ -221,9 +221,35 @@ namespace Sensus.Probes.User.Scripts
 			return copy;
 		}
 
-        public int CompareTo(Script script)
-        {
-            return DisplayDateTime.CompareTo(script.DisplayDateTime);
-        }
-    }
+		public int CompareTo(Script script)
+		{
+			return DisplayDateTime.CompareTo(script.DisplayDateTime);
+		}
+
+		public void Shuffle()
+		{
+			// shuffle input groups if needed, but only if there are no display conditions involved. display
+			// conditions assume that the input groups will be displayed in a particular order (i.e., non-shuffled).
+			// if a display condition is present and the groups are shuffled, then it could happen that a group's
+			// inputs (being conditioned on a subsequent group) are not shown.
+			Random random = new Random();
+			if (Runner.ShuffleInputGroups &&
+				!InputGroups.SelectMany(inputGroup => inputGroup.Inputs)
+								   .SelectMany(input => input.DisplayConditions)
+								   .Any())
+			{
+				random.Shuffle(InputGroups);
+			}
+
+			// shuffle inputs in groups if needed. it's fine to shuffle the inputs within a group even when there
+			// are display conditions, as display conditions only hold between inputs in different groups.
+			foreach (InputGroup inputGroup in InputGroups)
+			{
+				if (inputGroup.ShuffleInputs)
+				{
+					random.Shuffle(inputGroup.Inputs);
+				}
+			}
+		}
+	}
 }

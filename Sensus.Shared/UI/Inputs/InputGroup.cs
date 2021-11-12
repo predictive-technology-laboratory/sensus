@@ -30,7 +30,6 @@ namespace Sensus.UI.Inputs
 		private string _description;
 
 		public string Id { get; set; }
-		public Input Header { get; set; }
 		public ObservableCollection<Input> Inputs { get; }
 
 		public virtual bool HasInputs => Inputs.Any();
@@ -127,9 +126,6 @@ namespace Sensus.UI.Inputs
 		[OnOffUiProperty("Shuffle Inputs:", true, 5)]
 		public bool ShuffleInputs { get; set; }
 
-		//[OnOffUiProperty("Hide Title:", true, 6)]
-		//public bool HideTitle { get; set; }
-		
 		[OnOffUiProperty("Freeze Header:", true, 6)]
 		public bool FreezeHeader { get; set; }
 
@@ -163,13 +159,22 @@ namespace Sensus.UI.Inputs
 		[EntryStringUiProperty("Cancel Button Text:", true, 12, false)]
 		public virtual string CancelButtonText { get; set; }
 
+		[EntryStringUiProperty("Title:", true, 13, false)]
+		public virtual string Title { get; set; }
+
+		[OnOffUiProperty("Use Navigation View", true, 14)]
+		public virtual bool UseNavigationBar { get; set; }
+
+		[EntryIntegerUiProperty("Timeout (S):", true, 15, false)]
+		public virtual int? Timeout { get; set; }
+
 		/// <summary>
 		/// Gets a value indicating whether this <see cref="InputGroup"/> is valid.
 		/// A valid input group is one in which each <see cref="Input"/> in the group is valid.
 		/// An input group with no inputs is deemed valid by default.
 		/// </summary>
 		[JsonIgnore]
-		public bool Valid => Inputs.All(input => input?.Valid ?? true);
+		public bool Valid => Inputs.GroupBy(x => x?.RequiredGroup).All(x => (string.IsNullOrWhiteSpace(x.Key) && x.All(y => y?.Valid ?? true)) || (string.IsNullOrWhiteSpace(x.Key) == false && x.Any(y => y?.Valid ?? true))); //Inputs.All(input => input?.Valid ?? true);
 
 		public InputGroup()
 		{

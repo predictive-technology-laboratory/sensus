@@ -15,6 +15,7 @@
 using Newtonsoft.Json;
 using Sensus.UI.UiProperties;
 using System.Collections.Generic;
+using System.Linq;
 using Xamarin.Forms;
 
 namespace Sensus.UI.Inputs
@@ -23,10 +24,48 @@ namespace Sensus.UI.Inputs
 	{
 		private string _definedVariable;
 		private string _value;
+		protected ButtonGridView _grid;
+		static private Style _correctStyle;
+		static private Style _incorrectStyle;
+		static private Style _selectedStyle;
+
+		static ButtonGridInput()
+		{
+			_correctStyle = (Style)Application.Current.Resources["CorrectAnswerButton"];
+			_incorrectStyle = (Style)Application.Current.Resources["IncorrectAnswerButton"];
+			_selectedStyle = (Style)Application.Current.Resources["SelectedButton"];
+		}
+
+		public ButtonGridInput() : base()
+		{
+			ColumnCount = 1;
+
+		}
 
 		public override object Value => _value;
 
-		public override bool Enabled { get; set; }
+		public override bool Enabled
+		{
+			get
+			{
+				return _grid?.IsEnabled ?? false;
+			}
+			set
+			{
+				if (_grid != null)
+				{
+					_grid.IsEnabled = value;
+
+					if (GridButtons != null)
+					{
+						foreach (ButtonWithValue button in GridButtons)
+						{
+							button.IsEnabled = value;
+						}
+					}
+				}
+			}
+		}
 
 		public override string DefaultName => "Button Grid";
 
@@ -47,18 +86,39 @@ namespace Sensus.UI.Inputs
 		public List<string> Buttons { get; set; }
 
 		[EntryIntegerUiProperty("Number of Columns:", true, 3, false)]
-		public int ColumnCount { get; set; } = 1;
+		public int ColumnCount { get; set; }
+
+		[OnOffUiProperty("Selectable:", true, 4)]
+		public bool Selectable { get; set; }
+
+		[OnOffUiProperty("Leave Incorrect Value:", true, 4)]
+		public bool LeaveIncorrectValue { get; set; }
 
 		[JsonIgnore]
-		public List<ButtonWithValue> GridButtons { get; private set; }
+		public List<ButtonWithValue> GridButtons => _grid?.Buttons.ToList() ?? new List<ButtonWithValue>();
 
 		public override View GetView(int index)
 		{
 			if (base.GetView(index) == null)
 			{
-				GridButtons = new List<ButtonWithValue>();
+				if (LeaveIncorrectValue == false)
+				{
+					DelayEnded += (s, e) =>
+					{
+						foreach (ButtonWithValue gridButton in _grid.Buttons)
+						{
+							if (gridButton.Style != null)
+							{
+								if (gridButton.Style == _incorrectStyle)
+								{
+									gridButton.Style = null;
+								}
+							}
+						}
+					};
+				}
 
-				ButtonGridView grid = new ButtonGridView(ColumnCount, (s, e) =>
+				_grid = new ButtonGridView(ColumnCount, (s, e) =>
 				{
 					ButtonWithValue button = (ButtonWithValue)s;
 
@@ -66,32 +126,36 @@ namespace Sensus.UI.Inputs
 
 					Complete = true;
 
+					foreach (ButtonWithValue gridButton in _grid.Buttons)
+					{
+						gridButton.Style = null;
+					}
+
 					if (CorrectValue != null)
 					{
-						foreach(ButtonWithValue gridButton in GridButtons)
-						{
-							gridButton.Style = null;
-						}
-
 						if (Correct)
 						{
-							button.Style = (Style)Application.Current.Resources["CorrectAnswerButton"];
+							button.Style = _correctStyle; // (Style)Application.Current.Resources["CorrectAnswerButton"];
 						}
 						else
 						{
-							button.Style = (Style)Application.Current.Resources["IncorrectAnswerButton"];
+							button.Style = _incorrectStyle; // (Style)Application.Current.Resources["IncorrectAnswerButton"];
 						}
+					}
+					else if (Selectable)
+					{
+						button.Style = _selectedStyle; // (Style)Application.Current.Resources["SelectedButton"];
 					}
 				});
 
-				foreach (string button in Buttons)
+				foreach (string buttonValue in Buttons)
 				{
-					GridButtons.Add(grid.AddButton(button, button));
+					ButtonWithValue button = _grid.AddButton(buttonValue, buttonValue);
 				}
 
-				grid.Arrange();
+				_grid.Arrange();
 
-				base.SetView(grid);
+				base.SetView(_grid);
 			}
 
 			return base.GetView(index);

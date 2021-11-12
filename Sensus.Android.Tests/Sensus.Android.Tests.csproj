@@ -14,7 +14,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Sensus.Android.Tests</RootNamespace>
     <AssemblyName>Sensus.Android.Tests</AssemblyName>
-    <TargetFrameworkVersion>v9.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v10.0</TargetFrameworkVersion>
     <AndroidApplication>True</AndroidApplication>
     <AndroidResgenFile>Resources\Resource.designer.cs</AndroidResgenFile>
     <AndroidResgenClass>Resource</AndroidResgenClass>
@@ -56,6 +56,9 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.9.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>..\packages\BouncyCastle.1.8.9\lib\BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
     <Reference Include="Estimote.Android.Indoor, Version=2.5.4.3, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Estimote.Android.Indoor.2.5.4.3\lib\monoandroid90\Estimote.Android.Indoor.dll</HintPath>
     </Reference>
@@ -321,9 +324,6 @@
     </Reference>
     <Reference Include="Plugin.Clipboard">
       <HintPath>..\packages\Xamarin.Plugins.Clipboard.2.2.1\lib\MonoAndroid10\Plugin.Clipboard.dll</HintPath>
-    </Reference>
-    <Reference Include="BouncyCastle.Crypto">
-      <HintPath>..\packages\BouncyCastle.1.8.3\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="PInvoke.Windows.Core">
       <HintPath>..\packages\PInvoke.Windows.Core.0.5.155\lib\portable-net45+win8+wpa81\PInvoke.Windows.Core.dll</HintPath>

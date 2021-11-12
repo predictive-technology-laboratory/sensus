@@ -33,15 +33,12 @@ namespace Sensus.UI
 			_scriptList.ItemsSource = new ObservableCollection<Script>(_scripts);
 		}
 
-		public static IEnumerable<Script> GetProtocolScripts(Protocol protocol)
+		public static IEnumerable<Script> GetUserInitiatedScripts(Protocol protocol)
 		{
-			return protocol.Probes.OfType<ScriptProbe>()
-				.SelectMany(x => x.ScriptRunners)
-				.Where(x => x.Enabled && x.AllowUserInitiation && x.Script.InputGroups.Any(x => x.HasInputs))
-				.Select(x => x.Script);
+			return protocol.Probes.OfType<ScriptProbe>().SelectMany(x => x.UserInitiatedScripts);
 		}
 
-		public UserInitiatedScriptsPage(Protocol protocol) : base(GetProtocolScripts(protocol), true)
+		public UserInitiatedScriptsPage(Protocol protocol) : base(GetUserInitiatedScripts(protocol), true)
 		{
 			Title = $"{protocol.Name} Surveys";
 
@@ -62,6 +59,8 @@ namespace Sensus.UI
 
 		protected override async Task<bool> RunScriptAsync(Script script)
 		{
+			script = script.Copy(true);
+
 			script.RunTime = DateTimeOffset.UtcNow;
 
 			if (await base.RunScriptAsync(script))
