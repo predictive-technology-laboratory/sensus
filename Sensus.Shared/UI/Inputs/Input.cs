@@ -133,7 +133,7 @@ namespace Sensus.UI.Inputs
 		[OnOffUiProperty("Label Text is HTML:", true, 2)]
 		public bool IsLabelTextHtml { get; set; }
 
-		//[EntryIntegerUiProperty("Label Font Size:", true, 2, false)]
+		[EntryIntegerUiProperty("Label Font Size:", true, 3, false)]
 		public int LabelFontSize
 		{
 			get
@@ -146,13 +146,38 @@ namespace Sensus.UI.Inputs
 			}
 		}
 
-		//[EntryStringUiProperty("Label Text Color:", true, 1, false, typeof(ColorConverter))]
-		public Color LabelTextColor { get; set; }
+		[EntryStringUiProperty("Label Text Color:", true, 4, false)]
+		public string SerializableLabelTextColor { get; set; }
 
-		//[ListUiProperty("Label Text Attributes:", true, 3, new object[] { FontAttributes.None, FontAttributes.Bold, FontAttributes.Italic }, false)]
+		[JsonIgnore]
+		public Color? LabelTextColor
+		{
+			get
+			{
+				if (string.IsNullOrWhiteSpace(SerializableLabelTextColor) == false)
+				{
+					return Color.FromHex(SerializableLabelTextColor);
+				}
+
+				return null;
+			}
+			set
+			{
+				if (value != null)
+				{
+					SerializableLabelTextColor = value.Value.ToHex();
+				}
+				else
+				{
+					SerializableLabelTextColor = null;
+				}
+			}
+		}
+
+		[ListUiProperty("Label Text Attributes:", true, 5, new object[] { FontAttributes.None, FontAttributes.Bold, FontAttributes.Italic }, false)]
 		public FontAttributes LabelFontAttributes { get; set; }
 
-		//[ListUiProperty("Label Text Alignment:", true, 4, new object[] { TextAlignment.Start, TextAlignment.Center, TextAlignment.End }, false)]
+		[ListUiProperty("Label Text Alignment:", true, 6, new object[] { TextAlignment.Start, TextAlignment.Center, TextAlignment.End }, false)]
 		public TextAlignment LabelTextAlignment { get; set; }
 
 		public bool DisplayNumber
@@ -804,9 +829,9 @@ namespace Sensus.UI.Inputs
 				label.TextType = TextType.Html;
 			}
 
-			if (LabelTextColor != Color.Default)
+			if (LabelTextColor != null && LabelTextColor != Color.Default)
 			{
-				label.TextColor = LabelTextColor;
+				label.TextColor = LabelTextColor.Value;
 			}
 
 			return label;
