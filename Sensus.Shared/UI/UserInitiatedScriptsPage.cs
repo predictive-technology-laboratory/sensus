@@ -59,7 +59,7 @@ namespace Sensus.UI
 
 		protected override async Task<bool> RunScriptAsync(Script script)
 		{
-			script = script.Copy(true);
+			//script = script.Copy(true);
 
 			script.RunTime = DateTimeOffset.UtcNow;
 

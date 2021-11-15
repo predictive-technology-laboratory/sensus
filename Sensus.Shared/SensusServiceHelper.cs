@@ -1371,7 +1371,9 @@ namespace Sensus
 				startInputGroupIndex = savedState.InputGroupStack.Count;
 			}
 
-			for (int inputGroupIndex = startInputGroupIndex; inputGroups != null && inputGroupIndex < inputGroups.Count() && !cancellationToken.GetValueOrDefault().IsCancellationRequested; ++inputGroupIndex)
+			bool run = true;
+
+			for (int inputGroupIndex = startInputGroupIndex; inputGroupIndex < inputGroups.Count() && run && !cancellationToken.GetValueOrDefault().IsCancellationRequested; ++inputGroupIndex)
 			{
 				InputGroup inputGroup = inputGroups.ElementAt(inputGroupIndex);
 
@@ -1484,6 +1486,8 @@ namespace Sensus
 							// group and we are about to return.
 						}
 					});
+
+					run = lastNavigationResult != InputGroupPage.NavigationResult.Paused && inputGroups != null;
 				}
 			}
 
@@ -1500,7 +1504,7 @@ namespace Sensus
 			}
 
 			// process the inputs if the user didn't cancel
-			if (inputGroups != null)
+			if (lastNavigationResult == InputGroupPage.NavigationResult.Submit)
 			{
 				// set the submission timestamp. do this before GPS tagging since the latter could take a while and we want the timestamp to 
 				// reflect the time that the user hit submit.
@@ -2042,6 +2046,8 @@ namespace Sensus
 						}
 					}
 				}
+
+				script.Submitting = false;
 			}
 			else if (result.NavigationResult == InputGroupPage.NavigationResult.Submit || result.NavigationResult == InputGroupPage.NavigationResult.Cancel)
 			{
