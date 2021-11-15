@@ -1371,9 +1371,9 @@ namespace Sensus
 				startInputGroupIndex = savedState.InputGroupStack.Count;
 			}
 
-			bool run = true;
+			bool continueRun = true;
 
-			for (int inputGroupIndex = startInputGroupIndex; inputGroupIndex < inputGroups.Count() && run && !cancellationToken.GetValueOrDefault().IsCancellationRequested; ++inputGroupIndex)
+			for (int inputGroupIndex = startInputGroupIndex; continueRun && inputGroupIndex < inputGroups.Count() && !cancellationToken.GetValueOrDefault().IsCancellationRequested; ++inputGroupIndex)
 			{
 				InputGroup inputGroup = inputGroups.ElementAt(inputGroupIndex);
 
@@ -1487,7 +1487,7 @@ namespace Sensus
 						}
 					});
 
-					run = lastNavigationResult != InputGroupPage.NavigationResult.Paused && inputGroups != null;
+					continueRun = lastNavigationResult != InputGroupPage.NavigationResult.Paused && inputGroups != null;
 				}
 			}
 
