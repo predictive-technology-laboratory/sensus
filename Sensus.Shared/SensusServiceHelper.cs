@@ -1332,6 +1332,7 @@ namespace Sensus
 			bool firstPageDisplay = true;
 			App app = Application.Current as App;
 			INavigation navigation = app.DetailPage.Navigation;
+			Page currentPage = null;
 			Page returnPage = app.DetailPage;
 			InputGroupPage.NavigationResult lastNavigationResult = InputGroupPage.NavigationResult.None;
 			int startInputGroupIndex = 0;
@@ -1371,7 +1372,9 @@ namespace Sensus
 				startInputGroupIndex = savedState.InputGroupStack.Count;
 			}
 
-			for (int inputGroupIndex = startInputGroupIndex; inputGroups != null && inputGroupIndex < inputGroups.Count() && !cancellationToken.GetValueOrDefault().IsCancellationRequested; ++inputGroupIndex)
+			bool continueRun = true;
+
+			for (int inputGroupIndex = startInputGroupIndex; continueRun && inputGroupIndex < inputGroups.Count() && !cancellationToken.GetValueOrDefault().IsCancellationRequested; ++inputGroupIndex)
 			{
 				InputGroup inputGroup = inputGroups.ElementAt(inputGroupIndex);
 
@@ -1427,7 +1430,7 @@ namespace Sensus
 						// display the page if we've not been canceled
 						else if (!cancellationToken.GetValueOrDefault().IsCancellationRequested)
 						{
-							Page currentPage = inputGroupPage;
+							currentPage = inputGroupPage;
 
 							// display page. only animate the display for the first page.
 							if (inputGroup.UseNavigationBar)
@@ -1454,16 +1457,12 @@ namespace Sensus
 
 							lastNavigationResult = await inputGroupPage.ResponseTask;
 
+							if (savedState == null && lastNavigationResult == InputGroupPage.NavigationResult.Paused)
+							{
+								lastNavigationResult = InputGroupPage.NavigationResult.Cancel;
+							}
+
 							_logger.Log("Input group page navigation result:  " + lastNavigationResult, LoggingLevel.Normal, GetType());
-
-							// animate pop if the user submitted or canceled. when doing this, reference the navigation context
-							// on the page rather than the local 'navigation' variable. this is necessary because the navigation
-							// context may have changed (e.g., if prior to the pop the user reopens the app via pending survey 
-							// notification.
-
-							//bool animate = navigationResult == InputGroupPage.NavigationResult.Submit || navigationResult == InputGroupPage.NavigationResult.Cancel;
-
-							//await navigation.PopModalAsync(animate);
 
 							if (lastNavigationResult == InputGroupPage.NavigationResult.Backward)
 							{
@@ -1484,15 +1483,22 @@ namespace Sensus
 							// group and we are about to return.
 						}
 					});
+
+					continueRun = lastNavigationResult != InputGroupPage.NavigationResult.Paused && inputGroups != null;
 				}
 			}
 
-			if (useDetailPage)
+			if (useDetailPage && app.DetailPage == currentPage)
 			{
 				app.DetailPage = returnPage;
 			}
 			else
 			{
+				// animate pop if the user submitted or canceled. when doing this, reference the navigation context
+				// on the page rather than the local 'navigation' variable. this is necessary because the navigation
+				// context may have changed (e.g., if prior to the pop the user reopens the app via pending survey 
+				// notification.
+
 				foreach (Page modalPage in navigation.ModalStack.ToList())
 				{
 					await navigation.PopModalAsync(navigation.ModalStack.Count == 1);
@@ -1500,7 +1506,7 @@ namespace Sensus
 			}
 
 			// process the inputs if the user didn't cancel
-			if (inputGroups != null)
+			if (lastNavigationResult == InputGroupPage.NavigationResult.Submit)
 			{
 				// set the submission timestamp. do this before GPS tagging since the latter could take a while and we want the timestamp to 
 				// reflect the time that the user hit submit.
@@ -2042,6 +2048,8 @@ namespace Sensus
 						}
 					}
 				}
+
+				script.Submitting = false;
 			}
 			else if (result.NavigationResult == InputGroupPage.NavigationResult.Submit || result.NavigationResult == InputGroupPage.NavigationResult.Cancel)
 			{

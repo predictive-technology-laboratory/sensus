@@ -85,7 +85,7 @@ namespace Sensus.iOS.UI
 
 						if (Element.Parent is View parent && parent.Parent is ContentView == false)
 						{
-							CGSize size = _playerItem.Asset.Tracks.FirstOrDefault()?.NaturalSize ?? CGSize.Empty;
+							CGSize size = _playerItem.Asset.Tracks.FirstOrDefault(x => x.NaturalSize.IsEmpty == false)?.NaturalSize ?? CGSize.Empty;
 
 							double ratio = size.Width / parent.Width;
 
