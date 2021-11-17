@@ -263,6 +263,8 @@ namespace Sensus.UI
 			{
 				if (_confirmNavigation == false || string.IsNullOrWhiteSpace(cancelConfirmation) || await DisplayAlert("Confirm", cancelConfirmation, "Yes", "No"))
 				{
+					HandleStaleNavigation();
+
 					_responseTaskCompletionSource.TrySetResult(NavigationResult.Cancel);
 				}
 			};
@@ -271,6 +273,8 @@ namespace Sensus.UI
 			{
 				if (_canNavigateBackward)
 				{
+					HandleStaleNavigation();
+
 					_responseTaskCompletionSource.TrySetResult(NavigationResult.Backward);
 				}
 			};
@@ -314,6 +318,8 @@ namespace Sensus.UI
 
 						if (_confirmNavigation == false || string.IsNullOrWhiteSpace(confirmationMessage) || await DisplayAlert("Confirm", confirmationMessage, "Yes", "No"))
 						{
+							HandleStaleNavigation();
+
 							_responseTaskCompletionSource.TrySetResult(navigationResult);
 						}
 					}
@@ -517,6 +523,21 @@ namespace Sensus.UI
 			_responseTaskCompletionSource.TrySetResult(NavigationResult.Cancel);
 
 			return base.OnBackButtonPressed();
+		}
+
+		public Page ReturnPage { get; set; }
+
+		private void HandleStaleNavigation()
+		{
+			SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+			{
+				if (_responseTaskCompletionSource.Task.IsCompleted && ReturnPage != null)
+				{
+					App app = Application.Current as App;
+
+					app.DetailPage = ReturnPage;
+				}
+			});
 		}
 	}
 }

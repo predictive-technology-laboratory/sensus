@@ -1440,6 +1440,8 @@ namespace Sensus
 
 							if (useDetailPage)
 							{
+								inputGroupPage.ReturnPage = returnPage;
+
 								app.DetailPage = currentPage;
 							}
 							else
