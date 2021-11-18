@@ -331,8 +331,13 @@ namespace Sensus.UI
 				_navigationStack = new StackLayout
 				{
 					Orientation = StackOrientation.Vertical,
-					HorizontalOptions = LayoutOptions.FillAndExpand,
+					HorizontalOptions = LayoutOptions.FillAndExpand
 				};
+
+				if (inputGroup.PlaceNavigationAtBottom)
+				{
+					_navigationStack.VerticalOptions = LayoutOptions.EndAndExpand;
+				}
 
 				if (inputGroup.ShowNavigationButtons != ShowNavigationOptions.Always)
 				{
