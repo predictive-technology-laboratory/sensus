@@ -56,7 +56,7 @@ namespace Sensus.UI.Inputs
 				_mediaView = new MediaView()
 				{
 					HorizontalOptions = LayoutOptions.FillAndExpand,
-					VerticalOptions = LayoutOptions.FillAndExpand
+					VerticalOptions = LayoutOptions.FillAndExpand,
 				};
 
 				double height = -1;
