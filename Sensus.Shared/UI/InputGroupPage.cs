@@ -462,8 +462,6 @@ namespace Sensus.UI
 
 			Disappearing += async (o, e) =>
 			{
-				_responseTaskCompletionSource.TrySetResult(NavigationResult.Paused);
-
 				// the page is disappearing, so dispose of inputs
 				foreach (Input displayedInput in displayedInputs)
 				{
@@ -538,6 +536,14 @@ namespace Sensus.UI
 					app.DetailPage = ReturnPage;
 				}
 			});
+		}
+
+		public void SetResult(NavigationResult result)
+		{
+			if (_responseTaskCompletionSource.Task.IsCompleted == false)
+			{
+				_responseTaskCompletionSource.TrySetResult(result);
+			}
 		}
 	}
 }

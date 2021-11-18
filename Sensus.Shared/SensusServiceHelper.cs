@@ -1440,6 +1440,11 @@ namespace Sensus
 
 							if (useDetailPage)
 							{
+								inputGroupPage.Disappearing += (o, e) =>
+								{
+									inputGroupPage.SetResult(InputGroupPage.NavigationResult.Paused);
+								};
+
 								inputGroupPage.ReturnPage = returnPage;
 
 								app.DetailPage = currentPage;
@@ -2020,33 +2025,42 @@ namespace Sensus
 
 				if (savedState != null && result.InputGroups != null)
 				{
-					InputGroup[] inputGroups = result.InputGroups.ToArray();
-
-					foreach(int index in savedState.InputGroupStack)
+					if (savedState.InputGroupStack.Count == 0)
 					{
-						InputGroup inputGroup = inputGroups[index];
+						// don't save the state if the user never got passed the first input group.
+						script.Runner.SavedState = null;
+						savedState = null;
+					}
+					else
+					{
+						InputGroup[] inputGroups = result.InputGroups.ToArray();
 
-						foreach (Input input in inputGroup.Inputs)
+						foreach (int index in savedState.InputGroupStack)
 						{
-							string key = $"{inputGroup.Id}.{input.Id}";
-							
-							savedState.SavedInputs[key] = new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow),
-																			script.Runner.Script.Id,
-																			script.Runner.Name,
-																			input.GroupId,
-																			input.Id,
-																			script.Id,
-																			input.LabelText,
-																			input.Name,
-																			input.Value,
-																			script.CurrentDatum?.Id,
-																			input.Latitude,
-																			input.Longitude,
-																			input.LocationUpdateTimestamp,
-																			script.RunTime.Value,
-																			input.CompletionRecords,
-																			input.SubmissionTimestamp.Value,
-																			manualRun);
+							InputGroup inputGroup = inputGroups[index];
+
+							foreach (Input input in inputGroup.Inputs)
+							{
+								string key = $"{inputGroup.Id}.{input.Id}";
+
+								savedState.SavedInputs[key] = new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow),
+																				script.Runner.Script.Id,
+																				script.Runner.Name,
+																				input.GroupId,
+																				input.Id,
+																				script.Id,
+																				input.LabelText,
+																				input.Name,
+																				input.Value,
+																				script.CurrentDatum?.Id,
+																				input.Latitude,
+																				input.Longitude,
+																				input.LocationUpdateTimestamp,
+																				script.RunTime.Value,
+																				input.CompletionRecords,
+																				input.SubmissionTimestamp.Value,
+																				manualRun);
+							}
 						}
 					}
 				}
