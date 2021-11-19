@@ -2058,7 +2058,7 @@ namespace Sensus
 																				input.LocationUpdateTimestamp,
 																				script.RunTime.Value,
 																				input.CompletionRecords,
-																				input.SubmissionTimestamp.Value,
+																				DateTimeOffset.UtcNow, // save this now, but overwrite it when the script is actually submitted
 																				manualRun);
 							}
 						}
@@ -2126,6 +2126,11 @@ namespace Sensus
 							{
 								if (savedState.SavedInputs.TryGetValue($"{inputGroup.Id}.{input.Id}", out ScriptDatum savedInput))
 								{
+									savedInput.SubmissionTimestamp = input.SubmissionTimestamp ?? DateTimeOffset.UtcNow;
+									savedInput.Latitude = input.Latitude;
+									savedInput.Longitude = input.Longitude;
+									savedInput.LocationTimestamp = input.LocationUpdateTimestamp;
+
 									await script.Runner.Probe.StoreDatumAsync(savedInput, CancellationToken.None);
 								}
 							}
