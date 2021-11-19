@@ -1447,8 +1447,6 @@ namespace Sensus
 
 								inputGroupPage.ReturnPage = returnPage;
 
-								currentPage.Parent = null;
-
 								app.DetailPage = currentPage;
 							}
 							else
@@ -1499,8 +1497,6 @@ namespace Sensus
 
 			if (useDetailPage && app.DetailPage == currentPage)
 			{
-				returnPage.Parent = null;
-
 				app.DetailPage = returnPage;
 			}
 			else

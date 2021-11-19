@@ -19,34 +19,45 @@ using Microsoft.AppCenter.Crashes;
 
 namespace Sensus.UI
 {
-    public partial class App : Application
-    {
-        public Page MasterPage
-        {
-            get { return (MainPage as SensusMasterDetailPage).Master; }
-        }
+	public partial class App : Application
+	{
+		public Page MasterPage
+		{
+			get { return (MainPage as SensusMasterDetailPage).Master; }
+		}
 
-        public Page DetailPage
-        {
-            get { return (MainPage as SensusMasterDetailPage).Detail; }
-            set { (MainPage as SensusMasterDetailPage).Detail = value; }
-        }
+		public Page DetailPage
+		{
+			get
+			{
+				return (MainPage as SensusMasterDetailPage).Detail;
+			}
+			set
+			{
+				if (value != null)
+				{
+					value.Parent = null;
+				}
 
-        public App()
-        {
-            MainPage = new SensusMasterDetailPage();
+				(MainPage as SensusMasterDetailPage).Detail = value;
+			}
+		}
 
-            InitializeComponent();
-        }
+		public App()
+		{
+			MainPage = new SensusMasterDetailPage();
 
-        protected override void OnStart()
-        {
-            base.OnStart();
+			InitializeComponent();
+		}
 
-            AppCenter.Start("ios=" + SensusServiceHelper.APP_CENTER_KEY_IOS + ";" +
-                            "android=" + SensusServiceHelper.APP_CENTER_KEY_ANDROID,
-                            typeof(Analytics),
-                            typeof(Crashes));
-        }
-    }
+		protected override void OnStart()
+		{
+			base.OnStart();
+
+			AppCenter.Start("ios=" + SensusServiceHelper.APP_CENTER_KEY_IOS + ";" +
+							"android=" + SensusServiceHelper.APP_CENTER_KEY_ANDROID,
+							typeof(Analytics),
+							typeof(Crashes));
+		}
+	}
 }
