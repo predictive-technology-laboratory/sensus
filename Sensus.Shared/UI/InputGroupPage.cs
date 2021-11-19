@@ -538,6 +538,8 @@ namespace Sensus.UI
 				{
 					App app = Application.Current as App;
 
+					ReturnPage.Parent = null;
+
 					app.DetailPage = ReturnPage;
 				}
 			});
