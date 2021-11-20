@@ -2102,11 +2102,11 @@ namespace Sensus
 								await IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.Badge, script.Runner.Probe.Protocol);
 							}
 						}
+					}
 
-						if (await script.Runner.ScheduleScriptFromInputAsync(script))
-						{
-							await script.Runner.ScheduleNextScriptToRunAsync();
-						}
+					if (await script.Runner.ScheduleScriptFromInputAsync(script))
+					{
+						await script.Runner.ScheduleNextScriptToRunAsync();
 					}
 				}
 
