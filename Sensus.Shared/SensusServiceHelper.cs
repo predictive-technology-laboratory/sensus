@@ -1327,13 +1327,27 @@ namespace Sensus
 			public InputGroupPage.NavigationResult NavigationResult { get; set; }
 		}
 
+		private Page GetReturnPage(Page detailPage)
+		{
+			if (detailPage is InputGroupPage previousInputGroupPage)
+			{
+				return previousInputGroupPage.ReturnPage;
+			}
+			else if (detailPage is NavigationPage previousNavigationPage && previousNavigationPage.CurrentPage is InputGroupPage previousCurrentPage)
+			{
+				return previousCurrentPage.ReturnPage;
+			}
+
+			return detailPage;
+		}
+
 		protected async Task<PromptForInputsResult> PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, string title, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, bool confirmNavigation, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, bool useDetailPage, Action postDisplayCallback, SavedScriptState savedState)
 		{
 			bool firstPageDisplay = true;
 			App app = Application.Current as App;
 			INavigation navigation = app.DetailPage.Navigation;
 			Page currentPage = null;
-			Page returnPage = app.DetailPage;
+			Page returnPage = GetReturnPage(app.DetailPage);
 			InputGroupPage.NavigationResult lastNavigationResult = InputGroupPage.NavigationResult.None;
 			int startInputGroupIndex = 0;
 
@@ -1450,6 +1464,8 @@ namespace Sensus
 									{
 										inputGroupPage.SetResult(InputGroupPage.NavigationResult.Paused);
 									}
+
+									returnPage = null;
 								};
 
 								inputGroupPage.ReturnPage = returnPage;
@@ -1506,7 +1522,7 @@ namespace Sensus
 			{
 				if (app.DetailPage == currentPage)
 				{
-					app.DetailPage = returnPage;
+					app.DetailPage = returnPage ?? app.HomePage;
 				}
 			}
 			else

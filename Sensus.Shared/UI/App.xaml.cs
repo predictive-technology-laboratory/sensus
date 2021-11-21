@@ -43,6 +43,14 @@ namespace Sensus.UI
 			}
 		}
 
+		public Page HomePage
+		{
+			get
+			{
+				return (MainPage as MasterDetailPage)?.Detail;
+			}
+		}
+
 		public App()
 		{
 			MainPage = new SensusMasterDetailPage();
