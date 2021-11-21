@@ -1442,7 +1442,14 @@ namespace Sensus
 							{
 								inputGroupPage.Disappearing += (o, e) =>
 								{
-									inputGroupPage.SetResult(InputGroupPage.NavigationResult.Paused);
+									if (savedState == null)
+									{
+										inputGroupPage.SetResult(InputGroupPage.NavigationResult.Cancel);
+									}
+									else
+									{
+										inputGroupPage.SetResult(InputGroupPage.NavigationResult.Paused);
+									}
 								};
 
 								inputGroupPage.ReturnPage = returnPage;
@@ -1495,9 +1502,12 @@ namespace Sensus
 				}
 			}
 
-			if (useDetailPage && app.DetailPage == currentPage)
+			if (useDetailPage)
 			{
-				app.DetailPage = returnPage;
+				if (app.DetailPage == currentPage)
+				{
+					app.DetailPage = returnPage;
+				}
 			}
 			else
 			{
