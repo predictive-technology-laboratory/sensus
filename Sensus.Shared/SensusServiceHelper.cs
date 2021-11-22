@@ -1464,8 +1464,6 @@ namespace Sensus
 									{
 										inputGroupPage.SetResult(InputGroupPage.NavigationResult.Paused);
 									}
-
-									returnPage = null;
 								};
 
 								inputGroupPage.ReturnPage = returnPage;
@@ -1522,7 +1520,7 @@ namespace Sensus
 			{
 				if (app.DetailPage == currentPage)
 				{
-					app.DetailPage = returnPage ?? app.HomePage;
+					app.DetailPage = returnPage;
 				}
 			}
 			else
