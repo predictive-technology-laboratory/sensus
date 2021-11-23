@@ -1516,7 +1516,7 @@ namespace Sensus
 				}
 			}
 
-			if (useDetailPage)
+			if (useDetailPage && lastNavigationResult != InputGroupPage.NavigationResult.Paused)
 			{
 				if (app.DetailPage == currentPage)
 				{
