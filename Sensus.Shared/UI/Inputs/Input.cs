@@ -1016,8 +1016,19 @@ namespace Sensus.UI.Inputs
 
 		public virtual bool ValueMatches(object conditionValue, bool conjunctive)
 		{
+			if (Value == null && this is IVariableDefiningInput variableDefiningInput && string.IsNullOrWhiteSpace(variableDefiningInput.DefinedVariable) == false)
+			{
+				Protocol protocolForInput = GetProtocol();
+
+				if (protocolForInput.VariableValue.TryGetValue(variableDefiningInput.DefinedVariable, out string value))
+				{
+					return value == conditionValue as string;
+				}
+
+				return conditionValue == null;
+			}
 			// if either is null, both must be null to be equal
-			if (Value == null || conditionValue == null)
+			else if (Value == null || conditionValue == null)
 			{
 				return Value == null && conditionValue == null;
 			}
