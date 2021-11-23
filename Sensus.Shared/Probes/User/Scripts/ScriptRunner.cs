@@ -567,7 +567,7 @@ namespace Sensus.Probes.User.Scripts
 			// ensure all variables defined by inputs are listed on the protocol
 			List<string> unknownVariables = Script.InputGroups.SelectMany(inputGroup => inputGroup.Inputs)
 															  .OfType<IVariableDefiningInput>()
-															  .Where(input => !string.IsNullOrWhiteSpace(input.DefinedVariable))
+															  .Where(input => !string.IsNullOrWhiteSpace(input.DefinedVariable) && input.DefinedVariable.StartsWith('!') == false)
 															  .Select(input => input.DefinedVariable)
 															  .Where(definedVariable => !Probe.Protocol.VariableValue.ContainsKey(definedVariable))
 															  .ToList();
