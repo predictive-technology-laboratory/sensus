@@ -323,6 +323,8 @@ namespace Sensus.Probes.User.Scripts
 
 		public List<DateTime> CompletionTimes { get; set; }
 
+		public bool HasSubmitted { get; set; }
+
 		[JsonIgnore]
 		public List<DateTime> ScheduledTimes
 		{
@@ -803,15 +805,15 @@ namespace Sensus.Probes.User.Scripts
 
 				await runner.ScheduleScriptRunAsync(scheduledTime);
 
-				return scheduler.ScheduleMode != ScheduleModes.Next;
+				return scheduler.ScheduleMode == ScheduleModes.Next;
 			}
 
-			return true;
+			return false;
 		}
 
 		public async Task ScheduleNextScriptToRunAsync()
 		{
-			if (NextScript != null && (TriggerNextScriptFirstTimeOnly == false || CompletionTimes.Count == 1))
+			if (NextScript != null && (TriggerNextScriptFirstTimeOnly == false || HasSubmitted == false))
 			{
 				// if there is no window then run it immmediately
 				if (NextScriptRunDelayMS == 0)

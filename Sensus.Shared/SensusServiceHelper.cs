@@ -1516,9 +1516,9 @@ namespace Sensus
 				}
 			}
 
-			if (useDetailPage && lastNavigationResult != InputGroupPage.NavigationResult.Paused)
+			if (useDetailPage)
 			{
-				if (app.DetailPage == currentPage)
+				if (app.DetailPage == currentPage && lastNavigationResult != InputGroupPage.NavigationResult.Paused)
 				{
 					app.DetailPage = returnPage;
 				}
@@ -2128,10 +2128,12 @@ namespace Sensus
 						}
 					}
 
-					if (await script.Runner.ScheduleScriptFromInputAsync(script))
+					if (await script.Runner.ScheduleScriptFromInputAsync(script) == false)
 					{
 						await script.Runner.ScheduleNextScriptToRunAsync();
 					}
+
+					script.Runner.HasSubmitted = true;
 				}
 
 				// process/store all inputs in the script
@@ -2158,7 +2160,7 @@ namespace Sensus
 									await script.Runner.Probe.StoreDatumAsync(savedInput, CancellationToken.None);
 								}
 							}
-							else
+							else if (input.Display)
 							{
 								// the _script.Id allows us to link the data to the script that the user created. it never changes. on the other hand, the script
 								// that is passed into this method is always a copy of the user-created script. the script.Id allows us to link the various data

@@ -24,6 +24,7 @@ using Sensus.Exceptions;
 using System.ComponentModel;
 using static Sensus.UI.InputGroupPage;
 using System.Timers;
+using Sensus.Context;
 
 // register the input effect group
 [assembly: ResolutionGroupName(Input.EFFECT_RESOLUTION_GROUP_NAME)]
@@ -726,42 +727,48 @@ namespace Sensus.UI.Inputs
 
 		protected virtual void NavigateOrDelay(NavigationResult navigationResult, int delay)
 		{
-			if (InputGroupPage != null)
+			SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
 			{
-				if (delay > 0)
+				if (InputGroupPage != null)
 				{
-					InputGroupPage.SetNavigationVisibility(this);
-
-					_delayTimer?.Dispose();
-
-					_delayTimer = new Timer(delay) { AutoReset = false };
-
-					_view.IsEnabled = false;
-
-					_delayTimer.Elapsed += (o, s) =>
+					if (delay > 0)
 					{
-						_view.IsEnabled = true;
+						InputGroupPage.SetNavigationVisibility(this);
 
+						_delayTimer?.Dispose();
+
+						_delayTimer = new Timer(delay) { AutoReset = false };
+
+						_view.IsEnabled = false;
+
+						_delayTimer.Elapsed += (o, s) =>
+						{
+							SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+							{
+								_view.IsEnabled = true;
+
+								if (navigationResult != NavigationResult.None)
+								{
+									InputGroupPage.Navigate(this, navigationResult);
+								}
+
+								InputGroupPage.SetNavigationVisibility(this);
+							});
+						};
+
+						_delayTimer.Start();
+					}
+					else
+					{
 						if (navigationResult != NavigationResult.None)
 						{
 							InputGroupPage.Navigate(this, navigationResult);
 						}
 
 						InputGroupPage.SetNavigationVisibility(this);
-					};
-
-					_delayTimer.Start();
-				}
-				else
-				{
-					if (navigationResult != NavigationResult.None)
-					{
-						InputGroupPage.Navigate(this, navigationResult);
 					}
-
-					InputGroupPage.SetNavigationVisibility(this);
 				}
-			}
+			});
 		}
 
 		public Input()
