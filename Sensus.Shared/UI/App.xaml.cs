@@ -39,7 +39,16 @@ namespace Sensus.UI
 					value.Parent = null;
 				}
 
-				(MainPage as SensusMasterDetailPage).Detail = value;
+				if (MainPage is MasterDetailPage masterDetailPage)
+				{
+#if __IOS__
+					masterDetailPage.IsPresented = true;
+#endif
+					masterDetailPage.Detail = value;
+#if __IOS__
+					masterDetailPage.IsPresented = false;
+#endif
+				}
 			}
 		}
 
