@@ -206,21 +206,6 @@ namespace Sensus.UI
 
 					if (inputView != null)
 					{
-						// add media view to inputs that have media attached
-						// this is done here because the media needs to be attached on appearing and disposed on disappearing
-						if (input is MediaInput mediaInput && mediaInput.HasMedia)
-						{
-							Appearing += async (s, e) =>
-							{
-								await mediaInput.InitializeMediaAsync();
-							};
-
-							Disappearing += async (s, e) =>
-							{
-								await mediaInput.DisposeMediaAsync();
-							};
-						}
-
 						// frame all enabled inputs that request a frame
 						if (input.Enabled && input.Frame)
 						{
@@ -444,12 +429,14 @@ namespace Sensus.UI
 				#endregion
 			}
 
-			Appearing += (o, e) =>
+			Appearing += async (o, e) =>
 			{
 				// the page has appeared so mark all inputs as viewed
 				foreach (Input displayedInput in displayedInputs)
 				{
 					displayedInput.Viewed = true;
+
+					await displayedInput.OnAppearing();
 				}
 
 				if (inputGroup.Timeout != null)
@@ -470,7 +457,7 @@ namespace Sensus.UI
 				// the page is disappearing, so dispose of inputs
 				foreach (Input displayedInput in displayedInputs)
 				{
-					displayedInput.OnDisappearing(await ResponseTask);
+					await displayedInput.OnDisappearing(await ResponseTask);
 				}
 
 				if (_timer != null)

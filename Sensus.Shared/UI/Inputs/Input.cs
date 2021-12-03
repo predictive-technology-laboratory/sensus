@@ -25,6 +25,7 @@ using System.ComponentModel;
 using static Sensus.UI.InputGroupPage;
 using System.Timers;
 using Sensus.Context;
+using System.Threading.Tasks;
 
 // register the input effect group
 [assembly: ResolutionGroupName(Input.EFFECT_RESOLUTION_GROUP_NAME)]
@@ -1009,9 +1010,16 @@ namespace Sensus.UI.Inputs
 			_feedbackView?.Reset();
 		}
 
-		public virtual void OnDisappearing(NavigationResult result)
+		public virtual Task OnAppearing()
+		{
+			return Task.CompletedTask;
+		}
+
+		public virtual Task OnDisappearing(NavigationResult result)
 		{
 			_delayTimer?.Dispose();
+
+			return Task.CompletedTask;
 		}
 
 		public virtual bool ValueMatches(object conditionValue, bool conjunctive)

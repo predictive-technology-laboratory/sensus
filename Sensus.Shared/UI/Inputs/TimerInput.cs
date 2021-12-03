@@ -17,6 +17,7 @@ using Sensus.Context;
 using Sensus.UI.UiProperties;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Timers;
 using Xamarin.Forms;
 using static Sensus.UI.InputGroupPage;
@@ -154,7 +155,7 @@ namespace Sensus.UI.Inputs
 		[OnOffUiProperty("Show Stop Button:", true, 19)]
 		public bool ShowStopButton { get; set; }
 
-		public override void OnDisappearing(NavigationResult result)
+		public override Task OnDisappearing(NavigationResult result)
 		{
 			if (_timer.Enabled)
 			{
@@ -168,6 +169,8 @@ namespace Sensus.UI.Inputs
 					Complete = true;
 				}
 			}
+
+			return base.OnDisappearing(result);
 		}
 
 		public override View GetView(int index)

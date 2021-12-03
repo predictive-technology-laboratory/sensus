@@ -160,5 +160,19 @@ namespace Sensus.UI.Inputs
 				await _mediaView.DisposeMediaAsync();
 			}
 		}
+
+		public override async Task OnAppearing()
+		{
+			await InitializeMediaAsync();
+
+			await base.OnAppearing();
+		}
+
+		public override async Task OnDisappearing(InputGroupPage.NavigationResult result)
+		{
+			await DisposeMediaAsync();
+
+			await base.OnDisappearing(result);
+		}
 	}
 }

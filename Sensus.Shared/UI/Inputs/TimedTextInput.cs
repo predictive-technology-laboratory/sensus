@@ -4,6 +4,7 @@ using Sensus.UI.UiProperties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Timers;
 using Xamarin.Forms;
 
@@ -100,12 +101,12 @@ namespace Sensus.UI.Inputs
 			});
 		}
 
-		public override void OnDisappearing(InputGroupPage.NavigationResult result)
+		public override Task OnDisappearing(InputGroupPage.NavigationResult result)
 		{
 			_timer.Stop();
 			_timer.Dispose();
 
-			base.OnDisappearing(result);
+			return base.OnDisappearing(result);
 		}
 	}
 }
