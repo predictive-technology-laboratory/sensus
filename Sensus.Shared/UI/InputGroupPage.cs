@@ -445,7 +445,17 @@ namespace Sensus.UI
 
 					_timer.Elapsed += (s, e) =>
 					{
-						_responseTaskCompletionSource.TrySetResult(NavigationResult.Timeout);
+						if (inputGroup.ShowNavigationButtons == ShowNavigationOptions.AfterTimeout)
+						{
+							if (_navigationStack != null)
+							{
+								_navigationStack.IsVisible = true;
+							}
+						}
+						else
+						{
+							_responseTaskCompletionSource.TrySetResult(NavigationResult.Timeout);
+						}
 					};
 
 					_timer.Start();
