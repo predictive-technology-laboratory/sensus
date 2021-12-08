@@ -101,12 +101,12 @@ namespace Sensus.UI.Inputs
 			});
 		}
 
-		public override Task OnDisappearing(InputGroupPage.NavigationResult result)
+		public override Task DisposeAsync(InputGroupPage.NavigationResult result)
 		{
 			_timer.Stop();
 			_timer.Dispose();
 
-			return base.OnDisappearing(result);
+			return base.DisposeAsync(result);
 		}
 	}
 }

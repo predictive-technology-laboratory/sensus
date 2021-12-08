@@ -63,6 +63,8 @@ namespace Sensus.UI
 
 		public string InputGroupId => _inputGroup.Id;
 
+		public Page ReturnPage { get; set; }
+
 		public InputGroupPage(InputGroup inputGroup,
 							  int stepNumber,
 							  int totalSteps,
@@ -436,7 +438,7 @@ namespace Sensus.UI
 				{
 					displayedInput.Viewed = true;
 
-					await displayedInput.OnAppearing();
+					await displayedInput.PrepareAsync();
 				}
 
 				if (inputGroup.Timeout != null)
@@ -467,7 +469,7 @@ namespace Sensus.UI
 				// the page is disappearing, so dispose of inputs
 				foreach (Input displayedInput in displayedInputs)
 				{
-					await displayedInput.OnDisappearing(await ResponseTask);
+					await displayedInput.DisposeAsync(await ResponseTask);
 				}
 
 				if (_timer != null)
@@ -524,8 +526,6 @@ namespace Sensus.UI
 
 			return base.OnBackButtonPressed();
 		}
-
-		public Page ReturnPage { get; set; }
 
 		private void HandleStaleNavigation()
 		{

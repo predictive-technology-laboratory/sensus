@@ -1010,12 +1010,12 @@ namespace Sensus.UI.Inputs
 			_feedbackView?.Reset();
 		}
 
-		public virtual Task OnAppearing()
+		public virtual Task PrepareAsync()
 		{
 			return Task.CompletedTask;
 		}
 
-		public virtual Task OnDisappearing(NavigationResult result)
+		public virtual Task DisposeAsync(NavigationResult result)
 		{
 			_delayTimer?.Dispose();
 

@@ -155,7 +155,7 @@ namespace Sensus.UI.Inputs
 		[OnOffUiProperty("Show Stop Button:", true, 19)]
 		public bool ShowStopButton { get; set; }
 
-		public override Task OnDisappearing(NavigationResult result)
+		public override Task DisposeAsync(NavigationResult result)
 		{
 			if (_timer.Enabled)
 			{
@@ -170,7 +170,7 @@ namespace Sensus.UI.Inputs
 				}
 			}
 
-			return base.OnDisappearing(result);
+			return base.DisposeAsync(result);
 		}
 
 		public override View GetView(int index)
