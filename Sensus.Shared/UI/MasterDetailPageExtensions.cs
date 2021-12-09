@@ -13,13 +13,13 @@ namespace Sensus.UI
 			{
 				if (e.PropertyName == nameof(page.Detail))
 				{
-					if (page.Detail is InputGroupPage inputGroupPage1)
+					if (page.Detail is InputGroupPage withoutNavigationPage)
 					{
-						inputGroupPage1.Interrupt();
+						withoutNavigationPage.Interrupt();
 					}
-					else if (page.Detail is NavigationPage navigationPage && navigationPage.CurrentPage is InputGroupPage inputGroupPage2)
+					else if (page.Detail is NavigationPage navigationPage && navigationPage.CurrentPage is InputGroupPage withNavigationPage)
 					{
-						inputGroupPage2.Interrupt();
+						withNavigationPage.Interrupt();
 					}
 				}
 			};
