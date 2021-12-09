@@ -1418,7 +1418,7 @@ namespace Sensus
 					{
 						int stepNumber = inputGroupIndex + 1;
 
-						InputGroupPage inputGroupPage = new InputGroupPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, confirmNavigation, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, title);
+						InputGroupPage inputGroupPage = new InputGroupPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, confirmNavigation, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, title, savedState != null);
 
 						// do not display prompts page under the following conditions:
 						//
@@ -1452,19 +1452,22 @@ namespace Sensus
 								currentPage = new NavigationPage(currentPage);
 							}
 
+							// prepare the page
+							await inputGroupPage.PrepareAsync();
+
 							if (useDetailPage)
 							{
-								inputGroupPage.Disappearing += (o, e) =>
-								{
-									if (savedState == null)
-									{
-										inputGroupPage.SetResult(InputGroupPage.NavigationResult.Cancel);
-									}
-									else
-									{
-										inputGroupPage.SetResult(InputGroupPage.NavigationResult.Paused);
-									}
-								};
+								//inputGroupPage.Disappearing += (o, e) =>
+								//{
+								//	if (savedState == null)
+								//	{
+								//		inputGroupPage.SetResult(InputGroupPage.NavigationResult.Cancel);
+								//	}
+								//	else
+								//	{
+								//		inputGroupPage.SetResult(InputGroupPage.NavigationResult.Paused);
+								//	}
+								//};
 
 								inputGroupPage.ReturnPage = returnPage;
 
@@ -1484,6 +1487,8 @@ namespace Sensus
 							}
 
 							lastNavigationResult = await inputGroupPage.ResponseTask;
+
+							await inputGroupPage.DisposeAsync();
 
 							if (savedState == null && lastNavigationResult == InputGroupPage.NavigationResult.Paused)
 							{

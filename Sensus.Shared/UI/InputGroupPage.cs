@@ -40,11 +40,13 @@ namespace Sensus.UI
 		private InputGroup _inputGroup;
 		private StackLayout _navigationStack;
 		private bool _canNavigateBackward;
+		private List<Input> _displayedInputs;
 		private int _displayedInputCount;
 		private TaskCompletionSource<NavigationResult> _responseTaskCompletionSource;
 		private ShowNavigationOptions _showNavigationButtons;
 		private bool _confirmNavigation;
 		private Timer _timer;
+		private bool _savedState;
 
 		public int DisplayedInputCount
 		{
@@ -77,7 +79,8 @@ namespace Sensus.UI
 							  string incompleteSubmissionConfirmation,
 							  string submitConfirmation,
 							  bool displayProgress,
-							  string title = "")
+							  string title = "",
+							  bool savedState = false)
 		{
 
 			_inputGroup = inputGroup;
@@ -86,6 +89,7 @@ namespace Sensus.UI
 			_responseTaskCompletionSource = new TaskCompletionSource<NavigationResult>();
 			_showNavigationButtons = inputGroup.ShowNavigationButtons;
 			_confirmNavigation = confirmNavigation;
+			_savedState = savedState;
 
 			IsLastPage = totalSteps <= stepNumber;
 			Title = inputGroup.Title ?? title;
@@ -238,6 +242,8 @@ namespace Sensus.UI
 					}
 				}
 			}
+
+			_displayedInputs = displayedInputs;
 
 			// add final separator if we displayed any inputs
 			if (_displayedInputCount > 0)
@@ -437,44 +443,6 @@ namespace Sensus.UI
 				foreach (Input displayedInput in displayedInputs)
 				{
 					displayedInput.Viewed = true;
-
-					await displayedInput.PrepareAsync();
-				}
-
-				if (inputGroup.Timeout != null)
-				{
-					_timer = new Timer(inputGroup.Timeout.Value * 1000);
-
-					_timer.Elapsed += (s, e) =>
-					{
-						if (inputGroup.ShowNavigationButtons == ShowNavigationOptions.AfterTimeout)
-						{
-							if (_navigationStack != null)
-							{
-								_navigationStack.IsVisible = true;
-							}
-						}
-						else
-						{
-							_responseTaskCompletionSource.TrySetResult(NavigationResult.Timeout);
-						}
-					};
-
-					_timer.Start();
-				}
-			};
-
-			Disappearing += async (o, e) =>
-			{
-				// the page is disappearing, so dispose of inputs
-				foreach (Input displayedInput in displayedInputs)
-				{
-					await displayedInput.DisposeAsync(await ResponseTask);
-				}
-
-				if (_timer != null)
-				{
-					_timer.Stop();
 				}
 			};
 		}
@@ -540,11 +508,62 @@ namespace Sensus.UI
 			});
 		}
 
-		public void SetResult(NavigationResult result)
+		public async Task PrepareAsync()
+		{
+			foreach (Input displayedInput in _displayedInputs)
+			{
+				await displayedInput.PrepareAsync();
+			}
+
+			if (_inputGroup.Timeout != null)
+			{
+				_timer = new Timer(_inputGroup.Timeout.Value * 1000);
+
+				_timer.Elapsed += (o, e) =>
+				{
+					if (_inputGroup.ShowNavigationButtons == ShowNavigationOptions.AfterTimeout)
+					{
+						if (_navigationStack != null)
+						{
+							_navigationStack.IsVisible = true;
+						}
+					}
+					else
+					{
+						_responseTaskCompletionSource.TrySetResult(NavigationResult.Timeout);
+					}
+				};
+
+				_timer.Start();
+			}
+		}
+
+		public async Task DisposeAsync()
+		{
+			// the page is disappearing, so dispose of inputs
+			foreach (Input displayedInput in _displayedInputs)
+			{
+				await displayedInput.DisposeAsync(await ResponseTask);
+			}
+
+			if (_timer != null)
+			{
+				_timer.Stop();
+			}
+		}
+
+		public void Interrupt()
 		{
 			if (_responseTaskCompletionSource.Task.IsCompleted == false)
 			{
-				_responseTaskCompletionSource.TrySetResult(result);
+				if (_savedState)
+				{
+					_responseTaskCompletionSource.TrySetResult(NavigationResult.Paused);
+				}
+				else
+				{
+					_responseTaskCompletionSource.TrySetResult(NavigationResult.Cancel);
+				}
 			}
 		}
 	}

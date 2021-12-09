@@ -30,7 +30,7 @@ namespace Sensus.UI
 		{
 			get
 			{
-				return (MainPage as SensusMasterDetailPage).Detail;
+				return (MainPage as MasterDetailPage).Detail;
 			}
 			set
 			{
@@ -41,13 +41,7 @@ namespace Sensus.UI
 
 				if (MainPage is MasterDetailPage masterDetailPage)
 				{
-#if __IOS__
-					masterDetailPage.IsPresented = true;
-#endif
 					masterDetailPage.Detail = value;
-#if __IOS__
-					masterDetailPage.IsPresented = false;
-#endif
 				}
 			}
 		}
