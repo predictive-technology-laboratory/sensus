@@ -74,25 +74,7 @@ namespace Sensus.UI
 
 			IsPresented = true;
 
-			RegisterNavigationEvents();
-		}
-
-		public void RegisterNavigationEvents()
-		{
-			PropertyChanging += (o, e) =>
-			{
-				if (e.PropertyName == nameof(Detail))
-				{
-					if (Detail is InputGroupPage inputGroupPage1)
-					{
-						inputGroupPage1.Interrupt();
-					}
-					else if (Detail is NavigationPage navigationPage && navigationPage.CurrentPage is InputGroupPage inputGroupPage2)
-					{
-						inputGroupPage2.Interrupt();
-					}
-				}
-			};
+			this.RegisterNavigationEvents();
 		}
 	}
 }
