@@ -1457,18 +1457,6 @@ namespace Sensus
 
 							if (useDetailPage)
 							{
-								//inputGroupPage.Disappearing += (o, e) =>
-								//{
-								//	if (savedState == null)
-								//	{
-								//		inputGroupPage.SetResult(InputGroupPage.NavigationResult.Cancel);
-								//	}
-								//	else
-								//	{
-								//		inputGroupPage.SetResult(InputGroupPage.NavigationResult.Paused);
-								//	}
-								//};
-
 								inputGroupPage.ReturnPage = returnPage;
 
 								app.DetailPage = currentPage;
