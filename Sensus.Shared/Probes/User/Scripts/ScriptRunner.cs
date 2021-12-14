@@ -44,6 +44,7 @@ namespace Sensus.Probes.User.Scripts
 		private TimeSpan? _maxAge;
 		private readonly List<Tuple<ScheduledCallback, ScriptTriggerTime>> _scheduledCallbackTimes;
 		private readonly ScheduleTrigger _scheduleTrigger;
+		private bool _hasSubmitted;
 
 		private readonly object _locker = new object();
 
@@ -323,7 +324,19 @@ namespace Sensus.Probes.User.Scripts
 
 		public List<DateTime> CompletionTimes { get; set; }
 
-		public bool HasSubmitted { get; set; }
+		public bool HasSubmitted
+		{
+			get
+			{
+				return _hasSubmitted;
+			}
+			set
+			{
+				_hasSubmitted = value;
+
+				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasSubmitted)));
+			}
+		}
 
 		[JsonIgnore]
 		public List<DateTime> ScheduledTimes
