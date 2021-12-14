@@ -1079,6 +1079,7 @@ namespace Sensus.Probes.User.Scripts
 				copy.Probe = Probe;
 
 				copy.Name = GetCopyName();
+				copy.HasSubmitted = false;
 
 				foreach (InputGroup inputGroup in copy.Script.InputGroups)
 				{
