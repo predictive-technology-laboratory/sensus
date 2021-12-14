@@ -611,6 +611,7 @@ namespace Sensus.Probes.User.Scripts
 		public async Task ResetAsync()
 		{
 			await UnscheduleCallbacksAsync();
+			HasSubmitted = false;
 			RunTimes.Clear();
 			CompletionTimes.Clear();
 		}
