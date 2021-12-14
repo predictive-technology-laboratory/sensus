@@ -332,9 +332,14 @@ namespace Sensus.Probes.User.Scripts
 			}
 			set
 			{
+				bool changed = _hasSubmitted != value;
+
 				_hasSubmitted = value;
 
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasSubmitted)));
+				if (changed)
+				{
+					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasSubmitted)));
+				}
 			}
 		}
 
