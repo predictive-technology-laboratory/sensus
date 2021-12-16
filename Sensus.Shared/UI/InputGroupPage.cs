@@ -437,7 +437,7 @@ namespace Sensus.UI
 				#endregion
 			}
 
-			Appearing += async (o, e) =>
+			Appearing += (o, e) =>
 			{
 				// the page has appeared so mark all inputs as viewed
 				foreach (Input displayedInput in displayedInputs)
