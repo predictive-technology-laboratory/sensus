@@ -99,6 +99,7 @@ namespace Sensus.UI.Inputs
 					}
 
 					_progressTimer = new Timer(delay * _progressIncrement);
+
 					_progressTimer.Elapsed += (s, o) =>
 					{
 						SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>

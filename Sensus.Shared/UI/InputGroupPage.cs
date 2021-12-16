@@ -517,7 +517,7 @@ namespace Sensus.UI
 
 			if (_inputGroup.Timeout != null)
 			{
-				_timer = new Timer(_inputGroup.Timeout.Value * 1000);
+				_timer = new Timer(_inputGroup.Timeout.Value * 1000) { AutoReset = false };
 
 				_timer.Elapsed += (o, e) =>
 				{
