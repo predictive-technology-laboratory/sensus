@@ -33,6 +33,9 @@ namespace Sensus.UI.Inputs
 
 		public override string DefaultName => "Hyperlink";
 
+		[EntryStringUiProperty("Text", true, 5, true)]
+		public string Text { get; set; }
+
 		[EntryStringUiProperty("Url", true, 5, true)]
 		public string Url { get; set; }
 
@@ -44,9 +47,14 @@ namespace Sensus.UI.Inputs
 
 				Label urlLabel = new Label
 				{
-					Text = Url,
+					Text = Text,
 					StyleClass = new List<string> { "HyperlinkUrl" }
 				};
+
+				if (string.IsNullOrWhiteSpace(Text))
+				{
+					urlLabel.Text = Url;
+				}
 
 				TapGestureRecognizer gesture = new TapGestureRecognizer()
 				{
