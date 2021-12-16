@@ -521,17 +521,20 @@ namespace Sensus.UI
 
 				_timer.Elapsed += (o, e) =>
 				{
-					if (_inputGroup.ShowNavigationButtons == ShowNavigationOptions.AfterTimeout)
+					SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
 					{
-						if (_navigationStack != null)
+						if (_inputGroup.ShowNavigationButtons == ShowNavigationOptions.AfterTimeout)
 						{
-							_navigationStack.IsVisible = true;
+							if (_navigationStack != null)
+							{
+								_navigationStack.IsVisible = true;
+							}
 						}
-					}
-					else
-					{
-						_responseTaskCompletionSource.TrySetResult(NavigationResult.Timeout);
-					}
+						else
+						{
+							_responseTaskCompletionSource.TrySetResult(NavigationResult.Timeout);
+						}
+					});
 				};
 
 				_timer.Start();
