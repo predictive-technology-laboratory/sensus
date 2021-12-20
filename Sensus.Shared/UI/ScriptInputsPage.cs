@@ -157,11 +157,6 @@ namespace Sensus.UI
 				{
 					if (await DisplayAlert("Delete " + selectedInput.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
 					{
-						if (selectedInput is MediaInput mediaInput)
-						{
-							MediaObject.ClearCache(script.Runner, inputGroup, mediaInput);
-						}
-
 						inputGroup.Inputs.Remove(selectedInput);
 						inputsList.SelectedItem = null;  // manually reset, since it isn't done automatically.
 					}
@@ -192,7 +187,7 @@ namespace Sensus.UI
 					{
 						if (input is MediaInput mediaInput)
 						{
-							mediaInput.SetCachePath(script.Runner, inputGroup);
+							mediaInput.SetCachePath(script.Runner);
 						}
 						else if (input is ScriptSchedulerInput scriptSchedulerInput)
 						{

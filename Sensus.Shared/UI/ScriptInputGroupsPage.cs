@@ -78,8 +78,6 @@ namespace Sensus.UI
 				{
 					if (await DisplayAlert("Delete " + selectedInputGroup.ListItemText + "?", "This action cannot be undone.", "Delete", "Cancel"))
 					{
-						MediaObject.ClearCache(script.Runner, selectedInputGroup);
-
 						script.InputGroups.Remove(selectedInputGroup);
 						groupsList.SelectedItem = null;
 					}

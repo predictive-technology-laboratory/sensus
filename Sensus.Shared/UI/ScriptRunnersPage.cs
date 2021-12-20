@@ -85,8 +85,6 @@ namespace Sensus.UI
 						selectedScriptRunner.Enabled = false;
 						selectedScriptRunner.Triggers.Clear();
 
-						MediaObject.ClearCache(selectedScriptRunner);
-
 						probe.ScriptRunners.Remove(selectedScriptRunner);
 
 						scriptRunnersList.SelectedItem = null;  // reset manually since it's not done automatically

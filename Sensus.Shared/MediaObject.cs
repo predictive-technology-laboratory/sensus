@@ -34,23 +34,11 @@ namespace Sensus
 		{
 			return Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), cachePath));
 		}
-		public static string GetCachePath(ScriptRunner scriptRunner, InputGroup inputGroup = null, Input input = null)
+		public static string GetProtocolCachePath(ScriptRunner scriptRunner)
 		{
-			string path = Path.Combine(scriptRunner.Probe.Protocol.Id, $"{nameof(MediaObject)}Cache", scriptRunner.Script.Id);
-
-			if (inputGroup != null)
-			{
-				path = Path.Combine(path, inputGroup.Id);
-			}
-
-			if (input != null)
-			{
-				path = Path.Combine(path, input.Id);
-			}
-
-			return path;
+			return Path.Combine(scriptRunner.Probe.Protocol.Id, $"{nameof(MediaObject)}Cache");
 		}
-		private static string GetCacheFileName(string fileName, string cachePath)
+		public static string GetCacheFileName(string fileName)
 		{
 			string extension = Path.GetExtension(fileName);
 			string cacheName = null;
@@ -63,7 +51,11 @@ namespace Sensus
 				cacheName = $"{guid}{extension}";
 			}
 
-			return Path.Combine(cachePath, cacheName);
+			return cacheName;
+		}
+		public static string GetCacheFileName(string fileName, string cachePath)
+		{
+			return Path.Combine(cachePath, GetCacheFileName(fileName));
 		}
 
 		public static async Task<MediaObject> FromFileAsync(string path, Stream stream, string type, string cachePath)
@@ -170,7 +162,7 @@ namespace Sensus
 
 			return stream;
 		}
-		private async Task<Stream> WriteCacheFileAsync()
+		public async Task<Stream> WriteCacheFileAsync()
 		{
 			DownloadResult result = await DownloadMediaAsync(Data);
 
@@ -202,9 +194,9 @@ namespace Sensus
 			}
 		}
 
-		public static void ClearCache(ScriptRunner scriptRunner, InputGroup inputGroup = null, Input input = null)
+		public static void ClearCache(ScriptRunner scriptRunner)
 		{
-			string path = GetFullCachePath(GetCachePath(scriptRunner, inputGroup, input));
+			string path = GetFullCachePath(GetProtocolCachePath(scriptRunner));
 
 			if (Directory.Exists(path))
 			{
