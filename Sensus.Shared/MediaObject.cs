@@ -254,13 +254,16 @@ namespace Sensus
 		{
 			try
 			{
-				if (StorageMethod == MediaStorageMethods.Cache && IsCached == false)
+				if (IsCached == false)
 				{
-					await WriteCacheFileAsync();
-				}
-				else if (Type.ToLower().StartsWith("video") && StorageMethod == MediaStorageMethods.Embed)
-				{
-					await WriteCacheFileAsync(Convert.FromBase64String(Data));
+					if (StorageMethod == MediaStorageMethods.Cache)
+					{
+						await WriteCacheFileAsync();
+					}
+					else if (Type.ToLower().StartsWith("video") && StorageMethod == MediaStorageMethods.Embed)
+					{
+						await WriteCacheFileAsync(Convert.FromBase64String(Data));
+					}
 				}
 			}
 			catch (Exception error)
@@ -273,13 +276,16 @@ namespace Sensus
 		{
 			try
 			{
-				if (StorageMethod == MediaStorageMethods.Cache && IsCached == false)
+				if (IsCached == false)
 				{
-					WriteCacheFile();
-				}
-				else if (Type.ToLower().StartsWith("video") && StorageMethod == MediaStorageMethods.Embed)
-				{
-					WriteCacheFile(Convert.FromBase64String(Data));
+					if (StorageMethod == MediaStorageMethods.Cache)
+					{
+						WriteCacheFile();
+					}
+					else if (Type.ToLower().StartsWith("video") && StorageMethod == MediaStorageMethods.Embed)
+					{
+						WriteCacheFile(Convert.FromBase64String(Data));
+					}
 				}
 			}
 			catch (Exception error)
