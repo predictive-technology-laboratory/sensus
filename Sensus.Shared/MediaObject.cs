@@ -34,9 +34,13 @@ namespace Sensus
 		{
 			return Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), cachePath));
 		}
+		public static string GetProtocolCachePath(Protocol protocol)
+		{
+			return Path.Combine(protocol.Id, $"{nameof(MediaObject)}Cache");
+		}
 		public static string GetProtocolCachePath(ScriptRunner scriptRunner)
 		{
-			return Path.Combine(scriptRunner.Probe.Protocol.Id, $"{nameof(MediaObject)}Cache");
+			return GetProtocolCachePath(scriptRunner.Probe.Protocol);
 		}
 		public static string GetCacheFileName(string fileName)
 		{
