@@ -41,6 +41,8 @@ namespace Sensus.UI.Inputs
 		public List<string> Text { get; set; }
 		[OnOffUiProperty("Center Text:", true, 12)]
 		public bool CenterText { get; set; }
+		[OnOffUiProperty("Cycle Forever:", true, 13)]
+		public bool CycleForever { get; set; }
 
 		public override View GetView(int index)
 		{
@@ -96,7 +98,15 @@ namespace Sensus.UI.Inputs
 
 				if (_elapsed >= Duration)
 				{
-					Complete = true;
+					if (Complete == false)
+					{
+						Complete = true;
+					}
+
+					if (CycleForever == false)
+					{
+						_timer.Stop();
+					}
 				}
 			});
 		}
