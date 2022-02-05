@@ -20,6 +20,7 @@ namespace Sensus
 		public MediaStorageMethods StorageMethod { get; private set; }
 		public string CacheFileName { get; private set; }
 		public MediaCacheModes CacheMode { get; set; }
+		public long FileSize { get; set; }
 
 		// for deserialization and manual construction
 		public MediaObject(string data, string type, MediaStorageMethods storageMethod, string cacheFileName)
@@ -67,7 +68,7 @@ namespace Sensus
 			const int BUFFER_SIZE = 1024;
 			byte[] fileBuffer = new byte[stream.Length];
 			byte[] buffer = new byte[BUFFER_SIZE];
-			int totalBytesRead = 0;
+			long totalBytesRead = 0;
 			int bytesRead;
 
 			while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
@@ -78,6 +79,8 @@ namespace Sensus
 			}
 
 			MediaObject media = new MediaObject(Convert.ToBase64String(fileBuffer), type, MediaStorageMethods.Embed, GetCacheFileName(path, cachePath));
+
+			media.FileSize = totalBytesRead;
 
 			return media;
 		}
@@ -160,6 +163,8 @@ namespace Sensus
 		{
 			Stream stream = GetCacheFileStream();
 
+			FileSize = buffer.LongLength;
+
 			await stream.WriteAsync(buffer);
 
 			stream.Position = 0;
@@ -176,6 +181,8 @@ namespace Sensus
 		private void WriteCacheFile(byte[] buffer)
 		{
 			Stream stream = GetCacheFileStream();
+
+			FileSize = buffer.LongLength;
 
 			stream.Write(buffer);
 
