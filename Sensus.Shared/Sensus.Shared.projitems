@@ -177,7 +177,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\AddProximityTriggerPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\AddScriptTriggerPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\AnonymizerPage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\App.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\App.xaml.cs">
+         <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)UI\DataStorePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ButtonGridView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ButtonGridInput.cs" />
