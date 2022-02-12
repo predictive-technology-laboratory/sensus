@@ -125,6 +125,7 @@
 			<Setter Property="BackgroundColor" Value="{StaticResource FrameBackgroundColor}" />
 			<Setter Property="BorderColor" Value="{StaticResource FrameBorderColor}" />
 			<Setter Property="HasShadow" Value="False" />
+			<Setter Property="CornerRadius" Value="6" />
 		</Style>
 
 		<Style TargetType="{x:Type Slider}">
@@ -154,6 +155,7 @@
 			<Setter Property="BackgroundColor" Value="{StaticResource FrameBackgroundColor}" />
 			<Setter Property="BorderColor" Value="{StaticResource FrameBorderColor}" />
 			<Setter Property="HasShadow" Value="False" />
+			<Setter Property="CornerRadius" Value="6" />
 		</Style>
 
 		<Style x:Key="MissingLetterButton" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
