@@ -91,12 +91,11 @@ namespace Sensus.UI.Inputs
 		{
 			SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
 			{
-				_textLabel.Text = Text[_index % Text.Count];
-
-				_index += 1;
-				_elapsed += interval;
-
-				if (_elapsed >= Duration)
+				if (_elapsed < Duration)
+				{
+					_textLabel.Text = _elapsed.ToString() + " - " + Text[_index % Text.Count];
+				}
+				else if(_elapsed >= Duration)
 				{
 					if (Complete == false)
 					{
@@ -108,6 +107,9 @@ namespace Sensus.UI.Inputs
 						_timer.Stop();
 					}
 				}
+
+				_index += 1;
+				_elapsed += interval;
 			});
 		}
 
