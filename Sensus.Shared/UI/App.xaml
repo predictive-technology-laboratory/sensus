@@ -20,6 +20,7 @@
 		<Color x:Key="UrlLabelColor">#0047b3</Color>
 		<Color x:Key="SelectedButtonColor">#367fc9</Color>
 		<Color x:Key="SliderTrackBarColor">#acacac</Color>
+		<Color x:Key="SeparatorBarColor">#96BCE3</Color>
 		
 		<!-- Sensus colors -->
 		<Color x:Key="ProbeOnColor">#227022</Color>
@@ -87,7 +88,8 @@
 			<Setter Property="TextColor" Value="{StaticResource TextColor}" />
 		</Style>
 		<Style TargetType="{x:Type ListView}">
-			<Setter Property="SeparatorColor" Value="{StaticResource ButtonColor}" />
+			<Setter Property="BackgroundColor" Value="{StaticResource BackgroundColor}" />
+			<Setter Property="SeparatorColor" Value="{StaticResource SeparatorBarColor}" />
 		</Style>
 		<Style TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
 			<Setter Property="BackgroundColor" Value="{StaticResource ButtonColor}" />
