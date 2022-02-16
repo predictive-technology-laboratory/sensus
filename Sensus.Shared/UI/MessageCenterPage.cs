@@ -99,7 +99,7 @@ namespace Sensus.UI
 			await Navigation.PushAsync(new MessagePage(notificationMessage, this));
 		}
 
-		private class NotificationTextCell : TextCell
+		private class NotificationTextCell : DarkModeCompatibleTextCell
 		{
 			public NotificationTextCell()
 			{

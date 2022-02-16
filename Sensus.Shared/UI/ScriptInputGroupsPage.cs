@@ -28,7 +28,7 @@ namespace Sensus.UI
 			Title = "Input Groups";
 
 			ListView groupsList = new ListView(ListViewCachingStrategy.RecycleElement);
-			groupsList.ItemTemplate = new DataTemplate(typeof(TextCell));
+			groupsList.ItemTemplate = new DataTemplate(typeof(DarkModeCompatibleTextCell));
 			groupsList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(InputGroup.ListItemText));
 			groupsList.ItemsSource = script.InputGroups;
 			groupsList.ItemTapped += async (o, e) =>

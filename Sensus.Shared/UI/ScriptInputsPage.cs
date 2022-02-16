@@ -31,7 +31,7 @@ namespace Sensus.UI
 			Title = "Inputs";
 
 			ListView inputsList = new ListView(ListViewCachingStrategy.RecycleElement);
-			inputsList.ItemTemplate = new DataTemplate(typeof(TextCell));
+			inputsList.ItemTemplate = new DataTemplate(typeof(DarkModeCompatibleTextCell));
 			inputsList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(Input.Caption));
 			inputsList.ItemsSource = inputGroup.Inputs;
 			inputsList.ItemTapped += async (o, e) =>
