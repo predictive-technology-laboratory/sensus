@@ -93,7 +93,7 @@ namespace Sensus.UI.Inputs
 			{
 				if (_elapsed < Duration)
 				{
-					_textLabel.Text = _elapsed.ToString() + " - " + Text[_index % Text.Count];
+					_textLabel.Text = Text[_index % Text.Count];
 				}
 				else if(_elapsed >= Duration)
 				{
