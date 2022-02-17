@@ -284,7 +284,7 @@ namespace Sensus.UI.Inputs
 
 						foreach (ButtonWithValue gridButton in _grid.Buttons)
 						{
-							gridButton.Style = null;
+							gridButton.Style = (Style)Application.Current.Resources["SelectableButton"];
 						}
 
 						optionsLabel.IsVisible = true;
@@ -308,7 +308,7 @@ namespace Sensus.UI.Inputs
 
 					foreach (ButtonWithValue gridButton in _grid.Buttons)
 					{
-						gridButton.Style = null;
+						gridButton.Style = (Style)Application.Current.Resources["SelectableButton"];
 					}
 
 					button.Style = (Style)Application.Current.Resources["SelectedButton"];
