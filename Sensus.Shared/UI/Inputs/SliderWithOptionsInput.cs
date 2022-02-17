@@ -330,7 +330,7 @@ namespace Sensus.UI.Inputs
 				{
 					ButtonWithValue button = _grid.AddButton(buttonValue, buttonValue);
 
-					button.StyleClass = new List<string>();
+					button.Style = (Style)Application.Current.Resources["SelectableButton"];
 				}
 
 				_grid.Arrange();
