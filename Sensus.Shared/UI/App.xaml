@@ -18,6 +18,7 @@
 		<Color x:Key="LessDimmedColor">#5b5b5b</Color>
 		<Color x:Key="RequiredFieldLabelColor">#ad3434</Color>
 		<Color x:Key="UrlLabelColor">#0047b3</Color>
+		<Color x:Key="SelectableButtonColor">#96BCE3</Color>
 		<Color x:Key="SelectedButtonColor">#367fc9</Color>
 		<Color x:Key="SliderTrackBarColor">#acacac</Color>
 		<Color x:Key="SeparatorBarColor">#96BCE3</Color>
@@ -105,6 +106,9 @@
 		</Style>
 		<Style Class="NavigationButton" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
 			<Setter Property="BackgroundColor" Value="{StaticResource NavigationButtonColor}" />
+		</Style>
+		<Style x:Key="SelectableButton" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
+			<Setter Property="BackgroundColor" Value="{StaticResource SelectableButtonColor}" />
 		</Style>
 		<Style x:Key="SelectedButton" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
 			<Setter Property="BackgroundColor" Value="{StaticResource SelectedButtonColor}" />

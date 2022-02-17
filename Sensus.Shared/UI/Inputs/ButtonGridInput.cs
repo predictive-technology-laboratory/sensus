@@ -27,12 +27,17 @@ namespace Sensus.UI.Inputs
 		protected ButtonGridView _grid;
 		static private Style _correctStyle;
 		static private Style _incorrectStyle;
+		static private Style _selectableStyle;
 		static private Style _selectedStyle;
+
+		private Style _defaultStyle;
+
 
 		static ButtonGridInput()
 		{
 			_correctStyle = (Style)Application.Current.Resources["CorrectAnswerButton"];
 			_incorrectStyle = (Style)Application.Current.Resources["IncorrectAnswerButton"];
+			_selectableStyle = (Style)Application.Current.Resources["SelectableButton"];
 			_selectedStyle = (Style)Application.Current.Resources["SelectedButton"];
 		}
 
@@ -101,6 +106,11 @@ namespace Sensus.UI.Inputs
 		{
 			if (base.GetView(index) == null)
 			{
+				if (Selectable)
+				{
+					_defaultStyle = _selectableStyle;
+				}
+				
 				if (LeaveIncorrectValue == false)
 				{
 					DelayEnded += (s, e) =>
@@ -111,7 +121,7 @@ namespace Sensus.UI.Inputs
 							{
 								if (gridButton.Style == _incorrectStyle)
 								{
-									gridButton.Style = null;
+									gridButton.Style = _defaultStyle;
 								}
 							}
 						}
@@ -128,7 +138,7 @@ namespace Sensus.UI.Inputs
 
 					foreach (ButtonWithValue gridButton in _grid.Buttons)
 					{
-						gridButton.Style = null;
+						gridButton.Style = _defaultStyle;
 					}
 
 					if (CorrectValue != null)
@@ -151,6 +161,8 @@ namespace Sensus.UI.Inputs
 				foreach (string buttonValue in Buttons)
 				{
 					ButtonWithValue button = _grid.AddButton(buttonValue, buttonValue);
+
+					button.Style = _defaultStyle;
 				}
 
 				_grid.Arrange();
