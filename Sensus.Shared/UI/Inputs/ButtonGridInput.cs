@@ -25,26 +25,14 @@ namespace Sensus.UI.Inputs
 		private string _definedVariable;
 		private string _value;
 		protected ButtonGridView _grid;
-		static private Style _correctStyle;
-		static private Style _incorrectStyle;
-		static private Style _selectableStyle;
-		static private Style _selectedStyle;
 
-		private Style _defaultStyle;
-
-
-		static ButtonGridInput()
-		{
-			_correctStyle = (Style)Application.Current.Resources["CorrectAnswerButton"];
-			_incorrectStyle = (Style)Application.Current.Resources["IncorrectAnswerButton"];
-			_selectableStyle = (Style)Application.Current.Resources["SelectableButton"];
-			_selectedStyle = (Style)Application.Current.Resources["SelectedButton"];
-		}
+		private ButtonStates _defaultState;
 
 		public ButtonGridInput() : base()
 		{
 			ColumnCount = 1;
 
+			_defaultState = ButtonStates.Default;
 		}
 
 		public override object Value => _value;
@@ -60,14 +48,6 @@ namespace Sensus.UI.Inputs
 				if (_grid != null)
 				{
 					_grid.IsEnabled = value;
-
-					if (GridButtons != null)
-					{
-						foreach (ButtonWithValue button in GridButtons)
-						{
-							button.IsEnabled = value;
-						}
-					}
 				}
 			}
 		}
@@ -108,21 +88,18 @@ namespace Sensus.UI.Inputs
 			{
 				if (Selectable)
 				{
-					_defaultStyle = _selectableStyle;
+					_defaultState = ButtonStates.Selectable;
 				}
-				
+
 				if (LeaveIncorrectValue == false)
 				{
 					DelayEnded += (s, e) =>
 					{
-						foreach (ButtonWithValue gridButton in _grid.Buttons)
+						foreach (ButtonWithValue otherButton in _grid.Buttons)
 						{
-							if (gridButton.Style != null)
+							if (otherButton.State == ButtonStates.Incorrect)
 							{
-								if (gridButton.Style == _incorrectStyle)
-								{
-									gridButton.Style = _defaultStyle;
-								}
+								otherButton.State = ButtonStates.Default;
 							}
 						}
 					};
@@ -136,25 +113,25 @@ namespace Sensus.UI.Inputs
 
 					Complete = true;
 
-					foreach (ButtonWithValue gridButton in _grid.Buttons)
+					foreach (ButtonWithValue otherButton in _grid.Buttons)
 					{
-						gridButton.Style = _defaultStyle;
+						otherButton.State = _defaultState;
 					}
 
 					if (CorrectValue != null)
 					{
 						if (Correct)
 						{
-							button.Style = _correctStyle; // (Style)Application.Current.Resources["CorrectAnswerButton"];
+							button.State = ButtonStates.Correct;
 						}
 						else
 						{
-							button.Style = _incorrectStyle; // (Style)Application.Current.Resources["IncorrectAnswerButton"];
+							button.State = ButtonStates.Incorrect;
 						}
 					}
 					else if (Selectable)
 					{
-						button.Style = _selectedStyle; // (Style)Application.Current.Resources["SelectedButton"];
+						button.State = ButtonStates.Selected;
 					}
 				});
 
@@ -162,7 +139,10 @@ namespace Sensus.UI.Inputs
 				{
 					ButtonWithValue button = _grid.AddButton(buttonValue, buttonValue);
 
-					button.Style = _defaultStyle;
+					if (Selectable)
+					{
+						button.State = ButtonStates.Selectable;
+					}
 				}
 
 				_grid.Arrange();

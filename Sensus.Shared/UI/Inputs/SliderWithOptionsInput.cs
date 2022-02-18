@@ -148,7 +148,10 @@ namespace Sensus.UI.Inputs
 			}
 			set
 			{
-				_slider.IsEnabled = value;
+				if (_slider != null)
+				{
+					_slider.IsEnabled = value;
+				}
 
 				if (_grid != null)
 				{
@@ -225,8 +228,8 @@ namespace Sensus.UI.Inputs
 					HorizontalOptions = LayoutOptions.CenterAndExpand,
 					FontSize = 18,
 					Text = "More choices ...",
-					TextColor = (Color)Application.Current.Resources["LessDimmedColor"],
-					TextDecorations = TextDecorations.Underline,
+					StyleClass = new[] { "LessDimmedText" },
+					TextDecorations = TextDecorations.Underline
 				};
 
 				TapGestureRecognizer gesture = new TapGestureRecognizer()
@@ -284,7 +287,7 @@ namespace Sensus.UI.Inputs
 
 						foreach (ButtonWithValue gridButton in _grid.Buttons)
 						{
-							gridButton.Style = (Style)Application.Current.Resources["SelectableButton"];
+							gridButton.State = ButtonStates.Selectable;
 						}
 
 						optionsLabel.IsVisible = true;
@@ -308,10 +311,10 @@ namespace Sensus.UI.Inputs
 
 					foreach (ButtonWithValue gridButton in _grid.Buttons)
 					{
-						gridButton.Style = (Style)Application.Current.Resources["SelectableButton"];
+						gridButton.State = ButtonStates.Selectable;
 					}
 
-					button.Style = (Style)Application.Current.Resources["SelectedButton"];
+					button.State = ButtonStates.Selected;
 				})
 				{
 					AutoSize = AutoSizeOptionButtons,
@@ -330,7 +333,7 @@ namespace Sensus.UI.Inputs
 				{
 					ButtonWithValue button = _grid.AddButton(buttonValue, buttonValue);
 
-					button.Style = (Style)Application.Current.Resources["SelectableButton"];
+					button.State = ButtonStates.Selectable; //Style = (Style)Application.Current.Resources["SelectableButton"];
 				}
 
 				_grid.Arrange();
