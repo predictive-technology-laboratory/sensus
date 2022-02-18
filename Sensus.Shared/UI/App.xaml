@@ -20,7 +20,9 @@
 		<Color x:Key="RequiredFieldLabelColor">#ad3434</Color>
 		<Color x:Key="UrlLabelColor">#0047b3</Color>
 		<Color x:Key="SelectableButtonColor">#96BCE3</Color>
+		<Color x:Key="SelectableButtonTextColor">#000000</Color>
 		<Color x:Key="SelectedButtonColor">#367fc9</Color>
+		<Color x:Key="SelectedButtonTextColor">#000000</Color>
 		<Color x:Key="SliderTrackBarColor">#acacac</Color>
 		<Color x:Key="SeparatorBarColor">#96BCE3</Color>
 		
@@ -116,9 +118,11 @@
 				</Trigger>
 				<Trigger TargetType="{x:Type inputs:ButtonWithValue}" Property="State" Value="{x:Static inputs:ButtonStates.Selectable}">
 					<Setter Property="BackgroundColor" Value="{StaticResource SelectableButtonColor}"/>
+					<Setter Property="TextColor" Value="{StaticResource SelectableButtonTextColor}"/>
 				</Trigger>
 				<Trigger TargetType="{x:Type inputs:ButtonWithValue}" Property="State" Value="{x:Static inputs:ButtonStates.Selected}">
 					<Setter Property="BackgroundColor" Value="{StaticResource SelectedButtonColor}"/>
+					<Setter Property="TextColor" Value="{StaticResource SelectedButtonTextColor}"/>
 				</Trigger>
 			</Style.Triggers>
 		</Style>
