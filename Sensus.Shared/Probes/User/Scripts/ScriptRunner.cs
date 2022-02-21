@@ -619,6 +619,7 @@ namespace Sensus.Probes.User.Scripts
 			HasSubmitted = false;
 			RunTimes.Clear();
 			CompletionTimes.Clear();
+			SavedState = null;
 		}
 
 		public async Task RestartAsync()
