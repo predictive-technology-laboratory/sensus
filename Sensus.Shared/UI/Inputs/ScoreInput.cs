@@ -17,6 +17,7 @@ using Microcharts.Forms;
 using Newtonsoft.Json;
 using Sensus.UI.UiProperties;
 using SkiaSharp;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -115,6 +116,9 @@ namespace Sensus.UI.Inputs
 		[ListUiProperty("Score Method:", true, 21, new object[] { ScoreMethods.Total, ScoreMethods.Average }, false)]
 		public override ScoreMethods ScoreMethod { get; set; } = ScoreMethods.Total;
 
+		[OnOffUiProperty("Show Score as Percent:", true, 22)]
+		public bool ShowScoreAsPercent { get; set; }
+
 		[HiddenUiProperty]
 		public override float CorrectScore { get; set; }
 
@@ -183,7 +187,14 @@ namespace Sensus.UI.Inputs
 
 			if (_scoreSpan != null)
 			{
-				_scoreSpan.Text = Score.ToString();
+				if (ShowScoreAsPercent)
+				{
+					_scoreSpan.Text = $"{Score * 100 / Math.Max(1, CorrectScore):0.##}";
+				}
+				else
+				{
+					_scoreSpan.Text = Score.ToString();
+				}
 			}
 
 			if (_maxScoreSpan != null)
@@ -215,26 +226,41 @@ namespace Sensus.UI.Inputs
 			if (base.GetView(index) == null)
 			{
 				_label = CreateLabel(index);
-				
+
 				FormattedString scoreString = new FormattedString();
 
-				_scoreSpan = new Span()
+				if (ShowScoreAsPercent)
 				{
-					Text = Score.ToString(),
-					ForegroundColor = _scoreLabelColor,
-					FontSize = 50
-				};
+					_scoreSpan = new Span()
+					{
+						Text = $"{Score * 100 / Math.Max(1, CorrectScore):0.##}",
+						FontSize = 50,
+						ForegroundColor = _scoreLabelColor
+					};
 
-				_maxScoreSpan = new Span()
+					scoreString.Spans.Add(_scoreSpan);
+					scoreString.Spans.Add(new Span() { Text = "%", FontSize = 25, ForegroundColor = _scoreLabelDividerColor });
+				}
+				else
 				{
-					Text = CorrectScore.ToString(),
-					ForegroundColor = _maxScoreLabelColor,
-					FontSize = 25
-				};
+					_scoreSpan = new Span()
+					{
+						Text = Score.ToString(),
+						ForegroundColor = _scoreLabelColor,
+						FontSize = 50
+					};
 
-				scoreString.Spans.Add(_scoreSpan);
-				scoreString.Spans.Add(new Span() { Text = "\n/", FontSize = 25, ForegroundColor = _scoreLabelDividerColor });
-				scoreString.Spans.Add(_maxScoreSpan);
+					_maxScoreSpan = new Span()
+					{
+						Text = CorrectScore.ToString(),
+						ForegroundColor = _maxScoreLabelColor,
+						FontSize = 25
+					};
+
+					scoreString.Spans.Add(_scoreSpan);
+					scoreString.Spans.Add(new Span() { Text = "\n/", FontSize = 25, ForegroundColor = _scoreLabelDividerColor });
+					scoreString.Spans.Add(_maxScoreSpan);
+				}
 
 				Label scoreLabel = new Label()
 				{
