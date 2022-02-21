@@ -68,14 +68,20 @@ namespace Sensus.UI.Inputs
 
 			if (_correctDelay > 0 || _incorrectDelay > 0)
 			{
-				_progressBar = new ProgressBar();
+				_progressBar = new ProgressBar()
+				{
+					StyleClass = new[] { "FeedbackProgressBar" }
+				};
 
 				Children.Add(_progressBar);
 			}
 
 			if (string.IsNullOrWhiteSpace(_correctFeedbackMessage) == false || string.IsNullOrWhiteSpace(_incorrectFeedbackMessage) == false)
 			{
-				_feedbackLabel = new Label();
+				_feedbackLabel = new Label()
+				{
+					StyleClass = new[] { "FeedbackLabel" }
+				};
 
 				Children.Add(_feedbackLabel);
 			}
