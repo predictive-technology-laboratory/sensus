@@ -556,7 +556,6 @@ namespace Sensus.UI
                     if (action == "From QR Code")
                     {
                         url = await SensusServiceHelper.Get().ScanQrCodeAsync(QrCodePrefix.SENSUS_PROTOCOL);
-                        
                     }
                     else if (action == "From URL")
                     {
