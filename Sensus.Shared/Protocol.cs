@@ -1467,8 +1467,11 @@ namespace Sensus
         [OnOffUiProperty("(Android) Display Participation:", true, 57)]
         public bool DisplayParticipationPercentageInForegroundServiceNotification { get; set; } = true;
 
-		[OnOffUiProperty("(Android) Continue listening on AC power:", true, 58)]
-		public bool ListenOnAcPower { get; set; }
+        /// <summary>
+        /// Whether or not to include a <see cref="ParticipationReportDatum"/> when the protocol performs a health test.
+        /// <value><c>true</c> if the <see cref="ParticipationReportDatum"/> should be omitted; otherwise, <c>false</c>.</value>
+		[OnOffUiProperty("Omit Participation Report Datum", true, 58)]
+		public bool OmitParticipationReportDatum { get; set; }
 
 		/// <summary>
 		/// We regenerate the offset every time a protocol starts, so there's 
@@ -2764,10 +2767,13 @@ namespace Sensus
                     }
                 }
 
-                // submit participation report
-                ParticipationReportDatum participationReport = new ParticipationReportDatum(DateTimeOffset.UtcNow, this);
-                SensusServiceHelper.Get().Logger.Log("Protocol report:" + Environment.NewLine + participationReport, LoggingLevel.Normal, GetType());
-                _localDataStore.WriteDatum(participationReport, cancellationToken);
+                if (OmitParticipationReportDatum == false)
+                {
+                    // submit participation report
+                    ParticipationReportDatum participationReport = new ParticipationReportDatum(DateTimeOffset.UtcNow, this);
+                    SensusServiceHelper.Get().Logger.Log("Protocol report:" + Environment.NewLine + participationReport, LoggingLevel.Normal, GetType());
+                    _localDataStore.WriteDatum(participationReport, cancellationToken);
+                }
 
                 // write a heartbeat datum to let the backend know we've tested the protocol and we're alive
                 _localDataStore.WriteDatum(new HeartbeatDatum(DateTimeOffset.UtcNow), cancellationToken);
