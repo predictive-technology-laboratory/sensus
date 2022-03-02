@@ -264,7 +264,7 @@ namespace Sensus.Probes.User.Scripts
 			};
 		}
 
-		private void AddUserInitiatedScript(ScriptRunner runner)
+		private void AddUserInitiatedScript(ScriptRunner runner, int position = int.MaxValue)
 		{
 			if (runner.AllowUserInitiation)
 			{
@@ -272,25 +272,35 @@ namespace Sensus.Probes.User.Scripts
 
 				copy.Shuffle();
 
-				UserInitiatedScripts.Add(copy);
+				//UserInitiatedScripts.Add(copy);
+
+				UserInitiatedScripts.Insert(Math.Min(position, UserInitiatedScripts.Count), copy);
 			}
 		}
 
-		private void RemoveUserInitiatedScript(ScriptRunner runner)
+		private int RemoveUserInitiatedScript(ScriptRunner runner)
 		{
 			if (UserInitiatedScripts.FirstOrDefault(x => x.Runner == runner) is Script existingScript)
 			{
-				UserInitiatedScripts.Remove(existingScript);
+				//UserInitiatedScripts.Remove(existingScript);
+
+				int index = UserInitiatedScripts.IndexOf(existingScript);
+
+				UserInitiatedScripts.RemoveAt(index);
+
+				return index;
 			}
+
+			return -1;
 		}
 
 		public void ManageUserInitiatedScript(ScriptRunner runner)
 		{
 			lock (UserInitiatedScripts)
 			{
-				RemoveUserInitiatedScript(runner);
+				int index = RemoveUserInitiatedScript(runner);
 
-				AddUserInitiatedScript(runner);
+				AddUserInitiatedScript(runner, index);
 			}
 		}
 
