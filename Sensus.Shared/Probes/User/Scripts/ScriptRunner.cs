@@ -461,6 +461,9 @@ namespace Sensus.Probes.User.Scripts
 		[EntryStringUiProperty("Continue Prompt:", true, 30, false)]
 		public string ContinuePrompt { get; set; }
 
+		[EntryStringUiProperty("Submit Confirmation:", true, 31, false)]
+		public string SubmitConfirmation { get; set; }
+
 		[JsonIgnore]
 		public string Caption
 		{
@@ -489,6 +492,7 @@ namespace Sensus.Probes.User.Scripts
 			IncompleteSubmissionConfirmation = "You have not completed all required fields on the current page. Do you want to continue?";
 			ShuffleInputGroups = false;
 			ConfirmNavigation = true;
+			SubmitConfirmation = "Are you ready to submit your responses?";
 
 			Triggers.CollectionChanged += (o, e) =>
 			{

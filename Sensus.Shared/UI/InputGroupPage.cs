@@ -47,6 +47,8 @@ namespace Sensus.UI
 		private bool _confirmNavigation;
 		private Timer _timer;
 		private bool _savedState;
+		private string _incompleteSubmissionConfirmation;
+		private string _submitConfirmation;
 
 		public int DisplayedInputCount
 		{
@@ -90,6 +92,8 @@ namespace Sensus.UI
 			_showNavigationButtons = inputGroup.ShowNavigationButtons;
 			_confirmNavigation = confirmNavigation;
 			_savedState = savedState;
+			_incompleteSubmissionConfirmation = incompleteSubmissionConfirmation;
+			_submitConfirmation = submitConfirmation;
 
 			IsLastPage = totalSteps <= stepNumber;
 			Title = inputGroup.Title ?? title;
@@ -523,7 +527,7 @@ namespace Sensus.UI
 				{
 					SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
 					{
-						if (_inputGroup.ShowNavigationButtons == ShowNavigationOptions.AfterTimeout)
+						if (IsLastPage || _inputGroup.ShowNavigationButtons == ShowNavigationOptions.AfterTimeout)
 						{
 							if (_navigationStack != null)
 							{

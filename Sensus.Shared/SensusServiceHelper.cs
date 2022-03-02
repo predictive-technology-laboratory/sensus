@@ -2030,7 +2030,7 @@ namespace Sensus
 			// determine what happens with the script state.
 			SavedScriptState savedState = await ScriptRunner.ManageStateAsync(script);
 
-			PromptForInputsResult result = await PromptForInputsAsync(script.RunTime, script.Runner.Name, script.InputGroups, null, script.Runner.AllowCancel, null, script.Runner.ConfirmNavigation, null, script.Runner.IncompleteSubmissionConfirmation, "Are you ready to submit your responses?", script.Runner.DisplayProgress, script.Runner.UseDetailPage, null, savedState);
+			PromptForInputsResult result = await PromptForInputsAsync(script.RunTime, script.Runner.Name, script.InputGroups, null, script.Runner.AllowCancel, null, script.Runner.ConfirmNavigation, null, script.Runner.IncompleteSubmissionConfirmation, script.Runner.SubmitConfirmation, script.Runner.DisplayProgress, script.Runner.UseDetailPage, null, savedState);
 
 			if (result.NavigationResult == InputGroupPage.NavigationResult.Paused)
 			{
