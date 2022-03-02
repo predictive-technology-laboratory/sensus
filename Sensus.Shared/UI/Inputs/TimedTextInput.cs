@@ -43,6 +43,8 @@ namespace Sensus.UI.Inputs
 		public bool CenterText { get; set; }
 		[OnOffUiProperty("Cycle Forever:", true, 13)]
 		public bool CycleForever { get; set; }
+		[OnOffUiProperty("Stack Text", true, 14)]
+		public bool StackText { get; set; }
 
 		public override View GetView(int index)
 		{
@@ -91,11 +93,35 @@ namespace Sensus.UI.Inputs
 		{
 			SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
 			{
-				if (_elapsed < Duration)
+				if (_elapsed < Duration || CycleForever)
 				{
-					_textLabel.Text = Text[_index % Text.Count];
+					int position = _index % Text.Count;
+
+					if (StackText)
+					{
+						string newLines = "";
+
+						if (position > 0)
+						{
+							newLines = "\n\n";
+						}
+						else
+						{
+							_textLabel.Text = "";
+						}
+
+						_textLabel.Text += newLines + Text[position];
+					}
+					else
+					{
+						_textLabel.Text = Text[position];
+					}
+
+					_index += 1;
+					_elapsed += interval;
 				}
-				else if(_elapsed >= Duration)
+				
+				if (_elapsed >= Duration)
 				{
 					if (Complete == false)
 					{
@@ -107,9 +133,6 @@ namespace Sensus.UI.Inputs
 						_timer.Stop();
 					}
 				}
-
-				_index += 1;
-				_elapsed += interval;
 			});
 		}
 
