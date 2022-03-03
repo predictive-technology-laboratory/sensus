@@ -616,19 +616,19 @@ namespace Sensus.DataStores.Local
 										await Protocol.RemoteDataStore.WriteDataStreamAsync(filePreparedForRemote, streamName, streamContentType, cancellationToken);
 									}
 
-									// file was written remotely. delete it locally, and do this within a lock to prevent concurrent access
-									// by the code that checks the size of the data store.
-									lock (_pathsPreparedForRemote)
-									{
-										File.Delete(pathPreparedForRemote);
-										_pathsPreparedForRemote.Remove(pathPreparedForRemote);
-									}
-
 									_totalFilesWrittenToRemote++;
 								}
 								else
 								{
-									SensusServiceHelper.Get().Logger.Log("Skipped sending 0 length file to remote.", LoggingLevel.Normal, GetType());
+									SensusServiceHelper.Get().Logger.Log("Skipped writing 0 length file to remote.", LoggingLevel.Normal, GetType());
+								}
+
+								// file was written remotely. delete it locally, and do this within a lock to prevent concurrent access
+								// by the code that checks the size of the data store.
+								lock (_pathsPreparedForRemote)
+								{
+									File.Delete(pathPreparedForRemote);
+									_pathsPreparedForRemote.Remove(pathPreparedForRemote);
 								}
 							}
 							catch (Exception ex)
@@ -805,40 +805,43 @@ namespace Sensus.DataStores.Local
 				{
 					byte[] bytes = File.ReadAllBytes(path);
 
-					string preparedPath = Path.Combine(Path.GetDirectoryName(path), Guid.NewGuid() + JSON_FILE_EXTENSION);
-
-					if (_compressionLevel != CompressionLevel.NoCompression)
+					if (bytes.Length > 0)
 					{
-						preparedPath += GZIP_FILE_EXTENSION;
+						string preparedPath = Path.Combine(Path.GetDirectoryName(path), Guid.NewGuid() + JSON_FILE_EXTENSION);
 
-						Compressor compressor = new Compressor(Compressor.CompressionMethod.GZip);
-						MemoryStream compressedStream = new MemoryStream();
-						compressor.Compress(bytes, compressedStream, _compressionLevel);
-						bytes = compressedStream.ToArray();
-					}
-
-					if (_encrypt)
-					{
-						preparedPath += ENCRYPTED_FILE_EXTENSION;
-
-						using (FileStream preparedFile = new FileStream(preparedPath, FileMode.Create, FileAccess.Write))
+						if (_compressionLevel != CompressionLevel.NoCompression)
 						{
-							await Protocol.EnvelopeEncryptor.EnvelopeAsync(bytes, ENCRYPTION_KEY_SIZE_BITS, ENCRYPTION_INITIALIZATION_KEY_SIZE_BITS, preparedFile, cancellationToken);
-						}
-					}
-					else
-					{
-						File.WriteAllBytes(preparedPath, bytes);
-					}
+							preparedPath += GZIP_FILE_EXTENSION;
 
-					lock (_pathsPreparedForRemote)
-					{
-						_pathsPreparedForRemote.Add(preparedPath);
+							Compressor compressor = new Compressor(Compressor.CompressionMethod.GZip);
+							MemoryStream compressedStream = new MemoryStream();
+							compressor.Compress(bytes, compressedStream, _compressionLevel);
+							bytes = compressedStream.ToArray();
+						}
+
+						if (_encrypt)
+						{
+							preparedPath += ENCRYPTED_FILE_EXTENSION;
+
+							using (FileStream preparedFile = new FileStream(preparedPath, FileMode.Create, FileAccess.Write))
+							{
+								await Protocol.EnvelopeEncryptor.EnvelopeAsync(bytes, ENCRYPTION_KEY_SIZE_BITS, ENCRYPTION_INITIALIZATION_KEY_SIZE_BITS, preparedFile, cancellationToken);
+							}
+						}
+						else
+						{
+							File.WriteAllBytes(preparedPath, bytes);
+						}
+
+						lock (_pathsPreparedForRemote)
+						{
+							_pathsPreparedForRemote.Add(preparedPath);
+						}
+
+						_totalFilesPreparedForRemote++;
 					}
 
 					File.Delete(path);
-
-					_totalFilesPreparedForRemote++;
 				}
 
 				lock (_pathsUnpreparedForRemote)
