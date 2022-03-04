@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using Sensus.UI.UiProperties;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Xamarin.Forms;
 
 namespace Sensus.UI.Inputs
@@ -137,7 +138,12 @@ namespace Sensus.UI.Inputs
 
 				foreach (string buttonValue in Buttons)
 				{
-					ButtonWithValue button = _grid.AddButton(buttonValue, buttonValue);
+					string[] pair = Regex.Split(buttonValue.Replace("::", "\0"), ":").Select(x => x.Replace("\0", "::")).ToArray();
+
+					string value = pair.FirstOrDefault();
+					string text = pair.LastOrDefault();
+
+					ButtonWithValue button = _grid.AddButton(text, value);
 
 					if (Selectable)
 					{
