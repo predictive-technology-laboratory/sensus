@@ -128,7 +128,7 @@ namespace Sensus.UI.Inputs
 		[HiddenUiProperty]
 		public override int? Retries => 0;
 
-		[JsonIgnore] // TODO: determine if this needs to be serialized or not
+		[JsonIgnore]
 		public IEnumerable<Input> Inputs
 		{
 			get
