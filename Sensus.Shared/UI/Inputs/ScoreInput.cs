@@ -154,7 +154,6 @@ namespace Sensus.UI.Inputs
 
 				foreach (Input input in _inputs)
 				{
-
 					input.PropertyChanged += ScoreChanged;
 				}
 
