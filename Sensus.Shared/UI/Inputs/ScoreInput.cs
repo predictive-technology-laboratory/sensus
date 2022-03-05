@@ -28,7 +28,7 @@ namespace Sensus.UI.Inputs
 	public class ScoreInput : Input, IVariableDefiningInput
 	{
 		private string _definedVariable;
-		private IEnumerable<Input> _inputs = new List<Input>();
+		private List<Input> _inputs;
 		private Label _label;
 		private Span _scoreSpan;
 		private Span _maxScoreSpan;
@@ -88,6 +88,11 @@ namespace Sensus.UI.Inputs
 			}
 		}
 
+		public ScoreInput()
+		{
+			_inputs = new List<Input>();
+		}
+
 		public override object Value
 		{
 			get
@@ -145,11 +150,11 @@ namespace Sensus.UI.Inputs
 
 				if (string.IsNullOrWhiteSpace(ScoreGroup))
 				{
-					_inputs = value.OfType<ScoreInput>().Where(x => string.IsNullOrWhiteSpace(x.ScoreGroup) == false);
+					_inputs = value.Where(x => x is ScoreInput && string.IsNullOrWhiteSpace(x.ScoreGroup) == false).ToList();
 				}
 				else
 				{
-					_inputs = value.Where(x => x is ScoreInput == false);
+					_inputs = value.Where(x => x is ScoreInput == false).ToList();
 				}
 
 				foreach (Input input in _inputs)
