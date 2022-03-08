@@ -1386,7 +1386,10 @@ namespace Sensus
 				// put the saved input group positions onto the local stack and have the state managed by the presentation loop.
 				inputGroupBackStack = savedState.InputGroupStack;
 
-				startInputGroupIndex = savedState.InputGroupStack.Count;
+				if (savedState.InputGroupStack.Any())
+				{
+					startInputGroupIndex = savedState.InputGroupStack.FirstOrDefault() + 1;
+				}
 			}
 
 			bool continueRun = true;
