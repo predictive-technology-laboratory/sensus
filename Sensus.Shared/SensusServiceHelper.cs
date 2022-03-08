@@ -1357,25 +1357,28 @@ namespace Sensus
 
 			// assign inputs to scoreinputs by scoregroup
 			IEnumerable<Input> allInputs = inputGroups.SelectMany(x => x.Inputs);
+			IEnumerable<ScoreInput> allScoreInputs = allInputs.OfType<ScoreInput>();
+			ILookup<string, ScoreInput> scoreInputLookup = allScoreInputs.ToLookup(x =>
+			{
+				if (string.IsNullOrWhiteSpace(x.ScoreGroup))
+				{
+					return null;
+				}
+
+				return x.ScoreGroup;
+			});
+
+			foreach (ScoreInput scoreInput in allInputs.OfType<ScoreInput>())
+			{
+				scoreInput.ClearInputs();
+			}
+
 			IEnumerable<ScoreInput> groupedScoreInputs = allInputs.OfType<ScoreInput>().Where(x => string.IsNullOrWhiteSpace(x.ScoreGroup) == false);
 
-			foreach (IGrouping<string, Input> scoreGroup in allInputs.GroupBy(x => x.ScoreGroup).OrderBy(x => string.IsNullOrWhiteSpace(x.Key)))
+			// if the score group key is null, then the ScoreKeeperInputs accumulates the score of the other ScoreInputs in the collection of InputGroups
+			foreach (ScoreInput scoreInput in scoreInputLookup[null])
 			{
-				// if the score group key is null, then the ScoreKeeperInputs accumulates the score of the other ScoreInputs in the collection of InputGroups
-				if (string.IsNullOrWhiteSpace(scoreGroup.Key))
-				{
-					foreach (ScoreInput scoreInput in scoreGroup.OfType<ScoreInput>())
-					{
-						scoreInput.Inputs = groupedScoreInputs;
-					}
-				}
-				else // otherwise, it keeps score of the only the Inputs in its group
-				{
-					foreach (ScoreInput scoreInput in scoreGroup.OfType<ScoreInput>())
-					{
-						scoreInput.Inputs = scoreGroup.ToList();
-					}
-				}
+				scoreInput.Inputs = groupedScoreInputs;
 			}
 
 			if (savedState != null)
@@ -1444,6 +1447,17 @@ namespace Sensus
 						// display the page if we've not been canceled
 						else if (!cancellationToken.GetValueOrDefault().IsCancellationRequested)
 						{
+							foreach (Input input in inputGroup.Inputs)
+							{
+								if (input is not ScoreInput)
+								{
+									foreach (ScoreInput scoreInput in scoreInputLookup[input.ScoreGroup])
+									{
+										scoreInput.AddInput(input);
+									}
+								}
+							}
+
 							currentPage = inputGroupPage;
 
 							// display page. only animate the display for the first page.

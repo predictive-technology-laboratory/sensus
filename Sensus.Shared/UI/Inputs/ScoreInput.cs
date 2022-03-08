@@ -142,19 +142,27 @@ namespace Sensus.UI.Inputs
 			}
 			set
 			{
+
 				// remove the ScoreChanged event from each of the original inputs.
 				foreach (Input input in _inputs)
 				{
 					input.PropertyChanged -= ScoreChanged;
 				}
 
-				if (string.IsNullOrWhiteSpace(ScoreGroup))
+				if (value != null)
 				{
-					_inputs = value.Where(x => x is ScoreInput && string.IsNullOrWhiteSpace(x.ScoreGroup) == false).ToList();
+					if (string.IsNullOrWhiteSpace(ScoreGroup))
+					{
+						_inputs = value.Where(x => x is ScoreInput && string.IsNullOrWhiteSpace(x.ScoreGroup) == false).ToList();
+					}
+					else
+					{
+						_inputs = value.Where(x => x is not ScoreInput).ToList();
+					}
 				}
 				else
 				{
-					_inputs = value.Where(x => x is ScoreInput == false).ToList();
+					_inputs.Clear();
 				}
 
 				foreach (Input input in _inputs)
@@ -164,6 +172,37 @@ namespace Sensus.UI.Inputs
 
 				SetScore();
 			}
+		}
+
+		public void ClearInputs()
+		{
+			foreach (Input input in _inputs)
+			{
+				input.PropertyChanged -= ScoreChanged;
+			}
+
+			_inputs.Clear();
+		}
+
+		public void AddInput(Input input)
+		{
+			input.PropertyChanged -= ScoreChanged;
+
+			if (string.IsNullOrWhiteSpace(ScoreGroup))
+			{
+				if (input is ScoreInput)
+				{
+					_inputs.Add(input);
+				}
+			}
+			else if (ScoreGroup == input.ScoreGroup)
+			{
+				_inputs.Add(input);
+			}
+
+			input.PropertyChanged += ScoreChanged;
+
+			SetScore();
 		}
 
 		private IEnumerable<ChartEntry> GetChartEntries()
