@@ -210,6 +210,21 @@ namespace Sensus.UI.Inputs
 			return new[] { new ChartEntry(Score) { Color = _scoreColor }, new ChartEntry(CorrectScore - Score) { Color = _scoreRemainingColor } };
 		}
 
+		public string ScoreText
+		{
+			get
+			{
+				if (ShowScoreAsPercent && CorrectScore > 0)
+				{
+					return $"{Score * 100 / CorrectScore:0.##}";
+				}
+				else
+				{
+					return Score.ToString();
+				}
+			}
+		}
+
 		public void SetScore()
 		{
 			if (ScoreMethod == ScoreMethods.Total)
@@ -230,14 +245,7 @@ namespace Sensus.UI.Inputs
 
 			if (_scoreSpan != null)
 			{
-				if (ShowScoreAsPercent)
-				{
-					_scoreSpan.Text = $"{Score * 100 / Math.Max(1, CorrectScore):0.##}";
-				}
-				else
-				{
-					_scoreSpan.Text = Score.ToString();
-				}
+				_scoreSpan.Text = ScoreText;
 			}
 
 			if (_maxScoreSpan != null)
@@ -276,9 +284,9 @@ namespace Sensus.UI.Inputs
 				{
 					_scoreSpan = new Span()
 					{
-						Text = $"{Score * 100 / Math.Max(1, CorrectScore):0.##}",
-						FontSize = 50,
-						ForegroundColor = _scoreLabelColor
+						Text = ScoreText,
+						ForegroundColor = _scoreLabelColor,
+						FontSize = 50
 					};
 
 					scoreString.Spans.Add(_scoreSpan);
@@ -290,15 +298,19 @@ namespace Sensus.UI.Inputs
 					{
 						Text = Score.ToString(),
 						ForegroundColor = _scoreLabelColor,
-						FontSize = 50
+						FontSize = 50,
 					};
+
+					_scoreSpan.SetBinding(Span.TextProperty, nameof(ScoreText));
 
 					_maxScoreSpan = new Span()
 					{
 						Text = CorrectScore.ToString(),
 						ForegroundColor = _maxScoreLabelColor,
-						FontSize = 25
+						FontSize = 25,
 					};
+
+					_maxScoreSpan.SetBinding(Span.TextProperty, nameof(ScoreText));
 
 					scoreString.Spans.Add(_scoreSpan);
 					scoreString.Spans.Add(new Span() { Text = "\n/", FontSize = 25, ForegroundColor = _scoreLabelDividerColor });
