@@ -14,6 +14,7 @@
 
 using Newtonsoft.Json;
 using Sensus.UI.UiProperties;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -24,7 +25,7 @@ namespace Sensus.UI.Inputs
 	public class ButtonGridInput : Input, IVariableDefiningInput
 	{
 		private string _definedVariable;
-		private string _value;
+		private object _value;
 		protected ButtonGridView _grid;
 
 		private ButtonStates _defaultState;
@@ -77,6 +78,12 @@ namespace Sensus.UI.Inputs
 		[OnOffUiProperty("Selectable:", true, 4)]
 		public bool Selectable { get; set; }
 
+		[EntryIntegerUiProperty("Min. Number of Selections:", true, 4, false)]
+		public int MinSelectionCount { get; set; }
+
+		[EntryIntegerUiProperty("Max. Number of Selections:", true, 4, false)]
+		public int MaxSelectionCount { get; set; }
+
 		[OnOffUiProperty("Leave Incorrect Value:", true, 4)]
 		public bool LeaveIncorrectValue { get; set; }
 
@@ -106,33 +113,71 @@ namespace Sensus.UI.Inputs
 					};
 				}
 
+				int maxSelectionCount = Math.Min(MaxSelectionCount, Buttons.Count);
+				int minSelectionCount = Math.Min(MinSelectionCount, maxSelectionCount);
+
+				if (Required)
+				{
+					minSelectionCount = Math.Max(1, minSelectionCount);
+				}
+
 				_grid = new ButtonGridView(ColumnCount, (s, e) =>
 				{
 					ButtonWithValue button = (ButtonWithValue)s;
 
-					_value = button.Value;
-
-					Complete = true;
-
-					foreach (ButtonWithValue otherButton in _grid.Buttons)
+					if (Selectable && maxSelectionCount > 1)
 					{
-						otherButton.State = _defaultState;
-					}
+						List<ButtonWithValue> selectedButtons = _grid.Buttons.Where(x => x.State == ButtonStates.Selected).ToList();
 
-					if (CorrectValue != null)
-					{
-						if (Correct)
+						if (button.State == ButtonStates.Selectable)
 						{
-							button.State = ButtonStates.Correct;
+							if (selectedButtons.Count < maxSelectionCount)
+							{
+								selectedButtons.Add(button);
+
+								button.State = ButtonStates.Selected;
+							}
 						}
-						else
+						else if (button.State == ButtonStates.Selected)
 						{
-							button.State = ButtonStates.Incorrect;
+							if (selectedButtons.Count > minSelectionCount)
+							{
+								selectedButtons.Remove(button);
+
+								button.State = ButtonStates.Selectable;
+							}
 						}
+
+						_value = selectedButtons.Select(x => x.Value).ToArray();
+
+						Complete = selectedButtons.Count >= minSelectionCount;
 					}
-					else if (Selectable)
+					else
 					{
-						button.State = ButtonStates.Selected;
+						_value = button.Value;
+
+						Complete = true;
+
+						foreach (ButtonWithValue otherButton in _grid.Buttons)
+						{
+							otherButton.State = _defaultState;
+						}
+
+						if (CorrectValue != null)
+						{
+							if (Correct)
+							{
+								button.State = ButtonStates.Correct;
+							}
+							else
+							{
+								button.State = ButtonStates.Incorrect;
+							}
+						}
+						else if (Selectable)
+						{
+							button.State = ButtonStates.Selected;
+						}
 					}
 				});
 
