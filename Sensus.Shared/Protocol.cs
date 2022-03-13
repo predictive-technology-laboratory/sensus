@@ -1469,6 +1469,7 @@ namespace Sensus
 
         /// <summary>
         /// Whether or not to include a <see cref="ParticipationReportDatum"/> when the protocol performs a health test.
+        /// </summary>
         /// <value><c>true</c> if the <see cref="ParticipationReportDatum"/> should be omitted; otherwise, <c>false</c>.</value>
 		[OnOffUiProperty("Omit Participation Report Datum:", true, 58)]
 		public bool OmitParticipationReportDatum { get; set; }
