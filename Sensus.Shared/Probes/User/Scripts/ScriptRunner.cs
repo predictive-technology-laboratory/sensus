@@ -31,6 +31,7 @@ using Sensus.Exceptions;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Serialization;
 using Xamarin.Forms;
+using System.IO;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -60,24 +61,77 @@ namespace Sensus.Probes.User.Scripts
 		/// <value>The script.</value>
 		public Script Script { get; set; }
 
+		/// <summary>
+		/// Gets or sets the saved state
+		/// </summary>
+		/// <value>The saved state.</value>
+		[JsonIgnore] // do not serialize this since it is stored outside of the saved SensusServiceHelper
 		public SavedScriptState SavedState { get; set; }
+
+		private string SavedStatePath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), Probe.Protocol.Id, "SavedScriptStates");
+
+		private string GetSavedStateFileName()
+		{
+			return Path.Combine(SavedStatePath, $"{Script.Id}.json");
+		}
+
+		private async Task<bool> PromptForSavedState()
+		{
+			string continuePrompt = ContinuePrompt;
+
+			if (string.IsNullOrWhiteSpace(continuePrompt))
+			{
+				continuePrompt = "Do you want to Continue from where you stopped previously or Start Over?";
+			}
+
+			return await Application.Current.MainPage.DisplayAlert("Continue?", continuePrompt, "Continue", "Start Over");
+		}
 
 		public static async Task<SavedScriptState> ManageStateAsync(Script script)
 		{
 			ScriptRunner runner = script.Runner;
-
-			if (runner.SaveState)
+			string savePath = runner.GetSavedStateFileName();
+			
+			try
 			{
-				if (runner.SavedState != null)
-				{
-					string continuePrompt = runner.ContinuePrompt;
+				bool restoredState = false;
+				bool clearedState = false;
 
-					if (string.IsNullOrWhiteSpace(continuePrompt))
+				if (runner.SaveState)
+				{
+					if (runner.SavedState != null)
 					{
-						continuePrompt = "Do you want to Continue from where you stopped previously or Start Over?";
+						restoredState = await runner.PromptForSavedState();
+						
+						clearedState = restoredState == false;
+					}
+					else if (File.Exists(savePath))
+					{
+						restoredState = await runner.PromptForSavedState();
+
+						if (restoredState)
+						{
+							using (StreamReader reader = new StreamReader(savePath))
+							{
+								string json = await reader.ReadToEndAsync();
+
+								JsonSerializerSettings settings = new JsonSerializerSettings
+								{
+									ObjectCreationHandling = ObjectCreationHandling.Replace
+								};
+
+								runner.SavedState = JsonConvert.DeserializeObject<SavedScriptState>(json, settings);
+							}
+						}
+						else
+						{
+							clearedState = true;
+
+							ClearSavedState(script);
+						}
 					}
 
-					if (await Application.Current.MainPage.DisplayAlert("Continue?", continuePrompt, "Continue", "Start Over"))
+					if (restoredState)
 					{
 						foreach (KeyValuePair<string, string> pair in runner.SavedState.Variables)
 						{
@@ -86,26 +140,56 @@ namespace Sensus.Probes.User.Scripts
 					}
 					else
 					{
-						foreach (InputGroup inputGroup in script.InputGroups)
+						if (clearedState)
 						{
-							foreach (Input input in inputGroup.Inputs)
+							foreach (InputGroup inputGroup in script.InputGroups)
 							{
-								input.Reset();
+								foreach (Input input in inputGroup.Inputs)
+								{
+									input.Reset();
+								}
 							}
 						}
 
-						runner.SavedState = new SavedScriptState();
+						runner.SavedState = new SavedScriptState(savePath);
 					}
-				}
-				else
-				{
-					runner.SavedState = new SavedScriptState();
-				}
 
-				return runner.SavedState;
+					return runner.SavedState;
+				}
+			}
+			catch (Exception e)
+			{
+				SensusServiceHelper.Get().Logger.Log("Error restoring script saved state:  " + e.Message, LoggingLevel.Normal, typeof(ScriptRunner));
+
+				await SensusServiceHelper.Get().FlashNotificationAsync("Could not restore your previous progress.");
+
+				if (runner.SaveState)
+				{
+					return new SavedScriptState(savePath);
+				}
 			}
 
 			return null;
+		}
+
+		public static void ClearSavedState(Script script)
+		{
+			try
+			{
+				ScriptRunner runner = script.Runner;
+				string savePath = runner.GetSavedStateFileName();
+
+				if (runner.SaveState != null && File.Exists(savePath))
+				{
+					File.Delete(savePath);
+				}
+
+				script.Runner.SavedState = null;
+			}
+			catch (Exception e)
+			{
+				SensusServiceHelper.Get().Logger.Log("Error clearing script saved state:  " + e.Message, LoggingLevel.Normal, typeof(ScriptRunner));
+			}
 		}
 
 		/// <summary>

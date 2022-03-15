@@ -1483,6 +1483,12 @@ namespace Sensus
 								await navigation.PushModalAsync(currentPage, firstPageDisplay);
 							}
 
+							// save the state to file
+							if (savedState != null)
+							{
+								await savedState.SaveAsync();
+							}
+
 							// only run the post-display callback the first time a page is displayed. the caller expects the callback
 							// to fire only once upon first display.
 							if (firstPageDisplay)
@@ -2062,7 +2068,8 @@ namespace Sensus
 					if (savedState.InputGroupStack.Count == 0)
 					{
 						// don't save the state if the user never got passed the first input group.
-						script.Runner.SavedState = null;
+						//script.Runner.SavedState = null;
+						ScriptRunner.ClearSavedState(script);
 						savedState = null;
 					}
 					else
@@ -2104,7 +2111,8 @@ namespace Sensus
 			else if (result.NavigationResult == InputGroupPage.NavigationResult.Submit || result.NavigationResult == InputGroupPage.NavigationResult.Cancel)
 			{
 				// the script has either been canceled or submitted, so the state can be cleared.
-				script.Runner.SavedState = null;
+				//script.Runner.SavedState = null;
+				ScriptRunner.ClearSavedState(script);
 
 				// track script state and completions. do this immediately so that all timestamps are as accurate as possible.
 				if (result.NavigationResult == InputGroupPage.NavigationResult.Cancel)
