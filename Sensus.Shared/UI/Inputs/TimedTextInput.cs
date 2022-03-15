@@ -63,9 +63,6 @@ namespace Sensus.UI.Inputs
 					_textLabel.HorizontalTextAlignment = TextAlignment.Center;
 				}
 
-				_index = 0;
-				_elapsed = 0;
-
 				double interval = (double)Duration / Text.Count;
 
 				_timer = new Timer(interval * 1000);
@@ -75,18 +72,33 @@ namespace Sensus.UI.Inputs
 					CycleText(interval);
 				};
 
-				CycleText(interval);
-
-				_timer.Start();
-
-				base.SetView(new StackLayout
+				View view = new StackLayout
 				{
 					Orientation = StackOrientation.Vertical,
 					Children = { label, _textLabel }
-				});
+				};
+
+				base.SetView(view);
+			}
+
+			_index = 0;
+			_elapsed = 0;
+
+			CycleText(0);
+
+			if (DisplayDelay <= 0)
+			{
+				_timer.Start();
 			}
 
 			return base.GetView(index);
+		}
+
+		protected override Task OnDisplayedAfterDelay()
+		{
+			_timer.Start();
+
+			return base.OnDisplayedAfterDelay();
 		}
 
 		private void CycleText(double interval)
@@ -139,7 +151,6 @@ namespace Sensus.UI.Inputs
 		public override Task DisposeAsync(InputGroupPage.NavigationResult result)
 		{
 			_timer.Stop();
-			_timer.Dispose();
 
 			return base.DisposeAsync(result);
 		}

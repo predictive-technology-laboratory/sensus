@@ -308,6 +308,9 @@ namespace Sensus.UI.Inputs
 		[OnOffUiProperty("Keep Feedback after Delay:", true, 34)]
 		public virtual bool KeepFeedback { get; set; }
 
+		[EntryIntegerUiProperty("Display Delay:", true, 35, false)]
+		public virtual int DisplayDelay { get; set; }
+
 		/// <summary>
 		/// The current score of the <see cref="Input"/>.
 		/// </summary>
@@ -950,9 +953,33 @@ namespace Sensus.UI.Inputs
 			if (_view != null)
 			{
 				_view.IsEnabled = _enabled;
+
+				if (DisplayDelay > 0)
+				{
+					_view.IsVisible = false;
+
+					Timer timer = new Timer(DisplayDelay * 1000) { AutoReset = false };
+
+					timer.Elapsed += async (o, e) =>
+					{
+						await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+						{
+							_view.IsVisible = true;
+
+							await OnDisplayedAfterDelay();
+						});
+					};
+
+					timer.Start();
+				}
 			}
 
 			return _view;
+		}
+
+		protected virtual Task OnDisplayedAfterDelay()
+		{
+			return Task.CompletedTask;
 		}
 
 		[JsonIgnore]

@@ -160,7 +160,6 @@ namespace Sensus.UI.Inputs
 			if (_timer.Enabled)
 			{
 				_timer.Stop();
-				_timer.Dispose();
 
 				if (result == NavigationResult.Submit)
 				{
@@ -230,13 +229,6 @@ namespace Sensus.UI.Inputs
 					controlButtons.Children.Add(_startButton);
 				}
 				
-				if (ShowStartButton == false)
-				{
-					_timer.Start();
-
-					_events.Add(new TimerEvent { Timestamp = DateTimeOffset.UtcNow, ElapsedTime = _elapsedTime, Event = STARTED });
-				}
-
 				if (ShowPauseButton)
 				{
 					_pauseButton = new Button
@@ -312,7 +304,36 @@ namespace Sensus.UI.Inputs
 				_label.Text = GetLabelText(index);  // if the view was already initialized, just update the label since the index might have changed.
 			}
 
+			if (ShowStartButton == false && DisplayDelay <= 0)
+			{
+				StartTimer();
+			}
+
 			return base.GetView(index);
+		}
+
+		private void StartTimer()
+		{
+			_timer.Start();
+
+			_events.Add(new TimerEvent { Timestamp = DateTimeOffset.UtcNow, ElapsedTime = _elapsedTime, Event = STARTED });
+		}
+
+		protected override Task OnDisplayedAfterDelay()
+		{
+			StartTimer();
+
+			return base.OnDisplayedAfterDelay();
+		}
+
+		public override void Reset()
+		{
+			if (_events != null)
+			{
+				_events.Clear();
+			}
+
+			base.Reset();
 		}
 	}
 }
