@@ -308,7 +308,7 @@ namespace Sensus.UI.Inputs
 		[OnOffUiProperty("Keep Feedback after Delay:", true, 34)]
 		public virtual bool KeepFeedback { get; set; }
 
-		[EntryIntegerUiProperty("Display Delay:", true, 35, false)]
+		[EntryIntegerUiProperty("Display Delay (S):", true, 35, false)]
 		public virtual int DisplayDelay { get; set; }
 
 		/// <summary>
