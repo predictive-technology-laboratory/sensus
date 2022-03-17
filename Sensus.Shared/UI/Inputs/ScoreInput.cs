@@ -301,16 +301,12 @@ namespace Sensus.UI.Inputs
 						FontSize = 50,
 					};
 
-					_scoreSpan.SetBinding(Span.TextProperty, nameof(ScoreText));
-
 					_maxScoreSpan = new Span()
 					{
 						Text = CorrectScore.ToString(),
 						ForegroundColor = _maxScoreLabelColor,
 						FontSize = 25,
 					};
-
-					_maxScoreSpan.SetBinding(Span.TextProperty, nameof(ScoreText));
 
 					scoreString.Spans.Add(_scoreSpan);
 					scoreString.Spans.Add(new Span() { Text = "\n/", FontSize = 25, ForegroundColor = _scoreLabelDividerColor });

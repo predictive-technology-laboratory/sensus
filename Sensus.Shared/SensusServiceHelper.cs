@@ -1452,11 +1452,14 @@ namespace Sensus
 						{
 							foreach (Input input in inputGroup.Inputs)
 							{
-								if (input is not ScoreInput)
+								if (input is not ScoreInput && string.IsNullOrWhiteSpace(input.ScoreGroup) == false)
 								{
 									foreach (ScoreInput scoreInput in scoreInputLookup[input.ScoreGroup])
 									{
-										scoreInput.AddInput(input);
+										if (scoreInput.Inputs.Contains(input) == false)
+										{
+											scoreInput.AddInput(input);
+										}
 									}
 								}
 							}
