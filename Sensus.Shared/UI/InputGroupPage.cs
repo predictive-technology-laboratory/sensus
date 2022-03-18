@@ -47,8 +47,8 @@ namespace Sensus.UI
 		private bool _confirmNavigation;
 		private Timer _timer;
 		private bool _savedState;
-		private string _incompleteSubmissionConfirmation;
-		private string _submitConfirmation;
+		private readonly string _incompleteSubmissionConfirmation;
+		private readonly string _submitConfirmation;
 
 		public int DisplayedInputCount
 		{
