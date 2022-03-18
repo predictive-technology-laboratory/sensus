@@ -91,7 +91,7 @@ namespace Sensus.Probes.User.Scripts
 		{
 			ScriptRunner runner = script.Runner;
 			string savePath = runner.GetSavedStateFileName();
-			
+
 			try
 			{
 				bool restoredState = false;
@@ -102,7 +102,7 @@ namespace Sensus.Probes.User.Scripts
 					if (runner.SavedState != null)
 					{
 						restoredState = await runner.PromptForSavedState();
-						
+
 						clearedState = restoredState == false;
 					}
 					else if (File.Exists(savePath))
@@ -179,12 +179,12 @@ namespace Sensus.Probes.User.Scripts
 				ScriptRunner runner = script.Runner;
 				string savePath = runner.GetSavedStateFileName();
 
-				if (runner.SaveState != null && File.Exists(savePath))
+				if (File.Exists(savePath))
 				{
 					File.Delete(savePath);
 				}
 
-				script.Runner.SavedState = null;
+				runner.SavedState = null;
 			}
 			catch (Exception e)
 			{
