@@ -87,6 +87,9 @@ namespace Sensus.UI.Inputs
 		[OnOffUiProperty("Leave Incorrect Value:", true, 4)]
 		public bool LeaveIncorrectValue { get; set; }
 
+		[OnOffUiProperty("Split into Value:Text Pairs:", true, 4)]
+		public bool SplitValueTextPairs { get; set; }
+
 		[JsonIgnore]
 		public List<ButtonWithValue> GridButtons => _grid?.Buttons.ToList() ?? new List<ButtonWithValue>();
 
@@ -183,10 +186,16 @@ namespace Sensus.UI.Inputs
 
 				foreach (string buttonValue in Buttons)
 				{
-					string[] pair = Regex.Split(buttonValue.Replace("::", "\0"), ":").Select(x => x.Replace("\0", "::")).ToArray();
+					string text = buttonValue;
+					string value = buttonValue;
 
-					string value = pair.FirstOrDefault();
-					string text = pair.LastOrDefault();
+					if (SplitValueTextPairs)
+					{
+						string[] pair = Regex.Split(buttonValue.Replace("::", "\0"), ":").Select(x => x.Replace("\0", ":")).ToArray();
+
+						value = pair.FirstOrDefault();
+						text = pair.LastOrDefault();
+					}
 
 					ButtonWithValue button = _grid.AddButton(text, value);
 
