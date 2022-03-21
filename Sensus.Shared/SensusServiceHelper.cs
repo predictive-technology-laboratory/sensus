@@ -2073,6 +2073,7 @@ namespace Sensus
 						// don't save the state if the user never got passed the first input group.
 						//script.Runner.SavedState = null;
 						ScriptRunner.ClearSavedState(script);
+
 						savedState = null;
 					}
 					else
