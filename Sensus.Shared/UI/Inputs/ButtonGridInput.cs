@@ -32,6 +32,7 @@ namespace Sensus.UI.Inputs
 
 		public ButtonGridInput() : base()
 		{
+			Buttons = new List<string>();
 			ColumnCount = 1;
 
 			_defaultState = ButtonStates.Default;
