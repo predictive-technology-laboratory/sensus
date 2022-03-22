@@ -69,7 +69,9 @@ namespace Sensus.UI.Inputs
 
 				_timer.Elapsed += (s, e) =>
 				{
-					CycleText(interval);
+					_elapsed += interval;
+					
+					CycleText(/*interval*/);
 				};
 
 				View view = new StackLayout
@@ -84,7 +86,7 @@ namespace Sensus.UI.Inputs
 			_index = 0;
 			_elapsed = 0;
 
-			CycleText(0);
+			CycleText(/*0*/);
 
 			if (DisplayDelay <= 0)
 			{
@@ -101,7 +103,7 @@ namespace Sensus.UI.Inputs
 			return base.OnDisplayedAfterDelay();
 		}
 
-		private void CycleText(double interval)
+		private void CycleText(/*double interval*/)
 		{
 			SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
 			{
@@ -130,9 +132,8 @@ namespace Sensus.UI.Inputs
 					}
 
 					_index += 1;
-					_elapsed += interval;
 				}
-				
+
 				if (_elapsed >= Duration)
 				{
 					if (Complete == false)
