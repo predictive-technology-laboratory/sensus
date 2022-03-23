@@ -19,6 +19,8 @@ using System.Collections.Generic;
 using Sensus.UI.Inputs;
 using Xamarin.Forms;
 using System.Threading.Tasks;
+using Timer = System.Timers.Timer;
+using Sensus.Context;
 
 namespace Sensus.UI
 {
@@ -30,15 +32,23 @@ namespace Sensus.UI
 			Backward,
 			Forward,
 			Submit,
-			Cancel
+			Cancel,
+			Timeout,
+			Paused
 		}
 
 		private InputGroup _inputGroup;
 		private StackLayout _navigationStack;
 		private bool _canNavigateBackward;
+		private List<Input> _displayedInputs;
 		private int _displayedInputCount;
 		private TaskCompletionSource<NavigationResult> _responseTaskCompletionSource;
 		private ShowNavigationOptions _showNavigationButtons;
+		private bool _confirmNavigation;
+		private Timer _timer;
+		private bool _savedState;
+		private readonly string _incompleteSubmissionConfirmation;
+		private readonly string _submitConfirmation;
 
 		public int DisplayedInputCount
 		{
@@ -55,6 +65,10 @@ namespace Sensus.UI
 
 		public bool IsLastPage { get; }
 
+		public string InputGroupId => _inputGroup.Id;
+
+		public Page ReturnPage { get; set; }
+
 		public InputGroupPage(InputGroup inputGroup,
 							  int stepNumber,
 							  int totalSteps,
@@ -62,11 +76,13 @@ namespace Sensus.UI
 							  bool showCancelButton,
 							  string nextButtonTextOverride,
 							  CancellationToken? cancellationToken,
+							  bool confirmNavigation,
 							  string cancelConfirmation,
 							  string incompleteSubmissionConfirmation,
 							  string submitConfirmation,
 							  bool displayProgress,
-							  string title = "")
+							  string title = "",
+							  bool savedState = false)
 		{
 
 			_inputGroup = inputGroup;
@@ -74,43 +90,73 @@ namespace Sensus.UI
 			_displayedInputCount = 0;
 			_responseTaskCompletionSource = new TaskCompletionSource<NavigationResult>();
 			_showNavigationButtons = inputGroup.ShowNavigationButtons;
+			_confirmNavigation = confirmNavigation;
+			_savedState = savedState;
+			_incompleteSubmissionConfirmation = incompleteSubmissionConfirmation;
+			_submitConfirmation = submitConfirmation;
 
 			IsLastPage = totalSteps <= stepNumber;
+			Title = inputGroup.Title ?? title;
 
 			StackLayout contentLayout = new StackLayout
 			{
 				Orientation = StackOrientation.Vertical,
 				VerticalOptions = LayoutOptions.FillAndExpand,
-				Padding = new Thickness(10, 20, 10, 20),
-				Children =
-				{
-					new Label
-					{
-						Text = inputGroup.Name,
-						FontSize = 20,
-						HorizontalOptions = LayoutOptions.CenterAndExpand
-					}
-				}
+				Padding = new Thickness(10, 10, 10, 20)
 			};
 
-			if (inputGroup.HideTitle == false && string.IsNullOrWhiteSpace(title) == false)
+			ScrollView scrollView = new ScrollView
 			{
-				contentLayout.Children.Insert(0, new Label { Text = title, FontSize = 20, HorizontalOptions = LayoutOptions.CenterAndExpand });
+				Content = contentLayout
+			};
+
+			StackLayout headerLayout = new StackLayout
+			{
+				Orientation = StackOrientation.Vertical,
+				HorizontalOptions = LayoutOptions.FillAndExpand
+			};
+
+			StackLayout subHeaderLayout = new StackLayout
+			{
+				Orientation = StackOrientation.Vertical,
+				HorizontalOptions = LayoutOptions.FillAndExpand
+			};
+
+			if (inputGroup.UseNavigationBar == false)
+			{
+				if (string.IsNullOrWhiteSpace(inputGroup.Title) == false)
+				{
+					headerLayout.Children.Add(new Label
+					{
+						Text = inputGroup.Title,
+						FontSize = 20,
+						HorizontalOptions = LayoutOptions.CenterAndExpand
+					});
+				}
+				else
+				{
+					headerLayout.Children.Add(new Label
+					{
+						Text = title,
+						FontSize = 20,
+						HorizontalOptions = LayoutOptions.CenterAndExpand
+					});
+				}
 			}
 
 			#region progress bar
-			if (displayProgress)
+			if (displayProgress && inputGroup.HideProgress == false)
 			{
 				float progress = (stepNumber - 1) / (float)totalSteps;
 
-				contentLayout.Children.Add(new Label
+				subHeaderLayout.Children.Add(new Label
 				{
 					Text = "Progress:  " + Math.Round(100 * progress) + "%",
 					FontSize = 15,
 					HorizontalOptions = LayoutOptions.CenterAndExpand
 				});
 
-				contentLayout.Children.Add(new ProgressBar
+				subHeaderLayout.Children.Add(new ProgressBar
 				{
 					Progress = progress,
 					HorizontalOptions = LayoutOptions.FillAndExpand
@@ -119,17 +165,42 @@ namespace Sensus.UI
 			#endregion
 
 			#region required field label
-			if (inputGroup.Inputs.Any(input => input.Display && input.Required))
+			if (inputGroup.HideRequiredFieldLabel == false && inputGroup.Inputs.Any(input => input.Display && input.Required))
 			{
-				contentLayout.Children.Add(new Label
+				subHeaderLayout.Children.Add(new Label
 				{
 					Text = "Required fields are indicated with *",
 					FontSize = 15,
-					TextColor = Color.Red,
+					StyleClass = new[] { "RequiredFieldLabel" },
 					HorizontalOptions = LayoutOptions.Start
 				});
 			}
 			#endregion
+
+			if (subHeaderLayout.Children.Count > 0)
+			{
+				headerLayout.Children.Add(subHeaderLayout);
+			}
+
+			if (inputGroup.FreezeHeader && headerLayout.Children.Count > 0)
+			{
+				headerLayout.Padding = new Thickness(10 + scrollView.Margin.Left, 20, 10 + scrollView.Margin.Right, 0);
+
+				Content = new StackLayout()
+				{
+					Orientation = StackOrientation.Vertical,
+					Children = { headerLayout, scrollView }
+				};
+			}
+			else
+			{
+				if (headerLayout.Children.Count > 0)
+				{
+					contentLayout.Children.Insert(0, headerLayout);
+				}
+
+				Content = scrollView;
+			}
 
 			#region inputs
 			List<Input> displayedInputs = new List<Input>();
@@ -145,31 +216,14 @@ namespace Sensus.UI
 
 					if (inputView != null)
 					{
-						// add media view to inputs that have media attached
-						// this is done here because the media needs to be attached on appearing and disposed on disappearing
-						if (input is MediaInput mediaInput && mediaInput.HasMedia)
-						{
-							Appearing += async (s, e) =>
-							{
-								await mediaInput.InitializeMediaAsync();
-							};
-
-							Disappearing += async (s, e) =>
-							{
-								await mediaInput.DisposeMediaAsync();
-							};
-						}
-
 						// frame all enabled inputs that request a frame
 						if (input.Enabled && input.Frame)
 						{
 							inputView = new Frame
 							{
+								StyleClass = new List<string> { "InputFrame" },
 								Content = inputView,
-								BorderColor = Color.Accent,
-								BackgroundColor = Color.Transparent,
 								VerticalOptions = LayoutOptions.Start,
-								HasShadow = false,
 								Padding = new Thickness(10)
 							};
 						}
@@ -193,6 +247,8 @@ namespace Sensus.UI
 				}
 			}
 
+			_displayedInputs = displayedInputs;
+
 			// add final separator if we displayed any inputs
 			if (_displayedInputCount > 0)
 			{
@@ -202,8 +258,10 @@ namespace Sensus.UI
 
 			_cancelHandler = async (o, e) =>
 			{
-				if (string.IsNullOrWhiteSpace(cancelConfirmation) || await DisplayAlert("Confirm", cancelConfirmation, "Yes", "No"))
+				if (_confirmNavigation == false || string.IsNullOrWhiteSpace(cancelConfirmation) || await DisplayAlert("Confirm", cancelConfirmation, "Yes", "No"))
 				{
+					HandleStaleNavigation();
+
 					_responseTaskCompletionSource.TrySetResult(NavigationResult.Cancel);
 				}
 			};
@@ -212,50 +270,57 @@ namespace Sensus.UI
 			{
 				if (_canNavigateBackward)
 				{
+					HandleStaleNavigation();
+
 					_responseTaskCompletionSource.TrySetResult(NavigationResult.Backward);
 				}
 			};
 
 			_nextHandler = async (o, e) =>
 			{
-				if (!inputGroup.Valid && inputGroup.ForceValidInputs)
+				await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
 				{
-					await DisplayAlert("Mandatory", "You must provide values for all required fields before proceeding.", "Back");
-				}
-				else
-				{
-					string confirmationMessage = "";
-					NavigationResult navigationResult = NavigationResult.Forward;
-
-					// warn about incomplete inputs if a message is provided
-					if (!inputGroup.Valid && !string.IsNullOrWhiteSpace(incompleteSubmissionConfirmation))
+					if (!inputGroup.Valid && inputGroup.ForceValidInputs)
 					{
-						confirmationMessage += incompleteSubmissionConfirmation;
+						await DisplayAlert("Mandatory", "You must provide values for all required fields before proceeding.", "Back");
 					}
-
-					if (IsLastPage)
+					else
 					{
-						// confirm submission if a message is provided
-						if (!string.IsNullOrWhiteSpace(submitConfirmation))
-						{
-							// if we already warned about incomplete fields, make the submit confirmation sound natural.
-							if (!string.IsNullOrWhiteSpace(confirmationMessage))
-							{
-								confirmationMessage += " Also, this is the final page. ";
-							}
+						string confirmationMessage = "";
+						NavigationResult navigationResult = NavigationResult.Forward;
 
-							// confirm submission
-							confirmationMessage += submitConfirmation;
+						// warn about incomplete inputs if a message is provided
+						if (!inputGroup.Valid && !string.IsNullOrWhiteSpace(incompleteSubmissionConfirmation))
+						{
+							confirmationMessage += incompleteSubmissionConfirmation;
 						}
 
-						navigationResult = NavigationResult.Submit;
-					}
+						if (IsLastPage)
+						{
+							// confirm submission if a message is provided
+							if (!string.IsNullOrWhiteSpace(submitConfirmation))
+							{
+								// if we already warned about incomplete fields, make the submit confirmation sound natural.
+								if (!string.IsNullOrWhiteSpace(confirmationMessage))
+								{
+									confirmationMessage += " Also, this is the final page. ";
+								}
 
-					if (string.IsNullOrWhiteSpace(confirmationMessage) || await DisplayAlert("Confirm", confirmationMessage, "Yes", "No"))
-					{
-						_responseTaskCompletionSource.TrySetResult(navigationResult);
+								// confirm submission
+								confirmationMessage += submitConfirmation;
+							}
+
+							navigationResult = NavigationResult.Submit;
+						}
+
+						if (_confirmNavigation == false || string.IsNullOrWhiteSpace(confirmationMessage) || await DisplayAlert("Confirm", confirmationMessage, "Yes", "No"))
+						{
+							HandleStaleNavigation();
+
+							_responseTaskCompletionSource.TrySetResult(navigationResult);
+						}
 					}
-				}
+				});
 			};
 
 			if (inputGroup.ShowNavigationButtons != ShowNavigationOptions.Never)
@@ -263,8 +328,13 @@ namespace Sensus.UI
 				_navigationStack = new StackLayout
 				{
 					Orientation = StackOrientation.Vertical,
-					HorizontalOptions = LayoutOptions.FillAndExpand,
+					HorizontalOptions = LayoutOptions.FillAndExpand
 				};
+
+				if (inputGroup.PlaceNavigationAtBottom)
+				{
+					_navigationStack.VerticalOptions = LayoutOptions.EndAndExpand;
+				}
 
 				if (inputGroup.ShowNavigationButtons != ShowNavigationOptions.Always)
 				{
@@ -283,6 +353,7 @@ namespace Sensus.UI
 				{
 					Button previousButton = new Button
 					{
+						StyleClass = new List<string> { "NavigationButton" },
 						HorizontalOptions = LayoutOptions.FillAndExpand,
 						FontSize = 20,
 						Text = "Previous"
@@ -300,6 +371,7 @@ namespace Sensus.UI
 
 				Button nextButton = new Button
 				{
+					StyleClass = new List<string> { "NavigationButton" },
 					HorizontalOptions = LayoutOptions.FillAndExpand,
 					FontSize = 20,
 					Text = "Next"
@@ -318,11 +390,11 @@ namespace Sensus.UI
 				{
 					if (string.IsNullOrWhiteSpace(inputGroup.SubmitButtonText) == false)
 					{
-						nextButton.Text = "Submit";
+						nextButton.Text = inputGroup.SubmitButtonText;
 					}
 					else
 					{
-						nextButton.Text = inputGroup.SubmitButtonText;
+						nextButton.Text = "Submit";
 					}
 				}
 				else if (string.IsNullOrWhiteSpace(inputGroup.NextButtonText) == false)
@@ -341,6 +413,7 @@ namespace Sensus.UI
 				{
 					Button cancelButton = new Button
 					{
+						StyleClass = new List<string> { "NavigationButton" },
 						HorizontalOptions = LayoutOptions.FillAndExpand,
 						FontSize = 20,
 						Text = "Cancel"
@@ -375,20 +448,6 @@ namespace Sensus.UI
 				{
 					displayedInput.Viewed = true;
 				}
-			};
-
-			Disappearing += async (o, e) =>
-			{
-				// the page is disappearing, so dispose of inputs
-				foreach (Input displayedInput in displayedInputs)
-				{
-					displayedInput.OnDisappearing(await ResponseTask);
-				}
-			};
-
-			Content = new ScrollView
-			{
-				Content = contentLayout
 			};
 		}
 
@@ -434,10 +493,85 @@ namespace Sensus.UI
 		protected override bool OnBackButtonPressed()
 		{
 			// the only applies to phones with a hard/soft back button. iOS does not have this button. on 
-			// android, allow the user to cancel the page with the back button.
+			// android, allow the user to cancel/pause the page with the back button.
 			_responseTaskCompletionSource.TrySetResult(NavigationResult.Cancel);
 
 			return base.OnBackButtonPressed();
+		}
+
+		private void HandleStaleNavigation()
+		{
+			SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+			{
+				if (_responseTaskCompletionSource.Task.IsCompleted && ReturnPage != null)
+				{
+					App app = Application.Current as App;
+
+					app.DetailPage = ReturnPage;
+				}
+			});
+		}
+
+		public async Task PrepareAsync()
+		{
+			foreach (Input displayedInput in _displayedInputs)
+			{
+				await displayedInput.PrepareAsync();
+			}
+
+			if (_inputGroup.Timeout != null)
+			{
+				_timer = new Timer(_inputGroup.Timeout.Value * 1000) { AutoReset = false };
+
+				_timer.Elapsed += (o, e) =>
+				{
+					SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+					{
+						if (IsLastPage || _inputGroup.ShowNavigationButtons == ShowNavigationOptions.AfterTimeout)
+						{
+							if (_navigationStack != null)
+							{
+								_navigationStack.IsVisible = true;
+							}
+						}
+						else
+						{
+							_responseTaskCompletionSource.TrySetResult(NavigationResult.Timeout);
+						}
+					});
+				};
+
+				_timer.Start();
+			}
+		}
+
+		public async Task DisposeAsync()
+		{
+			// the page is disappearing, so dispose of inputs
+			foreach (Input displayedInput in _displayedInputs)
+			{
+				await displayedInput.DisposeAsync(await ResponseTask);
+			}
+
+			if (_timer != null)
+			{
+				_timer.Stop();
+			}
+		}
+
+		public void Interrupt()
+		{
+			if (_responseTaskCompletionSource.Task.IsCompleted == false)
+			{
+				if (_savedState)
+				{
+					_responseTaskCompletionSource.TrySetResult(NavigationResult.Paused);
+				}
+				else
+				{
+					_responseTaskCompletionSource.TrySetResult(NavigationResult.Cancel);
+				}
+			}
 		}
 	}
 }

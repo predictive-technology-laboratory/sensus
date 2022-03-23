@@ -27,6 +27,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AndroidLinearAccelerationProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AndroidMagnetometerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AndroidPedometerProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\HideSliderEffect.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SliderInputEffect.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\AndroidCallbackScheduler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\AndroidNotifier.cs" />

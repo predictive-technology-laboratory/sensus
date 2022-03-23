@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Sensus.Probes.User.Scripts;
 using Sensus.UI.UiProperties;
 using System;
 using System.Collections.Generic;
@@ -55,41 +56,61 @@ namespace Sensus.UI.Inputs
 				_mediaView = new MediaView()
 				{
 					HorizontalOptions = LayoutOptions.FillAndExpand,
-					VerticalOptions = LayoutOptions.FillAndExpand
+					VerticalOptions = LayoutOptions.FillAndExpand,
 				};
+
+				double height = -1;
+				
+				if (Height > 0)
+				{
+					height = Height.Value;
+				}
 
 				base.SetView(new StackLayout
 				{
 					Orientation = StackOrientation.Vertical,
-					HorizontalOptions = LayoutOptions.CenterAndExpand,
+					HorizontalOptions = LayoutOptions.FillAndExpand,
+					HeightRequest = height,
 					Children = { _label, _mediaView }
 				});
 
 				_events = new List<MediaEvent>();
 
-				if (Media.Type.ToLower().StartsWith("image"))
+				if (Media != null)
 				{
-					_events.Add(new MediaEvent { Timestamp = DateTimeOffset.UtcNow, Position = 0, Event = "View" });
-
-					Complete = true;
-				}
-				else if (Media.Type.ToLower().StartsWith("video"))
-				{
-					// the MediaView should be set after SetView is called
-					_mediaView.VideoEvent += (o, e) =>
+					if (Media.Type.ToLower().StartsWith("image"))
 					{
-						_events.Add(new MediaEvent { Timestamp = DateTimeOffset.UtcNow, Position = (int)e.Position.TotalMilliseconds, Event = e.Event });
+						_events.Add(new MediaEvent { Timestamp = DateTimeOffset.UtcNow, Position = 0, Event = "View" });
 
-						if (e.Event == VideoPlayer.END)
+						Complete = true;
+					}
+					else if (Media.Type.ToLower().StartsWith("video"))
+					{
+						// the MediaView should be set after SetView is called
+						_mediaView.VideoEvent += (o, e) =>
 						{
-							Complete = true;
-						}
-					};
+							_events.Add(new MediaEvent { Timestamp = DateTimeOffset.UtcNow, Position = (int)e.Position.TotalMilliseconds, Event = e.Event });
+
+							if (e.Event == VideoPlayer.END)
+							{
+								Complete = true;
+							}
+						};
+					}
+				}
+				else
+				{
+					_mediaView.Content = new Label() { Text = "There is no media to display", TextColor = Color.Red };
+
+					if (Required == false)
+					{
+						Complete = true;
+					}
 				}
 			}
 			else
 			{
-				_label.Text = GetLabelText(index);  // if the view was already initialized, just update the label since the index might have changed.
+				_label.Text = GetLabelText(index); // if the view was already initialized, just update the label since the index might have changed.
 			}
 
 			return base.GetView(index);
@@ -97,6 +118,24 @@ namespace Sensus.UI.Inputs
 
 		[MediaPickerUiProperty("Media:", true, 7)]
 		public MediaObject Media { get; set; }
+
+		[EntryIntegerUiProperty("Height:", true, 8, false)]
+		public int? Height { get; set; }
+
+		public string CachePath { get; set; }
+
+		public void SetCachePath(ScriptRunner scriptRunner)
+		{
+			CachePath = MediaObject.GetProtocolCachePath(scriptRunner);
+		}
+
+		public void ClearCache()
+		{
+			if (Media != null)
+			{
+				Media.ClearCache();
+			}
+		}
 
 		public bool HasMedia
 		{
@@ -120,6 +159,20 @@ namespace Sensus.UI.Inputs
 			{
 				await _mediaView.DisposeMediaAsync();
 			}
+		}
+
+		public override async Task PrepareAsync()
+		{
+			await InitializeMediaAsync();
+
+			await base.PrepareAsync();
+		}
+
+		public override async Task DisposeAsync(InputGroupPage.NavigationResult result)
+		{
+			await DisposeMediaAsync();
+
+			await base.DisposeAsync(result);
 		}
 	}
 }

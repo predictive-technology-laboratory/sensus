@@ -64,11 +64,9 @@ namespace Sensus.UI
 
 			Frame protocolListFrame = new Frame()
 			{
+				StyleClass = new[] { "UIFrame" },
 				Content = protocolListLayout,
-				BorderColor = Color.Accent,
-				BackgroundColor = Color.Transparent,
 				VerticalOptions = LayoutOptions.Start,
-				HasShadow = false,
 				Padding = new Thickness(10)
 			};
 

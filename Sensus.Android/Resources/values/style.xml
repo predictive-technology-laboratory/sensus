@@ -1,8 +1,6 @@
 ﻿<resources>
   <style name="SensusTheme" parent="SensusTheme.Base">
   </style>
-  <style name="SensusTheme.Base" parent="Theme.AppCompat.NoActionBar">    
-  </style>
-  <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">    
+  <style name="SensusTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
   </style>
 </resources>

@@ -75,7 +75,7 @@ namespace Sensus.UI
             Title = "Your Studies";
 
             _protocolsList = new ListView(ListViewCachingStrategy.RecycleElement);
-            _protocolsList.ItemTemplate = new DataTemplate(typeof(TextCell));
+            _protocolsList.ItemTemplate = new DataTemplate(typeof(DarkModeCompatibleTextCell));
             _protocolsList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(Protocol.Caption));
             _protocolsList.ItemTemplate.SetBinding(TextCell.DetailProperty, nameof(Protocol.SubCaption));
             _protocolsList.ItemsSource = SensusServiceHelper.Get()?.RegisteredProtocols;
@@ -105,7 +105,7 @@ namespace Sensus.UI
 						actions.Add("Snooze");
 					}
 
-					if (UserInitiatedScriptsPage.GetProtocolScripts(selectedProtocol).Any())
+					if (UserInitiatedScriptsPage.GetUserInitiatedScripts(selectedProtocol).Any())
 					{
 						actions.Add("Take Surveys");
 					}
@@ -320,9 +320,11 @@ namespace Sensus.UI
                         cancellationTokenSource.Token,
                         false,
                         "Cancel",
+                        false,
                         null,
                         null,
                         null,
+                        false,
                         false,
                         async () =>
                         {
@@ -391,9 +393,11 @@ namespace Sensus.UI
                                 cancellationTokenSource.Token,
                                 false,
                                 "Cancel",
+                                false,
                                 null,
                                 null,
                                 null,
+                                false,
                                 false,
                                 async () =>
                                 {
@@ -552,7 +556,6 @@ namespace Sensus.UI
                     if (action == "From QR Code")
                     {
                         url = await SensusServiceHelper.Get().ScanQrCodeAsync(QrCodePrefix.SENSUS_PROTOCOL);
-                        
                     }
                     else if (action == "From URL")
                     {

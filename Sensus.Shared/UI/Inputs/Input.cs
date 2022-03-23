@@ -24,6 +24,8 @@ using Sensus.Exceptions;
 using System.ComponentModel;
 using static Sensus.UI.InputGroupPage;
 using System.Timers;
+using Sensus.Context;
+using System.Threading.Tasks;
 
 // register the input effect group
 [assembly: ResolutionGroupName(Input.EFFECT_RESOLUTION_GROUP_NAME)]
@@ -63,6 +65,7 @@ namespace Sensus.UI.Inputs
 		protected float _score;
 		private InputFeedbackView _feedbackView;
 		private Timer _delayTimer;
+		private bool _enabled;
 
 		public InputGroupPage InputGroupPage { get; set; }
 
@@ -129,6 +132,10 @@ namespace Sensus.UI.Inputs
 			}
 		}
 
+		[OnOffUiProperty("Label Text is HTML:", true, 2)]
+		public bool IsLabelTextHtml { get; set; }
+
+		[EntryIntegerUiProperty("Label Font Size:", true, 3, false)]
 		public int LabelFontSize
 		{
 			get
@@ -140,6 +147,40 @@ namespace Sensus.UI.Inputs
 				_labelFontSize = value;
 			}
 		}
+
+		[EntryStringUiProperty("Label Text Color:", true, 4, false)]
+		public string SerializableLabelTextColor { get; set; }
+
+		[JsonIgnore]
+		public Color? LabelTextColor
+		{
+			get
+			{
+				if (string.IsNullOrWhiteSpace(SerializableLabelTextColor) == false)
+				{
+					return Color.FromHex(SerializableLabelTextColor);
+				}
+
+				return null;
+			}
+			set
+			{
+				if (value != null)
+				{
+					SerializableLabelTextColor = value.Value.ToHex();
+				}
+				else
+				{
+					SerializableLabelTextColor = null;
+				}
+			}
+		}
+
+		[ListUiProperty("Label Text Attributes:", true, 5, new object[] { FontAttributes.None, FontAttributes.Bold, FontAttributes.Italic }, false)]
+		public FontAttributes LabelFontAttributes { get; set; }
+
+		[ListUiProperty("Label Text Alignment:", true, 6, new object[] { TextAlignment.Start, TextAlignment.Center, TextAlignment.End }, false)]
+		public TextAlignment LabelTextAlignment { get; set; }
 
 		public bool DisplayNumber
 		{
@@ -212,6 +253,7 @@ namespace Sensus.UI.Inputs
 		/// <summary>
 		/// The number of attempts the user has made to provide the correct value to the <see cref="Input"/>. The input is disabled after (<see cref="Retries"/> + 1) attempts.
 		/// </summary>
+		[JsonIgnore]
 		public int Attempts
 		{
 			get
@@ -259,6 +301,15 @@ namespace Sensus.UI.Inputs
 		/// <value>A positive real number to make the <see cref="Input"/> scored or <c>0</c> to make it unscored.</value>
 		[EntryFloatUiProperty("Incorrect Score:", true, 32, false)]
 		public virtual float IncorrectScore { get; set; }
+
+		[EntryStringUiProperty("Required Group:", true, 33, false)]
+		public virtual string RequiredGroup { get; set; }
+
+		[OnOffUiProperty("Keep Feedback after Delay:", true, 34)]
+		public virtual bool KeepFeedback { get; set; }
+
+		[EntryIntegerUiProperty("Display Delay (S):", true, 35, false)]
+		public virtual int DisplayDelay { get; set; }
 
 		/// <summary>
 		/// The current score of the <see cref="Input"/>.
@@ -351,19 +402,32 @@ namespace Sensus.UI.Inputs
 					string definedVariable = input.DefinedVariable;
 					if (definedVariable != null)
 					{
-						Protocol protocolForInput = GetProtocol();
+						ScriptRunner runner = GetScriptRunner();
+						Protocol protocolForInput = runner.Probe.Protocol; // GetProtocol();
 
 						if (protocolForInput != null)
 						{
 							// if the input is complete, set the variable on the protocol
 							if (_complete)
 							{
-								protocolForInput.VariableValue[definedVariable] = inputValue.ToString();
+								string variableValue = inputValue.ToString();
+
+								protocolForInput.VariableValue[definedVariable] = variableValue;
+
+								if (runner.SaveState && runner.SavedState != null)
+								{
+									runner.SavedState.Variables[definedVariable] = variableValue;
+								}
 							}
 							// if the input is incomplete, set the value to null on the protocol
 							else
 							{
 								protocolForInput.VariableValue[definedVariable] = null;
+
+								if (runner.SaveState && runner.SavedState != null)
+								{
+									runner.SavedState.Variables[definedVariable] = null;
+								}
 							}
 						}
 					}
@@ -377,6 +441,14 @@ namespace Sensus.UI.Inputs
 				{
 					NavigateOrDelay(NavigationOnIncorrect, IncorrectDelay);
 				}
+			}
+		}
+
+		protected void SetFeedback(bool isCorrect)
+		{
+			if (_feedbackView != null)
+			{
+				_feedbackView.SetFeedback(isCorrect);
 			}
 		}
 
@@ -427,7 +499,22 @@ namespace Sensus.UI.Inputs
 		}
 
 		[JsonIgnore]
-		public abstract bool Enabled { get; set; }
+		public virtual bool Enabled
+		{
+			get
+			{
+				return _enabled;
+			}
+			set
+			{
+				if (_view != null)
+				{
+					_view.IsEnabled = value;
+				}
+
+				_enabled = value;
+			}
+		}
 
 		[JsonIgnore]
 		public abstract string DefaultName { get; }
@@ -624,7 +711,7 @@ namespace Sensus.UI.Inputs
 
 					return false;
 				}
-				else if (CorrectValue.ToString() == Value.ToString() || CorrectValue.ToString() == deserializedValue?.ToString())
+				else if (CorrectValue.ToString() == Value.ToString() || JsonConvert.SerializeObject(CorrectValue) == deserializedValue?.ToString() || CorrectValue.ToString() == deserializedValue?.ToString())
 				{
 					return true;
 				}
@@ -635,44 +722,57 @@ namespace Sensus.UI.Inputs
 			return true;
 		}
 
+		protected virtual bool IsCorrect()
+		{
+			object inputValue = JsonConvert.DeserializeObject<object>(JsonConvert.SerializeObject(Value, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+
+			return IsCorrect(inputValue);
+		}
+
 		protected virtual void NavigateOrDelay(NavigationResult navigationResult, int delay)
 		{
-			if (InputGroupPage != null)
+			SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
 			{
-				if (delay > 0)
+				if (InputGroupPage != null)
 				{
-					InputGroupPage.SetNavigationVisibility(this);
-
-					_delayTimer?.Dispose();
-
-					_delayTimer = new Timer(delay) { AutoReset = false };
-
-					_view.IsEnabled = false;
-
-					_delayTimer.Elapsed += (o, s) =>
+					if (delay > 0)
 					{
-						_view.IsEnabled = true;
+						InputGroupPage.SetNavigationVisibility(this);
 
+						_delayTimer?.Dispose();
+
+						_delayTimer = new Timer(delay) { AutoReset = false };
+
+						_view.IsEnabled = false;
+
+						_delayTimer.Elapsed += (o, s) =>
+						{
+							SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+							{
+								_view.IsEnabled = true;
+
+								if (navigationResult != NavigationResult.None)
+								{
+									InputGroupPage.Navigate(this, navigationResult);
+								}
+
+								InputGroupPage.SetNavigationVisibility(this);
+							});
+						};
+
+						_delayTimer.Start();
+					}
+					else
+					{
 						if (navigationResult != NavigationResult.None)
 						{
 							InputGroupPage.Navigate(this, navigationResult);
 						}
 
 						InputGroupPage.SetNavigationVisibility(this);
-					};
-
-					_delayTimer.Start();
-				}
-				else
-				{
-					if (navigationResult != NavigationResult.None)
-					{
-						InputGroupPage.Navigate(this, navigationResult);
 					}
-
-					InputGroupPage.SetNavigationVisibility(this);
 				}
-			}
+			});
 		}
 
 		public Input()
@@ -691,6 +791,7 @@ namespace Sensus.UI.Inputs
 			_frame = true;
 			_completionRecords = new List<InputCompletionRecord>();
 			_submissionTimestamp = null;
+			_enabled = true;
 
 			StoreCompletionRecords = true;
 		}
@@ -715,16 +816,36 @@ namespace Sensus.UI.Inputs
 
 		protected Label CreateLabel(int index)
 		{
-			return new Label
+			if (string.IsNullOrEmpty(LabelText))
 			{
+				return new Label { IsVisible = false };
+			}
+
+			Label label = new Label
+			{
+				StyleClass = new List<string> { "InputLabel" },
 				Text = GetLabelText(index),
-				FontSize = _labelFontSize
+				FontSize = _labelFontSize,
+				FontAttributes = LabelFontAttributes,
+				HorizontalTextAlignment = LabelTextAlignment,
 
 				// set the style ID on the label so that we can retrieve it when UI testing
 #if UI_TESTING
-                , StyleId = Name + " Label"
+				, StyleId = Name + " Label"
 #endif
 			};
+
+			if (IsLabelTextHtml)
+			{
+				label.TextType = TextType.Html;
+			}
+
+			if (LabelTextColor != null && LabelTextColor != Color.Default)
+			{
+				label.TextColor = LabelTextColor.Value;
+			}
+
+			return label;
 		}
 
 		protected string GetLabelText(int index)
@@ -800,10 +921,71 @@ namespace Sensus.UI.Inputs
 			}
 		}
 
+		/// <summary>
+		/// Gets the <see cref="ScriptRunner"/> containing the current input.
+		/// </summary>
+		/// <returns>The <see cref="ScriptRunner"/>.</returns>
+		private ScriptRunner GetScriptRunner()
+		{
+			try
+			{
+				return SensusServiceHelper.Get().RegisteredProtocols.SelectMany(protocol => protocol.Probes.OfType<ScriptProbe>())                  // get script probes
+																								 .Single()                                          // must be only 1 script probe
+																								 .ScriptRunners                                     // get runners
+																								 .First(runner => runner.Script.InputGroups         // get input groups for each runner
+																									.SelectMany(inputGroup => inputGroup.Inputs)    // get inputs for each input group
+																									.Any(input => input.Id == _id));                // check if any inputs are the current one. must check ids rather than object references, as we make deep copies of inputs when instantiating scripts to run.
+			}
+			catch (Exception ex)
+			{
+				// there is only one known situation in which multiple protocols may contain inputs with the same
+				// ids:  when the user manually set the protocol id and loads both protocols (one with the original
+				// id and one with the new id. when manually setting the protocol id, any script inputs do not receive
+				// a new id. this is by design in the use case where authentication servers wish to push out an updated
+				// protocol.
+				SensusServiceHelper.Get().Logger.Log("Exception while getting script runner for input:  " + ex.Message, LoggingLevel.Normal, GetType());
+				return null;
+			}
+		}
+
 		public virtual View GetView(int index)
 		{
+			if (_view != null)
+			{
+				_view.IsEnabled = _enabled;
+
+				if (DisplayDelay > 0)
+				{
+					_view.IsVisible = false;
+
+					Timer timer = new Timer(DisplayDelay * 1000) { AutoReset = false };
+
+					timer.Elapsed += async (o, e) =>
+					{
+						await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+						{
+							_view.IsVisible = true;
+
+							await OnDisplayedAfterDelay();
+						});
+					};
+
+					timer.Start();
+				}
+			}
+
 			return _view;
 		}
+
+		protected virtual Task OnDisplayedAfterDelay()
+		{
+			return Task.CompletedTask;
+		}
+
+		[JsonIgnore]
+		public EventHandler<FeedbackEventArgs> DelayStarted { get; set; }
+		[JsonIgnore]
+		public EventHandler<FeedbackEventArgs> DelayEnded { get; set; }
 
 		protected virtual void SetView(View value)
 		{
@@ -811,7 +993,7 @@ namespace Sensus.UI.Inputs
 
 			if (CorrectDelay > 0 || IncorrectDelay > 0 || string.IsNullOrWhiteSpace(CorrectFeedbackMessage) == false || string.IsNullOrWhiteSpace(IncorrectFeedbackMessage) == false)
 			{
-				_feedbackView = new InputFeedbackView(PROGRESS_INCREMENT, CorrectFeedbackMessage, CorrectDelay, IncorrectFeedbackMessage, IncorrectDelay);
+				_feedbackView = new InputFeedbackView(PROGRESS_INCREMENT, CorrectFeedbackMessage, CorrectDelay, IncorrectFeedbackMessage, IncorrectDelay, KeepFeedback, DelayStarted, DelayEnded);
 
 				view = new StackLayout()
 				{
@@ -837,7 +1019,7 @@ namespace Sensus.UI.Inputs
 			_view = viewContainer;
 		}
 
-		public void Reset()
+		public virtual void Reset()
 		{
 			_view = null;
 			_complete = false;
@@ -855,15 +1037,33 @@ namespace Sensus.UI.Inputs
 			_feedbackView?.Reset();
 		}
 
-		public virtual void OnDisappearing(NavigationResult result)
+		public virtual Task PrepareAsync()
+		{
+			return Task.CompletedTask;
+		}
+
+		public virtual Task DisposeAsync(NavigationResult result)
 		{
 			_delayTimer?.Dispose();
+
+			return Task.CompletedTask;
 		}
 
 		public virtual bool ValueMatches(object conditionValue, bool conjunctive)
 		{
+			if (Value == null && this is IVariableDefiningInput variableDefiningInput && string.IsNullOrWhiteSpace(variableDefiningInput.DefinedVariable) == false)
+			{
+				Protocol protocolForInput = GetProtocol();
+
+				if (protocolForInput.VariableValue.TryGetValue(variableDefiningInput.DefinedVariable, out string value))
+				{
+					return value == conditionValue as string;
+				}
+
+				return conditionValue == null;
+			}
 			// if either is null, both must be null to be equal
-			if (Value == null || conditionValue == null)
+			else if (Value == null || conditionValue == null)
 			{
 				return Value == null && conditionValue == null;
 			}

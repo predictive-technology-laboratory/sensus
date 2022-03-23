@@ -12,8 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Newtonsoft.Json;
 using Sensus.UI.UiProperties;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using Xamarin.Forms;
 
 namespace Sensus.UI.Inputs
@@ -21,11 +25,35 @@ namespace Sensus.UI.Inputs
 	public class ButtonGridInput : Input, IVariableDefiningInput
 	{
 		private string _definedVariable;
-		private string _value;
+		private object _value;
+		protected ButtonGridView _grid;
+
+		private ButtonStates _defaultState;
+
+		public ButtonGridInput() : base()
+		{
+			Buttons = new List<string>();
+			ColumnCount = 1;
+
+			_defaultState = ButtonStates.Default;
+		}
 
 		public override object Value => _value;
 
-		public override bool Enabled { get; set; }
+		public override bool Enabled
+		{
+			get
+			{
+				return _grid?.IsEnabled ?? false;
+			}
+			set
+			{
+				if (_grid != null)
+				{
+					_grid.IsEnabled = value;
+				}
+			}
+		}
 
 		public override string DefaultName => "Button Grid";
 
@@ -46,30 +74,141 @@ namespace Sensus.UI.Inputs
 		public List<string> Buttons { get; set; }
 
 		[EntryIntegerUiProperty("Number of Columns:", true, 3, false)]
-		public int ColumnCount { get; set; } = 1;
+		public int ColumnCount { get; set; }
+
+		[OnOffUiProperty("Selectable:", true, 4)]
+		public bool Selectable { get; set; }
+
+		[EntryIntegerUiProperty("Min. Number of Selections:", true, 4, false)]
+		public int MinSelectionCount { get; set; }
+
+		[EntryIntegerUiProperty("Max. Number of Selections:", true, 4, false)]
+		public int MaxSelectionCount { get; set; }
+
+		[OnOffUiProperty("Leave Incorrect Value:", true, 4)]
+		public bool LeaveIncorrectValue { get; set; }
+
+		[OnOffUiProperty("Split into Value:Text Pairs:", true, 4)]
+		public bool SplitValueTextPairs { get; set; }
+
+		[JsonIgnore]
+		public List<ButtonWithValue> GridButtons => _grid?.Buttons.ToList() ?? new List<ButtonWithValue>();
 
 		public override View GetView(int index)
 		{
 			if (base.GetView(index) == null)
 			{
-				ButtonGridView grid = new ButtonGridView(ColumnCount, (o, s) =>
+				if (Selectable)
 				{
-					if (o is ButtonWithValue button)
-					{
-						_value = button.Value;
-					}
-
-					Complete = true;
-				});
-
-				foreach (string button in Buttons)
-				{
-					grid.AddButton(button, button);
+					_defaultState = ButtonStates.Selectable;
 				}
 
-				grid.Arrange();
+				if (LeaveIncorrectValue == false)
+				{
+					DelayEnded += (s, e) =>
+					{
+						foreach (ButtonWithValue otherButton in _grid.Buttons)
+						{
+							if (otherButton.State == ButtonStates.Incorrect)
+							{
+								otherButton.State = ButtonStates.Default;
+							}
+						}
+					};
+				}
 
-				base.SetView(grid);
+				int maxSelectionCount = Math.Min(MaxSelectionCount, Buttons.Count);
+				int minSelectionCount = Math.Min(MinSelectionCount, maxSelectionCount);
+
+				if (Required)
+				{
+					minSelectionCount = Math.Max(1, minSelectionCount);
+				}
+
+				_grid = new ButtonGridView(ColumnCount, (s, e) =>
+				{
+					ButtonWithValue button = (ButtonWithValue)s;
+
+					if (Selectable && maxSelectionCount > 1)
+					{
+						List<ButtonWithValue> selectedButtons = _grid.Buttons.Where(x => x.State == ButtonStates.Selected).ToList();
+
+						if (button.State == ButtonStates.Selectable)
+						{
+							if (selectedButtons.Count < maxSelectionCount)
+							{
+								selectedButtons.Add(button);
+
+								button.State = ButtonStates.Selected;
+							}
+						}
+						else if (button.State == ButtonStates.Selected)
+						{
+							if (selectedButtons.Count > minSelectionCount)
+							{
+								selectedButtons.Remove(button);
+
+								button.State = ButtonStates.Selectable;
+							}
+						}
+
+						_value = selectedButtons.Select(x => x.Value).ToArray();
+
+						Complete = selectedButtons.Count >= minSelectionCount;
+					}
+					else
+					{
+						_value = button.Value;
+
+						Complete = true;
+
+						foreach (ButtonWithValue otherButton in _grid.Buttons)
+						{
+							otherButton.State = _defaultState;
+						}
+
+						if (CorrectValue != null)
+						{
+							if (Correct)
+							{
+								button.State = ButtonStates.Correct;
+							}
+							else
+							{
+								button.State = ButtonStates.Incorrect;
+							}
+						}
+						else if (Selectable)
+						{
+							button.State = ButtonStates.Selected;
+						}
+					}
+				});
+
+				foreach (string buttonValue in Buttons)
+				{
+					string text = buttonValue;
+					string value = buttonValue;
+
+					if (SplitValueTextPairs)
+					{
+						string[] pair = Regex.Split(buttonValue.Replace("::", "\0"), ":").Select(x => x.Replace("\0", ":")).ToArray();
+
+						value = pair.FirstOrDefault();
+						text = pair.LastOrDefault();
+					}
+
+					ButtonWithValue button = _grid.AddButton(text, value);
+
+					if (Selectable)
+					{
+						button.State = ButtonStates.Selectable;
+					}
+				}
+
+				_grid.Arrange();
+
+				base.SetView(_grid);
 			}
 
 			return base.GetView(index);

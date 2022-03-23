@@ -30,8 +30,17 @@
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\SymmetricEncryption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Exceptions\SensusException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ImpreciseDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IgnoreJsonIgnoreContractResolver.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)JsonIgnoreContractResolver.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MediaCacheModes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MediaObject.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)MediaView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MediaStorageMethods.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\SavedScriptState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\DarkModeCompatibleTextCellcs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\SliderWithOptionsInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\TimedTextInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\MasterDetailPageExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\MediaView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MessageEventDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\UserMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\ApplicationUsageEventProbe.cs" />
@@ -169,17 +178,21 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\AddProximityTriggerPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\AddScriptTriggerPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\AnonymizerPage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\App.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)UI\DataStorePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ButtonGridView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ButtonGridInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ButtonWithValue.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\InputFeedbackView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ScheduleModes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ScoreInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ReadOnlyTextInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\HyperlinkInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\MediaInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ScoreMethods.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ScriptSchedulerInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ShowNavigationOptions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\TimeInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\Input.cs" />
@@ -217,6 +230,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\RunScriptsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\HiddenUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\MediaPickerUiProperty.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\UiProperties\ScriptsUiProperty.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UserInitiatedScriptsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ScriptInputGroupPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ScriptInputGroupsPage.cs" />
@@ -321,5 +335,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Adaptation\example-aspl-policy.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)UI\App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

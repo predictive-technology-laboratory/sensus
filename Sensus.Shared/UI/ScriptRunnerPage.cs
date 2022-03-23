@@ -19,76 +19,81 @@ using System.Linq;
 
 namespace Sensus.UI
 {
-    /// <summary>
-    /// Displays a script runner, allowing the user to edit its prompts and triggers.
-    /// </summary>
-    public class ScriptRunnerPage : ContentPage
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ScriptRunnerPage"/> class.
-        /// </summary>
-        /// <param name="scriptRunner">Script runner to display.</param>
-        public ScriptRunnerPage(ScriptRunner scriptRunner)
-        {
-            Title = "Script";
+	/// <summary>
+	/// Displays a script runner, allowing the user to edit its prompts and triggers.
+	/// </summary>
+	public class ScriptRunnerPage : ContentPage
+	{
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ScriptRunnerPage"/> class.
+		/// </summary>
+		/// <param name="scriptRunner">Script runner to display.</param>
+		public ScriptRunnerPage(ScriptRunner scriptRunner)
+		{
+			Title = "Script";
 
-            StackLayout contentLayout = new StackLayout
-            {
-                Orientation = StackOrientation.Vertical,
-                VerticalOptions = LayoutOptions.FillAndExpand
-            };
+			StackLayout contentLayout = new StackLayout
+			{
+				Orientation = StackOrientation.Vertical,
+				VerticalOptions = LayoutOptions.FillAndExpand
+			};
 
-            foreach (StackLayout stack in UiProperty.GetPropertyStacks(scriptRunner))
-            {
-                contentLayout.Children.Add(stack);
-            }
+			foreach (StackLayout stack in UiProperty.GetPropertyStacks(scriptRunner))
+			{
+				contentLayout.Children.Add(stack);
+			}
 
-            Button editInputGroupsButton = new Button
-            {
-                Text = "Edit Input Groups",
-                FontSize = 20,
-                HorizontalOptions = LayoutOptions.FillAndExpand
-            };
+			Button editInputGroupsButton = new Button
+			{
+				Text = "Edit Input Groups",
+				FontSize = 20,
+				HorizontalOptions = LayoutOptions.FillAndExpand
+			};
 
-            editInputGroupsButton.Clicked += async (o, e) =>
-            {
-                await Navigation.PushAsync(new ScriptInputGroupsPage(scriptRunner.Script));
-            };
+			editInputGroupsButton.Clicked += async (o, e) =>
+			{
+				await Navigation.PushAsync(new ScriptInputGroupsPage(scriptRunner.Script));
+			};
 
-            contentLayout.Children.Add(editInputGroupsButton);
+			contentLayout.Children.Add(editInputGroupsButton);
 
-            Button editTriggersButton = new Button
-            {
-                Text = "Edit Triggers",
-                FontSize = 20,
-                HorizontalOptions = LayoutOptions.FillAndExpand
-            };
+			Button editTriggersButton = new Button
+			{
+				Text = "Edit Triggers",
+				FontSize = 20,
+				HorizontalOptions = LayoutOptions.FillAndExpand
+			};
 
-            editTriggersButton.Clicked += async (o, e) =>
-            {
-                await Navigation.PushAsync(new ScriptTriggersPage(scriptRunner));
-            };
+			editTriggersButton.Clicked += async (o, e) =>
+			{
+				await Navigation.PushAsync(new ScriptTriggersPage(scriptRunner));
+			};
 
-            contentLayout.Children.Add(editTriggersButton);
+			contentLayout.Children.Add(editTriggersButton);
 
-            Button viewScheduledTriggersButton = new Button
-            {
-                Text = "View Scheduled Triggers",
-                FontSize = 20,
-                HorizontalOptions = LayoutOptions.FillAndExpand
-            };
+			Button viewScheduledTriggersButton = new Button
+			{
+				Text = "View Scheduled Triggers",
+				FontSize = 20,
+				HorizontalOptions = LayoutOptions.FillAndExpand
+			};
 
-            viewScheduledTriggersButton.Clicked += async (o, e) =>
-            {
-                await Navigation.PushAsync(new ViewTextLinesPage("Scheduled Triggers", scriptRunner.ScheduledCallbackDescriptions));
-            };
+			viewScheduledTriggersButton.Clicked += async (o, e) =>
+			{
+				await Navigation.PushAsync(new ViewTextLinesPage("Scheduled Triggers", scriptRunner.ScheduledCallbackDescriptions));
+			};
 
-            contentLayout.Children.Add(viewScheduledTriggersButton);
+			contentLayout.Children.Add(viewScheduledTriggersButton);
 
-            Content = new ScrollView
-            {
-                Content = contentLayout
-            };
-        }
-    }
+			Disappearing += (s, e) =>
+			{
+				scriptRunner.Probe.ManageUserInitiatedScript(scriptRunner);
+			};
+
+			Content = new ScrollView
+			{
+				Content = contentLayout
+			};
+		}
+	}
 }

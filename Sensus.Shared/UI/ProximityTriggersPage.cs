@@ -33,7 +33,7 @@ namespace Sensus.UI
             Title = "Proximity Triggers";
 
             ListView triggerList = new ListView(ListViewCachingStrategy.RecycleElement);
-            triggerList.ItemTemplate = new DataTemplate(typeof(TextCell));
+            triggerList.ItemTemplate = new DataTemplate(typeof(DarkModeCompatibleTextCell));
             triggerList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", stringFormat: "{0}"));
             triggerList.ItemsSource = proximityProbe.Triggers;
             triggerList.ItemTapped += async (o, e) =>

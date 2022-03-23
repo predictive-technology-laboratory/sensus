@@ -101,6 +101,9 @@ namespace Sensus.UI.Inputs
 		[ListUiProperty("Show Navigation:", true, 2, new object[] { ShowNavigationOptions.Always, ShowNavigationOptions.WhenValid, ShowNavigationOptions.WhenComplete, ShowNavigationOptions.WhenCorrect, ShowNavigationOptions.Never }, false)]
 		public ShowNavigationOptions ShowNavigationButtons { get; set; }
 
+		[OnOffUiProperty("Place Navigation at Bottom:", true, 3)]
+		public bool PlaceNavigationAtBottom { get; set; }
+
 		[OnOffUiProperty("Prevent Navigation Backward:", true, 3)]
 		public bool HidePreviousButton { get; set; }
 
@@ -126,32 +129,47 @@ namespace Sensus.UI.Inputs
 		[OnOffUiProperty("Shuffle Inputs:", true, 5)]
 		public bool ShuffleInputs { get; set; }
 
-		[OnOffUiProperty("Show Title:", true, 6)]
-		public bool HideTitle { get; set; }
+		[OnOffUiProperty("Freeze Header:", true, 6)]
+		public bool FreezeHeader { get; set; }
+
+		[OnOffUiProperty("Hide Progress:", true, 7)]
+		public bool HideProgress { get; set; }
+
+		[OnOffUiProperty("Hide Required Field Label:", true, 8)]
+		public bool HideRequiredFieldLabel { get; set; }
 
 		/// <summary>
 		/// Override the text for the Previous button.
 		/// </summary>
-		[EntryStringUiProperty("Previous Button Text:", true, 7, false)]
+		[EntryStringUiProperty("Previous Button Text:", true, 9, false)]
 		public virtual string PreviousButtonText { get; set; }
 
 		/// <summary>
 		/// Override the text for the Next button.
 		/// </summary>
-		[EntryStringUiProperty("Next Button Text:", true, 8, false)]
+		[EntryStringUiProperty("Next Button Text:", true, 10, false)]
 		public virtual string NextButtonText { get; set; }
 
 		/// <summary>
 		/// Override the text for the Submit button.
 		/// </summary>
-		[EntryStringUiProperty("Submit Button Text:", true, 9, false)]
+		[EntryStringUiProperty("Submit Button Text:", true, 11, false)]
 		public virtual string SubmitButtonText { get; set; }
 
 		/// <summary>
 		/// Override the text for the Cancel button.
 		/// </summary>
-		[EntryStringUiProperty("Cancel Button Text:", true, 10, false)]
+		[EntryStringUiProperty("Cancel Button Text:", true, 12, false)]
 		public virtual string CancelButtonText { get; set; }
+
+		[EntryStringUiProperty("Title:", true, 13, false)]
+		public virtual string Title { get; set; }
+
+		[OnOffUiProperty("Use Navigation View", true, 14)]
+		public virtual bool UseNavigationBar { get; set; }
+
+		[EntryIntegerUiProperty("Timeout (S):", true, 15, false)]
+		public virtual int? Timeout { get; set; }
 
 		/// <summary>
 		/// Gets a value indicating whether this <see cref="InputGroup"/> is valid.
@@ -159,7 +177,7 @@ namespace Sensus.UI.Inputs
 		/// An input group with no inputs is deemed valid by default.
 		/// </summary>
 		[JsonIgnore]
-		public bool Valid => Inputs.All(input => input?.Valid ?? true);
+		public bool Valid => Inputs.GroupBy(x => x?.RequiredGroup).All(x => (string.IsNullOrWhiteSpace(x.Key) && x.All(y => y?.Valid ?? true)) || (string.IsNullOrWhiteSpace(x.Key) == false && x.Any(y => y?.Valid ?? true))); //Inputs.All(input => input?.Valid ?? true);
 
 		public InputGroup()
 		{

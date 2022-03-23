@@ -30,6 +30,8 @@ using Sensus.Notifications;
 using Sensus.Exceptions;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json.Serialization;
+using Xamarin.Forms;
+using System.IO;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -43,6 +45,7 @@ namespace Sensus.Probes.User.Scripts
 		private TimeSpan? _maxAge;
 		private readonly List<Tuple<ScheduledCallback, ScriptTriggerTime>> _scheduledCallbackTimes;
 		private readonly ScheduleTrigger _scheduleTrigger;
+		private bool _hasSubmitted;
 
 		private readonly object _locker = new object();
 
@@ -57,6 +60,137 @@ namespace Sensus.Probes.User.Scripts
 		/// </summary>
 		/// <value>The script.</value>
 		public Script Script { get; set; }
+
+		/// <summary>
+		/// Gets or sets the saved state
+		/// </summary>
+		/// <value>The saved state.</value>
+		[JsonIgnore] // do not serialize this since it is stored outside of the saved SensusServiceHelper
+		public SavedScriptState SavedState { get; set; }
+
+		private string SavedStatePath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), Probe.Protocol.Id, "SavedScriptStates");
+
+		private string GetSavedStateFileName()
+		{
+			return Path.Combine(SavedStatePath, $"{Script.Id}.json");
+		}
+
+		private async Task<bool> PromptForSavedState()
+		{
+			string continuePrompt = ContinuePrompt;
+
+			if (string.IsNullOrWhiteSpace(continuePrompt))
+			{
+				continuePrompt = "Do you want to Continue from where you stopped previously or Start Over?";
+			}
+
+			return await Application.Current.MainPage.DisplayAlert("Continue?", continuePrompt, "Continue", "Start Over");
+		}
+
+		public static async Task<SavedScriptState> ManageStateAsync(Script script)
+		{
+			ScriptRunner runner = script.Runner;
+			string savePath = runner.GetSavedStateFileName();
+
+			try
+			{
+				bool restoredState = false;
+				bool clearedState = false;
+
+				if (runner.SaveState)
+				{
+					if (runner.SavedState != null)
+					{
+						restoredState = await runner.PromptForSavedState();
+
+						clearedState = restoredState == false;
+					}
+					else if (File.Exists(savePath))
+					{
+						restoredState = await runner.PromptForSavedState();
+
+						if (restoredState)
+						{
+							using (StreamReader reader = new StreamReader(savePath))
+							{
+								string json = await reader.ReadToEndAsync();
+
+								JsonSerializerSettings settings = new JsonSerializerSettings
+								{
+									ObjectCreationHandling = ObjectCreationHandling.Replace
+								};
+
+								runner.SavedState = JsonConvert.DeserializeObject<SavedScriptState>(json, settings);
+							}
+						}
+						else
+						{
+							clearedState = true;
+
+							ClearSavedState(script);
+						}
+					}
+
+					if (restoredState)
+					{
+						foreach (KeyValuePair<string, string> pair in runner.SavedState.Variables)
+						{
+							runner.Probe.Protocol.VariableValue[pair.Key] = pair.Value;
+						}
+					}
+					else
+					{
+						if (clearedState)
+						{
+							foreach (InputGroup inputGroup in script.InputGroups)
+							{
+								foreach (Input input in inputGroup.Inputs)
+								{
+									input.Reset();
+								}
+							}
+						}
+
+						runner.SavedState = new SavedScriptState(savePath);
+					}
+
+					return runner.SavedState;
+				}
+			}
+			catch (Exception e)
+			{
+				SensusServiceHelper.Get().Logger.Log("Error restoring script saved state:  " + e.Message, LoggingLevel.Normal, typeof(ScriptRunner));
+
+				await SensusServiceHelper.Get().FlashNotificationAsync("Could not restore your previous progress.");
+
+				if (runner.SaveState)
+				{
+					return new SavedScriptState(savePath);
+				}
+			}
+
+			return null;
+		}
+
+		public static void ClearSavedState(Script script)
+		{
+			try
+			{
+				ScriptRunner runner = script.Runner;
+				string savePath = runner.GetSavedStateFileName();
+
+				if (File.Exists(savePath))
+				{
+					File.Delete(savePath);
+				}
+
+				runner.SavedState = null;
+			}
+			catch (Exception e)
+			{
+				SensusServiceHelper.Get().Logger.Log("Error clearing script saved state:  " + e.Message, LoggingLevel.Normal, typeof(ScriptRunner));
+			}
+		}
 
 		/// <summary>
 		/// Gets the <see cref="IScript"/> that this <see cref="IScriptRunner"/> is configured to run (for NuGet interfacing).
@@ -74,18 +208,18 @@ namespace Sensus.Probes.User.Scripts
 		/// </summary>
 		/// <value>The name.</value>
 		[EntryStringUiProperty("Name:", true, 1, true)]
-		public string Name 
+		public string Name
 		{
 			get { return _name; }
 			set
 			{
-				if(value != _name)
+				if (value != _name)
 				{
 					_name = value;
 					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Caption)));
 				}
 			}
-		}            
+		}
 
 		/// <summary>
 		/// Whether or not the survey is enabled.
@@ -274,6 +408,34 @@ namespace Sensus.Probes.User.Scripts
 
 		public List<DateTime> CompletionTimes { get; set; }
 
+		public bool HasSubmitted
+		{
+			get
+			{
+				return _hasSubmitted;
+			}
+			set
+			{
+				bool changed = _hasSubmitted != value;
+
+				_hasSubmitted = value;
+
+				if (changed)
+				{
+					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasSubmitted)));
+				}
+			}
+		}
+
+		[JsonIgnore]
+		public List<DateTime> ScheduledTimes
+		{
+			get
+			{
+				return _scheduledCallbackTimes.Select(x => x.Item2.Trigger).ToList();
+			}
+		}
+
 		/// <summary>
 		/// Whether or not to run the survey exactly once.
 		/// </summary>
@@ -356,11 +518,41 @@ namespace Sensus.Probes.User.Scripts
 		[OnOffUiProperty("Allow User Initiation:", true, 21)]
 		public bool AllowUserInitiation { get; set; }
 
+		[EntryStringUiProperty("Script Group:", true, 22, false)]
+		public string ScriptGroup { get; set; }
+
+		[OnOffUiProperty("Keep Until Completed:", true, 23)]
+		public bool KeepUntilCompleted { get; set; }
+
+		[ScriptsUiProperty("Next Script:", true, 24, false)]
+		public ScriptRunner NextScript { get; set; }
+
+		[EntryStringUiProperty("Next Script Run Delay (MS):", true, 25, false)]
+		public int NextScriptRunDelayMS { get; set; }
+
+		[OnOffUiProperty("Trigger Next Script First Time Only:", true, 26)]
+		public bool TriggerNextScriptFirstTimeOnly { get; set; }
+
+		[OnOffUiProperty("Confirm Navigation:", true, 27)]
+		public bool ConfirmNavigation { get; set; }
+
+		[OnOffUiProperty("Use Detail Page:", true, 28)]
+		public bool UseDetailPage { get; set; }
+
+		[OnOffUiProperty("Save State:", true, 29)]
+		public bool SaveState { get; set; }
+
+		[EntryStringUiProperty("Continue Prompt:", true, 30, false)]
+		public string ContinuePrompt { get; set; }
+
+		[EntryStringUiProperty("Submit Confirmation:", true, 31, false)]
+		public string SubmitConfirmation { get; set; }
+
 		[JsonIgnore]
 		public string Caption
 		{
 			get
-			{                
+			{
 				return _name;
 			}
 		}
@@ -383,6 +575,8 @@ namespace Sensus.Probes.User.Scripts
 			RunMode = RunMode.SingleKeepNewest;
 			IncompleteSubmissionConfirmation = "You have not completed all required fields on the current page. Do you want to continue?";
 			ShuffleInputGroups = false;
+			ConfirmNavigation = true;
+			SubmitConfirmation = "Are you ready to submit your responses?";
 
 			Triggers.CollectionChanged += (o, e) =>
 			{
@@ -479,7 +673,7 @@ namespace Sensus.Probes.User.Scripts
 			// ensure all variables defined by inputs are listed on the protocol
 			List<string> unknownVariables = Script.InputGroups.SelectMany(inputGroup => inputGroup.Inputs)
 															  .OfType<IVariableDefiningInput>()
-															  .Where(input => !string.IsNullOrWhiteSpace(input.DefinedVariable))
+															  .Where(input => !string.IsNullOrWhiteSpace(input.DefinedVariable) && input.DefinedVariable.StartsWith('!') == false)
 															  .Select(input => input.DefinedVariable)
 															  .Where(definedVariable => !Probe.Protocol.VariableValue.ContainsKey(definedVariable))
 															  .ToList();
@@ -510,8 +704,10 @@ namespace Sensus.Probes.User.Scripts
 		public async Task ResetAsync()
 		{
 			await UnscheduleCallbacksAsync();
+			HasSubmitted = false;
 			RunTimes.Clear();
 			CompletionTimes.Clear();
+			SavedState = null;
 		}
 
 		public async Task RestartAsync()
@@ -674,6 +870,68 @@ namespace Sensus.Probes.User.Scripts
 				}
 
 				SensusServiceHelper.Get().Logger.Log($"Scheduled for {triggerTime.Trigger} ({callback.Id})", LoggingLevel.Normal, GetType());
+			}
+		}
+
+		private async Task ScheduleScriptRunAsync(DateTime triggerDateTime, string scriptId = null)
+		{
+			ScriptTriggerTime triggerTime = new ScriptTriggerTime(triggerDateTime, null, "");
+
+			await ScheduleScriptRunAsync(triggerTime, scriptId);
+		}
+
+		public async Task<bool> ScheduleScriptFromInputAsync(Script script)
+		{
+			if (script.InputGroups.SelectMany(x => x.Inputs).OfType<ScriptSchedulerInput>().FirstOrDefault() is ScriptSchedulerInput scheduler && scheduler.Value is DateTime scheduledTime)
+			{
+				ScriptRunner runner = null;
+
+				if (scheduler.ScheduleMode == ScheduleModes.Self)
+				{
+					runner = Script.Runner;
+				}
+				else if (scheduler.ScheduleMode == ScheduleModes.Next && NextScript != null)
+				{
+					runner = NextScript;
+				}
+
+				if (scheduler.TimeOnly)
+				{
+					int daysFromNow = 0;
+
+					if (scheduler.DaysInFuture > 0)
+					{
+						daysFromNow = scheduler.DaysInFuture;
+					}
+					else if (scheduledTime.TimeOfDay < DateTime.Now.TimeOfDay)
+					{
+						daysFromNow = 1;
+					}
+
+					scheduledTime = DateTime.Now.Date.AddDays(daysFromNow).Add(scheduledTime.TimeOfDay);
+				}
+
+				await runner.ScheduleScriptRunAsync(scheduledTime);
+
+				return scheduler.ScheduleMode == ScheduleModes.Next;
+			}
+
+			return false;
+		}
+
+		public async Task ScheduleNextScriptToRunAsync()
+		{
+			if (NextScript != null && (TriggerNextScriptFirstTimeOnly == false || HasSubmitted == false))
+			{
+				// if there is no window then run it immmediately
+				if (NextScriptRunDelayMS == 0)
+				{
+					await NextScript.RunAsync(NextScript.Script.Copy(true));
+				}
+				else // schedule it to be run
+				{
+					await NextScript.ScheduleScriptRunAsync(DateTime.Now.AddMilliseconds(NextScriptRunDelayMS));
+				}
 			}
 		}
 
@@ -915,6 +1173,7 @@ namespace Sensus.Probes.User.Scripts
 				copy.Probe = Probe;
 
 				copy.Name = GetCopyName();
+				copy.HasSubmitted = false;
 
 				foreach (InputGroup inputGroup in copy.Script.InputGroups)
 				{

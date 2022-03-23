@@ -27,42 +27,43 @@ using Sensus.Callbacks;
 using Sensus.Exceptions;
 using Sensus.Context;
 using Newtonsoft.Json.Linq;
+using System.Collections.Specialized;
 
 namespace Sensus.Probes.User.Scripts
 {
-    /// <summary>
-    /// The Script Probe allows Sensus to deliver custom surveys to the user in response to either a schedule or the data coming off other probes. For 
-    /// example, one could configure a survey to display at particular times or randomly within particular time blocks. One could also configure a survey 
-    /// to display when a <see cref="Datum"/> from another probe meets particular criteria.
-    /// </summary>
-    public class ScriptProbe : Probe
-    {
+	/// <summary>
+	/// The Script Probe allows Sensus to deliver custom surveys to the user in response to either a schedule or the data coming off other probes. For 
+	/// example, one could configure a survey to display at particular times or randomly within particular time blocks. One could also configure a survey 
+	/// to display when a <see cref="Datum"/> from another probe meets particular criteria.
+	/// </summary>
+	public class ScriptProbe : Probe
+	{
 
 #if __ANDROID__
 
-        // android allows us to dynamically load code assemblies, but iOS does not. so, the current approach
-        // is to only support dynamic loading on android and force compile-time assembly inclusion on ios.
+		// android allows us to dynamically load code assemblies, but iOS does not. so, the current approach
+		// is to only support dynamic loading on android and force compile-time assembly inclusion on ios.
 
-        public static IScriptProbeAgent GetAgent(byte[] assemblyBytes, string agentId)
-        {
-            return GetAgents(assemblyBytes).SingleOrDefault(agent => agent.Id == agentId);
-        }
+		public static IScriptProbeAgent GetAgent(byte[] assemblyBytes, string agentId)
+		{
+			return GetAgents(assemblyBytes).SingleOrDefault(agent => agent.Id == agentId);
+		}
 
-        public static List<IScriptProbeAgent> GetAgents(byte[] assemblyBytes)
-        {
-            return Assembly.Load(assemblyBytes)
-                           .GetTypes()
-                           .Where(t => !t.IsAbstract && t.GetInterfaces().Contains(typeof(IScriptProbeAgent)))
-                           .Select(Activator.CreateInstance)
-                           .Cast<IScriptProbeAgent>()
-                           .ToList();
-        }
+		public static List<IScriptProbeAgent> GetAgents(byte[] assemblyBytes)
+		{
+			return Assembly.Load(assemblyBytes)
+						   .GetTypes()
+						   .Where(t => !t.IsAbstract && t.GetInterfaces().Contains(typeof(IScriptProbeAgent)))
+						   .Select(Activator.CreateInstance)
+						   .Cast<IScriptProbeAgent>()
+						   .ToList();
+		}
 
-        /// <summary>
-        /// Bytes of the assembly in which the <see cref="Agent"/> is contained.
-        /// </summary>
-        /// <value>The agent assembly bytes.</value>
-        public byte[] AgentAssemblyBytes { get; set; }
+		/// <summary>
+		/// Bytes of the assembly in which the <see cref="Agent"/> is contained.
+		/// </summary>
+		/// <value>The agent assembly bytes.</value>
+		public byte[] AgentAssemblyBytes { get; set; }
 
 #elif __IOS__
 
@@ -84,270 +85,343 @@ namespace Sensus.Probes.User.Scripts
 
 #endif
 
-        private ObservableCollection<ScriptRunner> _scriptRunners;
-        private IScriptProbeAgent _agent;
-        private ScheduledCallback _agentIntervalDeliveryScheduledCallback;
+		private ObservableCollection<ScriptRunner> _scriptRunners;
+		private IScriptProbeAgent _agent;
+		private ScheduledCallback _agentIntervalDeliveryScheduledCallback;
 
-        /// <summary>
-        /// Gets or sets the agent that controls survey delivery. See [here](xref:adaptive_surveys) for more information.
-        /// </summary>
-        /// <value>The agent.</value>
-        [JsonIgnore]
-        public IScriptProbeAgent Agent
-        {
-            get
-            {
-                // attempt to lazy-load the agent if there is none and we an agent id
-                if (_agent == null && !string.IsNullOrWhiteSpace(AgentId))
-                {
-                    try
-                    {
+		/// <summary>
+		/// Gets or sets the agent that controls survey delivery. See [here](xref:adaptive_surveys) for more information.
+		/// </summary>
+		/// <value>The agent.</value>
+		[JsonIgnore]
+		public IScriptProbeAgent Agent
+		{
+			get
+			{
+				// attempt to lazy-load the agent if there is none and we an agent id
+				if (_agent == null && !string.IsNullOrWhiteSpace(AgentId))
+				{
+					try
+					{
 #if __ANDROID__
-                        // also require an assembly on android, which is where we get the agents from.
-                        if (AgentAssemblyBytes != null)
-                        {
-                            _agent = GetAgent(AgentAssemblyBytes, AgentId);
-                        }
+						// also require an assembly on android, which is where we get the agents from.
+						if (AgentAssemblyBytes != null)
+						{
+							_agent = GetAgent(AgentAssemblyBytes, AgentId);
+						}
 #elif __IOS__
                         // there is no assembly in ios per apple restrictions on dynamically loaded code. agents are baked into the app instead.
                         _agent = GetAgent(AgentId);
 #endif
 
-                        // set the agent's policy if we previously received one (e.g., via push notification)
-                        if (AgentPolicy != null)
-                        {
-                            _agent.SetPolicyAsync(AgentPolicy).Wait();
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        SensusServiceHelper.Get()?.Logger.Log("Exception while loading agent:  " + ex.Message, LoggingLevel.Normal, GetType());
-                    }
-                }
+						// set the agent's policy if we previously received one (e.g., via push notification)
+						if (AgentPolicy != null)
+						{
+							_agent.SetPolicyAsync(AgentPolicy).Wait();
+						}
+					}
+					catch (Exception ex)
+					{
+						SensusServiceHelper.Get()?.Logger.Log("Exception while loading agent:  " + ex.Message, LoggingLevel.Normal, GetType());
+					}
+				}
 
-                return _agent;
-            }
-            set
-            {
-                _agent = value;
-                AgentId = _agent?.Id;
-            }
-        }
+				return _agent;
+			}
+			set
+			{
+				_agent = value;
+				AgentId = _agent?.Id;
+			}
+		}
 
-        /// <summary>
-        /// Id of the <see cref="Agent"/> to use.
-        /// </summary>
-        /// <value>The agent identifier.</value>
-        public string AgentId { get; set; }
+		/// <summary>
+		/// Id of the <see cref="Agent"/> to use.
+		/// </summary>
+		/// <value>The agent identifier.</value>
+		public string AgentId { get; set; }
 
-        /// <summary>
-        /// Gets or sets the agent policy.
-        /// </summary>
-        /// <value>The agent policy JSON.</value>
-        public JObject AgentPolicy { get; set; }
+		/// <summary>
+		/// Gets or sets the agent policy.
+		/// </summary>
+		/// <value>The agent policy JSON.</value>
+		public JObject AgentPolicy { get; set; }
 
-        public ObservableCollection<ScriptRunner> ScriptRunners
-        {
-            get { return _scriptRunners; }
-        }
+		public ObservableCollection<ScriptRunner> ScriptRunners
+		{
+			get { return _scriptRunners; }
+		}
 
-        public sealed override string DisplayName
-        {
-            get { return "Scripted Interactions"; }
-        }
+		[JsonIgnore]
+		public ObservableCollection<Script> UserInitiatedScripts { get; set; }
 
-        public sealed override Type DatumType
-        {
-            get { return typeof(ScriptDatum); }
-        }
+		public sealed override string DisplayName
+		{
+			get { return "Scripted Interactions"; }
+		}
 
-        protected override long DataRateSampleSize => 10;
+		public sealed override Type DatumType
+		{
+			get { return typeof(ScriptDatum); }
+		}
 
-        public override double? MaxDataStoresPerSecond { get => null; set { } }
+		protected override long DataRateSampleSize => 10;
 
-        protected override double RawParticipation
-        {
-            get
-            {
-                int scriptsRun = _scriptRunners.Sum(scriptRunner =>
-                {
-                    lock (scriptRunner.RunTimes)
-                    {
-                        return scriptRunner.RunTimes.Count(runTime => runTime >= Protocol.ParticipationHorizon);
-                    }
-                });
+		public override double? MaxDataStoresPerSecond { get => null; set { } }
 
-                int scriptsCompleted = _scriptRunners.Sum(scriptRunner =>
-                {
-                    lock (scriptRunner.CompletionTimes)
-                    {
-                        return scriptRunner.CompletionTimes.Count(completionTime => completionTime >= Protocol.ParticipationHorizon);
-                    }
-                });
+		protected override double RawParticipation
+		{
+			get
+			{
+				int scriptsRun = _scriptRunners.Sum(scriptRunner =>
+				{
+					lock (scriptRunner.RunTimes)
+					{
+						return scriptRunner.RunTimes.Count(runTime => runTime >= Protocol.ParticipationHorizon);
+					}
+				});
 
-                return scriptsRun == 0 ? 1 : scriptsCompleted / (float)scriptsRun;
-            }
-        }
+				int scriptsCompleted = _scriptRunners.Sum(scriptRunner =>
+				{
+					lock (scriptRunner.CompletionTimes)
+					{
+						return scriptRunner.CompletionTimes.Count(completionTime => completionTime >= Protocol.ParticipationHorizon);
+					}
+				});
 
-        public override string CollectionDescription
-        {
-            get
-            {
-                StringBuilder collectionDescription = new StringBuilder();
+				return scriptsRun == 0 ? 1 : scriptsCompleted / (float)scriptsRun;
+			}
+		}
 
-                Regex uppercaseSplitter = new Regex(@"
+		public override string CollectionDescription
+		{
+			get
+			{
+				StringBuilder collectionDescription = new StringBuilder();
+
+				Regex uppercaseSplitter = new Regex(@"
                 (?<=[A-Z])(?=[A-Z][a-z]) |
                 (?<=[^A-Z])(?=[A-Z]) |
                 (?<=[A-Za-z])(?=[^A-Za-z])", RegexOptions.IgnorePatternWhitespace);
 
-                foreach (ScriptRunner scriptRunner in _scriptRunners)
-                {
-                    if (scriptRunner.Enabled)
-                    {
-                        foreach (Trigger trigger in scriptRunner.Triggers)
-                        {
-                            collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  When " + trigger.Probe.DisplayName + " is " + uppercaseSplitter.Replace(trigger.Condition.ToString(), " ").ToLower() + " " + trigger.ConditionValue + ".");
-                        }
+				foreach (ScriptRunner scriptRunner in _scriptRunners)
+				{
+					if (scriptRunner.Enabled)
+					{
+						int currentLength = collectionDescription.Length;
 
-                        if (scriptRunner.RunOnStart)
-                        {
-                            collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  Once when the study is started.");
-                        }
+						foreach (Trigger trigger in scriptRunner.Triggers)
+						{
+							collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  When " + trigger.Probe.DisplayName + " is " + uppercaseSplitter.Replace(trigger.Condition.ToString(), " ").ToLower() + " " + trigger.ConditionValue + ".");
+						}
 
-                        if (scriptRunner.TriggerWindowsString != "")
-                        {
-                            collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  " + scriptRunner.ScheduleTriggerReadableDescription + ".");
-                        }
-                    }
-                }
+						if (scriptRunner.RunOnStart)
+						{
+							collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  Once when the study is started.");
+						}
 
-                return collectionDescription.ToString();
-            }
-        }
+						if (scriptRunner.TriggerWindowsString != "")
+						{
+							collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ":  " + scriptRunner.ScheduleTriggerReadableDescription + ".");
+						}
 
-        public ScriptProbe()
-        {
-            _scriptRunners = new ObservableCollection<ScriptRunner>();
-        }
+						if (collectionDescription.Length == currentLength)
+						{
+							collectionDescription.Append((collectionDescription.Length == 0 ? "" : Environment.NewLine) + scriptRunner.Name + ": Manually triggered or scheduled.");
+						}
+					}
+				}
 
-        protected override async Task InitializeAsync()
-        {
-            await base.InitializeAsync();
+				return collectionDescription.ToString();
+			}
+		}
 
-            foreach (ScriptRunner scriptRunner in _scriptRunners)
-            {
-                if (scriptRunner.Enabled)
-                {
-                    await scriptRunner.InitializeAsync();
-                }
-            }
+		public ScriptProbe()
+		{
+			_scriptRunners = new ObservableCollection<ScriptRunner>();
+			UserInitiatedScripts = new ObservableCollection<Script>();
 
-            await (Agent?.InitializeAsync(SensusServiceHelper.Get(), Protocol) ?? Task.CompletedTask);
-        }
+			_scriptRunners.CollectionChanged += (s, e) =>
+			{
+				lock (UserInitiatedScripts)
+				{
+					if (e.NewItems != null && e.Action == NotifyCollectionChangedAction.Add)
+					{
+						foreach (ScriptRunner runner in e.NewItems)
+						{
+							AddUserInitiatedScript(runner);
+						}
+					}
 
-        protected override async Task ProtectedStartAsync()
-        {
-            await base.ProtectedStartAsync();
+					if (e.OldItems != null && e.Action != NotifyCollectionChangedAction.Add && e.Action != NotifyCollectionChangedAction.Move)
+					{
+						foreach (ScriptRunner runner in e.OldItems)
+						{
+							RemoveUserInitiatedScript(runner);
+						}
+					}
+				}
+			};
+		}
 
-            foreach (ScriptRunner scriptRunner in _scriptRunners)
-            {
-                if (scriptRunner.Enabled)
-                {
-                    await scriptRunner.StartAsync();
-                }
-            }
+		private void AddUserInitiatedScript(ScriptRunner runner, int position = int.MaxValue)
+		{
+			if (runner.AllowUserInitiation)
+			{
+				Script copy = runner.Script.Copy(true);
 
-            // if the probe agent has requested survey delivery at regular intervals, schedule a repeating callback.
-            if (Agent?.DeliveryInterval != null)
-            {
-                _agentIntervalDeliveryScheduledCallback = new ScheduledCallback(async cancellationToken =>
-                {
-                    foreach (ScriptRunner scriptRunner in _scriptRunners)
-                    {
-                        await scriptRunner.RunAsync(scriptRunner.Script.Copy(true));
-                    }
+				copy.Shuffle();
 
-                }, Agent.DeliveryInterval.Value, Agent.DeliveryInterval.Value, Agent.Id, Protocol.Id, Protocol, null, Agent.DeliveryIntervalToleranceBefore.GetValueOrDefault(), Agent.DeliveryIntervalToleranceAfter.GetValueOrDefault(), ScheduledCallbackPriority.High, GetType());
+				//UserInitiatedScripts.Add(copy);
 
-                await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_agentIntervalDeliveryScheduledCallback);
-            }
-        }
+				UserInitiatedScripts.Insert(Math.Min(position, UserInitiatedScripts.Count), copy);
+			}
+		}
 
-        public override async Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
-        {
-            HealthTestResult result = await base.TestHealthAsync(events);
+		private int RemoveUserInitiatedScript(ScriptRunner runner)
+		{
+			if (UserInitiatedScripts.FirstOrDefault(x => x.Runner == runner) is Script existingScript)
+			{
+				//UserInitiatedScripts.Remove(existingScript);
 
-            // ensure that each window-based script runner that is enabled has scheduled surveys
-            foreach (ScriptRunner scriptRunner in _scriptRunners.Where(s => s.Enabled && !string.IsNullOrWhiteSpace(s.TriggerWindowsString)))
-            {
-                // update scheduled surveys
-                await scriptRunner.ScheduleScriptRunsAsync();
+				int index = UserInitiatedScripts.IndexOf(existingScript);
 
-                // ensure that at least 1 callback is scheduled for the future
-                int triggersScheduled = scriptRunner.FutureRunCount;
+				UserInitiatedScripts.RemoveAt(index);
 
-                if (triggersScheduled <= 0)
-                {
-                    SensusException.Report("Script runner \"" + scriptRunner.Name + "\" is enabled with a window trigger, but it has no scheduled callbacks.");
-                }
+				return index;
+			}
 
-                string eventName = TrackedEvent.Health + ":" + GetType().Name;
-                Dictionary<string, string> properties = new Dictionary<string, string>
-                {
-                    { "Triggers Scheduled", triggersScheduled.ToString() }
-                };
+			return -1;
+		}
 
-                Analytics.TrackEvent(eventName, properties);
+		public void ManageUserInitiatedScript(ScriptRunner runner)
+		{
+			lock (UserInitiatedScripts)
+			{
+				int index = RemoveUserInitiatedScript(runner);
 
-                events.Add(new AnalyticsTrackedEvent(eventName, properties));
-            }
+				AddUserInitiatedScript(runner, index);
+			}
+		}
 
-            return result;
-        }
+		protected override async Task InitializeAsync()
+		{
+			await base.InitializeAsync();
 
-        public override async Task ResetAsync()
-        {
-            await base.ResetAsync();
+			foreach (ScriptRunner scriptRunner in _scriptRunners)
+			{
+				if (scriptRunner.Enabled)
+				{
+					await scriptRunner.InitializeAsync();
+				}
+			}
 
-            foreach (ScriptRunner scriptRunner in _scriptRunners)
-            {
-                await scriptRunner.ResetAsync();
-            }
-        }
+			await (Agent?.InitializeAsync(SensusServiceHelper.Get(), Protocol) ?? Task.CompletedTask);
+		}
 
-        protected override async Task ProtectedStopAsync()
-        {
-            await base.ProtectedStopAsync();
+		protected override async Task ProtectedStartAsync()
+		{
+			await base.ProtectedStartAsync();
 
-            foreach (ScriptRunner scriptRunner in _scriptRunners)
-            {
-                await scriptRunner.StopAsync();
-            }
+			foreach (ScriptRunner scriptRunner in _scriptRunners)
+			{
+				if (scriptRunner.Enabled)
+				{
+					await scriptRunner.StartAsync();
+				}
+			}
 
-            if (_agentIntervalDeliveryScheduledCallback != null)
-            {
-                await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_agentIntervalDeliveryScheduledCallback);
-            }
-        }
+			// if the probe agent has requested survey delivery at regular intervals, schedule a repeating callback.
+			if (Agent?.DeliveryInterval != null)
+			{
+				_agentIntervalDeliveryScheduledCallback = new ScheduledCallback(async cancellationToken =>
+				{
+					foreach (ScriptRunner scriptRunner in _scriptRunners)
+					{
+						await scriptRunner.RunAsync(scriptRunner.Script.Copy(true));
+					}
 
-        protected override ChartSeries GetChartSeries()
-        {
-            throw new NotImplementedException();
-        }
+				}, Agent.DeliveryInterval.Value, Agent.DeliveryInterval.Value, Agent.Id, Protocol.Id, Protocol, null, Agent.DeliveryIntervalToleranceBefore.GetValueOrDefault(), Agent.DeliveryIntervalToleranceAfter.GetValueOrDefault(), ScheduledCallbackPriority.High, GetType());
 
-        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
-        {
-            throw new NotImplementedException();
-        }
+				await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_agentIntervalDeliveryScheduledCallback);
+			}
+		}
 
-        protected override ChartAxis GetChartPrimaryAxis()
-        {
-            throw new NotImplementedException();
-        }
+		public override async Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
+		{
+			HealthTestResult result = await base.TestHealthAsync(events);
 
-        protected override RangeAxisBase GetChartSecondaryAxis()
-        {
-            throw new NotImplementedException();
-        }
-    }
+			// ensure that each window-based script runner that is enabled has scheduled surveys
+			foreach (ScriptRunner scriptRunner in _scriptRunners.Where(s => s.Enabled && !string.IsNullOrWhiteSpace(s.TriggerWindowsString)))
+			{
+				// update scheduled surveys
+				await scriptRunner.ScheduleScriptRunsAsync();
+
+				// ensure that at least 1 callback is scheduled for the future
+				int triggersScheduled = scriptRunner.FutureRunCount;
+
+				if (triggersScheduled <= 0)
+				{
+					SensusException.Report("Script runner \"" + scriptRunner.Name + "\" is enabled with a window trigger, but it has no scheduled callbacks.");
+				}
+
+				string eventName = TrackedEvent.Health + ":" + GetType().Name;
+				Dictionary<string, string> properties = new Dictionary<string, string>
+				{
+					{ "Triggers Scheduled", triggersScheduled.ToString() }
+				};
+
+				Analytics.TrackEvent(eventName, properties);
+
+				events.Add(new AnalyticsTrackedEvent(eventName, properties));
+			}
+
+			return result;
+		}
+
+		public override async Task ResetAsync()
+		{
+			await base.ResetAsync();
+
+			foreach (ScriptRunner scriptRunner in _scriptRunners)
+			{
+				await scriptRunner.ResetAsync();
+			}
+		}
+
+		protected override async Task ProtectedStopAsync()
+		{
+			await base.ProtectedStopAsync();
+
+			foreach (ScriptRunner scriptRunner in _scriptRunners)
+			{
+				await scriptRunner.StopAsync();
+			}
+
+			if (_agentIntervalDeliveryScheduledCallback != null)
+			{
+				await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(_agentIntervalDeliveryScheduledCallback);
+			}
+		}
+
+		protected override ChartSeries GetChartSeries()
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override ChartAxis GetChartPrimaryAxis()
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override RangeAxisBase GetChartSecondaryAxis()
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

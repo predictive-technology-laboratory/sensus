@@ -32,7 +32,7 @@ namespace Sensus.UI
             Title = "Script Triggers";
 
             ListView triggerList = new ListView(ListViewCachingStrategy.RecycleElement);
-            triggerList.ItemTemplate = new DataTemplate(typeof(TextCell));
+            triggerList.ItemTemplate = new DataTemplate(typeof(DarkModeCompatibleTextCell));
             triggerList.ItemTemplate.SetBinding(TextCell.TextProperty, new Binding(".", stringFormat: "{0}"));
             triggerList.ItemsSource = scriptRunner.Triggers;
             triggerList.ItemTapped += async (o, e) =>
