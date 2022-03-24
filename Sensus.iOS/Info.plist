@@ -109,6 +109,8 @@
 			<array>
 				<string>edu.virginia.sie.ptl.sensus.protocol</string>
 			</array>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 	</array>
 	<key>UTExportedTypeDeclarations</key>
@@ -167,7 +169,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>17.0.0</string>
 	<key>CFBundleVersion</key>
-	<string>202203240751</string>
+	<string>202203241552</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Sensus uses Bluetooth to collect information for studies you enroll in.</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
