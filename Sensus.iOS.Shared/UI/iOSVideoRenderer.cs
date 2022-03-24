@@ -87,7 +87,7 @@ namespace Sensus.iOS.UI
 						{
 							CGSize size = _playerItem.Asset.Tracks.FirstOrDefault(x => x.NaturalSize.IsEmpty == false)?.NaturalSize ?? CGSize.Empty;
 
-							double ratio = size.Width / parent.Width;
+							double ratio = parent.Width / size.Width;
 
 							if (ratio > 1)
 							{

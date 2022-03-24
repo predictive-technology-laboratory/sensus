@@ -18,61 +18,63 @@ using Xamarin.Forms;
 
 namespace Sensus.UI
 {
-    public class SensusMasterDetailPage : MasterDetailPage
-    {
-        private SensusMasterPage _masterPage;
+	public class SensusMasterDetailPage : MasterDetailPage
+	{
+		private SensusMasterPage _masterPage;
 
-        public SensusMasterDetailPage()
-        {
-            _masterPage = new SensusMasterPage();
+		public SensusMasterDetailPage()
+		{
+			_masterPage = new SensusMasterPage();
 
-            _masterPage.MasterPageItemsListView.ItemSelected += (sender, e) =>
-            {
-                try
-                {
-                    SensusDetailPageItem selectedDetailPageItem = e.SelectedItem as SensusDetailPageItem;
+			_masterPage.MasterPageItemsListView.ItemSelected += (sender, e) =>
+			{
+				try
+				{
+					SensusDetailPageItem selectedDetailPageItem = e.SelectedItem as SensusDetailPageItem;
 
-                    if (selectedDetailPageItem != null)
-                    {
-                        if (selectedDetailPageItem.TargetType == null)
-                        {
-                            selectedDetailPageItem.Action?.Invoke();
-                        }
-                        else
-                        {
-                            Detail = new NavigationPage((Page)Activator.CreateInstance(selectedDetailPageItem.TargetType));
-                            IsPresented = false;
-                        }
+					if (selectedDetailPageItem != null)
+					{
+						if (selectedDetailPageItem.TargetType == null)
+						{
+							selectedDetailPageItem.Action?.Invoke();
+						}
+						else
+						{
+							Detail = new NavigationPage((Page)Activator.CreateInstance(selectedDetailPageItem.TargetType));
+							IsPresented = false;
+						}
 
-                        _masterPage.MasterPageItemsListView.SelectedItem = null;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    SensusException.Report("Exception while handling master-detail menu selection:  " + ex.Message, ex);
-                }
-            };
+						_masterPage.MasterPageItemsListView.SelectedItem = null;
+					}
+				}
+				catch (Exception ex)
+				{
+					SensusException.Report("Exception while handling master-detail menu selection:  " + ex.Message, ex);
+				}
+			};
 
-            Master = _masterPage;
+			Master = _masterPage;
 
-            // the SensusServiceHelper is not yet loaded when this page is constructed. as a result, we cannot assign the 
-            // ProtocolsPage to the Detail property. instead, just assign a blank content page and show the user the master
-            // detail list. by the time the user selects from the list, the service helper will be available and the protocols
-            // page will be ready to go.
-            Detail = new NavigationPage(new ContentPage
-            {
-                Content = new Label
-                {
-                    Text = "Welcome to Sensus." + Environment.NewLine + "Please select from the menu above.",
-                    FontSize = 30,
-                    HorizontalOptions = LayoutOptions.CenterAndExpand,
-                    VerticalOptions = LayoutOptions.CenterAndExpand,
-                    VerticalTextAlignment = TextAlignment.Center,
-                    HorizontalTextAlignment = TextAlignment.Center
-                }
-            });
+			// the SensusServiceHelper is not yet loaded when this page is constructed. as a result, we cannot assign the 
+			// ProtocolsPage to the Detail property. instead, just assign a blank content page and show the user the master
+			// detail list. by the time the user selects from the list, the service helper will be available and the protocols
+			// page will be ready to go.
+			Detail = new NavigationPage(new ContentPage
+			{
+				Content = new Label
+				{
+					Text = "Welcome to Sensus." + Environment.NewLine + "Please select from the menu above.",
+					FontSize = 30,
+					HorizontalOptions = LayoutOptions.CenterAndExpand,
+					VerticalOptions = LayoutOptions.CenterAndExpand,
+					VerticalTextAlignment = TextAlignment.Center,
+					HorizontalTextAlignment = TextAlignment.Center
+				}
+			});
 
-            IsPresented = true;
-        }
-    }
+			IsPresented = true;
+
+			this.RegisterNavigationEvents();
+		}
+	}
 }

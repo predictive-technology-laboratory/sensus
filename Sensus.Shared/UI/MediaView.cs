@@ -26,10 +26,30 @@ namespace Sensus.UI
 					{
 						_stream = await media.GetMediaStreamAsync();
 
-						Content = new Image
+						Image image = new Image
 						{
+							HorizontalOptions = LayoutOptions.Center,
 							Source = ImageSource.FromStream(() => _stream)
 						};
+
+						image.SizeChanged += (o, s) =>
+						{
+							if (image.Width < Width && image.Width > 1)
+							{
+								double ratio = Width / image.Width;
+
+								if (ratio < 1)
+								{
+									ratio = 1 / ratio;
+								}
+
+								image.HeightRequest = ratio * image.Height;
+
+								image.HorizontalOptions = LayoutOptions.FillAndExpand;
+							}
+						};
+
+						Content = image;
 					}
 					else if (media.Type.ToLower().StartsWith("video"))
 					{

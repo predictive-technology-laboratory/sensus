@@ -32,7 +32,7 @@ namespace Sensus.UI
 			Title = "Scripts";
 
 			ListView scriptRunnersList = new ListView(ListViewCachingStrategy.RecycleElement);
-			scriptRunnersList.ItemTemplate = new DataTemplate(typeof(TextCell));
+			scriptRunnersList.ItemTemplate = new DataTemplate(typeof(DarkModeCompatibleTextCell));
 			scriptRunnersList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(ScriptRunner.Caption));
 			scriptRunnersList.ItemsSource = probe.ScriptRunners;
 			scriptRunnersList.ItemTapped += async (o, e) =>
@@ -84,8 +84,6 @@ namespace Sensus.UI
 						await selectedScriptRunner.StopAsync();
 						selectedScriptRunner.Enabled = false;
 						selectedScriptRunner.Triggers.Clear();
-
-						MediaObject.ClearCache(selectedScriptRunner);
 
 						probe.ScriptRunners.Remove(selectedScriptRunner);
 

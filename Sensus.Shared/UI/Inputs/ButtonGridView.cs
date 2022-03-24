@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Xamarin.Forms;
 
 namespace Sensus.UI.Inputs
@@ -132,6 +133,19 @@ namespace Sensus.UI.Inputs
 		public IEnumerable<ButtonWithValue> Buttons => _buttons.ToArray();
 
 		public bool AutoSize { get; set; }
+
+		protected override void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		{
+			if (propertyName == nameof(IsEnabled))
+			{
+				foreach (ButtonWithValue button in _buttons)
+				{
+					button.IsEnabled = IsEnabled;
+				}
+			}
+
+			base.OnPropertyChanged(propertyName);
+		}
 
 		public void Arrange()
 		{

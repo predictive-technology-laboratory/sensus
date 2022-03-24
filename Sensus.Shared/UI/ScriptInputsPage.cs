@@ -31,7 +31,7 @@ namespace Sensus.UI
 			Title = "Inputs";
 
 			ListView inputsList = new ListView(ListViewCachingStrategy.RecycleElement);
-			inputsList.ItemTemplate = new DataTemplate(typeof(TextCell));
+			inputsList.ItemTemplate = new DataTemplate(typeof(DarkModeCompatibleTextCell));
 			inputsList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(Input.Caption));
 			inputsList.ItemsSource = inputGroup.Inputs;
 			inputsList.ItemTapped += async (o, e) =>
@@ -157,11 +157,6 @@ namespace Sensus.UI
 				{
 					if (await DisplayAlert("Delete " + selectedInput.Name + "?", "This action cannot be undone.", "Delete", "Cancel"))
 					{
-						if (selectedInput is MediaInput mediaInput)
-						{
-							MediaObject.ClearCache(script.Runner, inputGroup, mediaInput);
-						}
-
 						inputGroup.Inputs.Remove(selectedInput);
 						inputsList.SelectedItem = null;  // manually reset, since it isn't done automatically.
 					}
@@ -192,7 +187,7 @@ namespace Sensus.UI
 					{
 						if (input is MediaInput mediaInput)
 						{
-							mediaInput.SetCachePath(script.Runner, inputGroup);
+							mediaInput.SetCachePath(script.Runner);
 						}
 						else if (input is ScriptSchedulerInput scriptSchedulerInput)
 						{

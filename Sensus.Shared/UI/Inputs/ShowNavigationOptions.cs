@@ -20,6 +20,7 @@ namespace Sensus.UI.Inputs
 		WhenComplete,
 		WhenValid,
 		WhenCorrect,
-		Never
+		Never,
+		AfterTimeout
 	}
 }

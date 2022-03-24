@@ -20,133 +20,133 @@ using Xamarin.Forms;
 
 namespace Sensus.UI
 {
-    public class SensusMasterPage : ContentPage
-    {
-        private ListView _masterPageItemsListView;
+	public class SensusMasterPage : ContentPage
+	{
+		private ListView _masterPageItemsListView;
 
-        public ListView MasterPageItemsListView
-        {
-            get
-            {
-                return _masterPageItemsListView;
-            }
-        }
+		public ListView MasterPageItemsListView
+		{
+			get
+			{
+				return _masterPageItemsListView;
+			}
+		}
 
-        public SensusMasterPage()
-        {
-            List<SensusDetailPageItem> detailPageItems = new List<SensusDetailPageItem>();
+		public SensusMasterPage()
+		{
+			List<SensusDetailPageItem> detailPageItems = new List<SensusDetailPageItem>();
 
-            detailPageItems.Add(new SensusDetailPageItem
-            {
-                Title = "Studies",
-                IconSource = "studies.png",
-                TargetType = typeof(ProtocolsPage)
-            });
+			detailPageItems.Add(new SensusDetailPageItem
+			{
+				Title = "Studies",
+				IconSource = "studies.png",
+				TargetType = typeof(ProtocolsPage)
+			});
 
-            detailPageItems.Add(new SensusDetailPageItem
-            {
-                Title = "Surveys",
-                IconSource = "surveys.png",
-                TargetType = typeof(PendingScriptsPage)
-            });
+			detailPageItems.Add(new SensusDetailPageItem
+			{
+				Title = "Surveys",
+				IconSource = "surveys.png",
+				TargetType = typeof(PendingScriptsPage)
+			});
 
-            detailPageItems.Add(new SensusDetailPageItem
-            {
-                Title = "Message Center",
-                IconSource = "surveys.png",
-                TargetType = typeof(MessageCenterPage)
-            });
+			detailPageItems.Add(new SensusDetailPageItem
+			{
+				Title = "Message Center",
+				IconSource = "surveys.png",
+				TargetType = typeof(MessageCenterPage)
+			});
 
-            detailPageItems.Add(new SensusDetailPageItem
-            {
-                Title = "Privacy Policy",
-                IconSource = "privacy.png",
-                Action = () =>
-                {
-                    Device.OpenUri(new Uri("https://predictive-technology-laboratory.github.io/sensus/articles/privacy-policy.html"));
-                }
-            });
+			detailPageItems.Add(new SensusDetailPageItem
+			{
+				Title = "Privacy Policy",
+				IconSource = "privacy.png",
+				Action = () =>
+				{
+					Device.OpenUri(new Uri("https://predictive-technology-laboratory.github.io/sensus/articles/privacy-policy.html"));
+				}
+			});
 
-            detailPageItems.Add(new SensusDetailPageItem
-            {
-                Title = "Authenticate",
-                IconSource = "account.png",
-                Action = () =>
-                {
-                    SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-                    {
-                        Input input = await SensusServiceHelper.Get().PromptForInputAsync("Authenticate", new QrCodeInput(QrCodePrefix.IAM_CREDENTIALS, "Account:  ", true, "Please scan your account barcode."), null, true, null, null, null, null, false);
+			detailPageItems.Add(new SensusDetailPageItem
+			{
+				Title = "Authenticate",
+				IconSource = "account.png",
+				Action = () =>
+				{
+					SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+					{
+						Input input = await SensusServiceHelper.Get().PromptForInputAsync("Authenticate", new QrCodeInput(QrCodePrefix.IAM_CREDENTIALS, "Account:  ", true, "Please scan your account barcode."), null, true, null, null, null, null, false);
 
-                        if (input == null)
-                        {
-                            return;
-                        }
+						if (input == null)
+						{
+							return;
+						}
 
-                        string error = null;
+						string error = null;
 
-                        string credentials = input.Value?.ToString();
-                        if (string.IsNullOrWhiteSpace(credentials))
-                        {
-                            error = "Empty credentials barcode.";
-                        }
-                        else
-                        {
-                            string[] parts = credentials.Split(':');
-                            if (parts.Length == 3)
-                            {
-                                SensusContext.Current.IamRegion = parts[0];
-                                SensusContext.Current.IamAccessKey = parts[1];
-                                SensusContext.Current.IamAccessKeySecret = parts[2];
-                            }
-                            else
-                            {
-                                error = "Invalid credentials barcode.";
-                            }
-                        }
+						string credentials = input.Value?.ToString();
+						if (string.IsNullOrWhiteSpace(credentials))
+						{
+							error = "Empty credentials barcode.";
+						}
+						else
+						{
+							string[] parts = credentials.Split(':');
+							if (parts.Length == 3)
+							{
+								SensusContext.Current.IamRegion = parts[0];
+								SensusContext.Current.IamAccessKey = parts[1];
+								SensusContext.Current.IamAccessKeySecret = parts[2];
+							}
+							else
+							{
+								error = "Invalid credentials barcode.";
+							}
+						}
 
-                        if (error == null)
-                        {
-                            await SensusServiceHelper.Get().FlashNotificationAsync("Successfully authenticated.");
-                        }
-                        else
-                        {
-                            await SensusServiceHelper.Get().FlashNotificationAsync(error);
-                        }
-                    });
-                }
-            });
+						if (error == null)
+						{
+							await SensusServiceHelper.Get().FlashNotificationAsync("Successfully authenticated.");
+						}
+						else
+						{
+							await SensusServiceHelper.Get().FlashNotificationAsync(error);
+						}
+					});
+				}
+			});
 
-            _masterPageItemsListView = new ListView(ListViewCachingStrategy.RecycleElement)
-            {
-                ItemsSource = detailPageItems,
-                ItemTemplate = new DataTemplate(() =>
-                {
-                    Grid grid = new Grid { Padding = new Thickness(5, 10) };
-                    grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(30) });
-                    grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+			_masterPageItemsListView = new ListView(ListViewCachingStrategy.RecycleElement)
+			{
+				ItemsSource = detailPageItems,
+				ItemTemplate = new DataTemplate(() =>
+				{
+					Grid grid = new Grid { Padding = new Thickness(5, 10) };
+					grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(30) });
+					grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
 
-                    Image image = new Image();
-                    image.SetBinding(Image.SourceProperty, nameof(SensusDetailPageItem.IconSource));
+					Image image = new Image();
+					image.SetBinding(Image.SourceProperty, nameof(SensusDetailPageItem.IconSource));
 
-                    Label label = new Label { VerticalOptions = LayoutOptions.FillAndExpand };
-                    label.SetBinding(Label.TextProperty, nameof(SensusDetailPageItem.Title));
+					Label label = new Label { VerticalOptions = LayoutOptions.FillAndExpand };
+					label.SetBinding(Label.TextProperty, nameof(SensusDetailPageItem.Title));
 
-                    grid.Children.Add(image);
-                    grid.Children.Add(label, 1, 0);
+					grid.Children.Add(image);
+					grid.Children.Add(label, 1, 0);
 
-                    return new ViewCell { View = grid };
-                }),
+					return new ViewCell { View = grid };
+				}),
 
-                SeparatorVisibility = SeparatorVisibility.None
-            };
+				SeparatorVisibility = SeparatorVisibility.None
+			};
 
-            Icon = "hamburger.png";
-            Title = "Sensus";
+			Icon = "hamburger.png";
+			Title = "Sensus";
 
-            Content = new StackLayout
-            {
-                Children = { _masterPageItemsListView }
-            };
-        }
-    }
+			Content = new StackLayout
+			{
+				Children = { _masterPageItemsListView }
+			};
+		}
+	}
 }

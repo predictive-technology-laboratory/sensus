@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Application xmlns="http://xamarin.com/schemas/2014/forms"
 			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-			 x:Class="Sensus.UI.App">
+			 x:Class="Sensus.UI.App"
+			 xmlns:inputs="clr-namespace:Sensus.UI.Inputs">
 	<Application.Resources>
 		<!-- general UI colors -->
 		<Color x:Key="BackgroundColor">#ffffff</Color>
@@ -18,8 +19,12 @@
 		<Color x:Key="LessDimmedColor">#5b5b5b</Color>
 		<Color x:Key="RequiredFieldLabelColor">#ad3434</Color>
 		<Color x:Key="UrlLabelColor">#0047b3</Color>
+		<Color x:Key="SelectableButtonColor">#96BCE3</Color>
+		<Color x:Key="SelectableButtonTextColor">#000000</Color>
 		<Color x:Key="SelectedButtonColor">#367fc9</Color>
+		<Color x:Key="SelectedButtonTextColor">#000000</Color>
 		<Color x:Key="SliderTrackBarColor">#acacac</Color>
+		<Color x:Key="SeparatorBarColor">#96BCE3</Color>
 		
 		<!-- Sensus colors -->
 		<Color x:Key="ProbeOnColor">#227022</Color>
@@ -37,7 +42,7 @@
 		<!--<Color x:Key="ScoreLabelColor"></Color>-->
 
 		<!--<x:Int32 x:Key="ScrollViewPadding">4</x:Int32>-->
-		
+
 		<!-- Styles -->
 		<Style TargetType="{x:Type Page}" ApplyToDerivedTypes="True">
 			<Setter Property="BackgroundColor" Value="{StaticResource BackgroundColor}" />
@@ -87,25 +92,42 @@
 			<Setter Property="TextColor" Value="{StaticResource TextColor}" />
 		</Style>
 		<Style TargetType="{x:Type ListView}">
-			<Setter Property="SeparatorColor" Value="{StaticResource ButtonColor}" />
+			<Setter Property="BackgroundColor" Value="{StaticResource BackgroundColor}" />
+			<Setter Property="SeparatorColor" Value="{StaticResource SeparatorBarColor}" />
 		</Style>
-		<Style TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
+		<Style x:Key="BaseButtonStyle" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
 			<Setter Property="BackgroundColor" Value="{StaticResource ButtonColor}" />
-			<!--<Setter Property="BorderColor" Value="{StaticResource ButtonColor}" />-->
 			<Setter Property="TextColor" Value="{StaticResource ButtonTextColor}" />
 			<Setter Property="Padding" Value="6" />
 			<Setter Property="BorderRadius" Value="6" />
 			<Style.Triggers>
 				<Trigger Property="IsEnabled" Value="false" TargetType="{x:Type Button}">
 					<Setter Property="BackgroundColor" Value="{StaticResource DimmedColor}"/>
+					<Setter Property="TextColor" Value="{StaticResource LessDimmedColor}"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>
+		<Style TargetType="{x:Type Button}" ApplyToDerivedTypes="True" BasedOn="{StaticResource BaseButtonStyle}"/>
+		<Style TargetType="{x:Type inputs:ButtonWithValue}" ApplyToDerivedTypes="True" BasedOn="{StaticResource BaseButtonStyle}">
+			<Style.Triggers>
+				<Trigger TargetType="{x:Type inputs:ButtonWithValue}" Property="State" Value="{x:Static inputs:ButtonStates.Correct}">
+					<Setter Property="BackgroundColor" Value="{StaticResource CorrectAnswerColor}" />
+				</Trigger>
+				<Trigger TargetType="{x:Type inputs:ButtonWithValue}" Property="State" Value="{x:Static inputs:ButtonStates.Incorrect}">
+					<Setter Property="BackgroundColor" Value="{StaticResource IncorrectAnswerColor}" />
+				</Trigger>
+				<Trigger TargetType="{x:Type inputs:ButtonWithValue}" Property="State" Value="{x:Static inputs:ButtonStates.Selectable}">
+					<Setter Property="BackgroundColor" Value="{StaticResource SelectableButtonColor}"/>
+					<Setter Property="TextColor" Value="{StaticResource SelectableButtonTextColor}"/>
+				</Trigger>
+				<Trigger TargetType="{x:Type inputs:ButtonWithValue}" Property="State" Value="{x:Static inputs:ButtonStates.Selected}">
+					<Setter Property="BackgroundColor" Value="{StaticResource SelectedButtonColor}"/>
+					<Setter Property="TextColor" Value="{StaticResource SelectedButtonTextColor}"/>
 				</Trigger>
 			</Style.Triggers>
 		</Style>
 		<Style Class="NavigationButton" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
 			<Setter Property="BackgroundColor" Value="{StaticResource NavigationButtonColor}" />
-		</Style>
-		<Style x:Key="SelectedButton" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
-			<Setter Property="BackgroundColor" Value="{StaticResource SelectedButtonColor}" />
 		</Style>
 		<Style Class="RequiredFieldLabel" TargetType="{x:Type Label}" ApplyToDerivedTypes="True">
 			<Setter Property="TextColor" Value="{StaticResource RequiredFieldLabelColor}" />
@@ -125,39 +147,26 @@
 			<Setter Property="BackgroundColor" Value="{StaticResource FrameBackgroundColor}" />
 			<Setter Property="BorderColor" Value="{StaticResource FrameBorderColor}" />
 			<Setter Property="HasShadow" Value="False" />
+			<Setter Property="CornerRadius" Value="6" />
 		</Style>
 
 		<Style TargetType="{x:Type Slider}">
 			<Setter Property="MinimumTrackColor" Value="{StaticResource SliderTrackBarColor}" />
 		</Style>
 
-		<!--<Style Class="GridButton" TargetType="{x:Type rendered:ButtonWithValue}" ApplyToDerivedTypes="True">
-			<Style.Triggers>
-				<Trigger Property="ShowAs" Value="Correct" TargetType="{x:Type rendered:ButtonWithValue}">
-					<Setter Property="BackgroundColor" Value="{StaticResource CorrectAnswerColor}"/>
-				</Trigger>
-				<Trigger Property="ShowAs" Value="Incorrect" TargetType="{x:Type rendered:ButtonWithValue}">
-					<Setter Property="BackgroundColor" Value="{StaticResource IncorrectAnswerColor}"/>
-				</Trigger>
-			</Style.Triggers>
-		</Style>-->
-
-		<Style x:Key="CorrectAnswerButton" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
-			<Setter Property="BackgroundColor" Value="{StaticResource CorrectAnswerColor}" />
+		<Style Class="MissingLetterButton" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
+			<Setter Property="BackgroundColor" Value="{StaticResource MissingLetterButtonColor}" />
 		</Style>
 
-		<Style x:Key="IncorrectAnswerButton" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
-			<Setter Property="BackgroundColor" Value="{StaticResource IncorrectAnswerColor}" />
+		<Style Class="LessDimmedText" TargetType="{x:Type Label}" ApplyToDerivedTypes="True">
+			<Setter Property="TextColor" Value="{StaticResource LessDimmedColor}" />
 		</Style>
-
+		
 		<Style Class="InputFrame" TargetType="{x:Type Frame}">
 			<Setter Property="BackgroundColor" Value="{StaticResource FrameBackgroundColor}" />
 			<Setter Property="BorderColor" Value="{StaticResource FrameBorderColor}" />
 			<Setter Property="HasShadow" Value="False" />
-		</Style>
-
-		<Style x:Key="MissingLetterButton" TargetType="{x:Type Button}" ApplyToDerivedTypes="True">
-			<Setter Property="BackgroundColor" Value="{StaticResource MissingLetterButtonColor}" />
+			<Setter Property="CornerRadius" Value="6" />
 		</Style>
 
 	</Application.Resources>

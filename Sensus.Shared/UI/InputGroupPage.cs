@@ -40,11 +40,15 @@ namespace Sensus.UI
 		private InputGroup _inputGroup;
 		private StackLayout _navigationStack;
 		private bool _canNavigateBackward;
+		private List<Input> _displayedInputs;
 		private int _displayedInputCount;
 		private TaskCompletionSource<NavigationResult> _responseTaskCompletionSource;
 		private ShowNavigationOptions _showNavigationButtons;
 		private bool _confirmNavigation;
 		private Timer _timer;
+		private bool _savedState;
+		private readonly string _incompleteSubmissionConfirmation;
+		private readonly string _submitConfirmation;
 
 		public int DisplayedInputCount
 		{
@@ -63,6 +67,8 @@ namespace Sensus.UI
 
 		public string InputGroupId => _inputGroup.Id;
 
+		public Page ReturnPage { get; set; }
+
 		public InputGroupPage(InputGroup inputGroup,
 							  int stepNumber,
 							  int totalSteps,
@@ -75,7 +81,8 @@ namespace Sensus.UI
 							  string incompleteSubmissionConfirmation,
 							  string submitConfirmation,
 							  bool displayProgress,
-							  string title = "")
+							  string title = "",
+							  bool savedState = false)
 		{
 
 			_inputGroup = inputGroup;
@@ -84,6 +91,9 @@ namespace Sensus.UI
 			_responseTaskCompletionSource = new TaskCompletionSource<NavigationResult>();
 			_showNavigationButtons = inputGroup.ShowNavigationButtons;
 			_confirmNavigation = confirmNavigation;
+			_savedState = savedState;
+			_incompleteSubmissionConfirmation = incompleteSubmissionConfirmation;
+			_submitConfirmation = submitConfirmation;
 
 			IsLastPage = totalSteps <= stepNumber;
 			Title = inputGroup.Title ?? title;
@@ -206,21 +216,6 @@ namespace Sensus.UI
 
 					if (inputView != null)
 					{
-						// add media view to inputs that have media attached
-						// this is done here because the media needs to be attached on appearing and disposed on disappearing
-						if (input is MediaInput mediaInput && mediaInput.HasMedia)
-						{
-							Appearing += async (s, e) =>
-							{
-								await mediaInput.InitializeMediaAsync();
-							};
-
-							Disappearing += async (s, e) =>
-							{
-								await mediaInput.DisposeMediaAsync();
-							};
-						}
-
 						// frame all enabled inputs that request a frame
 						if (input.Enabled && input.Frame)
 						{
@@ -252,6 +247,8 @@ namespace Sensus.UI
 				}
 			}
 
+			_displayedInputs = displayedInputs;
+
 			// add final separator if we displayed any inputs
 			if (_displayedInputCount > 0)
 			{
@@ -263,6 +260,8 @@ namespace Sensus.UI
 			{
 				if (_confirmNavigation == false || string.IsNullOrWhiteSpace(cancelConfirmation) || await DisplayAlert("Confirm", cancelConfirmation, "Yes", "No"))
 				{
+					HandleStaleNavigation();
+
 					_responseTaskCompletionSource.TrySetResult(NavigationResult.Cancel);
 				}
 			};
@@ -271,6 +270,8 @@ namespace Sensus.UI
 			{
 				if (_canNavigateBackward)
 				{
+					HandleStaleNavigation();
+
 					_responseTaskCompletionSource.TrySetResult(NavigationResult.Backward);
 				}
 			};
@@ -314,6 +315,8 @@ namespace Sensus.UI
 
 						if (_confirmNavigation == false || string.IsNullOrWhiteSpace(confirmationMessage) || await DisplayAlert("Confirm", confirmationMessage, "Yes", "No"))
 						{
+							HandleStaleNavigation();
+
 							_responseTaskCompletionSource.TrySetResult(navigationResult);
 						}
 					}
@@ -325,8 +328,13 @@ namespace Sensus.UI
 				_navigationStack = new StackLayout
 				{
 					Orientation = StackOrientation.Vertical,
-					HorizontalOptions = LayoutOptions.FillAndExpand,
+					HorizontalOptions = LayoutOptions.FillAndExpand
 				};
+
+				if (inputGroup.PlaceNavigationAtBottom)
+				{
+					_navigationStack.VerticalOptions = LayoutOptions.EndAndExpand;
+				}
 
 				if (inputGroup.ShowNavigationButtons != ShowNavigationOptions.Always)
 				{
@@ -440,34 +448,6 @@ namespace Sensus.UI
 				{
 					displayedInput.Viewed = true;
 				}
-
-				if (inputGroup.Timeout != null)
-				{
-					_timer = new Timer(inputGroup.Timeout.Value * 1000);
-
-					_timer.Elapsed += (s, e) =>
-					{
-						_responseTaskCompletionSource.TrySetResult(NavigationResult.Timeout);
-					};
-
-					_timer.Start();
-				}
-			};
-
-			Disappearing += async (o, e) =>
-			{
-				_responseTaskCompletionSource.TrySetResult(NavigationResult.Paused);
-
-				// the page is disappearing, so dispose of inputs
-				foreach (Input displayedInput in displayedInputs)
-				{
-					displayedInput.OnDisappearing(await ResponseTask);
-				}
-
-				if (_timer != null)
-				{
-					_timer.Stop();
-				}
 			};
 		}
 
@@ -517,6 +497,81 @@ namespace Sensus.UI
 			_responseTaskCompletionSource.TrySetResult(NavigationResult.Cancel);
 
 			return base.OnBackButtonPressed();
+		}
+
+		private void HandleStaleNavigation()
+		{
+			SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+			{
+				if (_responseTaskCompletionSource.Task.IsCompleted && ReturnPage != null)
+				{
+					App app = Application.Current as App;
+
+					app.DetailPage = ReturnPage;
+				}
+			});
+		}
+
+		public async Task PrepareAsync()
+		{
+			foreach (Input displayedInput in _displayedInputs)
+			{
+				await displayedInput.PrepareAsync();
+			}
+
+			if (_inputGroup.Timeout != null)
+			{
+				_timer = new Timer(_inputGroup.Timeout.Value * 1000) { AutoReset = false };
+
+				_timer.Elapsed += (o, e) =>
+				{
+					SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+					{
+						if (IsLastPage || _inputGroup.ShowNavigationButtons == ShowNavigationOptions.AfterTimeout)
+						{
+							if (_navigationStack != null)
+							{
+								_navigationStack.IsVisible = true;
+							}
+						}
+						else
+						{
+							_responseTaskCompletionSource.TrySetResult(NavigationResult.Timeout);
+						}
+					});
+				};
+
+				_timer.Start();
+			}
+		}
+
+		public async Task DisposeAsync()
+		{
+			// the page is disappearing, so dispose of inputs
+			foreach (Input displayedInput in _displayedInputs)
+			{
+				await displayedInput.DisposeAsync(await ResponseTask);
+			}
+
+			if (_timer != null)
+			{
+				_timer.Stop();
+			}
+		}
+
+		public void Interrupt()
+		{
+			if (_responseTaskCompletionSource.Task.IsCompleted == false)
+			{
+				if (_savedState)
+				{
+					_responseTaskCompletionSource.TrySetResult(NavigationResult.Paused);
+				}
+				else
+				{
+					_responseTaskCompletionSource.TrySetResult(NavigationResult.Cancel);
+				}
+			}
 		}
 	}
 }

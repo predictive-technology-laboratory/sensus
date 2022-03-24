@@ -27,7 +27,7 @@ namespace Sensus.UI
 	{
 		protected override void SetUpScriptList()
 		{
-			_scriptList.ItemTemplate = new DataTemplate(typeof(TextCell));
+			_scriptList.ItemTemplate = new DataTemplate(typeof(DarkModeCompatibleTextCell));
 
 			_scriptList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(Script.Caption));
 			_scriptList.ItemsSource = new ObservableCollection<Script>(_scripts);

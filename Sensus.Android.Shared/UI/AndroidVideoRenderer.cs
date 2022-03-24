@@ -108,7 +108,7 @@ namespace Sensus.Android.UI
 
 				if (_videoPlayer.Parent is View parent && parent.Parent is ContentView == false)
 				{
-					double ratio = mediaPlayer.VideoWidth / parent.Width;
+					double ratio = parent.Width / mediaPlayer.VideoWidth;
 
 					if (ratio > 1)
 					{

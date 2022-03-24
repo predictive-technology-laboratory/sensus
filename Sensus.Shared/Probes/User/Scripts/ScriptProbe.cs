@@ -27,6 +27,7 @@ using Sensus.Callbacks;
 using Sensus.Exceptions;
 using Sensus.Context;
 using Newtonsoft.Json.Linq;
+using System.Collections.Specialized;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -242,32 +243,65 @@ namespace Sensus.Probes.User.Scripts
 
 			_scriptRunners.CollectionChanged += (s, e) =>
 			{
-				if (e.NewItems != null)
+				lock (UserInitiatedScripts)
 				{
-					foreach (ScriptRunner runner in e.NewItems)
+					if (e.NewItems != null && e.Action == NotifyCollectionChangedAction.Add)
 					{
-						if (runner.AllowUserInitiation)
+						foreach (ScriptRunner runner in e.NewItems)
 						{
-							Script copy = runner.Script.Copy(true);
-
-							copy.Shuffle();
-
-							UserInitiatedScripts.Add(copy);
+							AddUserInitiatedScript(runner);
 						}
 					}
-				}
 
-				if (e.OldItems != null)
-				{
-					foreach (ScriptRunner runner in e.OldItems)
+					if (e.OldItems != null && e.Action != NotifyCollectionChangedAction.Add && e.Action != NotifyCollectionChangedAction.Move)
 					{
-						if (UserInitiatedScripts.FirstOrDefault(x => x.Runner == runner) is Script script)
+						foreach (ScriptRunner runner in e.OldItems)
 						{
-							UserInitiatedScripts.Remove(script);
+							RemoveUserInitiatedScript(runner);
 						}
 					}
 				}
 			};
+		}
+
+		private void AddUserInitiatedScript(ScriptRunner runner, int position = int.MaxValue)
+		{
+			if (runner.AllowUserInitiation)
+			{
+				Script copy = runner.Script.Copy(true);
+
+				copy.Shuffle();
+
+				//UserInitiatedScripts.Add(copy);
+
+				UserInitiatedScripts.Insert(Math.Min(position, UserInitiatedScripts.Count), copy);
+			}
+		}
+
+		private int RemoveUserInitiatedScript(ScriptRunner runner)
+		{
+			if (UserInitiatedScripts.FirstOrDefault(x => x.Runner == runner) is Script existingScript)
+			{
+				//UserInitiatedScripts.Remove(existingScript);
+
+				int index = UserInitiatedScripts.IndexOf(existingScript);
+
+				UserInitiatedScripts.RemoveAt(index);
+
+				return index;
+			}
+
+			return -1;
+		}
+
+		public void ManageUserInitiatedScript(ScriptRunner runner)
+		{
+			lock (UserInitiatedScripts)
+			{
+				int index = RemoveUserInitiatedScript(runner);
+
+				AddUserInitiatedScript(runner, index);
+			}
 		}
 
 		protected override async Task InitializeAsync()

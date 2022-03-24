@@ -24,6 +24,8 @@ using Sensus.Exceptions;
 using System.ComponentModel;
 using static Sensus.UI.InputGroupPage;
 using System.Timers;
+using Sensus.Context;
+using System.Threading.Tasks;
 
 // register the input effect group
 [assembly: ResolutionGroupName(Input.EFFECT_RESOLUTION_GROUP_NAME)]
@@ -305,6 +307,9 @@ namespace Sensus.UI.Inputs
 
 		[OnOffUiProperty("Keep Feedback after Delay:", true, 34)]
 		public virtual bool KeepFeedback { get; set; }
+
+		[EntryIntegerUiProperty("Display Delay (S):", true, 35, false)]
+		public virtual int DisplayDelay { get; set; }
 
 		/// <summary>
 		/// The current score of the <see cref="Input"/>.
@@ -726,42 +731,48 @@ namespace Sensus.UI.Inputs
 
 		protected virtual void NavigateOrDelay(NavigationResult navigationResult, int delay)
 		{
-			if (InputGroupPage != null)
+			SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
 			{
-				if (delay > 0)
+				if (InputGroupPage != null)
 				{
-					InputGroupPage.SetNavigationVisibility(this);
-
-					_delayTimer?.Dispose();
-
-					_delayTimer = new Timer(delay) { AutoReset = false };
-
-					_view.IsEnabled = false;
-
-					_delayTimer.Elapsed += (o, s) =>
+					if (delay > 0)
 					{
-						_view.IsEnabled = true;
+						InputGroupPage.SetNavigationVisibility(this);
 
+						_delayTimer?.Dispose();
+
+						_delayTimer = new Timer(delay) { AutoReset = false };
+
+						_view.IsEnabled = false;
+
+						_delayTimer.Elapsed += (o, s) =>
+						{
+							SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+							{
+								_view.IsEnabled = true;
+
+								if (navigationResult != NavigationResult.None)
+								{
+									InputGroupPage.Navigate(this, navigationResult);
+								}
+
+								InputGroupPage.SetNavigationVisibility(this);
+							});
+						};
+
+						_delayTimer.Start();
+					}
+					else
+					{
 						if (navigationResult != NavigationResult.None)
 						{
 							InputGroupPage.Navigate(this, navigationResult);
 						}
 
 						InputGroupPage.SetNavigationVisibility(this);
-					};
-
-					_delayTimer.Start();
-				}
-				else
-				{
-					if (navigationResult != NavigationResult.None)
-					{
-						InputGroupPage.Navigate(this, navigationResult);
 					}
-
-					InputGroupPage.SetNavigationVisibility(this);
 				}
-			}
+			});
 		}
 
 		public Input()
@@ -942,9 +953,33 @@ namespace Sensus.UI.Inputs
 			if (_view != null)
 			{
 				_view.IsEnabled = _enabled;
+
+				if (DisplayDelay > 0)
+				{
+					_view.IsVisible = false;
+
+					Timer timer = new Timer(DisplayDelay * 1000) { AutoReset = false };
+
+					timer.Elapsed += async (o, e) =>
+					{
+						await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+						{
+							_view.IsVisible = true;
+
+							await OnDisplayedAfterDelay();
+						});
+					};
+
+					timer.Start();
+				}
 			}
 
 			return _view;
+		}
+
+		protected virtual Task OnDisplayedAfterDelay()
+		{
+			return Task.CompletedTask;
 		}
 
 		[JsonIgnore]
@@ -1002,15 +1037,33 @@ namespace Sensus.UI.Inputs
 			_feedbackView?.Reset();
 		}
 
-		public virtual void OnDisappearing(NavigationResult result)
+		public virtual Task PrepareAsync()
+		{
+			return Task.CompletedTask;
+		}
+
+		public virtual Task DisposeAsync(NavigationResult result)
 		{
 			_delayTimer?.Dispose();
+
+			return Task.CompletedTask;
 		}
 
 		public virtual bool ValueMatches(object conditionValue, bool conjunctive)
 		{
+			if (Value == null && this is IVariableDefiningInput variableDefiningInput && string.IsNullOrWhiteSpace(variableDefiningInput.DefinedVariable) == false)
+			{
+				Protocol protocolForInput = GetProtocol();
+
+				if (protocolForInput.VariableValue.TryGetValue(variableDefiningInput.DefinedVariable, out string value))
+				{
+					return value == conditionValue as string;
+				}
+
+				return conditionValue == null;
+			}
 			// if either is null, both must be null to be equal
-			if (Value == null || conditionValue == null)
+			else if (Value == null || conditionValue == null)
 			{
 				return Value == null && conditionValue == null;
 			}

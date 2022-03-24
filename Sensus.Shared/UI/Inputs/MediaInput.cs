@@ -56,7 +56,7 @@ namespace Sensus.UI.Inputs
 				_mediaView = new MediaView()
 				{
 					HorizontalOptions = LayoutOptions.FillAndExpand,
-					VerticalOptions = LayoutOptions.FillAndExpand
+					VerticalOptions = LayoutOptions.FillAndExpand,
 				};
 
 				double height = -1;
@@ -110,7 +110,7 @@ namespace Sensus.UI.Inputs
 			}
 			else
 			{
-				_label.Text = GetLabelText(index);  // if the view was already initialized, just update the label since the index might have changed.
+				_label.Text = GetLabelText(index); // if the view was already initialized, just update the label since the index might have changed.
 			}
 
 			return base.GetView(index);
@@ -124,9 +124,9 @@ namespace Sensus.UI.Inputs
 
 		public string CachePath { get; set; }
 
-		public void SetCachePath(ScriptRunner scriptRunner, InputGroup inputGroup)
+		public void SetCachePath(ScriptRunner scriptRunner)
 		{
-			CachePath = MediaObject.GetCachePath(scriptRunner, inputGroup, this);
+			CachePath = MediaObject.GetProtocolCachePath(scriptRunner);
 		}
 
 		public void ClearCache()
@@ -159,6 +159,20 @@ namespace Sensus.UI.Inputs
 			{
 				await _mediaView.DisposeMediaAsync();
 			}
+		}
+
+		public override async Task PrepareAsync()
+		{
+			await InitializeMediaAsync();
+
+			await base.PrepareAsync();
+		}
+
+		public override async Task DisposeAsync(InputGroupPage.NavigationResult result)
+		{
+			await DisposeMediaAsync();
+
+			await base.DisposeAsync(result);
 		}
 	}
 }

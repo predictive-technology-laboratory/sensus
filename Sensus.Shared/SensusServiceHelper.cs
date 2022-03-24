@@ -1327,13 +1327,27 @@ namespace Sensus
 			public InputGroupPage.NavigationResult NavigationResult { get; set; }
 		}
 
+		private Page GetReturnPage(Page detailPage)
+		{
+			if (detailPage is InputGroupPage previousInputGroupPage)
+			{
+				return previousInputGroupPage.ReturnPage;
+			}
+			else if (detailPage is NavigationPage previousNavigationPage && previousNavigationPage.CurrentPage is InputGroupPage previousCurrentPage)
+			{
+				return previousCurrentPage.ReturnPage;
+			}
+
+			return detailPage;
+		}
+
 		protected async Task<PromptForInputsResult> PromptForInputsAsync(DateTimeOffset? firstPromptTimestamp, string title, IEnumerable<InputGroup> inputGroups, CancellationToken? cancellationToken, bool showCancelButton, string nextButtonText, bool confirmNavigation, string cancelConfirmation, string incompleteSubmissionConfirmation, string submitConfirmation, bool displayProgress, bool useDetailPage, Action postDisplayCallback, SavedScriptState savedState)
 		{
 			bool firstPageDisplay = true;
 			App app = Application.Current as App;
 			INavigation navigation = app.DetailPage.Navigation;
 			Page currentPage = null;
-			Page returnPage = app.DetailPage;
+			Page returnPage = GetReturnPage(app.DetailPage);
 			InputGroupPage.NavigationResult lastNavigationResult = InputGroupPage.NavigationResult.None;
 			int startInputGroupIndex = 0;
 
@@ -1343,33 +1357,39 @@ namespace Sensus
 
 			// assign inputs to scoreinputs by scoregroup
 			IEnumerable<Input> allInputs = inputGroups.SelectMany(x => x.Inputs);
+			IEnumerable<ScoreInput> allScoreInputs = allInputs.OfType<ScoreInput>();
+			ILookup<string, ScoreInput> scoreInputLookup = allScoreInputs.ToLookup(x =>
+			{
+				if (string.IsNullOrWhiteSpace(x.ScoreGroup))
+				{
+					return null;
+				}
+
+				return x.ScoreGroup;
+			});
+
+			foreach (ScoreInput scoreInput in allInputs.OfType<ScoreInput>())
+			{
+				scoreInput.ClearInputs();
+			}
+
 			IEnumerable<ScoreInput> groupedScoreInputs = allInputs.OfType<ScoreInput>().Where(x => string.IsNullOrWhiteSpace(x.ScoreGroup) == false);
 
-			foreach (IGrouping<string, Input> scoreGroup in allInputs.GroupBy(x => x.ScoreGroup).OrderBy(x => string.IsNullOrWhiteSpace(x.Key)))
+			// if the score group key is null, then the ScoreKeeperInputs accumulates the score of the other ScoreInputs in the collection of InputGroups
+			foreach (ScoreInput scoreInput in scoreInputLookup[null])
 			{
-				// if the score group key is null, then the ScoreKeeperInputs accumulates the score of the other ScoreInputs in the collection of InputGroups
-				if (string.IsNullOrWhiteSpace(scoreGroup.Key))
-				{
-					foreach (ScoreInput scoreInput in scoreGroup.OfType<ScoreInput>())
-					{
-						scoreInput.Inputs = groupedScoreInputs;
-					}
-				}
-				else // otherwise, it keeps score of the only the Inputs in its group
-				{
-					foreach (ScoreInput scoreInput in scoreGroup.OfType<ScoreInput>())
-					{
-						scoreInput.Inputs = scoreGroup.ToList();
-					}
-				}
+				scoreInput.Inputs = groupedScoreInputs;
 			}
 
 			if (savedState != null)
 			{
-				// put the saved input group positions onto the local stack and have the saved managed by the presentation loop.
+				// put the saved input group positions onto the local stack and have the state managed by the presentation loop.
 				inputGroupBackStack = savedState.InputGroupStack;
 
-				startInputGroupIndex = savedState.InputGroupStack.Count;
+				if (savedState.InputGroupStack.Any())
+				{
+					startInputGroupIndex = savedState.InputGroupStack.FirstOrDefault() + 1;
+				}
 			}
 
 			bool continueRun = true;
@@ -1404,7 +1424,7 @@ namespace Sensus
 					{
 						int stepNumber = inputGroupIndex + 1;
 
-						InputGroupPage inputGroupPage = new InputGroupPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, confirmNavigation, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, title);
+						InputGroupPage inputGroupPage = new InputGroupPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, confirmNavigation, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, title, savedState != null);
 
 						// do not display prompts page under the following conditions:
 						//
@@ -1430,6 +1450,20 @@ namespace Sensus
 						// display the page if we've not been canceled
 						else if (!cancellationToken.GetValueOrDefault().IsCancellationRequested)
 						{
+							foreach (Input input in inputGroup.Inputs)
+							{
+								if (input is not ScoreInput && string.IsNullOrWhiteSpace(input.ScoreGroup) == false)
+								{
+									foreach (ScoreInput scoreInput in scoreInputLookup[input.ScoreGroup])
+									{
+										if (scoreInput.Inputs.Contains(input) == false)
+										{
+											scoreInput.AddInput(input);
+										}
+									}
+								}
+							}
+
 							currentPage = inputGroupPage;
 
 							// display page. only animate the display for the first page.
@@ -1438,13 +1472,24 @@ namespace Sensus
 								currentPage = new NavigationPage(currentPage);
 							}
 
+							// prepare the page
+							await inputGroupPage.PrepareAsync();
+
 							if (useDetailPage)
 							{
+								inputGroupPage.ReturnPage = returnPage;
+
 								app.DetailPage = currentPage;
 							}
 							else
 							{
 								await navigation.PushModalAsync(currentPage, firstPageDisplay);
+							}
+
+							// save the state to file
+							if (savedState != null)
+							{
+								await savedState.SaveAsync();
 							}
 
 							// only run the post-display callback the first time a page is displayed. the caller expects the callback
@@ -1456,6 +1501,8 @@ namespace Sensus
 							}
 
 							lastNavigationResult = await inputGroupPage.ResponseTask;
+
+							await inputGroupPage.DisposeAsync();
 
 							if (savedState == null && lastNavigationResult == InputGroupPage.NavigationResult.Paused)
 							{
@@ -1488,9 +1535,12 @@ namespace Sensus
 				}
 			}
 
-			if (useDetailPage && app.DetailPage == currentPage)
+			if (useDetailPage)
 			{
-				app.DetailPage = returnPage;
+				if (app.DetailPage == currentPage && lastNavigationResult != InputGroupPage.NavigationResult.Paused)
+				{
+					app.DetailPage = returnPage;
+				}
 			}
 			else
 			{
@@ -2006,7 +2056,7 @@ namespace Sensus
 			// determine what happens with the script state.
 			SavedScriptState savedState = await ScriptRunner.ManageStateAsync(script);
 
-			PromptForInputsResult result = await PromptForInputsAsync(script.RunTime, script.Runner.Name, script.InputGroups, null, script.Runner.AllowCancel, null, script.Runner.ConfirmNavigation, null, script.Runner.IncompleteSubmissionConfirmation, "Are you ready to submit your responses?", script.Runner.DisplayProgress, script.Runner.UseDetailPage, null, savedState);
+			PromptForInputsResult result = await PromptForInputsAsync(script.RunTime, script.Runner.Name, script.InputGroups, null, script.Runner.AllowCancel, null, script.Runner.ConfirmNavigation, null, script.Runner.IncompleteSubmissionConfirmation, script.Runner.SubmitConfirmation, script.Runner.DisplayProgress, script.Runner.UseDetailPage, null, savedState);
 
 			if (result.NavigationResult == InputGroupPage.NavigationResult.Paused)
 			{
@@ -2018,33 +2068,44 @@ namespace Sensus
 
 				if (savedState != null && result.InputGroups != null)
 				{
-					InputGroup[] inputGroups = result.InputGroups.ToArray();
-
-					foreach(int index in savedState.InputGroupStack)
+					if (savedState.InputGroupStack.Count == 0)
 					{
-						InputGroup inputGroup = inputGroups[index];
+						// don't save the state if the user never got passed the first input group.
+						//script.Runner.SavedState = null;
+						ScriptRunner.ClearSavedState(script);
 
-						foreach (Input input in inputGroup.Inputs)
+						savedState = null;
+					}
+					else
+					{
+						InputGroup[] inputGroups = result.InputGroups.ToArray();
+
+						foreach (int index in savedState.InputGroupStack)
 						{
-							string key = $"{inputGroup.Id}.{input.Id}";
-							
-							savedState.SavedInputs[key] = new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow),
-																			script.Runner.Script.Id,
-																			script.Runner.Name,
-																			input.GroupId,
-																			input.Id,
-																			script.Id,
-																			input.LabelText,
-																			input.Name,
-																			input.Value,
-																			script.CurrentDatum?.Id,
-																			input.Latitude,
-																			input.Longitude,
-																			input.LocationUpdateTimestamp,
-																			script.RunTime.Value,
-																			input.CompletionRecords,
-																			input.SubmissionTimestamp.Value,
-																			manualRun);
+							InputGroup inputGroup = inputGroups[index];
+
+							foreach (Input input in inputGroup.Inputs)
+							{
+								string key = $"{inputGroup.Id}.{input.Id}";
+
+								savedState.SavedInputs[key] = new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow),
+																				script.Runner.Script.Id,
+																				script.Runner.Name,
+																				input.GroupId,
+																				input.Id,
+																				script.Id,
+																				input.LabelText,
+																				input.Name,
+																				input.Value,
+																				script.CurrentDatum?.Id,
+																				input.Latitude,
+																				input.Longitude,
+																				input.LocationUpdateTimestamp,
+																				script.RunTime.Value,
+																				input.CompletionRecords,
+																				DateTimeOffset.UtcNow, // save this now, but overwrite it when the script is actually submitted
+																				manualRun);
+							}
 						}
 					}
 				}
@@ -2054,7 +2115,8 @@ namespace Sensus
 			else if (result.NavigationResult == InputGroupPage.NavigationResult.Submit || result.NavigationResult == InputGroupPage.NavigationResult.Cancel)
 			{
 				// the script has either been canceled or submitted, so the state can be cleared.
-				script.Runner.SavedState = null;
+				//script.Runner.SavedState = null;
+				ScriptRunner.ClearSavedState(script);
 
 				// track script state and completions. do this immediately so that all timestamps are as accurate as possible.
 				if (result.NavigationResult == InputGroupPage.NavigationResult.Cancel)
@@ -2086,12 +2148,14 @@ namespace Sensus
 								await IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.Badge, script.Runner.Probe.Protocol);
 							}
 						}
-
-						if (await script.Runner.ScheduleScriptFromInputAsync(script))
-						{
-							await script.Runner.ScheduleNextScriptToRunAsync();
-						}
 					}
+
+					if (await script.Runner.ScheduleScriptFromInputAsync(script) == false)
+					{
+						await script.Runner.ScheduleNextScriptToRunAsync();
+					}
+
+					script.Runner.HasSubmitted = true;
 				}
 
 				// process/store all inputs in the script
@@ -2110,10 +2174,15 @@ namespace Sensus
 							{
 								if (savedState.SavedInputs.TryGetValue($"{inputGroup.Id}.{input.Id}", out ScriptDatum savedInput))
 								{
+									savedInput.SubmissionTimestamp = input.SubmissionTimestamp ?? DateTimeOffset.UtcNow;
+									savedInput.Latitude = input.Latitude;
+									savedInput.Longitude = input.Longitude;
+									savedInput.LocationTimestamp = input.LocationUpdateTimestamp;
+
 									await script.Runner.Probe.StoreDatumAsync(savedInput, CancellationToken.None);
 								}
 							}
-							else
+							else if (input.Display)
 							{
 								// the _script.Id allows us to link the data to the script that the user created. it never changes. on the other hand, the script
 								// that is passed into this method is always a copy of the user-created script. the script.Id allows us to link the various data

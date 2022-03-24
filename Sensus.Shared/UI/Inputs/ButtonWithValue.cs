@@ -13,11 +13,34 @@
 // limitations under the License.
 
 using Xamarin.Forms;
+using System.Collections.Generic;
 
 namespace Sensus.UI.Inputs
 {
+	public enum ButtonStates
+	{
+		Default,
+		Correct,
+		Incorrect,
+		Selectable,
+		Selected
+	}
+
 	public class ButtonWithValue : Button
 	{
+		public ButtonWithValue()
+		{
+			StyleClass = new List<string> { "ButtonWithValue" };
+		}
+
 		public string Value { get; set; }
+
+		public static readonly BindableProperty StateProperty = BindableProperty.Create(nameof(State), typeof(ButtonStates), typeof(ButtonWithValue));
+
+		public ButtonStates State
+		{
+			get => (ButtonStates)GetValue(StateProperty);
+			set => SetValue(StateProperty, value);
+		}
 	}
 }

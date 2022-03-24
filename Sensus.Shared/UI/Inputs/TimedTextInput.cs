@@ -4,6 +4,7 @@ using Sensus.UI.UiProperties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Timers;
 using Xamarin.Forms;
 
@@ -40,6 +41,10 @@ namespace Sensus.UI.Inputs
 		public List<string> Text { get; set; }
 		[OnOffUiProperty("Center Text:", true, 12)]
 		public bool CenterText { get; set; }
+		[OnOffUiProperty("Cycle Forever:", true, 13)]
+		public bool CycleForever { get; set; }
+		[OnOffUiProperty("Stack Text", true, 14)]
+		public bool StackText { get; set; }
 
 		public override View GetView(int index)
 		{
@@ -58,54 +63,97 @@ namespace Sensus.UI.Inputs
 					_textLabel.HorizontalTextAlignment = TextAlignment.Center;
 				}
 
-				_index = 0;
-				_elapsed = 0;
-
 				double interval = (double)Duration / Text.Count;
 
 				_timer = new Timer(interval * 1000);
 
 				_timer.Elapsed += (s, e) =>
 				{
-					CycleText(interval);
+					_elapsed += interval;
+					
+					CycleText(/*interval*/);
 				};
 
-				CycleText(interval);
-
-				_timer.Start();
-
-				base.SetView(new StackLayout
+				View view = new StackLayout
 				{
 					Orientation = StackOrientation.Vertical,
 					Children = { label, _textLabel }
-				});
+				};
+
+				base.SetView(view);
+			}
+
+			_index = 0;
+			_elapsed = 0;
+
+			CycleText(/*0*/);
+
+			if (DisplayDelay <= 0)
+			{
+				_timer.Start();
 			}
 
 			return base.GetView(index);
 		}
 
-		private void CycleText(double interval)
+		protected override Task OnDisplayedAfterDelay()
+		{
+			_timer.Start();
+
+			return base.OnDisplayedAfterDelay();
+		}
+
+		private void CycleText(/*double interval*/)
 		{
 			SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
 			{
-				_textLabel.Text = Text[_index % Text.Count];
+				if (_elapsed < Duration || CycleForever)
+				{
+					int position = _index % Text.Count;
 
-				_index += 1;
-				_elapsed += interval;
+					if (StackText)
+					{
+						string newLines = "";
+
+						if (position > 0)
+						{
+							newLines = "\n\n";
+						}
+						else
+						{
+							_textLabel.Text = "";
+						}
+
+						_textLabel.Text += newLines + Text[position];
+					}
+					else
+					{
+						_textLabel.Text = Text[position];
+					}
+
+					_index += 1;
+				}
 
 				if (_elapsed >= Duration)
 				{
-					Complete = true;
+					if (Complete == false)
+					{
+						Complete = true;
+					}
+
+					if (CycleForever == false)
+					{
+						_timer.Stop();
+					}
 				}
 			});
 		}
 
-		public override void OnDisappearing(InputGroupPage.NavigationResult result)
+		public override Task DisposeAsync(InputGroupPage.NavigationResult result)
 		{
 			_timer.Stop();
-			_timer.Dispose();
 
-			base.OnDisappearing(result);
+			return base.DisposeAsync(result);
 		}
 	}
 }

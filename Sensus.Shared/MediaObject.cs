@@ -19,7 +19,8 @@ namespace Sensus
 		public string Type { get; private set; }
 		public MediaStorageMethods StorageMethod { get; private set; }
 		public string CacheFileName { get; private set; }
-		public MediaCacheModes CacheMode { get; set; } = MediaCacheModes.OnSerialization;
+		public MediaCacheModes CacheMode { get; set; }
+		public long FileSize { get; set; }
 
 		// for deserialization and manual construction
 		public MediaObject(string data, string type, MediaStorageMethods storageMethod, string cacheFileName)
@@ -34,23 +35,15 @@ namespace Sensus
 		{
 			return Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), cachePath));
 		}
-		public static string GetCachePath(ScriptRunner scriptRunner, InputGroup inputGroup = null, Input input = null)
+		public static string GetProtocolCachePath(Protocol protocol)
 		{
-			string path = Path.Combine(scriptRunner.Probe.Protocol.Id, $"{nameof(MediaObject)}Cache", scriptRunner.Script.Id);
-
-			if (inputGroup != null)
-			{
-				path = Path.Combine(path, inputGroup.Id);
-			}
-
-			if (input != null)
-			{
-				path = Path.Combine(path, input.Id);
-			}
-
-			return path;
+			return Path.Combine(protocol.Id, $"{nameof(MediaObject)}Cache");
 		}
-		private static string GetCacheFileName(string fileName, string cachePath)
+		public static string GetProtocolCachePath(ScriptRunner scriptRunner)
+		{
+			return GetProtocolCachePath(scriptRunner.Probe.Protocol);
+		}
+		public static string GetCacheFileName(string fileName)
 		{
 			string extension = Path.GetExtension(fileName);
 			string cacheName = null;
@@ -63,7 +56,11 @@ namespace Sensus
 				cacheName = $"{guid}{extension}";
 			}
 
-			return Path.Combine(cachePath, cacheName);
+			return cacheName;
+		}
+		public static string GetCacheFileName(string fileName, string cachePath)
+		{
+			return Path.Combine(cachePath, GetCacheFileName(fileName));
 		}
 
 		public static async Task<MediaObject> FromFileAsync(string path, Stream stream, string type, string cachePath)
@@ -71,7 +68,7 @@ namespace Sensus
 			const int BUFFER_SIZE = 1024;
 			byte[] fileBuffer = new byte[stream.Length];
 			byte[] buffer = new byte[BUFFER_SIZE];
-			int totalBytesRead = 0;
+			long totalBytesRead = 0;
 			int bytesRead;
 
 			while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
@@ -82,6 +79,8 @@ namespace Sensus
 			}
 
 			MediaObject media = new MediaObject(Convert.ToBase64String(fileBuffer), type, MediaStorageMethods.Embed, GetCacheFileName(path, cachePath));
+
+			media.FileSize = totalBytesRead;
 
 			return media;
 		}
@@ -164,13 +163,15 @@ namespace Sensus
 		{
 			Stream stream = GetCacheFileStream();
 
+			FileSize = buffer.LongLength;
+
 			await stream.WriteAsync(buffer);
 
 			stream.Position = 0;
 
 			return stream;
 		}
-		private async Task<Stream> WriteCacheFileAsync()
+		public async Task<Stream> WriteCacheFileAsync()
 		{
 			DownloadResult result = await DownloadMediaAsync(Data);
 
@@ -180,6 +181,8 @@ namespace Sensus
 		private void WriteCacheFile(byte[] buffer)
 		{
 			Stream stream = GetCacheFileStream();
+
+			FileSize = buffer.LongLength;
 
 			stream.Write(buffer);
 
@@ -202,9 +205,9 @@ namespace Sensus
 			}
 		}
 
-		public static void ClearCache(ScriptRunner scriptRunner, InputGroup inputGroup = null, Input input = null)
+		public static void ClearCache(ScriptRunner scriptRunner)
 		{
-			string path = GetFullCachePath(GetCachePath(scriptRunner, inputGroup, input));
+			string path = GetFullCachePath(GetProtocolCachePath(scriptRunner));
 
 			if (Directory.Exists(path))
 			{
@@ -262,13 +265,16 @@ namespace Sensus
 		{
 			try
 			{
-				if (StorageMethod == MediaStorageMethods.Cache && IsCached == false)
+				if (IsCached == false)
 				{
-					await WriteCacheFileAsync();
-				}
-				else if (Type.ToLower().StartsWith("video") && StorageMethod == MediaStorageMethods.Embed)
-				{
-					await WriteCacheFileAsync(Convert.FromBase64String(Data));
+					if (StorageMethod == MediaStorageMethods.Cache)
+					{
+						await WriteCacheFileAsync();
+					}
+					else if (Type.ToLower().StartsWith("video") && StorageMethod == MediaStorageMethods.Embed)
+					{
+						await WriteCacheFileAsync(Convert.FromBase64String(Data));
+					}
 				}
 			}
 			catch (Exception error)
@@ -281,13 +287,16 @@ namespace Sensus
 		{
 			try
 			{
-				if (StorageMethod == MediaStorageMethods.Cache && IsCached == false)
+				if (IsCached == false)
 				{
-					WriteCacheFile();
-				}
-				else if (Type.ToLower().StartsWith("video") && StorageMethod == MediaStorageMethods.Embed)
-				{
-					WriteCacheFile(Convert.FromBase64String(Data));
+					if (StorageMethod == MediaStorageMethods.Cache)
+					{
+						WriteCacheFile();
+					}
+					else if (Type.ToLower().StartsWith("video") && StorageMethod == MediaStorageMethods.Embed)
+					{
+						WriteCacheFile(Convert.FromBase64String(Data));
+					}
 				}
 			}
 			catch (Exception error)

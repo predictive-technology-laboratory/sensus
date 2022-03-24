@@ -25,10 +25,24 @@ namespace Sensus.UI.Inputs
 		private string _definedVariable;
 		private List<string> _value;
 		private HashSet<int> _missingLetterIndexes;
+		private ButtonGridView _choiceGrid;
 
 		public override object Value => _value;
 
-		public override bool Enabled { get; set; }
+		public override bool Enabled
+		{
+			get
+			{
+				return _choiceGrid?.IsEnabled ?? false;
+			}
+			set
+			{
+				if (_choiceGrid != null)
+				{
+					_choiceGrid.IsEnabled = value;
+				}
+			}
+		}
 
 		public override string DefaultName => "Word Puzzle";
 
@@ -56,6 +70,9 @@ namespace Sensus.UI.Inputs
 
 		[EntryIntegerUiProperty("Column Count:", true, 4, true)]
 		public int ColumnCount { get; set; } = 8;
+
+		[OnOffUiProperty("Leave Incorrect Value:", true, 5)]
+		public bool LeaveIncorrectValue { get; set; }
 
 		[HiddenUiProperty]
 		public override object CorrectValue { get; set; }
@@ -114,7 +131,7 @@ namespace Sensus.UI.Inputs
 					{
 						ButtonWithValue wordButton = wordGrid.AddButton("", "");
 
-						wordButton.Style = (Style)Application.Current.Resources["MissingLetterButton"];
+						wordButton.StyleClass = new[] { "MissingLetterButton" };
 					}
 					else
 					{
@@ -126,14 +143,28 @@ namespace Sensus.UI.Inputs
 
 				ButtonWithValue[] wordButtons = wordGrid.Buttons.ToArray();
 
-				ButtonGridView choiceGrid = new ButtonGridView(0, null)
+				_choiceGrid = new ButtonGridView(0, null)
 				{
 					HorizontalOptions = LayoutOptions.FillAndExpand
 				};
 
+				if (LeaveIncorrectValue == false)
+				{
+					DelayEnded += (s, e) =>
+					{
+						foreach (ButtonWithValue otherButton in _choiceGrid.Buttons)
+						{
+							if (otherButton.State == ButtonStates.Incorrect)
+							{
+								otherButton.State = ButtonStates.Default;
+							}
+						}
+					};
+				}
+
 				foreach ((int letterIndex, string choice) in choices)
 				{
-					ButtonWithValue button = choiceGrid.AddButton(choice.ToUpper(), choice);
+					ButtonWithValue button = _choiceGrid.AddButton(choice.ToUpper(), choice);
 
 					if (letterIndex < 0)
 					{
@@ -143,7 +174,12 @@ namespace Sensus.UI.Inputs
 							{
 								_value = _value.Union(new[] { button.Value }).OrderBy(x => x).ToList();
 
-								button.Style = (Style)Application.Current.Resources["IncorrectAnswerButton"];
+								foreach (ButtonWithValue otherButton in _choiceGrid.Buttons)
+								{
+									otherButton.State = ButtonStates.Default;
+								}
+
+								button.State = ButtonStates.Incorrect;
 
 								if (_value.Count >= MissingLetterCount)
 								{
@@ -165,7 +201,14 @@ namespace Sensus.UI.Inputs
 							_value = _value.Union(new[] { button.Value }).OrderBy(x => x).ToList();
 							_missingLetterIndexes.Remove(letterIndex);
 
-							wordButtons[letterIndex].Style = (Style)Application.Current.Resources["CorrectAnswerButton"];
+							foreach (ButtonWithValue otherButton in _choiceGrid.Buttons)
+							{
+								otherButton.State = ButtonStates.Default;
+							}
+
+							button.State = ButtonStates.Correct;
+
+							wordButtons[letterIndex].State = ButtonStates.Correct;
 
 							wordButtons[letterIndex].Text = choice.ToUpper();
 
@@ -194,11 +237,11 @@ namespace Sensus.UI.Inputs
 					label.Text = "Select Tiles:";
 				}
 
-				choiceGrid.Arrange();
+				_choiceGrid.Arrange();
 
 				StackLayout puzzleLayout = new StackLayout()
 				{
-					Children = { wordGrid, label, choiceGrid }
+					Children = { wordGrid, label, _choiceGrid }
 				};
 
 				base.SetView(puzzleLayout);

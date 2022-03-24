@@ -27,7 +27,7 @@ namespace Sensus.UI
         /// <summary>
         /// Enables tap-and-hold to remove a pending survey.
         /// </summary>
-        private class PendingScriptTextCell : TextCell
+        private class PendingScriptTextCell : DarkModeCompatibleTextCell
         {
             public PendingScriptTextCell()
             {

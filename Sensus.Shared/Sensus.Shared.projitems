@@ -36,8 +36,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)MediaObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MediaStorageMethods.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\SavedScriptState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\DarkModeCompatibleTextCellcs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\SliderWithOptionsInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\TimedTextInput.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\MasterDetailPageExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\MediaView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MessageEventDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\UserMessage.cs" />
@@ -176,7 +178,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\AddProximityTriggerPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\AddScriptTriggerPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\AnonymizerPage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\App.xaml.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)UI\DataStorePage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ButtonGridView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ButtonGridInput.cs" />

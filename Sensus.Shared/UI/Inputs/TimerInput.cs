@@ -17,6 +17,7 @@ using Sensus.Context;
 using Sensus.UI.UiProperties;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Timers;
 using Xamarin.Forms;
 using static Sensus.UI.InputGroupPage;
@@ -154,12 +155,11 @@ namespace Sensus.UI.Inputs
 		[OnOffUiProperty("Show Stop Button:", true, 19)]
 		public bool ShowStopButton { get; set; }
 
-		public override void OnDisappearing(NavigationResult result)
+		public override Task DisposeAsync(NavigationResult result)
 		{
 			if (_timer.Enabled)
 			{
 				_timer.Stop();
-				_timer.Dispose();
 
 				if (result == NavigationResult.Submit)
 				{
@@ -168,6 +168,8 @@ namespace Sensus.UI.Inputs
 					Complete = true;
 				}
 			}
+
+			return base.DisposeAsync(result);
 		}
 
 		public override View GetView(int index)
@@ -227,13 +229,6 @@ namespace Sensus.UI.Inputs
 					controlButtons.Children.Add(_startButton);
 				}
 				
-				if (ShowStartButton == false)
-				{
-					_timer.Start();
-
-					_events.Add(new TimerEvent { Timestamp = DateTimeOffset.UtcNow, ElapsedTime = _elapsedTime, Event = STARTED });
-				}
-
 				if (ShowPauseButton)
 				{
 					_pauseButton = new Button
@@ -309,7 +304,36 @@ namespace Sensus.UI.Inputs
 				_label.Text = GetLabelText(index);  // if the view was already initialized, just update the label since the index might have changed.
 			}
 
+			if (ShowStartButton == false && DisplayDelay <= 0)
+			{
+				StartTimer();
+			}
+
 			return base.GetView(index);
+		}
+
+		private void StartTimer()
+		{
+			_timer.Start();
+
+			_events.Add(new TimerEvent { Timestamp = DateTimeOffset.UtcNow, ElapsedTime = _elapsedTime, Event = STARTED });
+		}
+
+		protected override Task OnDisplayedAfterDelay()
+		{
+			StartTimer();
+
+			return base.OnDisplayedAfterDelay();
+		}
+
+		public override void Reset()
+		{
+			if (_events != null)
+			{
+				_events.Clear();
+			}
+
+			base.Reset();
 		}
 	}
 }

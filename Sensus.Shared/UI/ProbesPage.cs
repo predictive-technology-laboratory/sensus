@@ -64,7 +64,7 @@ namespace Sensus.UI
 			Title = title;
 
 			_probesList = new ListView(ListViewCachingStrategy.RecycleElement);
-			_probesList.ItemTemplate = new DataTemplate(typeof(TextCell));
+			_probesList.ItemTemplate = new DataTemplate(typeof(DarkModeCompatibleTextCell));
 			_probesList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(Probe.Caption));
 			_probesList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding(nameof(Probe.Enabled), converter: new ProbeTextColorValueConverter()));
 			_probesList.ItemTemplate.SetBinding(TextCell.DetailProperty, nameof(Probe.SubCaption));

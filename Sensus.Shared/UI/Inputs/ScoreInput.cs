@@ -17,6 +17,7 @@ using Microcharts.Forms;
 using Newtonsoft.Json;
 using Sensus.UI.UiProperties;
 using SkiaSharp;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace Sensus.UI.Inputs
 	public class ScoreInput : Input, IVariableDefiningInput
 	{
 		private string _definedVariable;
-		private IEnumerable<Input> _inputs = new List<Input>();
+		private List<Input> _inputs;
 		private Label _label;
 		private Span _scoreSpan;
 		private Span _maxScoreSpan;
@@ -87,6 +88,11 @@ namespace Sensus.UI.Inputs
 			}
 		}
 
+		public ScoreInput()
+		{
+			_inputs = new List<Input>();
+		}
+
 		public override object Value
 		{
 			get
@@ -115,6 +121,9 @@ namespace Sensus.UI.Inputs
 		[ListUiProperty("Score Method:", true, 21, new object[] { ScoreMethods.Total, ScoreMethods.Average }, false)]
 		public override ScoreMethods ScoreMethod { get; set; } = ScoreMethods.Total;
 
+		[OnOffUiProperty("Show Score as Percent:", true, 22)]
+		public bool ShowScoreAsPercent { get; set; }
+
 		[HiddenUiProperty]
 		public override float CorrectScore { get; set; }
 
@@ -124,7 +133,7 @@ namespace Sensus.UI.Inputs
 		[HiddenUiProperty]
 		public override int? Retries => 0;
 
-		[JsonIgnore] // TODO: determine if this needs to be serialized or not
+		[JsonIgnore]
 		public IEnumerable<Input> Inputs
 		{
 			get
@@ -133,24 +142,31 @@ namespace Sensus.UI.Inputs
 			}
 			set
 			{
+
 				// remove the ScoreChanged event from each of the original inputs.
 				foreach (Input input in _inputs)
 				{
 					input.PropertyChanged -= ScoreChanged;
 				}
 
-				if (string.IsNullOrWhiteSpace(ScoreGroup))
+				if (value != null)
 				{
-					_inputs = value.OfType<ScoreInput>().Where(x => string.IsNullOrWhiteSpace(x.ScoreGroup) == false);
+					if (string.IsNullOrWhiteSpace(ScoreGroup))
+					{
+						_inputs = value.Where(x => x is ScoreInput && string.IsNullOrWhiteSpace(x.ScoreGroup) == false).ToList();
+					}
+					else
+					{
+						_inputs = value.Where(x => x is not ScoreInput).ToList();
+					}
 				}
 				else
 				{
-					_inputs = value.Where(x => x is ScoreInput == false);
+					_inputs.Clear();
 				}
 
 				foreach (Input input in _inputs)
 				{
-
 					input.PropertyChanged += ScoreChanged;
 				}
 
@@ -158,9 +174,55 @@ namespace Sensus.UI.Inputs
 			}
 		}
 
+		public void ClearInputs()
+		{
+			foreach (Input input in _inputs)
+			{
+				input.PropertyChanged -= ScoreChanged;
+			}
+
+			_inputs.Clear();
+		}
+
+		public void AddInput(Input input)
+		{
+			input.PropertyChanged -= ScoreChanged;
+
+			if (string.IsNullOrWhiteSpace(ScoreGroup))
+			{
+				if (input is ScoreInput)
+				{
+					_inputs.Add(input);
+				}
+			}
+			else if (ScoreGroup == input.ScoreGroup)
+			{
+				_inputs.Add(input);
+			}
+
+			input.PropertyChanged += ScoreChanged;
+
+			SetScore();
+		}
+
 		private IEnumerable<ChartEntry> GetChartEntries()
 		{
 			return new[] { new ChartEntry(Score) { Color = _scoreColor }, new ChartEntry(CorrectScore - Score) { Color = _scoreRemainingColor } };
+		}
+
+		public string ScoreText
+		{
+			get
+			{
+				if (ShowScoreAsPercent && CorrectScore > 0)
+				{
+					return $"{Score * 100 / CorrectScore:0.##}";
+				}
+				else
+				{
+					return Score.ToString();
+				}
+			}
 		}
 
 		public void SetScore()
@@ -183,7 +245,7 @@ namespace Sensus.UI.Inputs
 
 			if (_scoreSpan != null)
 			{
-				_scoreSpan.Text = Score.ToString();
+				_scoreSpan.Text = ScoreText;
 			}
 
 			if (_maxScoreSpan != null)
@@ -215,26 +277,41 @@ namespace Sensus.UI.Inputs
 			if (base.GetView(index) == null)
 			{
 				_label = CreateLabel(index);
-				
+
 				FormattedString scoreString = new FormattedString();
 
-				_scoreSpan = new Span()
+				if (ShowScoreAsPercent)
 				{
-					Text = Score.ToString(),
-					ForegroundColor = _scoreLabelColor,
-					FontSize = 50
-				};
+					_scoreSpan = new Span()
+					{
+						Text = ScoreText,
+						ForegroundColor = _scoreLabelColor,
+						FontSize = 50
+					};
 
-				_maxScoreSpan = new Span()
+					scoreString.Spans.Add(_scoreSpan);
+					scoreString.Spans.Add(new Span() { Text = "%", FontSize = 25, ForegroundColor = _scoreLabelDividerColor });
+				}
+				else
 				{
-					Text = CorrectScore.ToString(),
-					ForegroundColor = _maxScoreLabelColor,
-					FontSize = 25
-				};
+					_scoreSpan = new Span()
+					{
+						Text = Score.ToString(),
+						ForegroundColor = _scoreLabelColor,
+						FontSize = 50,
+					};
 
-				scoreString.Spans.Add(_scoreSpan);
-				scoreString.Spans.Add(new Span() { Text = "\n/", FontSize = 25, ForegroundColor = _scoreLabelDividerColor });
-				scoreString.Spans.Add(_maxScoreSpan);
+					_maxScoreSpan = new Span()
+					{
+						Text = CorrectScore.ToString(),
+						ForegroundColor = _maxScoreLabelColor,
+						FontSize = 25,
+					};
+
+					scoreString.Spans.Add(_scoreSpan);
+					scoreString.Spans.Add(new Span() { Text = "\n/", FontSize = 25, ForegroundColor = _scoreLabelDividerColor });
+					scoreString.Spans.Add(_maxScoreSpan);
+				}
 
 				Label scoreLabel = new Label()
 				{
