@@ -109,6 +109,8 @@
 			<array>
 				<string>edu.virginia.sie.ptl.sensus.protocol</string>
 			</array>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 	</array>
 	<key>UTExportedTypeDeclarations</key>
