@@ -91,7 +91,7 @@ namespace Sensus
 		/// <summary>
 		/// The build ID, used to tag each <see cref="Datum"/>. This is an arbitrary string value, and it is optional.
 		/// </summary>
-		public const string BUILD_ID = "202203240751";
+		public const string BUILD_ID = "202203241552";
 
 		public static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
 		private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
