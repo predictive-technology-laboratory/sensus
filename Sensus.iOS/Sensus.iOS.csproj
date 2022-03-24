@@ -447,6 +447,9 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <PackageReference Include="Xamarin.Plugins.Clipboard">
       <Version>2.2.1</Version>
     </PackageReference>
+    <PackageReference Include="Xamarin.Swift4">
+      <Version>4.0.0.2</Version>
+    </PackageReference>
     <PackageReference Include="Xamarin.Swift4.ARKit">
       <Version>4.2.1.1</Version>
     </PackageReference>
