@@ -1,9 +1,6 @@
-﻿using Newtonsoft.Json;
-using Sensus.Context;
+﻿using Sensus.Context;
 using Sensus.UI.UiProperties;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 using Xamarin.Forms;
@@ -71,7 +68,7 @@ namespace Sensus.UI.Inputs
 				{
 					_elapsed += interval;
 					
-					CycleText(/*interval*/);
+					CycleText();
 				};
 
 				View view = new StackLayout
@@ -86,7 +83,7 @@ namespace Sensus.UI.Inputs
 			_index = 0;
 			_elapsed = 0;
 
-			CycleText(/*0*/);
+			CycleText();
 
 			if (DisplayDelay <= 0)
 			{
@@ -103,7 +100,7 @@ namespace Sensus.UI.Inputs
 			return base.OnDisplayedAfterDelay();
 		}
 
-		private void CycleText(/*double interval*/)
+		private void CycleText()
 		{
 			SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
 			{
