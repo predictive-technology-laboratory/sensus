@@ -68,6 +68,16 @@
 		<AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
 		<LangVersion>latest</LangVersion>
 	</PropertyGroup>
+	<Target Name="AddCustomAliases" BeforeTargets="ResolveReferences">
+		<ItemGroup>
+			<ReferencePath Condition="'%(FileName)' == 'Estimote.Android.Indoor'">
+				<Aliases>indoor, global</Aliases>
+			</ReferencePath>
+			<ReferencePath Condition="'%(FileName)' == 'Estimote.Android.Proximity'">
+				<Aliases>proximity, global</Aliases>
+			</ReferencePath>
+		</ItemGroup>
+	</Target>
 	<ItemGroup>
 		<Reference Include="BouncyCastle.Crypto, Version=1.9.0.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
 			<HintPath>..\packages\Portable.BouncyCastle.1.9.0\lib\netstandard2.0\BouncyCastle.Crypto.dll</HintPath>
