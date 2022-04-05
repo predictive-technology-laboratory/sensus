@@ -114,7 +114,6 @@ namespace Sensus.Probes.Context
 		[OnOffUiProperty("Discover all devices:", true, 7)]
 		public bool DiscoverAll { get; set; }
 
-
 		[JsonIgnore]
 		public int ReadAttemptCount { get; set; }
 
