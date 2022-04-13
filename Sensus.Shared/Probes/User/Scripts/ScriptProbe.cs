@@ -264,7 +264,7 @@ namespace Sensus.Probes.User.Scripts
 			};
 		}
 
-		private void AddUserInitiatedScript(ScriptRunner runner, int position = int.MaxValue)
+		private void AddUserInitiatedScript(ScriptRunner runner, int position = -1)
 		{
 			if (runner.AllowUserInitiation)
 			{
@@ -272,9 +272,12 @@ namespace Sensus.Probes.User.Scripts
 
 				copy.Shuffle();
 
-				//UserInitiatedScripts.Add(copy);
+				if (position < 0)
+				{
+					position = UserInitiatedScripts.Count;
+				}
 
-				UserInitiatedScripts.Insert(Math.Min(position, UserInitiatedScripts.Count), copy);
+				UserInitiatedScripts.Insert(position, copy);
 			}
 		}
 
