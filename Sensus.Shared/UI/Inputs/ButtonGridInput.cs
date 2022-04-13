@@ -88,7 +88,7 @@ namespace Sensus.UI.Inputs
 		[OnOffUiProperty("Leave Incorrect Value:", true, 4)]
 		public bool LeaveIncorrectValue { get; set; }
 
-		[OnOffUiProperty("Split into Value:Text Pairs:", true, 4)]
+		[OnOffUiProperty("Split into Value/Text Pairs:", true, 4)]
 		public bool SplitValueTextPairs { get; set; }
 
 		[JsonIgnore]
@@ -192,7 +192,14 @@ namespace Sensus.UI.Inputs
 
 					if (SplitValueTextPairs)
 					{
-						string[] pair = Regex.Split(buttonValue.Replace("::", "\0"), ":").Select(x => x.Replace("\0", ":")).ToArray();
+						string[] pair = Regex.Split(buttonValue, "(?<=[^:])::(?=[^:])")
+							.Select(x => Regex.Replace(x, ":::", "::"))
+							.ToArray();
+
+						if (pair.Length > 2)
+						{
+							pair[1] = string.Join("::", pair.Skip(1));
+						}
 
 						value = pair.FirstOrDefault();
 						text = pair.LastOrDefault();
