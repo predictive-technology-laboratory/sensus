@@ -338,7 +338,7 @@ namespace Sensus.DataStores.Local
 			// indicated by a lack of file extension.
 			foreach (string pathUnpreparedForRemote in Directory.GetFiles(StorageDirectory).Where(path => string.IsNullOrWhiteSpace(Path.GetExtension(path))))
 			{
-				await PreparePathForRemoteAsync(pathUnpreparedForRemote, CancellationToken.None);
+				PreparePathForRemoteAsync(pathUnpreparedForRemote, CancellationToken.None);
 			}
 
 			OpenFile();
@@ -516,7 +516,7 @@ namespace Sensus.DataStores.Local
 
 								if (startNewFile)
 								{
-									await StartNewFileAsync(cancellationToken);
+									StartNewFile(cancellationToken);
 								}
 
 								if (checkSize)
@@ -555,7 +555,7 @@ namespace Sensus.DataStores.Local
 				{
 					_writeToRemoteTask = Task.Run(async () =>
 					{
-						await StartNewFileAsync(cancellationToken);
+						StartNewFile(cancellationToken);
 
 						string[] pathsPreparedForRemote;
 						lock (_pathsPreparedForRemote)
@@ -646,7 +646,7 @@ namespace Sensus.DataStores.Local
 			}
 		}
 
-		private async Task StartNewFileAsync(CancellationToken cancellationToken)
+		private void StartNewFile(CancellationToken cancellationToken)
 		{
 			// start a new file within a lock to ensure that anyone with the lock will have a valid file
 			string unpreparedPath = null;
@@ -674,7 +674,7 @@ namespace Sensus.DataStores.Local
 				}
 			}
 
-			await PreparePathForRemoteAsync(unpreparedPath, cancellationToken);
+			PreparePathForRemoteAsync(unpreparedPath, cancellationToken);
 		}
 
 		public override void CreateTarFromLocalData(string outputPath)
@@ -797,51 +797,61 @@ namespace Sensus.DataStores.Local
 			return path;
 		}
 
-		private async Task PreparePathForRemoteAsync(string path, CancellationToken cancellationToken)
+		private void PreparePathForRemoteAsync(string path, CancellationToken cancellationToken)
 		{
 			try
 			{
-				if (File.Exists(path))
+				lock (_fileLocker)
 				{
-					byte[] bytes = File.ReadAllBytes(path);
-
-					if (bytes.Length > 0)
+					if (File.Exists(path))
 					{
-						string preparedPath = Path.Combine(Path.GetDirectoryName(path), Guid.NewGuid() + JSON_FILE_EXTENSION);
+						byte[] bytes = File.ReadAllBytes(path);
 
-						if (_compressionLevel != CompressionLevel.NoCompression)
+						if (bytes.Length > 0)
 						{
-							preparedPath += GZIP_FILE_EXTENSION;
+							string preparedPath = Path.Combine(Path.GetDirectoryName(path), Guid.NewGuid() + JSON_FILE_EXTENSION);
 
-							Compressor compressor = new Compressor(Compressor.CompressionMethod.GZip);
-							MemoryStream compressedStream = new MemoryStream();
-							compressor.Compress(bytes, compressedStream, _compressionLevel);
-							bytes = compressedStream.ToArray();
-						}
-
-						if (_encrypt)
-						{
-							preparedPath += ENCRYPTED_FILE_EXTENSION;
-
-							using (FileStream preparedFile = new FileStream(preparedPath, FileMode.Create, FileAccess.Write))
+							if (_compressionLevel != CompressionLevel.NoCompression)
 							{
-								await Protocol.EnvelopeEncryptor.EnvelopeAsync(bytes, ENCRYPTION_KEY_SIZE_BITS, ENCRYPTION_INITIALIZATION_KEY_SIZE_BITS, preparedFile, cancellationToken);
+								preparedPath += GZIP_FILE_EXTENSION;
+
+								Compressor compressor = new Compressor(Compressor.CompressionMethod.GZip);
+								MemoryStream compressedStream = new MemoryStream();
+								compressor.Compress(bytes, compressedStream, _compressionLevel);
+								bytes = compressedStream.ToArray();
+
+								compressedStream.Position = 0;
+
+								if (Encoding.Default.GetString(compressor.Decompress(compressedStream)) is string decompressed && decompressed.EndsWith("]") == false)
+								{
+									SensusServiceHelper.Get().Logger.Log("Partial file compression", LoggingLevel.Normal, GetType());
+								}
 							}
-						}
-						else
-						{
-							File.WriteAllBytes(preparedPath, bytes);
+
+							if (_encrypt)
+							{
+								preparedPath += ENCRYPTED_FILE_EXTENSION;
+
+								using (FileStream preparedFile = new FileStream(preparedPath, FileMode.Create, FileAccess.Write))
+								{
+									Protocol.EnvelopeEncryptor.Envelope(bytes, ENCRYPTION_KEY_SIZE_BITS, ENCRYPTION_INITIALIZATION_KEY_SIZE_BITS, preparedFile, cancellationToken);
+								}
+							}
+							else
+							{
+								File.WriteAllBytes(preparedPath, bytes);
+							}
+
+							lock (_pathsPreparedForRemote)
+							{
+								_pathsPreparedForRemote.Add(preparedPath);
+							}
+
+							_totalFilesPreparedForRemote++;
 						}
 
-						lock (_pathsPreparedForRemote)
-						{
-							_pathsPreparedForRemote.Add(preparedPath);
-						}
-
-						_totalFilesPreparedForRemote++;
+						File.Delete(path);
 					}
-
-					File.Delete(path);
 				}
 
 				lock (_pathsUnpreparedForRemote)
@@ -888,7 +898,7 @@ namespace Sensus.DataStores.Local
 				_toWriteBuffer.Clear();
 			}
 
-			await PreparePathForRemoteAsync(CloseFile(), CancellationToken.None);
+			PreparePathForRemoteAsync(CloseFile(), CancellationToken.None);
 		}
 
 		public void Clear()
@@ -928,7 +938,7 @@ namespace Sensus.DataStores.Local
 
 			foreach (string pathUnpreparedForRemote in pathsUnpreparedForRemote)
 			{
-				await PreparePathForRemoteAsync(pathUnpreparedForRemote, CancellationToken.None);
+				PreparePathForRemoteAsync(pathUnpreparedForRemote, CancellationToken.None);
 			}
 
 			HealthTestResult result = await base.TestHealthAsync(events);

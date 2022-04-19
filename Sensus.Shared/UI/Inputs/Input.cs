@@ -26,6 +26,7 @@ using static Sensus.UI.InputGroupPage;
 using System.Timers;
 using Sensus.Context;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 // register the input effect group
 [assembly: ResolutionGroupName(Input.EFFECT_RESOLUTION_GROUP_NAME)]
@@ -371,7 +372,7 @@ namespace Sensus.UI.Inputs
 				if (_complete)
 				{
 					// get a deep copy of the value. some inputs have list values, and simply using the list reference wouldn't track the history, since the most up-to-date list would be used for all history values.
-					inputValue = JsonConvert.DeserializeObject<object>(JsonConvert.SerializeObject(Value, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+					inputValue = JsonConvert.DeserializeObject(JsonConvert.SerializeObject(Value, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), Value?.GetType(), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
 
 					_completionTimestamp = timestamp;
 
@@ -696,22 +697,39 @@ namespace Sensus.UI.Inputs
 			}
 		}
 
-		protected virtual bool IsCorrect(object deserializedValue)
+		protected virtual bool IsCorrect(object value)
 		{
-			if (CorrectValue != null)
+			object correctValue = CorrectValue;
+
+			if (correctValue != null)
 			{
-				if (CorrectValue is string stringValue && stringValue.StartsWith("=") && (stringValue.StartsWith("==") == false))
+				if (correctValue is string stringValue && Regex.IsMatch(stringValue, @"^=(={2})*[^=]"))
 				{
 					Protocol protocol = GetProtocol();
 
-					if (protocol.VariableValue.TryGetValue(stringValue.Substring(1), out string value) && CorrectValue.ToString() == value)
+					protocol.VariableValue.TryGetValue(stringValue.Substring(1), out correctValue);
+				}
+
+				if (correctValue != null && value != null)
+				{
+					if (correctValue.Equals(value))
 					{
 						return true;
 					}
-
-					return false;
+					else if (JsonConvert.SerializeObject(correctValue) == JsonConvert.SerializeObject(value))
+					{
+						return true;
+					}
+					else if (JsonConvert.SerializeObject(correctValue) == value as string)
+					{
+						return true;
+					}
+					else if (correctValue as string == JsonConvert.SerializeObject(value))
+					{
+						return true;
+					}
 				}
-				else if (CorrectValue.ToString() == Value.ToString() || JsonConvert.SerializeObject(CorrectValue) == deserializedValue?.ToString() || CorrectValue.ToString() == deserializedValue?.ToString())
+				else if (correctValue == null && value == null)
 				{
 					return true;
 				}
@@ -724,7 +742,7 @@ namespace Sensus.UI.Inputs
 
 		protected virtual bool IsCorrect()
 		{
-			object inputValue = JsonConvert.DeserializeObject<object>(JsonConvert.SerializeObject(Value, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
+			object inputValue = JsonConvert.DeserializeObject(JsonConvert.SerializeObject(Value, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), Value?.GetType(), SensusServiceHelper.JSON_SERIALIZER_SETTINGS);
 
 			return IsCorrect(inputValue);
 		}
@@ -869,7 +887,7 @@ namespace Sensus.UI.Inputs
 					foreach (string variable in protocolForInput.VariableValue.Keys)
 					{
 						// get the value for the variable as defined on the protocol
-						string variableValue = protocolForInput.VariableValue[variable];
+						string variableValue = protocolForInput.VariableValue[variable] as string;
 
 						// if the variable's value has not been defined, then just use the variable name as a fallback.
 						if (variableValue == null)
@@ -1055,9 +1073,16 @@ namespace Sensus.UI.Inputs
 			{
 				Protocol protocolForInput = GetProtocol();
 
-				if (protocolForInput.VariableValue.TryGetValue(variableDefiningInput.DefinedVariable, out string value))
+				if (protocolForInput.VariableValue.TryGetValue(variableDefiningInput.DefinedVariable, out object value) && value != null && conditionValue != null)
 				{
-					return value == conditionValue as string;
+					if (value.Equals(conditionValue))
+					{
+						return true;
+					}
+					else if (JsonConvert.SerializeObject(value) == JsonConvert.SerializeObject(conditionValue))
+					{
+						return true;
+					}
 				}
 
 				return conditionValue == null;

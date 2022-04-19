@@ -22,8 +22,9 @@
     <TargetFrameworkVersion>v10.0</TargetFrameworkVersion>
     <AssemblyName>SensusAndroid</AssemblyName>
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
-    <Description>Endpoint for the Sensus Android application. This is what gets built and distributed to the Android Play
-Store. It is possible to run and debug this project on physical and virtual Android devices.</Description>
+    <Description>
+			Endpoint for the Sensus Android application. This is what gets built and distributed to the Android Play Store. It is possible to run and debug this project on physical and virtual Android devices.
+		</Description>
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -47,6 +48,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <EnableLLVM>false</EnableLLVM>
     <BundleAssemblies>false</BundleAssemblies>
     <LangVersion>latest</LangVersion>
+    <AndroidLinkMode>None</AndroidLinkMode>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>
@@ -66,6 +68,16 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
+  <Target Name="AddCustomAliases" BeforeTargets="ResolveReferences">
+    <ItemGroup>
+      <ReferencePath Condition="'%(FileName)' == 'Estimote.Android.Indoor'">
+        <Aliases>indoor, global</Aliases>
+      </ReferencePath>
+      <ReferencePath Condition="'%(FileName)' == 'Estimote.Android.Proximity'">
+        <Aliases>proximity, global</Aliases>
+      </ReferencePath>
+    </ItemGroup>
+  </Target>
   <ItemGroup>
     <Reference Include="BouncyCastle.Crypto, Version=1.9.0.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
       <HintPath>..\packages\Portable.BouncyCastle.1.9.0\lib\netstandard2.0\BouncyCastle.Crypto.dll</HintPath>
@@ -102,9 +114,6 @@ Store. It is possible to run and debug this project on physical and virtual Andr
     </Reference>
     <Reference Include="Plugin.Media, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xam.Plugin.Media.4.0.1.5\lib\monoandroid71\Plugin.Media.dll</HintPath>
-    </Reference>
-    <Reference Include="Sensus.Shared.NuGet, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sensus.1.55.0\lib\netstandard2.0\Sensus.Shared.NuGet.dll</HintPath>
     </Reference>
     <Reference Include="SkiaSharp, Version=2.80.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
       <HintPath>..\packages\SkiaSharp.2.80.2\lib\monoandroid1.0\SkiaSharp.dll</HintPath>
@@ -483,7 +492,7 @@ Store. It is possible to run and debug this project on physical and virtual Andr
   </ItemGroup>
   <Import Project="..\Sensus.Shared\Sensus.Shared.projitems" Label="Shared" />
   <Import Project="..\Sensus.Android.Shared\Sensus.Android.Shared.projitems" Label="Shared" />
-  <Import Project="..\ExampleSensingAgent.Shared\ExampleSensingAgent.Shared.projitems" Label="Shared" />
+  <Import Project="..\Sensus.Shared.Core\Sensus.Shared.Core.projitems" Label="Shared" />
   <Import Project="..\packages\Xamarin.Build.Download.0.4.11\build\Xamarin.Build.Download.targets" Condition="Exists('..\packages\Xamarin.Build.Download.0.4.11\build\Xamarin.Build.Download.targets')" />
   <Import Project="..\packages\Xamarin.GooglePlayServices.Basement.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Basement.targets" Condition="Exists('..\packages\Xamarin.GooglePlayServices.Basement.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Basement.targets')" />
   <Import Project="..\packages\Xamarin.GooglePlayServices.Tasks.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Tasks.targets" Condition="Exists('..\packages\Xamarin.GooglePlayServices.Tasks.60.1142.1\build\MonoAndroid80\Xamarin.GooglePlayServices.Tasks.targets')" />

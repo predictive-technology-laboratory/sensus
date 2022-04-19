@@ -516,7 +516,7 @@ namespace Sensus
 		private float _gpsMinDistanceDelayMeters;
 		private float _gpsDeferralDistanceMeters;
 		private float _gpsDeferralTimeMinutes;
-		private Dictionary<string, string> _variableValue;
+		private Dictionary<string, object> _variableValue;
 		private ProtocolStartConfirmationMode _startConfirmationMode;
 		private string _participantId;
 		private string _pushNotificationsSharedAccessSignature;
@@ -1009,7 +1009,7 @@ namespace Sensus
 			}
 		}
 
-		public Dictionary<string, string> VariableValue
+		public Dictionary<string, object> VariableValue
 		{
 			get
 			{
@@ -1039,7 +1039,7 @@ namespace Sensus
 			}
 			set
 			{
-				_variableValue = new Dictionary<string, string>();
+				_variableValue = new Dictionary<string, object>();
 
 				if (value != null)
 				{
@@ -1673,7 +1673,7 @@ namespace Sensus
 			_gpsMinDistanceDelayMeters = GPS_DEFAULT_MIN_DISTANCE_DELAY_METERS;
 			_gpsDeferralDistanceMeters = GPS_DEFAULT_DEFERRAL_DISTANCE_METERS;
 			_gpsDeferralTimeMinutes = GPS_DEFAULT_DEFERRAL_TIME_MINUTES;
-			_variableValue = new Dictionary<string, string>();
+			_variableValue = new Dictionary<string, object>();
 			_startConfirmationMode = ProtocolStartConfirmationMode.None;
 			_probes = new List<Probe>();
 		}

@@ -36,6 +36,7 @@ namespace Sensus.UI.Inputs
 		private ButtonGridView _grid;
 		private string _definedVariable;
 		private object _value;
+		private string _otherResponseValue;
 
 		/// <summary>
 		/// A short tip that explains how to pick an item from the dialog window.
@@ -128,14 +129,25 @@ namespace Sensus.UI.Inputs
 			}
 		}
 
+		[OnOffUiProperty("Split into Value/Text Pairs:", true, 17)]
+		public bool SplitValueTextPairs { get; set; }
+
+		[EditableListUiProperty("\"Other\" Values:", true, 17, true)]
+		public List<string> OtherValues { get; set; }
+
+		[EntryStringUiProperty("\"Other\" Response Label:", true, 17, true)]
+		public string OtherResponseLabel { get; set; }
+
 		public override object Value
 		{
 			get
 			{
-				// the slider can be untouched but still have a value associated with it (i.e., the position of the slider). if the slider
-				// is not a required input, then this value would be returned, which is not what we want since the user never interacted with the
-				// input. so, additionally keep track of whether the value has actually changed, indicating that the user has touched the control.
-				return _value; // _slider == null || !_incrementalValueHasChanged ? null : (object)_incrementalValue;
+				if (string.IsNullOrEmpty(_otherResponseValue) == false)
+				{
+					_value = new object[] { _value, _otherResponseValue };
+				}
+
+				return _value;
 			}
 		}
 
@@ -269,6 +281,25 @@ namespace Sensus.UI.Inputs
 				// value. this is needed with a slider range that has a negative minimum.
 				_slider.Value = Minimum;
 
+				List<string> otherValues = OtherValues?.ToList() ?? new List<string>();
+
+				StackLayout otherLayout = null;
+				Label otherLabel = null;
+				Editor otherEditor = null;
+
+				_slider.DragStarted += (sender, e) =>
+				{
+					if (_slider.Effects.Contains(_effect))
+					{
+						_slider.Effects.Remove(_effect);
+					}
+				};
+
+				_slider.DragCompleted += (sender, e) =>
+				{
+					_slider.Value = _incrementalValue;
+				};
+
 				_slider.ValueChanged += (sender, e) =>
 				{
 					double newIncrementalValue = GetIncrementalValue(e.NewValue);
@@ -279,11 +310,28 @@ namespace Sensus.UI.Inputs
 						_incrementalValueHasChanged = true;
 
 						_value = _incrementalValue;
-						_slider.Value = _incrementalValue;
+
+						if (otherValues.Contains(_value.ToString()))
+						{
+							otherLabel.Text = $"{OtherResponseLabel ?? "Other Response"}:";
+
+							if (otherLabel.Text.EndsWith("::"))
+							{
+								otherLabel.Text = otherLabel.Text[0..^1];
+							}
+
+							otherLayout.IsVisible = true;
+
+							_otherResponseValue = otherEditor.Text;
+						}
+						else
+						{
+							otherLayout.IsVisible = false;
+
+							_otherResponseValue = null;
+						}
 
 						Complete = true;
-
-						_slider.Effects.Remove(_effect);
 
 						foreach (ButtonWithValue gridButton in _grid.Buttons)
 						{
@@ -315,11 +363,51 @@ namespace Sensus.UI.Inputs
 					}
 
 					button.State = ButtonStates.Selected;
+
+					if (otherLayout != null)
+					{
+						bool otherSelected = otherValues.Contains(button.Value);
+
+						if (otherSelected)
+						{
+							_otherResponseValue = otherEditor.Text;
+						}
+						else
+						{
+							_otherResponseValue = null;
+						}
+
+						if (string.IsNullOrWhiteSpace(OtherResponseLabel) && otherLabel != null)
+						{
+							otherLabel.Text = button.Text + ":";
+
+							if (otherLabel.Text.EndsWith("::"))
+							{
+								otherLabel.Text = otherLabel.Text[0..^1];
+							}
+						}
+
+						otherLayout.IsVisible = otherSelected;
+					}
 				})
 				{
 					AutoSize = AutoSizeOptionButtons,
 					IsVisible = false
 				};
+
+				foreach (string buttonValue in OtherOptions)
+				{
+					(string text, string value, bool isOther) = ButtonValueParser.ParseButtonValue(buttonValue, SplitValueTextPairs);
+
+					if (isOther)
+					{
+						otherValues.Add(value);
+					}
+
+					ButtonWithValue button = _grid.AddButton(text, value);
+
+					button.State = ButtonStates.Selectable;
+				}
 
 				StackLayout optionsLayout = new StackLayout
 				{
@@ -329,14 +417,34 @@ namespace Sensus.UI.Inputs
 					Children = { optionsLabel, _grid }
 				};
 
-				foreach (string buttonValue in OtherOptions)
-				{
-					ButtonWithValue button = _grid.AddButton(buttonValue, buttonValue);
-
-					button.State = ButtonStates.Selectable; //Style = (Style)Application.Current.Resources["SelectableButton"];
-				}
-
 				_grid.Arrange();
+
+				if (otherValues.Any())
+				{
+					otherEditor = new Editor
+					{
+						Keyboard = Keyboard.Default,
+						HorizontalOptions = LayoutOptions.FillAndExpand,
+						AutoSize = EditorAutoSizeOption.TextChanges
+					};
+
+					otherEditor.Unfocused += (s, e) => _otherResponseValue = otherEditor.Text;
+
+					otherLabel = new Label { Text = $"{OtherResponseLabel ?? "Other Response"}:" };
+
+					if (otherLabel.Text.EndsWith("::"))
+					{
+						otherLabel.Text = otherLabel.Text[0..^1];
+					}
+
+					otherLayout = new StackLayout
+					{
+						IsVisible = false,
+						Children = { otherLabel, otherEditor }
+					};
+
+					optionsLayout.Children.Add(otherLayout);
+				}
 
 				base.SetView(new StackLayout
 				{

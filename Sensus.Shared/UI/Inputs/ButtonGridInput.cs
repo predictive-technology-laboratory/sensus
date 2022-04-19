@@ -17,7 +17,6 @@ using Sensus.UI.UiProperties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Xamarin.Forms;
 
 namespace Sensus.UI.Inputs
@@ -26,6 +25,8 @@ namespace Sensus.UI.Inputs
 	{
 		private string _definedVariable;
 		private object _value;
+		private string _otherResponseValue;
+
 		protected ButtonGridView _grid;
 
 		private ButtonStates _defaultState;
@@ -38,7 +39,25 @@ namespace Sensus.UI.Inputs
 			_defaultState = ButtonStates.Default;
 		}
 
-		public override object Value => _value;
+		public override object Value
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(_otherResponseValue) == false)
+				{
+					if (_value is string)
+					{
+						_value = new string[] { _value as string, _otherResponseValue };
+					}
+					else if (_value is string[] array)
+					{
+						_value = array.Union(new[] { _otherResponseValue }).ToArray();
+					}
+				}
+
+				return _value;
+			}
+		}
 
 		public override bool Enabled
 		{
@@ -88,8 +107,14 @@ namespace Sensus.UI.Inputs
 		[OnOffUiProperty("Leave Incorrect Value:", true, 4)]
 		public bool LeaveIncorrectValue { get; set; }
 
-		[OnOffUiProperty("Split into Value:Text Pairs:", true, 4)]
+		[OnOffUiProperty("Split into Value/Text Pairs:", true, 4)]
 		public bool SplitValueTextPairs { get; set; }
+
+		[EditableListUiProperty("\"Other\" Values:", true, 4, true)]
+		public List<string> OtherValues { get; set; }
+
+		[EntryStringUiProperty("\"Other\" Response Label:", true, 4, true)]
+		public string OtherResponseLabel { get; set; }
 
 		[JsonIgnore]
 		public List<ButtonWithValue> GridButtons => _grid?.Buttons.ToList() ?? new List<ButtonWithValue>();
@@ -124,6 +149,12 @@ namespace Sensus.UI.Inputs
 				{
 					minSelectionCount = Math.Max(1, minSelectionCount);
 				}
+
+				List<string> otherValues = OtherValues?.ToList() ?? new List<string>();
+
+				StackLayout otherLayout = null;
+				Label otherLabel = null;
+				Editor otherEditor = null;
 
 				_grid = new ButtonGridView(ColumnCount, (s, e) =>
 				{
@@ -183,19 +214,43 @@ namespace Sensus.UI.Inputs
 							button.State = ButtonStates.Selected;
 						}
 					}
+
+					if (otherLayout != null && otherValues.Any())
+					{
+						IEnumerable<ButtonWithValue> selectedOtherButtons = _grid.Buttons.Where(x => x.State == ButtonStates.Selected && otherValues.Contains(x.Value));
+
+						bool otherSelected = selectedOtherButtons.Any();
+
+						if (otherSelected)
+						{
+							_otherResponseValue = otherEditor.Text;
+						}
+						else
+						{
+							_otherResponseValue = null;
+						}
+
+						if (string.IsNullOrWhiteSpace(OtherResponseLabel) && otherLabel != null && selectedOtherButtons.Count() == 1)
+						{
+							otherLabel.Text = button.Text + ":";
+
+							if (otherLabel.Text.EndsWith("::"))
+							{
+								otherLabel.Text = otherLabel.Text[0..^1];
+							}
+						}
+
+						otherLayout.IsVisible = otherSelected;
+					}
 				});
 
 				foreach (string buttonValue in Buttons)
 				{
-					string text = buttonValue;
-					string value = buttonValue;
+					(string text, string value, bool isOther) = ButtonValueParser.ParseButtonValue(buttonValue, SplitValueTextPairs);
 
-					if (SplitValueTextPairs)
+					if (isOther)
 					{
-						string[] pair = Regex.Split(buttonValue.Replace("::", "\0"), ":").Select(x => x.Replace("\0", ":")).ToArray();
-
-						value = pair.FirstOrDefault();
-						text = pair.LastOrDefault();
+						otherValues.Add(value);
 					}
 
 					ButtonWithValue button = _grid.AddButton(text, value);
@@ -208,7 +263,44 @@ namespace Sensus.UI.Inputs
 
 				_grid.Arrange();
 
-				base.SetView(_grid);
+				View input = _grid;
+
+				if (Selectable && otherValues.Any())
+				{
+					otherEditor = new Editor
+					{
+						Keyboard = Keyboard.Default,
+						HorizontalOptions = LayoutOptions.FillAndExpand,
+						AutoSize = EditorAutoSizeOption.TextChanges
+					};
+
+					otherEditor.Unfocused += (s, e) => _otherResponseValue = otherEditor.Text;
+
+					otherLabel = new Label { Text = $"{OtherResponseLabel ?? "Other Response"}:" };
+
+					if (string.IsNullOrWhiteSpace(OtherResponseLabel) && otherValues.Count == 1 && GridButtons.FirstOrDefault(x => x.Value == otherValues[0]) is ButtonWithValue otherButton)
+					{
+						otherLabel.Text = otherButton.Text;
+					}
+
+					if (otherLabel.Text.EndsWith("::"))
+					{
+						otherLabel.Text = otherLabel.Text[0..^1];
+					}
+
+					otherLayout = new StackLayout
+					{
+						IsVisible = false,
+						Children = { otherLabel, otherEditor }
+					};
+
+					input = new StackLayout
+					{
+						Children = { _grid, otherLayout }
+					};
+				}
+
+				base.SetView(input);
 			}
 
 			return base.GetView(index);

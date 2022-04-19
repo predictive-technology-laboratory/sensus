@@ -59,21 +59,16 @@ namespace Sensus.UI
 
 		protected override async Task<bool> RunScriptAsync(Script script)
 		{
-			//script = script.Copy(true);
-
 			script.RunTime = DateTimeOffset.UtcNow;
 
-			if (await base.RunScriptAsync(script))
-			{
-				foreach (Input input in script.InputGroups.SelectMany(x => x.Inputs))
-				{
-					input.Reset();
-				}
+			bool submitted = await base.RunScriptAsync(script);
 
-				return true;
+			foreach (Input input in script.InputGroups.SelectMany(x => x.Inputs))
+			{
+				input.Reset();
 			}
 
-			return false;
+			return submitted;
 		}
 	}
 }

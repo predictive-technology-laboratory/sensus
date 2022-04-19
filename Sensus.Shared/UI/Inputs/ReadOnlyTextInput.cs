@@ -22,7 +22,9 @@ namespace Sensus.UI.Inputs
 	{
 		public ReadOnlyTextInput()
 		{
-
+			StoreCompletionRecords = false;
+			Complete = true;
+			Required = false;
 		}
 
 		public override object Value
@@ -60,10 +62,6 @@ namespace Sensus.UI.Inputs
 				{
 					textLabel.TextType = TextType.Html;
 				}
-
-				StoreCompletionRecords = false;
-				Complete = true;
-				Required = false;
 
 				base.SetView(new StackLayout
 				{

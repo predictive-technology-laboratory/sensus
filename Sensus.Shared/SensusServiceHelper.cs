@@ -91,7 +91,7 @@ namespace Sensus
 		/// <summary>
 		/// The build ID, used to tag each <see cref="Datum"/>. This is an arbitrary string value, and it is optional.
 		/// </summary>
-		public const string BUILD_ID = "202203241552";
+		public const string BUILD_ID = "";
 
 		public static readonly string SHARE_DIRECTORY = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "share");
 		private static readonly string LOG_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "sensus_log.txt");
@@ -2064,7 +2064,7 @@ namespace Sensus
 
 				await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Cancelled) ?? Task.CompletedTask);
 				// temporary ScriptState value until the Nuget package is updated
-				script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum((ScriptState)9, DateTimeOffset.UtcNow, script), CancellationToken.None);
+				script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Paused, DateTimeOffset.UtcNow, script), CancellationToken.None);
 
 				if (savedState != null && result.InputGroups != null)
 				{
