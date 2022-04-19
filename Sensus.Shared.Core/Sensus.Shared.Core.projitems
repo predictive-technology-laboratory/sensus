@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>8560be00-6908-4c16-b80e-ae1e6a2c8412</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Sensus.Shared.Core</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Adaptation\ISensingAgentStateDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Adaptation\SensingAgent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Adaptation\SensingAgentControlCriteria.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Adaptation\SensingAgentState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\TypeExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ILogger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IProtocol.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ISensusServiceHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LoggingLevel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\ISmsDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\ITelephonyDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\TelephonyState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\IAmbientTemperatureDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\IBluetoothDeviceProximityDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\IHumidityDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\ILightDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\ISoundDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\IBatteryDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Device\IScreenDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\IListeningProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\IPollingProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\IProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeaconProximityEvent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\IAltitudeDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\ICompassDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\IEstimoteBeaconDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\ILocationDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\IPointOfInterestProximityDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\IProximityDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\ProximityThresholdDirection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\Activities.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityConfidence.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityPhase.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\IAccelerometerDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\IActivityDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\IAttitudeDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\IGyroscopeDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ILinearAccelerationDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\IMagnetometerDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\IPedometerDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ISpeedDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\ICellTowerDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\IWlanDatum.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\IScript.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\IScriptProbeAgent.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\IScriptRunner.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScriptState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ProtocolState.cs" />
+  </ItemGroup>
+</Project>

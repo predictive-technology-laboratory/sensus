@@ -2064,7 +2064,7 @@ namespace Sensus
 
 				await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Cancelled) ?? Task.CompletedTask);
 				// temporary ScriptState value until the Nuget package is updated
-				script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum((ScriptState)9, DateTimeOffset.UtcNow, script), CancellationToken.None);
+				script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Paused, DateTimeOffset.UtcNow, script), CancellationToken.None);
 
 				if (savedState != null && result.InputGroups != null)
 				{

@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.202
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32319.34
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sensus.Android", "Sensus.Android\Sensus.Android.csproj", "{D33B6CDB-795C-4826-B131-47C526ACE07F}"
 EndProject
@@ -68,14 +68,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{1833108D-29E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sensus.Shared.NuGet", "Sensus.Shared.NuGet\Sensus.Shared.NuGet.csproj", "{117104F2-EE3A-4BF1-B617-DE009D6453F7}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sensus.Shared.Core", "Sensus.Shared.Core\Sensus.Shared.Core.shproj", "{8560BE00-6908-4C16-B80E-AE1E6A2C8412}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Sensus.Shared.Core\Sensus.Shared.Core.projitems*{117104f2-ee3a-4bf1-b617-de009d6453f7}*SharedItemsImports = 5
+		Sensus.Shared.Core\Sensus.Shared.Core.projitems*{8560be00-6908-4c16-b80e-ae1e6a2c8412}*SharedItemsImports = 13
 		Sensus.iOS.Shared\Sensus.iOS.Shared.projitems*{acfa56bf-b959-4caf-a2a7-981a9e48e17c}*SharedItemsImports = 4
+		Sensus.Shared.Core\Sensus.Shared.Core.projitems*{acfa56bf-b959-4caf-a2a7-981a9e48e17c}*SharedItemsImports = 4
 		Sensus.Shared\Sensus.Shared.projitems*{acfa56bf-b959-4caf-a2a7-981a9e48e17c}*SharedItemsImports = 4
 		Sensus.Shared\Sensus.Shared.projitems*{b2f65fe8-f266-4c0c-b4a8-d326002b9180}*SharedItemsImports = 13
 		Sensus.Android.Shared\Sensus.Android.Shared.projitems*{b6e23da5-2716-426b-9f8f-9c47bd6b68d3}*SharedItemsImports = 13
 		Sensus.iOS.Shared\Sensus.iOS.Shared.projitems*{ca15dd76-c484-4a56-a03f-9ef242294d55}*SharedItemsImports = 13
 		Sensus.Android.Shared\Sensus.Android.Shared.projitems*{d33b6cdb-795c-4826-b131-47c526ace07f}*SharedItemsImports = 4
+		Sensus.Shared.Core\Sensus.Shared.Core.projitems*{d33b6cdb-795c-4826-b131-47c526ace07f}*SharedItemsImports = 4
 		Sensus.Shared\Sensus.Shared.projitems*{d33b6cdb-795c-4826-b131-47c526ace07f}*SharedItemsImports = 4
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
