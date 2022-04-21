@@ -311,24 +311,27 @@ namespace Sensus.UI.Inputs
 
 						_value = _incrementalValue;
 
-						if (otherValues.Contains(_value.ToString()))
+						if (otherLayout != null)
 						{
-							otherLabel.Text = $"{OtherResponseLabel ?? "Other Response"}:";
-
-							if (otherLabel.Text.EndsWith("::"))
+							if (otherValues.Contains(_value.ToString()))
 							{
-								otherLabel.Text = otherLabel.Text[0..^1];
+								otherLabel.Text = $"{OtherResponseLabel ?? "Other Response"}:";
+
+								if (otherLabel.Text.EndsWith("::"))
+								{
+									otherLabel.Text = otherLabel.Text[0..^1];
+								}
+
+								otherLayout.IsVisible = true;
+
+								_otherResponseValue = otherEditor.Text;
 							}
+							else
+							{
+								otherLayout.IsVisible = false;
 
-							otherLayout.IsVisible = true;
-
-							_otherResponseValue = otherEditor.Text;
-						}
-						else
-						{
-							otherLayout.IsVisible = false;
-
-							_otherResponseValue = null;
+								_otherResponseValue = null;
+							}
 						}
 
 						Complete = true;
