@@ -151,7 +151,7 @@ namespace Sensus.UI
 
 				subHeaderLayout.Children.Add(new Label
 				{
-					Text = "Progress:  " + Math.Round(100 * progress) + "%",
+					Text = "Progress: " + Math.Round(100 * progress) + "%",
 					FontSize = 15,
 					HorizontalOptions = LayoutOptions.CenterAndExpand
 				});
@@ -331,11 +331,6 @@ namespace Sensus.UI
 					HorizontalOptions = LayoutOptions.FillAndExpand
 				};
 
-				if (inputGroup.PlaceNavigationAtBottom)
-				{
-					_navigationStack.VerticalOptions = LayoutOptions.EndAndExpand;
-				}
-
 				if (inputGroup.ShowNavigationButtons != ShowNavigationOptions.Always)
 				{
 					_navigationStack.IsVisible = false;
@@ -431,7 +426,32 @@ namespace Sensus.UI
 					cancelButton.Clicked += _cancelHandler;
 				}
 
-				contentLayout.Children.Add(_navigationStack);
+				if (inputGroup.NavigationPlacement != NavigationButtonLocations.Outside)
+				{
+					if (inputGroup.NavigationPlacement == NavigationButtonLocations.End)
+					{
+						_navigationStack.VerticalOptions = LayoutOptions.EndAndExpand;
+					}
+
+					contentLayout.Children.Add(_navigationStack);
+				}
+				else
+				{
+					_navigationStack.Padding = contentLayout.Padding;
+
+					if (Content is ScrollView contentScrollView)
+					{
+						Content = new StackLayout
+						{
+							Orientation = StackOrientation.Vertical,
+							Children = { Content, _navigationStack }
+						};
+					}
+					else if (Content is StackLayout contentStackLayout)
+					{
+						contentStackLayout.Children.Add(_navigationStack);
+					}
+				}
 
 				// allow the cancellation token to set the result of this page
 				cancellationToken?.Register(() =>

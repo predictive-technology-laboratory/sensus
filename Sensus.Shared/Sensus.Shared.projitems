@@ -38,6 +38,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\SavedScriptState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\DarkModeCompatibleTextCellcs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ButtonValueParser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\NavigationButtonLocations.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\SliderWithOptionsInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\TimedTextInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\MasterDetailPageExtensions.cs" />
