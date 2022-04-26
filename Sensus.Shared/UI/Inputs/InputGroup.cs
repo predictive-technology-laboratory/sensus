@@ -99,10 +99,10 @@ namespace Sensus.UI.Inputs
 		/// </summary>
 		/// <value><c>true</c> to hide the navigation buttons; otherwise, <c>false</c>.</value>
 		[ListUiProperty("Show Navigation:", true, 2, new object[] { ShowNavigationOptions.Always, ShowNavigationOptions.WhenValid, ShowNavigationOptions.WhenComplete, ShowNavigationOptions.WhenCorrect, ShowNavigationOptions.AfterTimeout, ShowNavigationOptions.Never }, false)]
-		public ShowNavigationOptions ShowNavigationButtons { get; set; }
+		public virtual ShowNavigationOptions ShowNavigationButtons { get; set; }
 
 		[ListUiProperty("Place Navigation:", true, 3, new object[] { NavigationButtonLocations.Inline, NavigationButtonLocations.End, NavigationButtonLocations.Outside }, false)]
-		public NavigationButtonLocations NavigationPlacement { get; set; }
+		public virtual NavigationButtonLocations NavigationPlacement { get; set; }
 
 		[OnOffUiProperty("Prevent Navigation Backward:", true, 3)]
 		public bool HidePreviousButton { get; set; }
