@@ -27,6 +27,7 @@ using System.Collections.Generic;
 using Sensus.Extensions;
 using ICSharpCode.SharpZipLib.Tar;
 using System.Net;
+using Newtonsoft.Json.Linq;
 
 namespace Sensus.DataStores.Local
 {
@@ -482,7 +483,7 @@ namespace Sensus.DataStores.Local
 													}
 													catch (Exception writeException)
 													{
-														SensusException.Report("Exception while writing datum JSON bytes to file:  " + writeException.Message, writeException);
+														SensusException.Report("Exception while writing datum JSON bytes to file: " + writeException.Message, writeException);
 														startNewFile = true;
 														break;
 													}
@@ -797,6 +798,63 @@ namespace Sensus.DataStores.Local
 			return path;
 		}
 
+		private byte[] CheckFile(byte[] bytes, string path, out bool incomplete)
+		{
+			incomplete = false;
+
+			if (bytes.Last() != (byte)']')
+			{
+				string fileName = Path.GetFileName(path);
+
+				incomplete = true;
+
+				try
+				{
+					string json = Encoding.UTF8.GetString(bytes);
+
+					using (StringWriter writer = new StringWriter())
+					{
+						using (JsonTextWriter jsonWriter = new JsonTextWriter(writer) { AutoCompleteOnClose = true })
+						{
+							using (StringReader reader = new StringReader(json))
+							{
+								using (JsonTextReader jsonReader = new JsonTextReader(reader))
+								{
+									try
+									{
+										jsonWriter.WriteToken(jsonReader);
+									}
+									catch (JsonException)
+									{
+										if (jsonReader.TokenType == JsonToken.PropertyName)
+										{
+											jsonWriter.WriteToken(JsonToken.Null, null);
+										}
+
+										SensusServiceHelper.Get().Logger.Log($"Partial data file found and repaired: '{fileName}'", LoggingLevel.Normal, GetType());
+									}
+
+									if (jsonWriter.WriteState == WriteState.Object)
+									{
+										jsonWriter.WriteToken(JsonToken.PropertyName, "IncompleteDatum");
+										jsonWriter.WriteToken(JsonToken.Boolean, true);
+									}
+								}
+							}
+						}
+
+						return Encoding.UTF8.GetBytes(writer.ToString());
+					}
+				}
+				catch (Exception e)
+				{
+					SensusServiceHelper.Get().Logger.Log($"Partial data file found: '{fileName}'. It could not be repaired: {e.Message}", LoggingLevel.Normal, GetType());
+				}
+			}
+
+			return bytes;
+		}
+
 		private void PreparePathForRemoteAsync(string path, CancellationToken cancellationToken)
 		{
 			try
@@ -809,7 +867,16 @@ namespace Sensus.DataStores.Local
 
 						if (bytes.Length > 0)
 						{
-							string preparedPath = Path.Combine(Path.GetDirectoryName(path), Guid.NewGuid() + JSON_FILE_EXTENSION);
+							string incompleteSuffix = "";
+
+							bytes = CheckFile(bytes, path, out bool incomplete);
+
+							if (incomplete)
+							{
+								incompleteSuffix = "-incomplete";
+							}
+
+							string preparedPath = Path.Combine(Path.GetDirectoryName(path), Guid.NewGuid() + incompleteSuffix + JSON_FILE_EXTENSION);
 
 							if (_compressionLevel != CompressionLevel.NoCompression)
 							{
@@ -821,11 +888,6 @@ namespace Sensus.DataStores.Local
 								bytes = compressedStream.ToArray();
 
 								compressedStream.Position = 0;
-
-								if (Encoding.Default.GetString(compressor.Decompress(compressedStream)) is string decompressed && decompressed.EndsWith("]") == false)
-								{
-									SensusServiceHelper.Get().Logger.Log("Partial file compression", LoggingLevel.Normal, GetType());
-								}
 							}
 
 							if (_encrypt)
