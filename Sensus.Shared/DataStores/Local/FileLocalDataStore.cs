@@ -27,7 +27,6 @@ using System.Collections.Generic;
 using Sensus.Extensions;
 using ICSharpCode.SharpZipLib.Tar;
 using System.Net;
-using Newtonsoft.Json.Linq;
 
 namespace Sensus.DataStores.Local
 {
@@ -94,7 +93,7 @@ namespace Sensus.DataStores.Local
 		/// Step 2:  A file on disk without a file extension, written with data from the in-memory buffer.
 		/// </summary>
 		private string _currentPath;
-		private BufferedStream _currentFile;
+		private Stream _currentFile;
 		private int _currentFileBufferSizeBytes;
 		private Task _writeBufferedDataToFileTask;
 		private List<Datum> _toWriteBuffer;
@@ -164,6 +163,13 @@ namespace Sensus.DataStores.Local
 				_compressionLevel = value;
 			}
 		}
+
+		/// <summary>
+		/// Gets or sets whether <see cref="Probes.Probe"/> data will be held buffered in memory or written immediately to file.
+		/// </summary>
+		/// <value><see langword="true" /> to skip buffering.</value>
+		[OnOffUiProperty("Do Not Use Buffer:", true, 2)]
+		public bool DoNotUseBuffer { get; set; }
 
 		/// <summary>
 		/// Gets or sets the buffer size in bytes. All <see cref="Probes.Probe"/>d data will be held in memory until the buffer is filled, at which time
@@ -372,7 +378,17 @@ namespace Sensus.DataStores.Local
 					try
 					{
 						_currentPath = Path.Combine(StorageDirectory, Guid.NewGuid().ToString());
-						_currentFile = new BufferedStream(new FileStream(_currentPath, FileMode.CreateNew, FileAccess.Write), _currentFileBufferSizeBytes);
+
+						if (DoNotUseBuffer)
+						{
+							_currentFile = new FileStream(_currentPath, FileMode.CreateNew, FileAccess.Write);
+						}
+						else
+						{
+							// TODO: check into whether this is necessary at all. It seems as if the funcitonality of BufferedStream has been moved into Streams like FileStream
+							_currentFile = new BufferedStream(new FileStream(_currentPath, FileMode.CreateNew, FileAccess.Write), _currentFileBufferSizeBytes);
+						}
+
 						_totalDataWrittenToCurrentFile = 0;
 						_totalFilesOpened++;
 					}
@@ -397,13 +413,81 @@ namespace Sensus.DataStores.Local
 			}
 		}
 
-		public override void WriteDatum(Datum datum, CancellationToken cancellationToken)
+		private void WriteDatumImmediately(Datum datum, CancellationToken cancellationToken)
 		{
-			if (!Running)
+			Task.Run(async () =>
 			{
-				return;
-			}
+				bool startNewFile = false;
+				bool checkSize = false;
 
+				lock (_fileLocker)
+				{
+					// it's possible to stop the datastore and dispose the file before entering this lock, in 
+					// which case we won't have a file to write to. check the file.
+					if (_currentFile != null)
+					{
+						#region write JSON for datum to file
+						string datumJSON = null;
+						try
+						{
+							datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, false);
+						}
+						catch (Exception ex)
+						{
+							SensusException.Report("Failed to get JSON for datum.", ex);
+						}
+
+						if (datumJSON != null)
+						{
+							try
+							{
+								byte[] datumJsonBytes = Encoding.UTF8.GetBytes((_totalDataWrittenToCurrentFile == 0 ? "" : ",") + Environment.NewLine + datumJSON);
+								_currentFile.Write(datumJsonBytes, 0, datumJsonBytes.Length);
+								_totalDataWrittenToCurrentFile++;
+								_totalDataWritten++;
+
+								_currentFile.Flush();
+
+								// periodically check the size of the current file
+								if (_totalDataWrittenToCurrentFile % DATA_WRITES_PER_SIZE_CHECK == 0)
+								{
+									checkSize = true;
+								}
+							}
+							catch (Exception writeException)
+							{
+								SensusException.Report("Exception while writing datum JSON bytes to file: " + writeException.Message, writeException);
+
+								startNewFile = true;
+							}
+						}
+						#endregion
+					}
+
+					if (checkSize)
+					{
+						// must do the check within the lock, since other callers might be trying to close the file and null the path.
+						if (SensusServiceHelper.GetFileSizeMB(_currentPath) >= MAX_FILE_SIZE_MB)
+						{
+							startNewFile = true;
+						}
+					}
+				}
+
+				if (startNewFile)
+				{
+					StartNewFile(cancellationToken);
+				}
+
+				if (checkSize)
+				{
+					await WriteToRemoteIfTooLargeAsync(cancellationToken);
+				}
+
+			}, cancellationToken);
+		}
+		private void WriteDatumBuffered(Datum datum, CancellationToken cancellationToken)
+		{
 			lock (_dataBuffer)
 			{
 				_dataBuffer.Add(datum);
@@ -534,6 +618,22 @@ namespace Sensus.DataStores.Local
 						}
 					});
 				}
+			}
+		}
+		public override void WriteDatum(Datum datum, CancellationToken cancellationToken)
+		{
+			if (!Running)
+			{
+				return;
+			}
+
+			if (DoNotUseBuffer)
+			{
+				WriteDatumImmediately(datum, cancellationToken);
+			}
+			else
+			{
+				WriteDatumBuffered(datum, cancellationToken);
 			}
 		}
 
