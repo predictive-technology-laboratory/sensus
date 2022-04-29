@@ -16,7 +16,7 @@ using Sensus.Probes;
 using System;
 using System.Linq;
 using System.Collections.Generic;
-//using Newtonsoft.Json;
+using Newtonsoft.Json;
 
 namespace Sensus
 {
@@ -33,7 +33,7 @@ namespace Sensus
     {
         private Dictionary<string, double> _probeParticipation;
 
-        //[JsonProperty(TypeNameHandling = TypeNameHandling.None)]
+        [JsonProperty(TypeNameHandling = TypeNameHandling.None)]
         public Dictionary<string, double> ProbeParticipation
         {
             get
