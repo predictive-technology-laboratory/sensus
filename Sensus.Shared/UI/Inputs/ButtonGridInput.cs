@@ -116,6 +116,9 @@ namespace Sensus.UI.Inputs
 		[EntryStringUiProperty("\"Other\" Response Label:", true, 4, true)]
 		public string OtherResponseLabel { get; set; }
 
+		[OnOffUiProperty("Auto size buttons:", true, 4)]
+		public bool AutoSizeButtons { get; set; }
+
 		[JsonIgnore]
 		public List<ButtonWithValue> GridButtons => _grid?.Buttons.ToList() ?? new List<ButtonWithValue>();
 
@@ -214,6 +217,8 @@ namespace Sensus.UI.Inputs
 							button.State = ButtonStates.Selected;
 						}
 					}
+
+					_grid.AutoSize = AutoSizeButtons;
 
 					if (otherLayout != null && otherValues.Any())
 					{
