@@ -133,7 +133,7 @@ namespace Sensus.Probes.User.Scripts
 
 					if (restoredState)
 					{
-						foreach (KeyValuePair<string, string> pair in runner.SavedState.Variables)
+						foreach (KeyValuePair<string, object> pair in runner.SavedState.Variables)
 						{
 							runner.Probe.Protocol.VariableValue[pair.Key] = pair.Value;
 						}

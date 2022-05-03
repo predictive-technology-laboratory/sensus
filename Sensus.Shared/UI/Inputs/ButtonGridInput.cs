@@ -35,6 +35,7 @@ namespace Sensus.UI.Inputs
 		{
 			Buttons = new List<string>();
 			ColumnCount = 1;
+			MaxSelectionCount = 1;
 
 			_defaultState = ButtonStates.Default;
 		}

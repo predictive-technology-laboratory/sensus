@@ -411,13 +411,13 @@ namespace Sensus.UI.Inputs
 							// if the input is complete, set the variable on the protocol
 							if (_complete)
 							{
-								string variableValue = inputValue.ToString();
+								//string variableValue = inputValue.ToString();
 
-								protocolForInput.VariableValue[definedVariable] = variableValue;
+								protocolForInput.VariableValue[definedVariable] = inputValue; // variableValue;
 
 								if (runner.SaveState && runner.SavedState != null)
 								{
-									runner.SavedState.Variables[definedVariable] = variableValue;
+									runner.SavedState.Variables[definedVariable] = inputValue; // variableValue;
 								}
 							}
 							// if the input is incomplete, set the value to null on the protocol
