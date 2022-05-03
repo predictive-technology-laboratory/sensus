@@ -218,8 +218,6 @@ namespace Sensus.UI.Inputs
 						}
 					}
 
-					_grid.AutoSize = AutoSizeButtons;
-
 					if (otherLayout != null && otherValues.Any())
 					{
 						IEnumerable<ButtonWithValue> selectedOtherButtons = _grid.Buttons.Where(x => x.State == ButtonStates.Selected && otherValues.Contains(x.Value));
@@ -247,7 +245,10 @@ namespace Sensus.UI.Inputs
 
 						otherLayout.IsVisible = otherSelected;
 					}
-				});
+				})
+				{
+					AutoSize = AutoSizeButtons
+				};
 
 				foreach (string buttonValue in Buttons)
 				{
