@@ -35,6 +35,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)MediaCacheModes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MediaObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MediaStorageMethods.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ObjectComparer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\SavedScriptState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\DarkModeCompatibleTextCellcs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ButtonValueParser.cs" />
