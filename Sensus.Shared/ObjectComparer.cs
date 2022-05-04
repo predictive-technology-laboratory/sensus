@@ -36,6 +36,11 @@ namespace Sensus
 	{
 		private static bool CompareIComparables(IComparable left, IComparable right, ComparisonOperators compareWith)
 		{
+			if (compareWith == ComparisonOperators.Default)
+			{
+				compareWith = ComparisonOperators.Equal;
+			}
+
 			if (left.GetType() == right.GetType())
 			{
 				int result = left.CompareTo(right);
@@ -142,6 +147,11 @@ namespace Sensus
 			IEnumerable<object> rightObjects = right.OfType<object>();
 			IEnumerable<object> intersection = leftObjects.Intersect(rightObjects);
 			int intersectionLength = intersection.Count();
+
+			if (compareWith == ComparisonOperators.Default)
+			{
+				compareWith = ComparisonOperators.Intersect;
+			}
 
 			if (compareWith == ComparisonOperators.Equal)
 			{
@@ -273,11 +283,7 @@ namespace Sensus
 
 		public static bool Compare(object left, object right, ComparisonOperators compareWith)
 		{
-			if (compareWith == ComparisonOperators.Default)
-			{
-				compareWith = ComparisonOperators.Equal;
-			}
-			else if (compareWith == ComparisonOperators.StrictEqual)
+			if (compareWith == ComparisonOperators.StrictEqual)
 			{
 				return Equals(left, right);
 			}
