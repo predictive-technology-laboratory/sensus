@@ -8,7 +8,7 @@ namespace Sensus
 {
 	public enum ComparisonOperators
 	{
-		None,
+		Default,
 		Equal,                    // IComparable comparisons
 		NotEqual,                 // IComparable comparisons
 		GreaterThan,              // IComparable comparisons
@@ -27,120 +27,111 @@ namespace Sensus
 		LengthGreaterThanOrEqual, // IEnumerable comparisons
 		LengthLessThan,           // IEnumerable comparisons
 		LengthLessThanOrEqual,    // IEnumerable comparisons
+
+		StrictEqual,
+		StrictNotEqual
 	}
 
 	public static class ObjectComparer
 	{
 		private static bool CompareIComparables(IComparable left, IComparable right, ComparisonOperators compareWith)
 		{
-			try
+			if (left.GetType() == right.GetType())
 			{
-				if (compareWith == ComparisonOperators.None)
+				int result = left.CompareTo(right);
+
+				if (compareWith == ComparisonOperators.Equal && result == 0)
 				{
-					compareWith = ComparisonOperators.Equal;
+					return true;
 				}
-
-				if (left.GetType() == right.GetType())
+				else if (compareWith == ComparisonOperators.NotEqual && result != 0)
 				{
-					int result = left.CompareTo(right);
-
-					if (compareWith == ComparisonOperators.Equal && result == 0)
+					return true;
+				}
+				else if (compareWith == ComparisonOperators.GreaterThanOrEqual && result >= 0)
+				{
+					return true;
+				}
+				else if (compareWith == ComparisonOperators.GreaterThan && result > 0)
+				{
+					return true;
+				}
+				else if (compareWith == ComparisonOperators.LessThanOrEqual && result <= 0)
+				{
+					return true;
+				}
+				else if (compareWith == ComparisonOperators.LessThan && result < 0)
+				{
+					return true;
+				}
+				else if (left is string leftString && right is string rightString)
+				{
+					if (compareWith == ComparisonOperators.Intersect)
 					{
-						return true;
+						return leftString.Intersect(rightString).Any();
 					}
-					else if (compareWith == ComparisonOperators.NotEqual && result != 0)
+					else if (compareWith == ComparisonOperators.Disjoint)
 					{
-						return true;
+						return leftString.Intersect(rightString).Any() == false;
 					}
-					else if (compareWith == ComparisonOperators.GreaterThanOrEqual && result >= 0)
+					else if (compareWith == ComparisonOperators.ContainsAll)
 					{
-						return true;
+						return leftString.Contains(rightString);
 					}
-					else if (compareWith == ComparisonOperators.GreaterThan && result > 0)
+					else if (compareWith == ComparisonOperators.ContainsNone)
 					{
-						return true;
+						return leftString.Contains(rightString) == false;
 					}
-					else if (compareWith == ComparisonOperators.LessThanOrEqual && result <= 0)
+					else if (compareWith == ComparisonOperators.AllContained)
 					{
-						return true;
+						return rightString.Contains(leftString);
 					}
-					else if (compareWith == ComparisonOperators.LessThan && result < 0)
+					else if (compareWith == ComparisonOperators.NoneContained)
 					{
-						return true;
-					}
-					else if (left is string leftString && right is string rightString)
-					{
-						if (compareWith == ComparisonOperators.Intersect)
-						{
-							return leftString.Intersect(rightString).Any();
-						}
-						else if (compareWith == ComparisonOperators.Disjoint)
-						{
-							return leftString.Intersect(rightString).Any() == false;
-						}
-						else if (compareWith == ComparisonOperators.ContainsAll)
-						{
-							return leftString.Contains(rightString);
-						}
-						else if (compareWith == ComparisonOperators.ContainsNone)
-						{
-							return leftString.Contains(rightString) == false;
-						}
-						else if (compareWith == ComparisonOperators.AllContained)
-						{
-							return rightString.Contains(leftString);
-						}
-						else if (compareWith == ComparisonOperators.NoneContained)
-						{
-							return rightString.Contains(leftString) == false;
-						}
+						return rightString.Contains(leftString) == false;
 					}
 				}
-				else if (compareWith >= ComparisonOperators.LengthEqual && compareWith <= ComparisonOperators.LengthLessThanOrEqual)
+			}
+			else if (compareWith >= ComparisonOperators.LengthEqual && compareWith <= ComparisonOperators.LengthLessThanOrEqual)
+			{
+				if (left is string leftString && right is int rightLength)
 				{
-					if (left is string leftString && right is int rightLength)
-					{
-						return CompareIEnumerableAndIComparable(leftString, rightLength, compareWith);
-					}
-					else if (left is int leftLength && right is string rightString)
-					{
-						return CompareIComparableAndIEnumerable(leftLength, rightString, compareWith);
-					}
+					return CompareIEnumerableAndIComparable(leftString, rightLength, compareWith);
+				}
+				else if (left is int leftLength && right is string rightString)
+				{
+					return CompareIComparableAndIEnumerable(leftLength, rightString, compareWith);
+				}
+			}
+			else
+			{
+				TypeConverter leftConverter = TypeDescriptor.GetConverter(left.GetType());
+				IComparable convertedLeft = left;
+				IComparable convertedRight = right;
+
+				if (leftConverter.CanConvertTo(right.GetType()))
+				{
+					convertedLeft = (IComparable)leftConverter.ConvertTo(left, right.GetType());
+				}
+				else if (leftConverter.CanConvertFrom(right.GetType()))
+				{
+					convertedRight = (IComparable)leftConverter.ConvertFrom(right);
 				}
 				else
 				{
-					TypeConverter leftConverter = TypeDescriptor.GetConverter(left.GetType());
-					IComparable convertedLeft = left;
-					IComparable convertedRight = right;
+					TypeConverter rightConverter = TypeDescriptor.GetConverter(right.GetType());
 
-					if (leftConverter.CanConvertTo(right.GetType()))
+					if (rightConverter.CanConvertTo(left.GetType()))
 					{
-						convertedLeft = (IComparable)leftConverter.ConvertTo(left, right.GetType());
+						convertedRight = (IComparable)rightConverter.ConvertTo(right, left.GetType());
 					}
-					else if (leftConverter.CanConvertFrom(right.GetType()))
+					else if (rightConverter.CanConvertFrom(left.GetType()))
 					{
-						convertedRight = (IComparable)leftConverter.ConvertFrom(right);
+						convertedLeft = (IComparable)rightConverter.ConvertFrom(left);
 					}
-					else
-					{
-						TypeConverter rightConverter = TypeDescriptor.GetConverter(right.GetType());
-
-						if (rightConverter.CanConvertTo(left.GetType()))
-						{
-							convertedRight = (IComparable)rightConverter.ConvertTo(right, left.GetType());
-						}
-						else if (rightConverter.CanConvertFrom(left.GetType()))
-						{
-							convertedLeft = (IComparable)rightConverter.ConvertFrom(left);
-						}
-					}
-
-					return CompareIComparables(convertedLeft, convertedRight, compareWith);
 				}
-			}
-			catch (Exception e)
-			{
-				SensusServiceHelper.Get().Logger.Log($"Failed to convert between {left} and {right}: {e.Message}", LoggingLevel.Normal, typeof(ObjectComparer));
+
+				return CompareIComparables(convertedLeft, convertedRight, compareWith);
 			}
 
 			return false;
@@ -151,11 +142,6 @@ namespace Sensus
 			IEnumerable<object> rightObjects = right.OfType<object>();
 			IEnumerable<object> intersection = leftObjects.Intersect(rightObjects);
 			int intersectionLength = intersection.Count();
-
-			if (compareWith == ComparisonOperators.None)
-			{
-				compareWith = ComparisonOperators.Equal;
-			}
 
 			if (compareWith == ComparisonOperators.Equal)
 			{
@@ -287,12 +273,30 @@ namespace Sensus
 
 		public static bool Compare(object left, object right, ComparisonOperators compareWith)
 		{
-			if (left == null && right == null)
+			if (compareWith == ComparisonOperators.Default)
 			{
-				return true;
+				compareWith = ComparisonOperators.Equal;
 			}
-			else if (left == null || right == null)
+			else if (compareWith == ComparisonOperators.StrictEqual)
 			{
+				return Equals(left, right);
+			}
+			else if (compareWith == ComparisonOperators.StrictNotEqual)
+			{
+				return Equals(left, right) == false;
+			}
+
+			if (left == null || right == null)
+			{
+				if (left == null && right == null && compareWith == ComparisonOperators.Equal)
+				{
+					return true;
+				}
+				else if (compareWith == ComparisonOperators.NotEqual)
+				{
+					return true;
+				}
+
 				return false;
 			}
 			else if (left is IComparable leftComparable && right is IComparable rightComparable)
@@ -322,6 +326,5 @@ namespace Sensus
 
 			return true;
 		}
-
 	}
 }
