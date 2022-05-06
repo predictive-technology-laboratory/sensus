@@ -1175,6 +1175,8 @@ namespace Sensus.Probes.User.Scripts
 				copy.Name = GetCopyName();
 				copy.HasSubmitted = false;
 
+				copy.SavedState = null;
+
 				foreach (InputGroup inputGroup in copy.Script.InputGroups)
 				{
 					inputGroup.Id = Guid.NewGuid().ToString();
