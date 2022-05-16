@@ -483,11 +483,13 @@ namespace Sensus.Notifications
 
 			lock (_pendingUpdateProtocols)
 			{
-				string eventName = TrackedEvent.Health + ":" + GetType().Name;
-				Dictionary<string, string> properties = new Dictionary<string, string>
-				{
-					{ "Pending Updates", _pendingUpdateProtocols.Count.ToString() }
-				};
+				//string eventName = TrackedEvent.Health + ":" + GetType().Name;
+				//Dictionary<string, string> properties = new Dictionary<string, string>
+				//{
+				//	{ "Pending Updates", _pendingUpdateProtocols.Count.ToString() }
+				//};
+
+				SensusServiceHelper.Get().Logger.Log($"PNRs to Delete: {_pushNotificationBackendKeysProtocolIdsToDelete.Count}", LoggingLevel.Normal, GetType());
 			}
 		}
 
@@ -518,11 +520,13 @@ namespace Sensus.Notifications
 			// report remaining PNRs to send
 			lock (_pushNotificationRequestsToSend)
 			{
-				string eventName = TrackedEvent.Health + ":" + GetType().Name;
-				Dictionary<string, string> properties = new Dictionary<string, string>
-				{
-					{ "PNRs to Send", _pushNotificationRequestsToSend.Count.ToString() }
-				};
+				//string eventName = TrackedEvent.Health + ":" + GetType().Name;
+				//Dictionary<string, string> properties = new Dictionary<string, string>
+				//{
+				//	{ "PNRs to Send", _pushNotificationRequestsToSend.Count.ToString() }
+				//};
+
+				SensusServiceHelper.Get().Logger.Log($"PNRs to Delete: {_pushNotificationBackendKeysProtocolIdsToDelete.Count}", LoggingLevel.Normal, GetType());
 			}
 			#endregion
 
@@ -565,11 +569,13 @@ namespace Sensus.Notifications
 			// report remaining PNRs to delete
 			lock (_pushNotificationBackendKeysProtocolIdsToDelete)
 			{
-				string eventName = TrackedEvent.Health + ":" + GetType().Name;
-				Dictionary<string, string> properties = new Dictionary<string, string>
-				{
-					{ "PNRs to Delete", _pushNotificationBackendKeysProtocolIdsToDelete.Count.ToString() }
-				};
+				//string eventName = TrackedEvent.Health + ":" + GetType().Name;
+				//Dictionary<string, string> properties = new Dictionary<string, string>
+				//{
+				//	{ "PNRs to Delete", _pushNotificationBackendKeysProtocolIdsToDelete.Count.ToString() }
+				//};
+
+				SensusServiceHelper.Get().Logger.Log($"PNRs to Delete: {_pushNotificationBackendKeysProtocolIdsToDelete.Count}", LoggingLevel.Normal, GetType());
 			}
 			#endregion
 		}
