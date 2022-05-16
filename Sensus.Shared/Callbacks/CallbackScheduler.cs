@@ -382,11 +382,13 @@ namespace Sensus.Callbacks
 				if (callback.State == ScheduledCallbackState.Created ||
 					callback.State == ScheduledCallbackState.Completed)
 				{
-					string eventName = TrackedEvent.Warning + ":" + GetType().Name;
-					Dictionary<string, string> properties = new Dictionary<string, string>
-					{
-						{ "Callback State", callback.State + ":" + callback.Id }
-					};
+					//string eventName = TrackedEvent.Warning + ":" + GetType().Name;
+					//Dictionary<string, string> properties = new Dictionary<string, string>
+					//{
+					//	{ "Callback State", callback.State + ":" + callback.Id }
+					//};
+
+					SensusServiceHelper.Get().Logger.Log($"Callback State: {callback.State}:{callback.Id}", LoggingLevel.Normal, GetType());
 				}
 				else if (callback.State == ScheduledCallbackState.Scheduled)
 				{
@@ -397,21 +399,25 @@ namespace Sensus.Callbacks
 
 						if (latency.TotalMinutes > 1)
 						{
-							string eventName = TrackedEvent.Warning + ":" + GetType().Name;
-							Dictionary<string, string> properties = new Dictionary<string, string>
-							{
-								{ "Callback Latency", latency.TotalMinutes.RoundToWhole(5) + ":" + callback.Id }
-							};
+							//string eventName = TrackedEvent.Warning + ":" + GetType().Name;
+							//Dictionary<string, string> properties = new Dictionary<string, string>
+							//{
+							//	{ "Callback Latency",  + ":" + callback.Id }
+							//};
+
+							SensusServiceHelper.Get().Logger.Log($"Callback Latency: {latency.TotalMinutes.RoundToWhole(5)}:{callback.Id}", LoggingLevel.Normal, GetType());
 						}
 					}
 					else
 					{
 						// report missing next execution time
-						string eventName = TrackedEvent.Warning + ":" + GetType().Name;
-						Dictionary<string, string> properties = new Dictionary<string, string>
-						{
-							{ "Callback Next Execution", "NONE" }
-						};
+						//string eventName = TrackedEvent.Warning + ":" + GetType().Name;
+						//Dictionary<string, string> properties = new Dictionary<string, string>
+						//{
+						//	{ "Callback Next Execution", "NONE" }
+						//};
+
+						SensusServiceHelper.Get().Logger.Log($"Callback Next Execution is null", LoggingLevel.Normal, GetType());
 					}
 				}
 			}
