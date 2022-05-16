@@ -20,7 +20,6 @@ using System;
 using Sensus.Callbacks;
 using Sensus.Context;
 using System.IO;
-using Microsoft.AppCenter.Analytics;
 using System.Collections.Generic;
 using Sensus.Extensions;
 using Sensus.Notifications;
@@ -332,8 +331,6 @@ namespace Sensus.DataStores.Remote
 						{ "Storage Latency", (timeElapsedSincePreviousWrite.TotalMilliseconds).RoundToWhole(1000).ToString() }
 					};
 
-					Analytics.TrackEvent(eventName, properties);
-
 					events.Add(new AnalyticsTrackedEvent(eventName, properties));
 				}
 			}
@@ -345,8 +342,6 @@ namespace Sensus.DataStores.Remote
 				{
 					{ "Missing Callback", _writeCallback.Id }
 				};
-
-				Analytics.TrackEvent(eventName, properties);
 
 				events.Add(new AnalyticsTrackedEvent(eventName, properties));
 

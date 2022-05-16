@@ -60,7 +60,6 @@ using Sensus.iOS.Probes.User.Health;
 
 #if __ANDROID__
 using Sensus.Android;
-using Microsoft.AppCenter.Analytics;
 #endif
 
 namespace Sensus
@@ -2787,8 +2786,6 @@ namespace Sensus
 			{
 				{ "Wake Lock Held", androidSensusServiceHelper.WakeLockHeld.ToString() }
 			};
-
-			Analytics.TrackEvent(eventName, properties);
 
 			// don't add time to tracked event, as it'll create too many distinct values.
 			properties.Add("Wake Lock Time", androidSensusServiceHelper.WakeLockTime.ToString());

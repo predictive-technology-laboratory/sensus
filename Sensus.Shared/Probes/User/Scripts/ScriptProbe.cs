@@ -19,7 +19,6 @@ using System.Text.RegularExpressions;
 using System.Collections.ObjectModel;
 using Syncfusion.SfChart.XForms;
 using System.Collections.Generic;
-using Microsoft.AppCenter.Analytics;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Reflection;
@@ -373,8 +372,6 @@ namespace Sensus.Probes.User.Scripts
 				{
 					{ "Triggers Scheduled", triggersScheduled.ToString() }
 				};
-
-				Analytics.TrackEvent(eventName, properties);
 
 				events.Add(new AnalyticsTrackedEvent(eventName, properties));
 			}

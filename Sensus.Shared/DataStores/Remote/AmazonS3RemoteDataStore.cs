@@ -24,7 +24,6 @@ using Newtonsoft.Json;
 using System.Net;
 using Sensus.Exceptions;
 using System.Text;
-using Microsoft.AppCenter.Analytics;
 using System.Collections.Generic;
 using Sensus.Extensions;
 using Sensus.Notifications;
@@ -877,8 +876,6 @@ namespace Sensus.DataStores.Remote
 			{
 				{ "Put Success", Convert.ToString(_successfulPutCount.RoundToWholePercentageOf(_putCount, 5)) }
 			};
-
-			Analytics.TrackEvent(eventName, properties);
 
 			events.Add(new AnalyticsTrackedEvent(eventName, properties));
 

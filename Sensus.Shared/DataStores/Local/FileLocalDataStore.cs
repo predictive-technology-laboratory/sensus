@@ -22,7 +22,6 @@ using System.Text;
 using System.IO.Compression;
 using Sensus.UI.UiProperties;
 using System.Linq;
-using Microsoft.AppCenter.Analytics;
 using System.Collections.Generic;
 using Sensus.Extensions;
 using ICSharpCode.SharpZipLib.Tar;
@@ -1115,8 +1114,6 @@ namespace Sensus.DataStores.Local
 				{ "Paths Unprepared For Remote", Convert.ToString(_pathsUnpreparedForRemote.Count) },
 				{ "Prepared Files Size MB", Convert.ToString(Math.Round(GetSizeMB(), 0)) }
 			};
-
-			Analytics.TrackEvent(eventName, properties);
 
 			events.Add(new AnalyticsTrackedEvent(eventName, properties));
 
