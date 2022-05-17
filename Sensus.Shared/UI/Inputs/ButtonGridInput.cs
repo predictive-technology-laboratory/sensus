@@ -228,20 +228,27 @@ namespace Sensus.UI.Inputs
 						if (otherSelected)
 						{
 							_otherResponseValue = otherEditor.Text;
+
+							if (string.IsNullOrWhiteSpace(OtherResponseLabel) && otherLabel != null)
+							{
+								if (selectedOtherButtons.Count() == 1)
+								{
+									otherLabel.Text = selectedOtherButtons.Single().Text + ":";
+
+									if (otherLabel.Text.EndsWith("::"))
+									{
+										otherLabel.Text = otherLabel.Text[0..^1];
+									}
+								}
+								else
+								{
+									otherLabel.Text = "Other:";
+								}
+							}
 						}
 						else
 						{
 							_otherResponseValue = null;
-						}
-
-						if (string.IsNullOrWhiteSpace(OtherResponseLabel) && otherLabel != null && selectedOtherButtons.Count() == 1)
-						{
-							otherLabel.Text = button.Text + ":";
-
-							if (otherLabel.Text.EndsWith("::"))
-							{
-								otherLabel.Text = otherLabel.Text[0..^1];
-							}
 						}
 
 						otherLayout.IsVisible = otherSelected;

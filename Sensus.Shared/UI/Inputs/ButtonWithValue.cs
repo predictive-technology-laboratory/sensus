@@ -13,7 +13,6 @@
 // limitations under the License.
 
 using Xamarin.Forms;
-using System.Collections.Generic;
 
 namespace Sensus.UI.Inputs
 {
@@ -30,7 +29,7 @@ namespace Sensus.UI.Inputs
 	{
 		public ButtonWithValue()
 		{
-			StyleClass = new List<string> { "ButtonWithValue" };
+			//StyleClass = new List<string> { "ButtonWithValue" };
 		}
 
 		public string Value { get; set; }
