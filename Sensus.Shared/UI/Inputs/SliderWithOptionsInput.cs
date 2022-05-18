@@ -281,7 +281,7 @@ namespace Sensus.UI.Inputs
 				// value. this is needed with a slider range that has a negative minimum.
 				_slider.Value = Minimum;
 
-				List<string> otherValues = OtherValues?.ToList() ?? new List<string>();
+				HashSet<string> otherValues = OtherValues?.ToHashSet() ?? new HashSet<string>();
 
 				StackLayout otherLayout = null;
 				Label otherLabel = null;
@@ -400,7 +400,7 @@ namespace Sensus.UI.Inputs
 
 				foreach (string buttonValue in OtherOptions)
 				{
-					(string text, string value, bool isOther) = ButtonValueParser.ParseButtonValue(buttonValue, SplitValueTextPairs);
+					(string text, string value, bool isOther, bool _) = ButtonValueParser.ParseButtonValue(buttonValue, SplitValueTextPairs);
 
 					if (isOther)
 					{

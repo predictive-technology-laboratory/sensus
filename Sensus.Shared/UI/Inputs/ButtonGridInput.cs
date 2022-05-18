@@ -117,6 +117,9 @@ namespace Sensus.UI.Inputs
 		[EntryStringUiProperty("\"Other\" Response Label:", true, 4, true)]
 		public string OtherResponseLabel { get; set; }
 
+		[EditableListUiProperty("Exclusive Values:", true, 4, true)]
+		public List<string> ExclusiveValues { get; set; }
+
 		[OnOffUiProperty("Auto size buttons:", true, 4)]
 		public bool AutoSizeButtons { get; set; }
 
@@ -154,7 +157,8 @@ namespace Sensus.UI.Inputs
 					minSelectionCount = Math.Max(1, minSelectionCount);
 				}
 
-				List<string> otherValues = OtherValues?.ToList() ?? new List<string>();
+				HashSet<string> otherValues = OtherValues?.ToHashSet() ?? new HashSet<string>();
+				HashSet<string> exclusiveValues = ExclusiveValues?.ToHashSet() ?? new HashSet<string>();
 
 				StackLayout otherLayout = null;
 				Label otherLabel = null;
@@ -163,13 +167,33 @@ namespace Sensus.UI.Inputs
 				_grid = new ButtonGridView(ColumnCount, (s, e) =>
 				{
 					ButtonWithValue button = (ButtonWithValue)s;
+					List<ButtonWithValue> selectedButtons = _grid.Buttons.Where(x => x.State == ButtonStates.Selected).ToList();
 
 					if (Selectable && maxSelectionCount > 1)
 					{
-						List<ButtonWithValue> selectedButtons = _grid.Buttons.Where(x => x.State == ButtonStates.Selected).ToList();
+						bool isExclusive = exclusiveValues.Contains(button.Value);
 
 						if (button.State == ButtonStates.Selectable)
 						{
+							if (isExclusive)
+							{
+								foreach (ButtonWithValue otherButton in _grid.Buttons)
+								{
+									otherButton.State = _defaultState;
+
+									selectedButtons.Remove(otherButton);
+								}
+							}
+							else
+							{
+								foreach (ButtonWithValue otherButton in selectedButtons.Where(x => exclusiveValues.Contains(x.Value)).ToList())
+								{
+									otherButton.State = _defaultState;
+
+									selectedButtons.Remove(otherButton);
+								}
+							}
+
 							if (selectedButtons.Count < maxSelectionCount)
 							{
 								selectedButtons.Add(button);
@@ -221,7 +245,7 @@ namespace Sensus.UI.Inputs
 
 					if (otherLayout != null && otherValues.Any())
 					{
-						IEnumerable<ButtonWithValue> selectedOtherButtons = _grid.Buttons.Where(x => x.State == ButtonStates.Selected && otherValues.Contains(x.Value));
+						IEnumerable<ButtonWithValue> selectedOtherButtons = selectedButtons.Where(x => /*x.State == ButtonStates.Selected &&*/ otherValues.Contains(x.Value));
 
 						bool otherSelected = selectedOtherButtons.Any();
 
@@ -260,11 +284,16 @@ namespace Sensus.UI.Inputs
 
 				foreach (string buttonValue in Buttons)
 				{
-					(string text, string value, bool isOther) = ButtonValueParser.ParseButtonValue(buttonValue, SplitValueTextPairs);
+					(string text, string value, bool isOther, bool isExclusive) = ButtonValueParser.ParseButtonValue(buttonValue, SplitValueTextPairs);
 
 					if (isOther)
 					{
 						otherValues.Add(value);
+					}
+
+					if (isExclusive)
+					{
+						exclusiveValues.Add(value);
 					}
 
 					ButtonWithValue button = _grid.AddButton(text, value);
@@ -292,7 +321,7 @@ namespace Sensus.UI.Inputs
 
 					otherLabel = new Label { Text = $"{OtherResponseLabel ?? "Other Response"}:" };
 
-					if (string.IsNullOrWhiteSpace(OtherResponseLabel) && otherValues.Count == 1 && GridButtons.FirstOrDefault(x => x.Value == otherValues[0]) is ButtonWithValue otherButton)
+					if (string.IsNullOrWhiteSpace(OtherResponseLabel) && otherValues.Count == 1 && GridButtons.FirstOrDefault(x => x.Value == otherValues.First()) is ButtonWithValue otherButton)
 					{
 						otherLabel.Text = otherButton.Text;
 					}
