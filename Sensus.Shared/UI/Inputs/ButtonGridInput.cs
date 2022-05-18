@@ -164,6 +164,8 @@ namespace Sensus.UI.Inputs
 				Label otherLabel = null;
 				Editor otherEditor = null;
 
+				bool completeFunc(int selectedButtonCount, bool otherSelected) => Selectable == false || (selectedButtonCount >= minSelectionCount && (otherSelected == false || string.IsNullOrWhiteSpace(_otherResponseValue) == false));
+
 				_grid = new ButtonGridView(ColumnCount, (s, e) =>
 				{
 					ButtonWithValue button = (ButtonWithValue)s;
@@ -213,13 +215,13 @@ namespace Sensus.UI.Inputs
 
 						_value = selectedButtons.Select(x => x.Value).ToArray();
 
-						Complete = selectedButtons.Count >= minSelectionCount;
+						//Complete = selectableCompleteFunc(selectedButtons.Count); // selectedButtons.Count >= minSelectionCount;
 					}
 					else
 					{
 						_value = button.Value;
 
-						Complete = true;
+						//Complete = true;
 
 						foreach (ButtonWithValue otherButton in _grid.Buttons)
 						{
@@ -239,15 +241,19 @@ namespace Sensus.UI.Inputs
 						}
 						else if (Selectable)
 						{
+							selectedButtons.Add(button);
+
 							button.State = ButtonStates.Selected;
 						}
 					}
 
-					if (otherLayout != null && otherValues.Any())
+					bool otherSelected = false;
+					
+					if (Selectable && otherValues.Any())
 					{
-						IEnumerable<ButtonWithValue> selectedOtherButtons = selectedButtons.Where(x => /*x.State == ButtonStates.Selected &&*/ otherValues.Contains(x.Value));
+						IEnumerable<ButtonWithValue> selectedOtherButtons = selectedButtons.Where(x => otherValues.Contains(x.Value));
 
-						bool otherSelected = selectedOtherButtons.Any();
+						otherSelected = selectedOtherButtons.Any();
 
 						if (otherSelected)
 						{
@@ -277,6 +283,8 @@ namespace Sensus.UI.Inputs
 
 						otherLayout.IsVisible = otherSelected;
 					}
+
+					Complete = completeFunc(selectedButtons.Count, otherLayout.IsVisible);
 				})
 				{
 					AutoSize = AutoSizeButtons
@@ -317,7 +325,12 @@ namespace Sensus.UI.Inputs
 						AutoSize = EditorAutoSizeOption.TextChanges
 					};
 
-					otherEditor.Unfocused += (s, e) => _otherResponseValue = otherEditor.Text;
+					otherEditor.Unfocused += (s, e) =>
+					{
+						_otherResponseValue = otherEditor.Text;
+
+						Complete = completeFunc(_grid.Buttons.Count(x => x.State == ButtonStates.Selected), true);
+					};
 
 					otherLabel = new Label { Text = $"{OtherResponseLabel ?? "Other Response"}:" };
 
