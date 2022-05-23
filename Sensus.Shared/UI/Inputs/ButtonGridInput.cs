@@ -284,7 +284,7 @@ namespace Sensus.UI.Inputs
 						otherLayout.IsVisible = otherSelected;
 					}
 
-					Complete = completeFunc(selectedButtons.Count, otherLayout.IsVisible);
+					Complete = completeFunc(selectedButtons.Count, otherSelected);
 				})
 				{
 					AutoSize = AutoSizeButtons
