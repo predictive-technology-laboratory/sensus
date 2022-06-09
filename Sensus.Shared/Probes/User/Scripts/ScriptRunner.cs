@@ -548,6 +548,14 @@ namespace Sensus.Probes.User.Scripts
 		[EntryStringUiProperty("Submit Confirmation:", true, 31, false)]
 		public string SubmitConfirmation { get; set; }
 
+		[EntryStringUiProperty("Reminder Intervals (S):", true, 8, false)]
+		public string ReminderIntervals { get; set; }
+
+		[EntryStringUiProperty("Reminder Message:", true, 8, false)]
+		public string ReminderMessage { get; set; }
+
+		public List<string> ReminderCallbackIds { get; set; }
+
 		[JsonIgnore]
 		public string Caption
 		{
@@ -577,6 +585,7 @@ namespace Sensus.Probes.User.Scripts
 			ShuffleInputGroups = false;
 			ConfirmNavigation = true;
 			SubmitConfirmation = "Are you ready to submit your responses?";
+			ReminderCallbackIds = new List<string>();
 
 			Triggers.CollectionChanged += (o, e) =>
 			{
@@ -935,6 +944,77 @@ namespace Sensus.Probes.User.Scripts
 			}
 		}
 
+		private async Task ScheduleReminderAsync(Script script, TimeSpan timeSpan)
+		{
+			string id = Script.Id + "." + GetType().FullName + ".Reminder." + timeSpan.ToString();
+
+			if (ReminderCallbackIds.Contains(id) == false)
+			{
+				ScheduledCallback callback = new ScheduledCallback(async c =>
+				{
+					await UnscheduleReminderAsync(id);
+				}, timeSpan, id, Probe.Protocol.Id, Probe.Protocol, null, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS), ScheduledCallbackPriority.High, GetType());
+
+				if (string.IsNullOrWhiteSpace(script.Runner.ReminderMessage))
+				{
+					callback.UserNotificationMessage = "Click to view available surveys.";
+				}
+				else
+				{
+					callback.UserNotificationMessage = script.Runner.ReminderMessage;
+				}
+
+				callback.NotificationUserResponseAction = NotificationUserResponseAction.DisplayPendingSurveys;
+
+				if (await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(callback) == ScheduledCallbackState.Scheduled)
+				{
+					ReminderCallbackIds.Add(id);
+
+					SensusServiceHelper.Get().Logger.Log($"Scheduled {timeSpan} second reminder for {script.Id}", LoggingLevel.Normal, GetType());
+				}
+				else
+				{
+					SensusServiceHelper.Get().Logger.Log($"Could not schedule {timeSpan} second reminder for {script.Id}", LoggingLevel.Normal, GetType());
+				}
+			}
+		}
+		private async Task ScheduleRemindersAsync(Script script)
+		{
+			if (string.IsNullOrWhiteSpace(script.Runner.ReminderIntervals) == false)
+			{
+				IEnumerable<string> intervalStrings = script.Runner.ReminderIntervals.Split(",").Select(x => x.Trim());
+
+				foreach (string intervalString in intervalStrings)
+				{
+					if (int.TryParse(intervalString, out int interval))
+					{
+						await ScheduleReminderAsync(script, TimeSpan.FromSeconds(interval));
+					}
+					else if (intervalString.Contains(":") && TimeSpan.TryParse(intervalString, out TimeSpan timeSpan))
+					{
+						await ScheduleReminderAsync(script, timeSpan);
+					}
+				}
+			}
+		}
+
+		private async Task UnscheduleReminderAsync(string id)
+		{
+			await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(id);
+
+			lock (ReminderCallbackIds)
+			{
+				ReminderCallbackIds.Remove(id);
+			}
+		}
+		public async Task UnscheduleRemindersAsync()
+		{
+			foreach (string id in ReminderCallbackIds.ToList())
+			{
+				await UnscheduleReminderAsync(id);
+			}
+		}
+
 		/// <summary>
 		/// Creates the script run callback.
 		/// </summary>
@@ -959,6 +1039,8 @@ namespace Sensus.Probes.User.Scripts
 				{
 					return;
 				}
+
+				await ScheduleRemindersAsync(scriptToRun);
 
 				await RunAsync(scriptToRun);
 
