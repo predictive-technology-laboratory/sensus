@@ -110,6 +110,12 @@ namespace Sensus.Callbacks
         public TimeSpan? RepeatDelay { get; set; }
 
         /// <summary>
+        /// For actions that are repeatedly executed, this is the delay between executions.
+        /// </summary>
+        /// <value>The repeat delay.</value>
+        public Func<bool> RepeatPredicate { get; set; }
+
+        /// <summary>
         /// Gets or sets the next execution time for this callback.
         /// </summary>
         /// <value>The next execution time.</value>
@@ -174,6 +180,7 @@ namespace Sensus.Callbacks
             Canceller = new CancellationTokenSource();
             NotificationUserResponseAction = NotificationUserResponseAction.None;
             State = ScheduledCallbackState.Created;
+            RepeatPredicate = () => RepeatDelay > TimeSpan.Zero;
         }
 
 		/// <summary>

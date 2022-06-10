@@ -14,7 +14,6 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Sensus.Context;
@@ -60,6 +59,7 @@ namespace Sensus.Callbacks
 			if (callback.State != ScheduledCallbackState.Created)
 			{
 				SensusException.Report("Attemped to schedule callback " + callback.Id + ", which is in the " + callback.State + " state and not the " + ScheduledCallbackState.Created + " state.");
+				
 				callback.State = ScheduledCallbackState.Unknown;
 			}
 			else if (_idCallback.TryAdd(callback.Id, callback))
@@ -125,6 +125,17 @@ namespace Sensus.Callbacks
 			}
 		}
 
+		public bool ContainsCallback(string id)
+		{
+			// we should never get a null callback id, but it seems that we are from android.
+			if (id == null)
+			{
+				SensusException.Report("Attempted to check contains of callback that has null id.");
+				return false;
+			}
+
+			return _idCallback.ContainsKey(id);
+		}
 		public bool ContainsCallback(ScheduledCallback callback)
 		{
 			if (callback == null)
@@ -132,16 +143,8 @@ namespace Sensus.Callbacks
 				SensusException.Report("Attempted to check contains of null callback.");
 				return false;
 			}
-			// we should never get a null callback id, but it seems that we are from android.
-			else if (callback.Id == null)
-			{
-				SensusException.Report("Attempted to check contains of callback that has null id.");
-				return false;
-			}
-			else
-			{
-				return _idCallback.ContainsKey(callback.Id);
-			}
+
+			return ContainsCallback(callback.Id);
 		}
 
 		protected ScheduledCallback TryGetCallback(string id)
@@ -285,7 +288,8 @@ namespace Sensus.Callbacks
 							// schedule callback again if it is still scheduled with a valid repeat delay
 							if (ContainsCallback(callback) &&
 								callback.RepeatDelay.HasValue &&
-								callback.RepeatDelay.Value.Ticks > 0)
+								callback.RepeatDelay.Value.Ticks > 0 &&
+								(callback.RepeatPredicate?.Invoke() == true))
 							{
 								callback.NextExecution = DateTime.Now + callback.RepeatDelay.Value;
 								callback.InvocationId = Guid.NewGuid().ToString();  // set the new invocation ID before resetting the state so that concurrent callers won't run (their invocation IDs won't match)
@@ -301,7 +305,7 @@ namespace Sensus.Callbacks
 								await RequestLocalInvocationAsync(callback);
 
 #if __IOS__
-                                await RequestRemoteInvocationAsync(callback);
+								await RequestRemoteInvocationAsync(callback);
 #endif
 							}
 							else
@@ -323,54 +327,54 @@ namespace Sensus.Callbacks
 		}
 
 #if __IOS__
-        /// <summary>
-        /// Requests remote invocation for a <see cref="ScheduledCallback"/>, to be delivered in parallel with the 
-        /// local invocation loop on iOS. Only one of these (the remote or local) will ultimately be allowed to 
-        /// run -- whichever arrives first.
-        /// </summary>
-        /// <returns>Task.</returns>
-        /// <param name="callback">Callback.</param>
-        protected async Task RequestRemoteInvocationAsync(ScheduledCallback callback)
-        {
-            // not all callbacks are associated with a protocol (e.g., the app-level health test). because push notifications are
-            // currently tied to the remote data store of the protocol, we don't currently provide PNR support for such callbacks.
-            // on race conditions, it might be the case that the system attempts to schedule a duplicate callback. if this happens
-            // the duplicate will not be assigned a next execution, and the system will try to unschedule/delete it. skip such
-            // callbacks below.
-            if (callback.Protocol != null && callback.NextExecution.HasValue)
-            {
-                try
-                {
-                    // the request id must differentiate the current device. furthermore, it needs to identify the
-                    // request as one for a callback. lastly, it needs to identify the particular callback that it
-                    // targets. the id does not include the callback invocation, as any newer requests for the 
-                    // callback should obsolete older requests.
-                    string id = SensusServiceHelper.Get().DeviceId + "." + SENSUS_CALLBACK_KEY + "." + callback.Id;
+		/// <summary>
+		/// Requests remote invocation for a <see cref="ScheduledCallback"/>, to be delivered in parallel with the 
+		/// local invocation loop on iOS. Only one of these (the remote or local) will ultimately be allowed to 
+		/// run -- whichever arrives first.
+		/// </summary>
+		/// <returns>Task.</returns>
+		/// <param name="callback">Callback.</param>
+		protected async Task RequestRemoteInvocationAsync(ScheduledCallback callback)
+		{
+			// not all callbacks are associated with a protocol (e.g., the app-level health test). because push notifications are
+			// currently tied to the remote data store of the protocol, we don't currently provide PNR support for such callbacks.
+			// on race conditions, it might be the case that the system attempts to schedule a duplicate callback. if this happens
+			// the duplicate will not be assigned a next execution, and the system will try to unschedule/delete it. skip such
+			// callbacks below.
+			if (callback.Protocol != null && callback.NextExecution.HasValue)
+			{
+				try
+				{
+					// the request id must differentiate the current device. furthermore, it needs to identify the
+					// request as one for a callback. lastly, it needs to identify the particular callback that it
+					// targets. the id does not include the callback invocation, as any newer requests for the 
+					// callback should obsolete older requests.
+					string id = SensusServiceHelper.Get().DeviceId + "." + SENSUS_CALLBACK_KEY + "." + callback.Id;
 
-                    PushNotificationUpdate update = new PushNotificationUpdate
-                    {
-                        Type = PushNotificationUpdateType.Callback,
-                        Content = JObject.Parse("{" +
-                                                    "\"callback-id\":" + JsonConvert.ToString(callback.Id) + "," +
-                                                    "\"invocation-id\":" + JsonConvert.ToString(callback.InvocationId) +
-                                                "}")
-                    };
+					PushNotificationUpdate update = new PushNotificationUpdate
+					{
+						Type = PushNotificationUpdateType.Callback,
+						Content = JObject.Parse("{" +
+													"\"callback-id\":" + JsonConvert.ToString(callback.Id) + "," +
+													"\"invocation-id\":" + JsonConvert.ToString(callback.InvocationId) +
+												"}")
+					};
 
-                    PushNotificationRequest request = new PushNotificationRequest(id, SensusServiceHelper.Get().DeviceId, callback.Protocol, update, PushNotificationRequest.LocalFormat, callback.NextExecution.Value, callback.PushNotificationBackendKey);
+					PushNotificationRequest request = new PushNotificationRequest(id, SensusServiceHelper.Get().DeviceId, callback.Protocol, update, PushNotificationRequest.LocalFormat, callback.NextExecution.Value, callback.PushNotificationBackendKey);
 
-                    await SensusContext.Current.Notifier.SendPushNotificationRequestAsync(request, CancellationToken.None);
-                }
-                catch (Exception ex)
-                {
-                    SensusException.Report("Exception while sending push notification request for scheduled callback:  " + ex.Message, ex);
-                }
-            }
-        }
+					await SensusContext.Current.Notifier.SendPushNotificationRequestAsync(request, CancellationToken.None);
+				}
+				catch (Exception ex)
+				{
+					SensusException.Report("Exception while sending push notification request for scheduled callback:  " + ex.Message, ex);
+				}
+			}
+		}
 
-        protected async Task CancelRemoteInvocationAsync(ScheduledCallback callback)
-        {
-            await SensusContext.Current.Notifier.DeletePushNotificationRequestAsync(callback.PushNotificationBackendKey, callback.Protocol, CancellationToken.None);
-        }
+		protected async Task CancelRemoteInvocationAsync(ScheduledCallback callback)
+		{
+			await SensusContext.Current.Notifier.DeletePushNotificationRequestAsync(callback.PushNotificationBackendKey, callback.Protocol, CancellationToken.None);
+		}
 #endif
 
 		public void TestHealth()
@@ -461,7 +465,7 @@ namespace Sensus.Callbacks
 			CancelLocalInvocation(callback);
 
 #if __IOS__
-            await CancelRemoteInvocationAsync(callback);
+			await CancelRemoteInvocationAsync(callback);
 #else
 			await Task.CompletedTask;
 #endif

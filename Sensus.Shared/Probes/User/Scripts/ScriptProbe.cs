@@ -333,6 +333,12 @@ namespace Sensus.Probes.User.Scripts
 				}
 			}
 
+			// reschedule reminders
+			foreach (Script script in SensusServiceHelper.Get().ScriptsToRun)
+			{
+				await script.Runner.ScheduleRemindersAsync(script);
+			}
+
 			// if the probe agent has requested survey delivery at regular intervals, schedule a repeating callback.
 			if (Agent?.DeliveryInterval != null)
 			{

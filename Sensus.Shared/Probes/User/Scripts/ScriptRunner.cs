@@ -554,8 +554,6 @@ namespace Sensus.Probes.User.Scripts
 		[EntryStringUiProperty("Reminder Message:", true, 8, false)]
 		public string ReminderMessage { get; set; }
 
-		public List<string> ReminderCallbackIds { get; set; }
-
 		[JsonIgnore]
 		public string Caption
 		{
@@ -728,6 +726,8 @@ namespace Sensus.Probes.User.Scripts
 		public async Task StopAsync()
 		{
 			await UnscheduleCallbacksAsync();
+
+			await UnscheduleRemindersAsync();
 
 			if (SensusServiceHelper.Get().RemoveScriptsForRunner(this))
 			{
@@ -944,41 +944,71 @@ namespace Sensus.Probes.User.Scripts
 			}
 		}
 
-		private async Task ScheduleReminderAsync(Script script, TimeSpan timeSpan)
+		public List<string> ReminderCallbackIds { get; set; }
+
+		private async Task ScheduleReminderAsync(Script script, TimeSpan timeSpan, bool repeats)
 		{
-			string id = Script.Id + "." + GetType().FullName + ".Reminder." + timeSpan.ToString();
-
-			if (ReminderCallbackIds.Contains(id) == false)
+			if (script.RunTime?.Add(timeSpan) > DateTimeOffset.Now || repeats)
 			{
-				ScheduledCallback callback = new ScheduledCallback(async c =>
-				{
-					await UnscheduleReminderAsync(id);
-				}, timeSpan, id, Probe.Protocol.Id, Probe.Protocol, null, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS), ScheduledCallbackPriority.High, GetType());
+				string id = $"{Script.Id}.{GetType().FullName}.Reminder";
 
-				if (string.IsNullOrWhiteSpace(script.Runner.ReminderMessage))
+				if (repeats)
 				{
-					callback.UserNotificationMessage = "Click to view available surveys.";
-				}
-				else
-				{
-					callback.UserNotificationMessage = script.Runner.ReminderMessage;
+					id += $".{DateTime.Now:s}+";
 				}
 
-				callback.NotificationUserResponseAction = NotificationUserResponseAction.DisplayPendingSurveys;
+				id += timeSpan.ToString();
 
-				if (await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(callback) == ScheduledCallbackState.Scheduled)
+				if (SensusContext.Current.CallbackScheduler.ContainsCallback(id) == false)
 				{
-					ReminderCallbackIds.Add(id);
+					ScheduledCallback callback = new ScheduledCallback(async c =>
+					{
+						//if (repeats == false || scriptProbe.State != ProbeState.Running)
+						//{
+						//	await UnscheduleReminderAsync(id);
+						//}
 
-					SensusServiceHelper.Get().Logger.Log($"Scheduled {timeSpan} second reminder for {script.Id}", LoggingLevel.Normal, GetType());
-				}
-				else
-				{
-					SensusServiceHelper.Get().Logger.Log($"Could not schedule {timeSpan} second reminder for {script.Id}", LoggingLevel.Normal, GetType());
+						////if (repeats == false || c.IsCancellationRequested)
+						////{
+						////	await UnscheduleReminderAsync(id);
+						////}
+					}, timeSpan, id, Probe.Protocol.Id, Probe.Protocol, null, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS), ScheduledCallbackPriority.High, GetType());
+
+					if (repeats)
+					{
+						callback.RepeatDelay = timeSpan;
+
+						callback.RepeatPredicate = () => script.Runner.Probe.State == ProbeState.Running;
+					}
+
+					if (string.IsNullOrWhiteSpace(script.Runner.ReminderMessage))
+					{
+						callback.UserNotificationMessage = $"{script.Runner.Name} is ready in your Surveys list. Click here to view it.";
+					}
+					else
+					{
+						callback.UserNotificationMessage = script.Runner.ReminderMessage;
+					}
+
+					callback.NotificationUserResponseAction = NotificationUserResponseAction.DisplayPendingSurveys;
+
+					if (await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(callback) == ScheduledCallbackState.Scheduled)
+					{
+						if (ReminderCallbackIds.Contains(id) == false)
+						{
+							ReminderCallbackIds.Add(id);
+						}
+
+						SensusServiceHelper.Get().Logger.Log($"Scheduled {timeSpan} second reminder for {script.Id}", LoggingLevel.Normal, GetType());
+					}
+					else
+					{
+						SensusServiceHelper.Get().Logger.Log($"Could not schedule {timeSpan} second reminder for {script.Id}", LoggingLevel.Normal, GetType());
+					}
 				}
 			}
 		}
-		private async Task ScheduleRemindersAsync(Script script)
+		public async Task ScheduleRemindersAsync(Script script)
 		{
 			if (string.IsNullOrWhiteSpace(script.Runner.ReminderIntervals) == false)
 			{
@@ -986,13 +1016,23 @@ namespace Sensus.Probes.User.Scripts
 
 				foreach (string intervalString in intervalStrings)
 				{
-					if (int.TryParse(intervalString, out int interval))
+					bool repeats = false;
+					string parsableInterval = intervalString;
+
+					if (intervalString.EndsWith("*"))
 					{
-						await ScheduleReminderAsync(script, TimeSpan.FromSeconds(interval));
+						parsableInterval = intervalString[0..^1];
+
+						repeats = true;
 					}
-					else if (intervalString.Contains(":") && TimeSpan.TryParse(intervalString, out TimeSpan timeSpan))
+
+					if (int.TryParse(parsableInterval, out int interval))
 					{
-						await ScheduleReminderAsync(script, timeSpan);
+						await ScheduleReminderAsync(script, TimeSpan.FromSeconds(interval), repeats);
+					}
+					else if (parsableInterval.Contains(":") && TimeSpan.TryParse(parsableInterval, out TimeSpan timeSpan))
+					{
+						await ScheduleReminderAsync(script, timeSpan, repeats);
 					}
 				}
 			}
@@ -1039,8 +1079,6 @@ namespace Sensus.Probes.User.Scripts
 				{
 					return;
 				}
-
-				await ScheduleRemindersAsync(scriptToRun);
 
 				await RunAsync(scriptToRun);
 
@@ -1098,6 +1136,8 @@ namespace Sensus.Probes.User.Scripts
 		public async Task RunAsync(Script script, Datum previousDatum = null, Datum currentDatum = null)
 		{
 			SensusServiceHelper.Get().Logger.Log($"Running \"{Name}\".", LoggingLevel.Normal, GetType());
+
+			await ScheduleRemindersAsync(script);
 
 			script.RunTime = DateTimeOffset.UtcNow;
 
