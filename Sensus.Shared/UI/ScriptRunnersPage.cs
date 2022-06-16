@@ -87,6 +87,14 @@ namespace Sensus.UI
 
 						probe.ScriptRunners.Remove(selectedScriptRunner);
 
+						foreach(ScriptRunner runner in probe.ScriptRunners)
+						{
+							if (runner.NextScript == selectedScriptRunner)
+							{
+								runner.NextScript = null;
+							}
+						}
+
 						scriptRunnersList.SelectedItem = null;  // reset manually since it's not done automatically
 					}
 				}
