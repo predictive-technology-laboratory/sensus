@@ -742,8 +742,9 @@ namespace Sensus.Probes.User.Scripts
 
 		public async Task ScheduleScriptRunsAsync()
 		{
-			if (_scheduleTrigger.WindowCount == 0 ||               // there are no windows to schedule
+			if (
 				SensusServiceHelper.Get() == null ||               // the service helper hasn't loaded
+				(_scheduleTrigger.WindowCount == 0 && _scheduledCallbackTimes.Count == 0) ||               // there are no windows to schedule and no scheduled callback times
 				Probe == null ||                                   // there is no probe
 				Probe.Protocol.State == ProtocolState.Stopped ||   // protocol has stopped
 				Probe.Protocol.State == ProtocolState.Stopping ||  // protocol is about to stop
@@ -940,6 +941,8 @@ namespace Sensus.Probes.User.Scripts
 				else // schedule it to be run
 				{
 					await NextScript.ScheduleScriptRunAsync(DateTime.Now.AddMilliseconds(NextScriptRunDelayMS));
+
+					await SensusServiceHelper.Get().SaveAsync();
 				}
 			}
 		}
