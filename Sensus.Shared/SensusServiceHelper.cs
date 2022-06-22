@@ -789,45 +789,46 @@ namespace Sensus
 		{
 			return Task.Run(() =>
 			{
+				if (_saving)
+				{
+					_logger.Log("Already saving. Waiting to enter critical section.", LoggingLevel.Normal, GetType());
+				}
+
 				lock (_saveLocker)
 				{
-					if (_saving)
+					_logger.Log("Starting to save. Entered critical section.", LoggingLevel.Normal, GetType());
+
+					_saving = true;
+
+					try
 					{
-						_logger.Log("Already saving. Aborting save.", LoggingLevel.Normal, GetType());
-						return;
+						_logger.Log("Serializing service helper.", LoggingLevel.Normal, GetType());
+
+						string serviceHelperJSON = JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS);
+
+						// once upon a time, we made the poor decision to encode protocols as unicode (UTF-16). can't switch to UTF-8 now...
+						byte[] encryptedBytes = SensusContext.Current.SymmetricEncryption.Encrypt(serviceHelperJSON, Encoding.Unicode);
+						File.WriteAllBytes(SERIALIZATION_PATH, encryptedBytes);
+
+						_logger.Log("Serialized service helper with " + _registeredProtocols.Count + " protocols.", LoggingLevel.Normal, GetType());
+
+						// ensure that all logged messages make it into the file.
+						_logger.CommitMessageBuffer();
 					}
-					else
+					catch (Exception ex)
 					{
-						_saving = true;
+						string message = "Exception while serializing service helper:  " + ex;
+						SensusException.Report(message, ex);
+						_logger.Log(message, LoggingLevel.Normal, GetType());
 					}
-				}
-
-				try
-				{
-					_logger.Log("Serializing service helper.", LoggingLevel.Normal, GetType());
-
-					string serviceHelperJSON = JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS);
-
-					// once upon a time, we made the poor decision to encode protocols as unicode (UTF-16). can't switch to UTF-8 now...
-					byte[] encryptedBytes = SensusContext.Current.SymmetricEncryption.Encrypt(serviceHelperJSON, Encoding.Unicode);
-					File.WriteAllBytes(SERIALIZATION_PATH, encryptedBytes);
-
-					_logger.Log("Serialized service helper with " + _registeredProtocols.Count + " protocols.", LoggingLevel.Normal, GetType());
-
-					// ensure that all logged messages make it into the file.
-					_logger.CommitMessageBuffer();
-				}
-				catch (Exception ex)
-				{
-					string message = "Exception while serializing service helper:  " + ex;
-					SensusException.Report(message, ex);
-					_logger.Log(message, LoggingLevel.Normal, GetType());
-				}
-				finally
-				{
-					lock (_saveLocker)
+					finally
 					{
-						_saving = false;
+						lock (_saveLocker)
+						{
+							_saving = false;
+
+							_logger.Log("Done saving. Exiting critical section.", LoggingLevel.Normal, GetType());
+						}
 					}
 				}
 			});
