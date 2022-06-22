@@ -896,9 +896,9 @@ namespace Sensus.Probes.User.Scripts
 			{
 				ScriptRunner runner = null;
 
-				if (scheduler.ScheduleMode == ScheduleModes.Self)
+				if (scheduler.ScheduleMode == ScheduleModes.Self || scheduler.ScheduleMode == ScheduleModes.Reminder)
 				{
-					runner = Script.Runner;
+					runner = script.Runner;
 				}
 				else if (scheduler.ScheduleMode == ScheduleModes.Next && NextScript != null)
 				{
@@ -921,7 +921,14 @@ namespace Sensus.Probes.User.Scripts
 					scheduledTime = DateTime.Now.Date.AddDays(daysFromNow).Add(scheduledTime.TimeOfDay);
 				}
 
-				await runner.ScheduleScriptRunAsync(scheduledTime);
+				if (scheduler.ScheduleMode == ScheduleModes.Reminder)
+				{
+					await runner.ScheduleReminderAsync(script, scheduledTime);
+				}
+				else
+				{
+					await runner.ScheduleScriptRunAsync(scheduledTime);
+				}
 
 				return scheduler.ScheduleMode == ScheduleModes.Next;
 			}
@@ -964,18 +971,7 @@ namespace Sensus.Probes.User.Scripts
 
 				if (SensusContext.Current.CallbackScheduler.ContainsCallback(id) == false)
 				{
-					ScheduledCallback callback = new ScheduledCallback(async c =>
-					{
-						//if (repeats == false || scriptProbe.State != ProbeState.Running)
-						//{
-						//	await UnscheduleReminderAsync(id);
-						//}
-
-						////if (repeats == false || c.IsCancellationRequested)
-						////{
-						////	await UnscheduleReminderAsync(id);
-						////}
-					}, timeSpan, id, Probe.Protocol.Id, Probe.Protocol, null, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS), ScheduledCallbackPriority.High, GetType());
+					ScheduledCallback callback = new ScheduledCallback(c => Task.CompletedTask, timeSpan, id, Probe.Protocol.Id, Probe.Protocol, null, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS), ScheduledCallbackPriority.High, GetType());
 
 					if (repeats)
 					{
@@ -984,13 +980,13 @@ namespace Sensus.Probes.User.Scripts
 						callback.RepeatPredicate = () => script.Runner.Probe.State == ProbeState.Running;
 					}
 
-					if (string.IsNullOrWhiteSpace(script.Runner.ReminderMessage))
+					if (string.IsNullOrWhiteSpace(script.Runner.ReminderMessage) == false)
 					{
-						callback.UserNotificationMessage = $"{script.Runner.Name} is ready in your Surveys list. Click here to view it.";
+						callback.UserNotificationMessage = script.Runner.ReminderMessage;
 					}
 					else
 					{
-						callback.UserNotificationMessage = script.Runner.ReminderMessage;
+						callback.UserNotificationMessage = $"{script.Runner.Name} is ready in your Surveys list. Click here to view it.";
 					}
 
 					callback.NotificationUserResponseAction = NotificationUserResponseAction.DisplayPendingSurveys;
@@ -1010,6 +1006,12 @@ namespace Sensus.Probes.User.Scripts
 					}
 				}
 			}
+		}
+		public async Task ScheduleReminderAsync(Script script, DateTime dateTime)
+		{
+			TimeSpan timeSpan = dateTime - DateTime.Now;
+
+			await ScheduleReminderAsync(script, timeSpan, false);
 		}
 		public async Task ScheduleRemindersAsync(Script script)
 		{
