@@ -7,7 +7,7 @@ namespace Sensus.UI.Inputs
 	{
 		public ScriptRunner Runner { get; set; }
 
-		[ListUiProperty("Scheduled Script:", true, 14, new object[] { ScheduleModes.Self, ScheduleModes.Next, ScheduleModes.Select }, true)]
+		[ListUiProperty("Schedule Mode:", true, 14, new object[] { ScheduleModes.Reminder, ScheduleModes.Self, ScheduleModes.Next, ScheduleModes.Select }, true)]
 		public ScheduleModes ScheduleMode { get; set; }
 
 		[ScriptsUiProperty("Scheduled Script:", true, 15, false)]

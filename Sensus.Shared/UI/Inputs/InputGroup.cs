@@ -165,7 +165,7 @@ namespace Sensus.UI.Inputs
 		[EntryStringUiProperty("Title:", true, 13, false)]
 		public virtual string Title { get; set; }
 
-		[OnOffUiProperty("Use Navigation View", true, 14)]
+		[OnOffUiProperty("Use Navigation Bar:", true, 14)]
 		public virtual bool UseNavigationBar { get; set; }
 
 		[EntryIntegerUiProperty("Timeout (S):", true, 15, false)]
