@@ -171,13 +171,13 @@ namespace Sensus.UI.Inputs
 					ButtonWithValue button = (ButtonWithValue)s;
 					List<ButtonWithValue> selectedButtons = _grid.Buttons.Where(x => x.State == ButtonStates.Selected).ToList();
 
-					if (Selectable && maxSelectionCount > 1)
+					if (Selectable)
 					{
 						bool isExclusive = exclusiveValues.Contains(button.Value);
 
 						if (button.State == ButtonStates.Selectable)
 						{
-							if (isExclusive)
+							if (isExclusive || maxSelectionCount == 1)
 							{
 								foreach (ButtonWithValue otherButton in _grid.Buttons)
 								{
@@ -214,14 +214,10 @@ namespace Sensus.UI.Inputs
 						}
 
 						_value = selectedButtons.Select(x => x.Value).ToArray();
-
-						//Complete = selectableCompleteFunc(selectedButtons.Count); // selectedButtons.Count >= minSelectionCount;
 					}
 					else
 					{
 						_value = button.Value;
-
-						//Complete = true;
 
 						foreach (ButtonWithValue otherButton in _grid.Buttons)
 						{
@@ -239,12 +235,12 @@ namespace Sensus.UI.Inputs
 								button.State = ButtonStates.Incorrect;
 							}
 						}
-						else if (Selectable)
-						{
-							selectedButtons.Add(button);
+						//else if (Selectable)
+						//{
+						//	selectedButtons.Add(button);
 
-							button.State = ButtonStates.Selected;
-						}
+						//	button.State = ButtonStates.Selected;
+						//}
 					}
 
 					bool otherSelected = false;
