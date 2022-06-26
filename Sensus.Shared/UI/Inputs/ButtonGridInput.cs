@@ -17,6 +17,7 @@ using Sensus.UI.UiProperties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace Sensus.UI.Inputs
@@ -123,8 +124,20 @@ namespace Sensus.UI.Inputs
 		[OnOffUiProperty("Auto size buttons:", true, 4)]
 		public bool AutoSizeButtons { get; set; }
 
+		[OnOffUiProperty("Show Long Text:", true, 4)]
+		public bool ShowLongText { get; set; }
+
+		private const int LONG_TEXT_LENGTH = 30;
+
 		[JsonIgnore]
 		public List<ButtonWithValue> GridButtons => _grid?.Buttons.ToList() ?? new List<ButtonWithValue>();
+
+		private async Task<bool> HandleLongText(ButtonWithValue button)
+		{
+			Page page = Application.Current.MainPage.Navigation?.NavigationStack?.LastOrDefault() ?? Application.Current.MainPage;
+
+			return button.Text.Length < LONG_TEXT_LENGTH || ShowLongText == false || await page.DisplayAlert("Do you want to select:", button.Text, "Yes", "No");
+		}
 
 		public override View GetView(int index)
 		{
@@ -166,7 +179,7 @@ namespace Sensus.UI.Inputs
 
 				bool completeFunc(int selectedButtonCount, bool otherSelected) => Selectable == false || (selectedButtonCount >= minSelectionCount && (otherSelected == false || string.IsNullOrWhiteSpace(_otherResponseValue) == false));
 
-				_grid = new ButtonGridView(ColumnCount, (s, e) =>
+				_grid = new ButtonGridView(ColumnCount, async (s, e) =>
 				{
 					ButtonWithValue button = (ButtonWithValue)s;
 					List<ButtonWithValue> selectedButtons = _grid.Buttons.Where(x => x.State == ButtonStates.Selected).ToList();
@@ -177,30 +190,33 @@ namespace Sensus.UI.Inputs
 
 						if (button.State == ButtonStates.Selectable)
 						{
-							if (isExclusive || maxSelectionCount == 1)
+							if (await HandleLongText(button))
 							{
-								foreach (ButtonWithValue otherButton in _grid.Buttons)
+								if (isExclusive || maxSelectionCount == 1)
 								{
-									otherButton.State = _defaultState;
+									foreach (ButtonWithValue otherButton in _grid.Buttons)
+									{
+										otherButton.State = _defaultState;
 
-									selectedButtons.Remove(otherButton);
+										selectedButtons.Remove(otherButton);
+									}
 								}
-							}
-							else
-							{
-								foreach (ButtonWithValue otherButton in selectedButtons.Where(x => exclusiveValues.Contains(x.Value)).ToList())
+								else
 								{
-									otherButton.State = _defaultState;
+									foreach (ButtonWithValue otherButton in selectedButtons.Where(x => exclusiveValues.Contains(x.Value)).ToList())
+									{
+										otherButton.State = _defaultState;
 
-									selectedButtons.Remove(otherButton);
+										selectedButtons.Remove(otherButton);
+									}
 								}
-							}
 
-							if (selectedButtons.Count < maxSelectionCount)
-							{
-								selectedButtons.Add(button);
+								if (selectedButtons.Count < maxSelectionCount)
+								{
+									selectedButtons.Add(button);
 
-								button.State = ButtonStates.Selected;
+									button.State = ButtonStates.Selected;
+								}
 							}
 						}
 						else if (button.State == ButtonStates.Selected)
@@ -235,16 +251,28 @@ namespace Sensus.UI.Inputs
 								button.State = ButtonStates.Incorrect;
 							}
 						}
-						//else if (Selectable)
-						//{
-						//	selectedButtons.Add(button);
+						/*else if (Selectable)
+						{
+							if (selectedButtons.Contains(button))
+							{
+								if (selectedButtons.Count > minSelectionCount)
+								{
+									selectedButtons.Remove(button);
 
-						//	button.State = ButtonStates.Selected;
-						//}
+									button.State = ButtonStates.Selectable;
+								}
+							}
+							else if (await HandleLongText(button))
+							{
+								selectedButtons.Add(button);
+
+								button.State = ButtonStates.Selected;
+							}
+						}*/
 					}
 
 					bool otherSelected = false;
-					
+
 					if (Selectable && otherValues.Any())
 					{
 						IEnumerable<ButtonWithValue> selectedOtherButtons = selectedButtons.Where(x => otherValues.Contains(x.Value));
