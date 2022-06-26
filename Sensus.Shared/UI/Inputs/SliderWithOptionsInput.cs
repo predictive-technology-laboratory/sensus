@@ -18,6 +18,7 @@ using Newtonsoft.Json;
 using Sensus.UI.UiProperties;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sensus.UI.Inputs
 {
@@ -138,6 +139,11 @@ namespace Sensus.UI.Inputs
 		[EntryStringUiProperty("\"Other\" Response Label:", true, 17, true)]
 		public string OtherResponseLabel { get; set; }
 
+		[OnOffUiProperty("Show Long Text:", true, 4)]
+		public bool ShowLongText { get; set; }
+
+		private const int LONG_TEXT_LENGTH = 30;
+
 		public override object Value
 		{
 			get
@@ -207,6 +213,13 @@ namespace Sensus.UI.Inputs
 			RightLabel = null;
 			DisplaySliderValue = true;
 			DisplayMinMax = true;
+		}
+
+		private async Task<bool> HandleLongText(ButtonWithValue button)
+		{
+			Page page = Application.Current.MainPage.Navigation?.NavigationStack?.LastOrDefault() ?? Application.Current.MainPage;
+
+			return button.State == ButtonStates.Selected || button.Text.Length < LONG_TEXT_LENGTH || ShowLongText == false || await page.DisplayAlert("Do you want to select:", button.Text, "Yes", "No");
 		}
 
 		public override View GetView(int index)
@@ -352,45 +365,49 @@ namespace Sensus.UI.Inputs
 				// we use the effects framework to hide the slider's initial position from the user, in order to avoid biasing the user away from or toward the initial position.
 				_slider.Effects.Add(_effect);
 
-				_grid = new ButtonGridView(1, (s, e) =>
+				_grid = new ButtonGridView(1, async (s, e) =>
 				{
 					ButtonWithValue button = (ButtonWithValue)s;
 
-					_value = button.Value;
-
-					Complete = true;
-
-					foreach (ButtonWithValue gridButton in _grid.Buttons)
+					if (await HandleLongText(button))
 					{
-						gridButton.State = ButtonStates.Selectable;
-					}
+						_value = button.Value;
 
-					button.State = ButtonStates.Selected;
+						Complete = true;
 
-					if (otherLayout != null)
-					{
-						bool otherSelected = otherValues.Contains(button.Value);
-
-						if (otherSelected)
+						foreach (ButtonWithValue gridButton in _grid.Buttons)
 						{
-							_otherResponseValue = otherEditor.Text;
-						}
-						else
-						{
-							_otherResponseValue = null;
+							gridButton.State = ButtonStates.Selectable;
 						}
 
-						if (string.IsNullOrWhiteSpace(OtherResponseLabel) && otherLabel != null)
-						{
-							otherLabel.Text = button.Text + ":";
+						button.State = ButtonStates.Selected;
 
-							if (otherLabel.Text.EndsWith("::"))
+
+						if (otherLayout != null)
+						{
+							bool otherSelected = otherValues.Contains(button.Value);
+
+							if (otherSelected)
 							{
-								otherLabel.Text = otherLabel.Text[0..^1];
+								_otherResponseValue = otherEditor.Text;
 							}
-						}
+							else
+							{
+								_otherResponseValue = null;
+							}
 
-						otherLayout.IsVisible = otherSelected;
+							if (string.IsNullOrWhiteSpace(OtherResponseLabel) && otherLabel != null)
+							{
+								otherLabel.Text = button.Text + ":";
+
+								if (otherLabel.Text.EndsWith("::"))
+								{
+									otherLabel.Text = otherLabel.Text[0..^1];
+								}
+							}
+
+							otherLayout.IsVisible = otherSelected;
+						}
 					}
 				})
 				{
