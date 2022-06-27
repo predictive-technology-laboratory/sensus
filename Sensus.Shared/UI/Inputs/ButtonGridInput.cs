@@ -162,7 +162,7 @@ namespace Sensus.UI.Inputs
 					};
 				}
 
-				int maxSelectionCount = Math.Min(MaxSelectionCount, Buttons.Count);
+				int maxSelectionCount = Math.Max(1, Math.Min(MaxSelectionCount, Buttons.Count));
 				int minSelectionCount = Math.Min(MinSelectionCount, maxSelectionCount);
 
 				if (Required)
