@@ -29,6 +29,13 @@ namespace Sensus
 			Type = type;
 			StorageMethod = storageMethod;
 			CacheFileName = cacheFileName;
+
+			if (IsCached)
+			{
+				FileInfo cachedFileInfo = new FileInfo(GetFullCachePath(CacheFileName));
+
+				FileSize = cachedFileInfo.Length;
+			}
 		}
 
 		public static string GetFullCachePath(string cachePath)
