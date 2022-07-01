@@ -182,10 +182,10 @@ namespace Sensus.UI.Inputs
 				_grid = new ButtonGridView(ColumnCount, async (s, e) =>
 				{
 					ButtonWithValue button = (ButtonWithValue)s;
-					List<ButtonWithValue> selectedButtons = _grid.Buttons.Where(x => x.State == ButtonStates.Selected).ToList();
 
 					if (Selectable)
 					{
+						List<ButtonWithValue> selectedButtons = _grid.Buttons.Where(x => x.State == ButtonStates.Selected).ToList();
 						bool isExclusive = exclusiveValues.Contains(button.Value);
 
 						if (button.State == ButtonStates.Selectable)
@@ -230,10 +230,51 @@ namespace Sensus.UI.Inputs
 						}
 
 						_value = selectedButtons.Select(x => x.Value).ToArray();
+
+						bool otherSelected = false;
+
+						if (otherValues.Any())
+						{
+							IEnumerable<ButtonWithValue> selectedOtherButtons = selectedButtons.Where(x => otherValues.Contains(x.Value));
+
+							otherSelected = selectedOtherButtons.Any();
+
+							if (otherSelected)
+							{
+								_otherResponseValue = otherEditor.Text;
+
+								if (string.IsNullOrWhiteSpace(OtherResponseLabel) && otherLabel != null)
+								{
+									if (selectedOtherButtons.Count() == 1)
+									{
+										otherLabel.Text = selectedOtherButtons.Single().Text + ":";
+
+										if (otherLabel.Text.EndsWith("::"))
+										{
+											otherLabel.Text = otherLabel.Text[0..^1];
+										}
+									}
+									else
+									{
+										otherLabel.Text = "Other:";
+									}
+								}
+							}
+							else
+							{
+								_otherResponseValue = null;
+							}
+
+							otherLayout.IsVisible = otherSelected;
+						}
+
+						Complete = completeFunc(selectedButtons.Count, otherSelected);
 					}
 					else
 					{
 						_value = button.Value;
+
+						Complete = true;
 
 						foreach (ButtonWithValue otherButton in _grid.Buttons)
 						{
@@ -251,64 +292,7 @@ namespace Sensus.UI.Inputs
 								button.State = ButtonStates.Incorrect;
 							}
 						}
-						/*else if (Selectable)
-						{
-							if (selectedButtons.Contains(button))
-							{
-								if (selectedButtons.Count > minSelectionCount)
-								{
-									selectedButtons.Remove(button);
-
-									button.State = ButtonStates.Selectable;
-								}
-							}
-							else if (await HandleLongText(button))
-							{
-								selectedButtons.Add(button);
-
-								button.State = ButtonStates.Selected;
-							}
-						}*/
 					}
-
-					bool otherSelected = false;
-
-					if (Selectable && otherValues.Any())
-					{
-						IEnumerable<ButtonWithValue> selectedOtherButtons = selectedButtons.Where(x => otherValues.Contains(x.Value));
-
-						otherSelected = selectedOtherButtons.Any();
-
-						if (otherSelected)
-						{
-							_otherResponseValue = otherEditor.Text;
-
-							if (string.IsNullOrWhiteSpace(OtherResponseLabel) && otherLabel != null)
-							{
-								if (selectedOtherButtons.Count() == 1)
-								{
-									otherLabel.Text = selectedOtherButtons.Single().Text + ":";
-
-									if (otherLabel.Text.EndsWith("::"))
-									{
-										otherLabel.Text = otherLabel.Text[0..^1];
-									}
-								}
-								else
-								{
-									otherLabel.Text = "Other:";
-								}
-							}
-						}
-						else
-						{
-							_otherResponseValue = null;
-						}
-
-						otherLayout.IsVisible = otherSelected;
-					}
-
-					Complete = completeFunc(selectedButtons.Count, otherSelected);
 				})
 				{
 					AutoSize = AutoSizeButtons
