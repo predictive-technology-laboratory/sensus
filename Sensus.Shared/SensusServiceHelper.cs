@@ -1488,7 +1488,7 @@ namespace Sensus
 							}
 
 							// save the state to file
-							if (savedState != null)
+							if (savedState != null && savedState.InputGroupStack.Count > 0)
 							{
 								await savedState.SaveAsync();
 							}
