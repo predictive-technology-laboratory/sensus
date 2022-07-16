@@ -892,48 +892,64 @@ namespace Sensus.Probes.User.Scripts
 
 		public async Task<bool> ScheduleScriptFromInputAsync(Script script)
 		{
-			if (script.InputGroups.SelectMany(x => x.Inputs).OfType<ScriptSchedulerInput>().FirstOrDefault() is ScriptSchedulerInput scheduler && scheduler.Value is DateTime scheduledTime)
+			IEnumerable<ScriptSchedulerInput> schedulers = script.InputGroups.SelectMany(x => x.Inputs).OfType<ScriptSchedulerInput>();
+			bool scheduledNext = false;
+			bool save = schedulers.Any();
+
+			foreach (ScriptSchedulerInput scheduler in schedulers)
 			{
-				ScriptRunner runner = null;
-
-				if (scheduler.ScheduleMode == ScheduleModes.Self || scheduler.ScheduleMode == ScheduleModes.Reminder)
+				try
 				{
-					runner = script.Runner;
-				}
-				else if (scheduler.ScheduleMode == ScheduleModes.Next && NextScript != null)
-				{
-					runner = NextScript;
-				}
-
-				if (scheduler.TimeOnly)
-				{
-					int daysFromNow = 0;
-
-					if (scheduler.DaysInFuture > 0)
+					if (scheduler.Value is DateTime scheduledTime)
 					{
-						daysFromNow = scheduler.DaysInFuture;
+						if (scheduler.TimeOnly)
+						{
+							int daysFromNow = 0;
+
+							if (scheduler.DaysInFuture > 0)
+							{
+								daysFromNow = scheduler.DaysInFuture;
+							}
+							else if (scheduledTime.TimeOfDay < DateTime.Now.TimeOfDay)
+							{
+								daysFromNow = 1;
+							}
+
+							scheduledTime = DateTime.Now.Date.AddDays(daysFromNow).Add(scheduledTime.TimeOfDay);
+						}
+
+						if (scheduler.ScheduleMode == ScheduleModes.Reminder)
+						{
+							await ScheduleReminderAsync(script, scheduledTime);
+						}
+						else if (scheduler.ScheduleMode == ScheduleModes.Self)
+						{
+							await script.Runner.ScheduleScriptRunAsync(scheduledTime);
+						}
+						else if (scheduler.ScheduleMode == ScheduleModes.Next && NextScript != null)
+						{
+							await NextScript.ScheduleScriptRunAsync(scheduledTime);
+
+							scheduledNext = true;
+						}
+						else if (scheduler.ScheduleMode == ScheduleModes.Select && scheduler.ScheduledScript != null)
+						{
+							await scheduler.ScheduledScript.ScheduleScriptRunAsync(scheduledTime);
+						}
 					}
-					else if (scheduledTime.TimeOfDay < DateTime.Now.TimeOfDay)
-					{
-						daysFromNow = 1;
-					}
-
-					scheduledTime = DateTime.Now.Date.AddDays(daysFromNow).Add(scheduledTime.TimeOfDay);
 				}
-
-				if (scheduler.ScheduleMode == ScheduleModes.Reminder)
+				catch (Exception e)
 				{
-					await runner.ScheduleReminderAsync(script, scheduledTime);
+					SensusServiceHelper.Get().Logger.Log($"Failed to schedule from SchedulerInput with {scheduler.ScheduleMode}: {e.Message}", LoggingLevel.Normal, GetType());
 				}
-				else
-				{
-					await runner.ScheduleScriptRunAsync(scheduledTime);
-				}
-
-				return scheduler.ScheduleMode == ScheduleModes.Next;
 			}
 
-			return false;
+			if (save)
+			{
+				await SensusServiceHelper.Get().SaveAsync();
+			}
+
+			return scheduledNext;
 		}
 
 		public async Task ScheduleNextScriptToRunAsync()
@@ -1087,10 +1103,10 @@ namespace Sensus.Probes.User.Scripts
 
 				await RunAsync(scriptToRun);
 
-				// on android, the callback alarm has fired and the script has been run. on ios, the notification has been
-				// delivered (1) to the app in the foreground, (2) to the notification tray where the user has opened
-				// it, or (3) via push notification in the background. in any case, the script has been run. now is a good 
-				// time to update the scheduled callbacks to run this script.
+		// on android, the callback alarm has fired and the script has been run. on ios, the notification has been
+		// delivered (1) to the app in the foreground, (2) to the notification tray where the user has opened
+		// it, or (3) via push notification in the background. in any case, the script has been run. now is a good 
+		// time to update the scheduled callbacks to run this script.
 				await ScheduleScriptRunsAsync();
 
 			}, triggerTime.TimeTillTrigger, Script.Id + "." + GetType().FullName + "." + (triggerTime.Trigger - DateTime.MinValue).Days + "." + triggerTime.Window, Probe.Protocol.Id, Probe.Protocol, null, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS), ScheduledCallbackPriority.High, GetType());  // use Script.Id rather than script.Id for the callback identifier. using the former means that callbacks are unique to the script runner and not the script copies (the latter) that we will be running. the latter would always be unique.
