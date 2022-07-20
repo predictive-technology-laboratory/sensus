@@ -438,77 +438,8 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <PackageReference Include="Xamarin.Plugins.Clipboard">
       <Version>2.2.1</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Swift4">
-      <Version>4.0.0.2</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Swift4.ARKit">
-      <Version>4.2.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Swift4.AVFoundation">
-      <Version>4.2.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Swift4.Core">
-      <Version>4.2.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Swift4.CoreAudio">
-      <Version>4.2.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Swift4.CoreFoundation">
-      <Version>4.2.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Swift4.CoreGraphics">
-      <Version>4.2.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Swift4.CoreImage">
-      <Version>4.2.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Swift4.CoreLocation">
-      <Version>4.2.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Swift4.CoreMedia">
-      <Version>4.2.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Swift4.Darwin">
-      <Version>4.2.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Swift4.Dispatch">
-      <Version>4.2.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Swift4.Foundation">
-      <Version>4.2.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Swift4.GLKit">
-      <Version>4.2.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Swift4.Metal">
-      <Version>4.2.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Swift4.ModelIO">
-      <Version>4.2.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Swift4.ObjectiveC">
-      <Version>4.2.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Swift4.OS">
-      <Version>4.2.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Swift4.QuartzCore">
-      <Version>4.2.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Swift4.SceneKit">
-      <Version>4.2.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Swift4.SIMD">
-      <Version>4.2.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Swift4.SpriteKit">
-      <Version>4.2.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Swift4.SwiftOnoneSupport">
-      <Version>4.2.1.1</Version>
-    </PackageReference>
-    <PackageReference Include="Xamarin.Swift4.UIKit">
-      <Version>4.2.1.1</Version>
+    <PackageReference Include="Xamarin.Swift">
+      <Version>1.0.11</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.TestCloud.Agent">
       <Version>0.21.7</Version>
