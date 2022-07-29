@@ -45,6 +45,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitWheelchairUseProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthKitNumberOfTimesFallenProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Health\iOSHealthDataProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\iOSButtonWithValueRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\iOSVideoRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\HideSliderEffect.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SliderInputEffect.cs" />

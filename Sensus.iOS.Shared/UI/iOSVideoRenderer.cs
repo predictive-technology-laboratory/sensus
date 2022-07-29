@@ -10,7 +10,6 @@ using CoreGraphics;
 using System;
 using System.Linq;
 using CoreMedia;
-using ObjCRuntime;
 
 [assembly: ExportRenderer(typeof(VideoPlayer), typeof(iOSVideoRenderer))]
 
