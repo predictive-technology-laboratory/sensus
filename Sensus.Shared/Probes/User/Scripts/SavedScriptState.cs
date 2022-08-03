@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Sensus.UI.Inputs;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,6 +21,7 @@ namespace Sensus.Probes.User.Scripts
 			SavePath = savePath;
 		}
 
+		[JsonIgnore]
 		public string SavePath { get; set; }
 		[JsonIgnore]
 		public Stack<int> InputGroupStack { get; set; }
@@ -55,11 +55,18 @@ namespace Sensus.Probes.User.Scripts
 
 		public async Task SaveAsync()
 		{
-			Directory.CreateDirectory(Path.GetDirectoryName(SavePath));
-
-			using (StreamWriter writer = new StreamWriter(SavePath))
+			try
 			{
-				await writer.WriteAsync(JsonConvert.SerializeObject(this));
+				Directory.CreateDirectory(Path.GetDirectoryName(SavePath));
+
+				using (StreamWriter writer = new StreamWriter(SavePath))
+				{
+					await writer.WriteAsync(JsonConvert.SerializeObject(this));
+				}
+			}
+			catch (Exception e)
+			{
+				SensusServiceHelper.Get()?.Logger.Log("Failed to save script state: " + e.Message, LoggingLevel.Normal, GetType());
 			}
 		}
 	}

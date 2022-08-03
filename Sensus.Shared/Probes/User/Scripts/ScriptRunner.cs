@@ -121,6 +121,8 @@ namespace Sensus.Probes.User.Scripts
 								};
 
 								runner.SavedState = JsonConvert.DeserializeObject<SavedScriptState>(json, settings);
+
+								runner.SavedState.SavePath = savePath;
 							}
 						}
 						else
