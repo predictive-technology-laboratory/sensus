@@ -16,6 +16,10 @@ using Xamarin.Forms;
 using Newtonsoft.Json;
 using Sensus.UI.UiProperties;
 using System;
+using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
+using DatePicker = Xamarin.Forms.DatePicker;
+using TimePicker = Xamarin.Forms.TimePicker;
+using iOSPlatform = Xamarin.Forms.PlatformConfiguration.iOS;
 
 namespace Sensus.UI.Inputs
 {
@@ -111,6 +115,8 @@ namespace Sensus.UI.Inputs
 #endif
 				};
 
+				_datePicker.On<iOSPlatform>().SetUpdateMode(UpdateMode.WhenFinished);
+
 				_timePicker = new TimePicker
 				{
 					HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -120,6 +126,8 @@ namespace Sensus.UI.Inputs
 					, StyleId = Name
 #endif
 				};
+
+				_timePicker.On<iOSPlatform>().SetUpdateMode(UpdateMode.WhenFinished);
 
 				Color defaultTextColor = _datePicker.TextColor;
 				_datePicker.TextColor = Color.Gray;

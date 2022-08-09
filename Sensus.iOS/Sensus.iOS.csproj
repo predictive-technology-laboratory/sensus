@@ -47,7 +47,7 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <ConsolePause>false</ConsolePause>
     <MtouchArch>ARMv7, ARM64</MtouchArch>
     <CodesignEntitlements>EntitlementsProduction.plist</CodesignEntitlements>
-    <CodesignKey>iPhone Distribution: UVA Apps, LLC (L8C6JE7MP8)</CodesignKey>
+    <CodesignKey>iPhone Developer</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
     <IpaPackageName>
     </IpaPackageName>
@@ -59,7 +59,7 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <MtouchLink>SdkOnly</MtouchLink>
     <MtouchFastDev>false</MtouchFastDev>
     <LangVersion>latest</LangVersion>
-    <CodesignProvision>Sensus App Store</CodesignProvision>
+    <CodesignProvision>Sensus Development</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <Optimize>true</Optimize>
