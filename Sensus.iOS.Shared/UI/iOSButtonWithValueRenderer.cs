@@ -26,6 +26,8 @@ namespace Sensus.iOS.UI
 
 			if (Control != null)
 			{
+				Control.TitleLabel.Text = Control.TitleLabel.Text ?? "";
+
 				Element.SizeChanged += (s, e) =>
 				{
 					if (resized == false)
