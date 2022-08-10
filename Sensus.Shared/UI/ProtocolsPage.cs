@@ -698,7 +698,11 @@ namespace Sensus.UI
 #if DEBUG
 			ToolbarItems.Add(new ToolbarItem("Save", null, async () =>
 			{
+				await SensusServiceHelper.Get().FlashNotificationAsync("Starting to save...");
+
 				await SensusServiceHelper.Get().SaveAsync();
+
+				await SensusServiceHelper.Get().FlashNotificationAsync("Finished saving.");
 			}, ToolbarItemOrder.Secondary));
 #endif
 
