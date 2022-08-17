@@ -110,6 +110,18 @@ namespace Sensus.UI
 				Content = contentLayout
 			};
 
+			//bool scrolled = false;
+
+			//scrollView.SizeChanged += async (s, e) =>
+			//{
+			//	if (scrolled == false)
+			//	{
+			//		await scrollView.ScrollToAsync(0, 0, false);
+
+			//		scrolled = true;
+			//	}
+			//};
+
 			StackLayout headerLayout = new StackLayout
 			{
 				Orientation = StackOrientation.Vertical,
