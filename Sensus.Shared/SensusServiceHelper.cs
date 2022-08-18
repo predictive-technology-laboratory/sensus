@@ -2206,7 +2206,7 @@ namespace Sensus
 																								  input.LocationUpdateTimestamp,
 																								  script.RunTime.Value,
 																								  input.CompletionRecords,
-																								  input.SubmissionTimestamp.Value,
+																								  input.SubmissionTimestamp ?? DateTimeOffset.UtcNow,
 																								  manualRun), CancellationToken.None);
 							}
 
