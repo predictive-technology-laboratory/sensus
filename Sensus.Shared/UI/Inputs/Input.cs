@@ -68,6 +68,7 @@ namespace Sensus.UI.Inputs
 		private Timer _delayTimer;
 		private bool _enabled;
 
+		[JsonIgnore]
 		public InputGroupPage InputGroupPage { get; set; }
 
 		/// <summary>
