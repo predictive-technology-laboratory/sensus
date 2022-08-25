@@ -55,9 +55,9 @@ namespace Sensus
 			string extension = Path.GetExtension(fileName);
 			string cacheName = null;
 
-			using (MD5 sha = MD5.Create())
+			using (MD5 hasher = MD5.Create())
 			{
-				byte[] hash = sha.ComputeHash(Encoding.UTF8.GetBytes(fileName));
+				byte[] hash = hasher.ComputeHash(Encoding.UTF8.GetBytes(fileName));
 				Guid guid = new Guid(hash);
 
 				cacheName = $"{guid}{extension}";
