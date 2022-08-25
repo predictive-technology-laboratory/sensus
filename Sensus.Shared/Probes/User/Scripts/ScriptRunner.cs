@@ -68,7 +68,7 @@ namespace Sensus.Probes.User.Scripts
 		[JsonIgnore] // do not serialize this since it is stored outside of the saved SensusServiceHelper
 		public SavedScriptState SavedState { get; set; }
 
-		private string SavedStatePath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), Probe.Protocol.Id, "SavedScriptStates");
+		private string SavedStatePath => Path.Combine(Probe.Protocol.StorageDirectory, "SavedScriptStates");
 
 		private string GetSavedStateFileName()
 		{
@@ -734,6 +734,15 @@ namespace Sensus.Probes.User.Scripts
 			if (SensusServiceHelper.Get().RemoveScriptsForRunner(this))
 			{
 				await SensusServiceHelper.Get().IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.None, Probe.Protocol);
+			}
+
+			try
+			{
+				Directory.Delete(SavedStatePath, true);
+			}
+			catch (Exception e)
+			{
+				SensusServiceHelper.Get().Logger.Log($"Failed to delete saved state: {e.Message}", LoggingLevel.Normal, GetType());
 			}
 		}
 
