@@ -91,6 +91,8 @@ namespace Sensus.UI.Inputs
 		public ScoreInput()
 		{
 			_inputs = new List<Input>();
+
+			Required = false;
 		}
 
 		public override object Value
