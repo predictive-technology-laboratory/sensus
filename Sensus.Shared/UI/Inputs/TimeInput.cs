@@ -18,12 +18,13 @@ using Sensus.UI.UiProperties;
 using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 using TimePicker = Xamarin.Forms.TimePicker;
 using iOSPlatform = Xamarin.Forms.PlatformConfiguration.iOS;
+using System;
 
 namespace Sensus.UI.Inputs
 {
 	public class TimeInput : Input, IVariableDefiningInput
 	{
-		private TimePicker _timePicker;
+		private ConstrainedTimePicker _timePicker;
 		private Label _label;
 		private bool _hasFocused;
 		private string _definedVariable;
@@ -47,6 +48,11 @@ namespace Sensus.UI.Inputs
 				_definedVariable = value?.Trim();
 			}
 		}
+
+		[TimeUiProperty("Minimum Time (iOS):", true, 18, false)]
+		public TimeSpan? MinimumTime { get; set; }
+		[TimeUiProperty("Maximum Time (iOS):", true, 19, false)]
+		public TimeSpan? MaximumTime { get; set; }
 
 		public override object Value
 		{
@@ -95,7 +101,7 @@ namespace Sensus.UI.Inputs
 		{
 			if (base.GetView(index) == null)
 			{
-				_timePicker = new TimePicker
+				_timePicker = new ConstrainedTimePicker
 				{
 					HorizontalOptions = LayoutOptions.FillAndExpand,
 
@@ -104,6 +110,16 @@ namespace Sensus.UI.Inputs
                     , StyleId = Name
 #endif
 				};
+
+				if (MinimumTime != null)
+				{
+					_timePicker.MinimumTime = MinimumTime.Value;
+				}
+
+				if (MaximumTime != null)
+				{
+					_timePicker.MaximumTime = MaximumTime.Value;
+				}
 
 				_timePicker.On<iOSPlatform>().SetUpdateMode(UpdateMode.WhenFinished);
 

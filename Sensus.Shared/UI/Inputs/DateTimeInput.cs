@@ -57,6 +57,11 @@ namespace Sensus.UI.Inputs
 		[OnOffUiProperty("Time Only:", true, 17)]
 		public virtual bool TimeOnly { get; set; }
 
+		[TimeUiProperty("Minimum Time (iOS):", true, 18, false)]
+		public TimeSpan? MinimumTime { get; set; }
+		[TimeUiProperty("Maximum Time (iOS):", true, 19, false)]
+		public TimeSpan? MaximumTime { get; set; }
+
 		public override object Value
 		{
 			get
@@ -117,7 +122,7 @@ namespace Sensus.UI.Inputs
 
 				_datePicker.On<iOSPlatform>().SetUpdateMode(UpdateMode.WhenFinished);
 
-				_timePicker = new TimePicker
+				_timePicker = new ConstrainedTimePicker
 				{
 					HorizontalOptions = LayoutOptions.FillAndExpand,
 
@@ -126,6 +131,11 @@ namespace Sensus.UI.Inputs
 					, StyleId = Name
 #endif
 				};
+
+				if (MinimumTime != null)
+				{
+					
+				}
 
 				_timePicker.On<iOSPlatform>().SetUpdateMode(UpdateMode.WhenFinished);
 
