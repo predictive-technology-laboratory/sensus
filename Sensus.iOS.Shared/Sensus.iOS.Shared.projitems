@@ -54,15 +54,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\iOSActivityProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\iOSBluetoothDeviceProximityProbePeripheralManagerDelegate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\iOSBluetoothDeviceProximityProbeCentralManagerDelegate.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\iOSEstimoteBeaconProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)iOSPowerConnectionChangeListener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\UNUserNotifications\UNUserNotificationDelegate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\UNUserNotifications\UNUserNotificationNotifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\iOSNotifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GlobalSuppressions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NetworkConnectivity.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBackgroundIndoorLocationManagerDelegate.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteForegroundIndoorLocationManagerDelegate.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Notifications\" />

@@ -265,13 +265,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\ViewVisibleValueConverter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VideoPlayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Window.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeacon.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeaconDatum.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteBeaconProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\AsymmetricEncryption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\IVariableDefiningInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityDatum.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\EstimoteBeaconProbeBeaconsPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SensusMasterPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SensusDetailPageItem.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SensusMasterDetailPage.cs" />
@@ -300,10 +296,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\ProgressPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ProtocolCompatibilityMode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)HeartbeatDatum.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteLocation.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteIndoorLocationDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\ScriptTriggerTime.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Location\EstimoteIndoorLocationAccuracy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\PendingSurveyNotificationMode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotificationUpdate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\PushNotificationUpdateType.cs" />

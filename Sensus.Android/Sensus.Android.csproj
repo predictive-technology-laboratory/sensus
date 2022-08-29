@@ -82,14 +82,6 @@
     <Reference Include="BouncyCastle.Crypto, Version=1.9.0.0, Culture=neutral, PublicKeyToken=0e99375e54769942, processorArchitecture=MSIL">
       <HintPath>..\packages\Portable.BouncyCastle.1.9.0\lib\netstandard2.0\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
-    <Reference Include="Estimote.Android.Indoor, Version=2.5.4.3, Culture=neutral, processorArchitecture=MSIL">
-      <Aliases>indoor, global</Aliases>
-      <HintPath>..\packages\Estimote.Android.Indoor.2.5.4.3\lib\monoandroid90\Estimote.Android.Indoor.dll</HintPath>
-    </Reference>
-    <Reference Include="Estimote.Android.Proximity, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <Aliases>proximity, global</Aliases>
-      <HintPath>..\packages\Estimote.Android.Proximity.1.0.3.1\lib\monoandroid90\Estimote.Android.Proximity.dll</HintPath>
-    </Reference>
     <Reference Include="FormsViewGroup, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xamarin.Forms.4.7.0.1351\lib\MonoAndroid90\FormsViewGroup.dll</HintPath>
     </Reference>
