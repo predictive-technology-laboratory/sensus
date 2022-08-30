@@ -32,6 +32,54 @@ namespace Sensus
 		StrictNotEqual
 	}
 
+	public class ObjectEqualityComparer : EqualityComparer<object>
+	{
+		public override bool Equals(object left, object right)
+		{
+			TypeConverter leftConverter = TypeDescriptor.GetConverter(left.GetType());
+			object convertedLeft = left;
+			object convertedRight = right;
+
+			if (leftConverter.CanConvertTo(right.GetType()))
+			{
+				convertedLeft = leftConverter.ConvertTo(left, right.GetType());
+			}
+			else if (leftConverter.CanConvertFrom(right.GetType()))
+			{
+				convertedRight = leftConverter.ConvertFrom(right);
+			}
+			else
+			{
+				TypeConverter rightConverter = TypeDescriptor.GetConverter(right.GetType());
+
+				if (rightConverter.CanConvertTo(left.GetType()))
+				{
+					convertedRight = rightConverter.ConvertTo(right, left.GetType());
+				}
+				else if (rightConverter.CanConvertFrom(left.GetType()))
+				{
+					convertedLeft = rightConverter.ConvertFrom(left);
+				}
+			}
+
+			return object.Equals(convertedLeft, convertedRight);
+		}
+
+		public override int GetHashCode(object obj)
+		{
+			if (obj is double d)
+			{
+				return ((long)d).GetHashCode();
+			}
+			else if (obj is float f)
+			{
+				return ((long)f).GetHashCode();
+			}
+
+			return obj.GetHashCode();
+		}
+	}
+
 	public static class ObjectComparer
 	{
 		private static bool CompareIComparables(IComparable left, IComparable right, ComparisonOperators compareWith)
@@ -145,7 +193,7 @@ namespace Sensus
 		{
 			IEnumerable<object> leftObjects = left.OfType<object>();
 			IEnumerable<object> rightObjects = right.OfType<object>();
-			IEnumerable<object> intersection = leftObjects.Intersect(rightObjects);
+			IEnumerable<object> intersection = leftObjects.Intersect(rightObjects, new ObjectEqualityComparer());
 			int intersectionLength = intersection.Count();
 
 			if (compareWith == ComparisonOperators.Default)
@@ -159,7 +207,7 @@ namespace Sensus
 			}
 			else if (compareWith == ComparisonOperators.NotEqual)
 			{
-				return leftObjects.Count() != intersectionLength || rightObjects.Count() == intersectionLength;
+				return leftObjects.Count() != intersectionLength || rightObjects.Count() != intersectionLength;
 			}
 			else if (compareWith == ComparisonOperators.GreaterThan)
 			{
