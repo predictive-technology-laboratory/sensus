@@ -19,9 +19,11 @@ namespace Sensus.Android.Probes.Movement
 
 			_pedometerListener = new AndroidSensorListener(SensorType.StepCounter, async e =>
 			{
-				if (_lastValue > 0)
+				float difference = e.Values[0] - _lastValue;
+
+				if (_lastValue > 0 && difference > 0)
 				{
-					await StoreDatumAsync(new PedometerDatum(DateTimeOffset.UtcNow, e.Values[0] - _lastValue));
+					await StoreDatumAsync(new PedometerDatum(DateTimeOffset.UtcNow, difference));
 				}
 
 				_lastValue = e.Values[0];
