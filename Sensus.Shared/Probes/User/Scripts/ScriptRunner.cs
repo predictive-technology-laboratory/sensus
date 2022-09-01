@@ -90,60 +90,49 @@ namespace Sensus.Probes.User.Scripts
 		public static async Task<SavedScriptState> ManageStateAsync(Script script)
 		{
 			ScriptRunner runner = script.Runner;
-			string savePath = runner.GetSavedStateFileName();
 
-			try
+			if (runner.SaveState)
 			{
-				bool restoredState = false;
-				bool clearedState = false;
+				string savePath = runner.GetSavedStateFileName();
 
-				if (runner.SaveState)
+				try
 				{
-					if (runner.SavedState != null)
-					{
-						restoredState = await PromptForSavedStateAsync(script);
+					bool restoreState = runner.SavedState != null || File.Exists(savePath);
 
-						clearedState = restoredState == false;
-					}
-					else if (File.Exists(savePath))
+					if (restoreState)
 					{
-						restoredState = await PromptForSavedStateAsync(script);
+						restoreState = await PromptForSavedStateAsync(script);
 
-						if (restoredState)
+						if (restoreState)
 						{
-							using (StreamReader reader = new StreamReader(savePath))
+							if (runner.SavedState == null)
 							{
-								string json = await reader.ReadToEndAsync();
-
-								JsonSerializerSettings settings = new JsonSerializerSettings
+								using (StreamReader reader = new StreamReader(savePath))
 								{
-									ObjectCreationHandling = ObjectCreationHandling.Replace
-								};
+									string json = await reader.ReadToEndAsync();
 
-								runner.SavedState = JsonConvert.DeserializeObject<SavedScriptState>(json, settings);
+									JsonSerializerSettings settings = new JsonSerializerSettings
+									{
+										ObjectCreationHandling = ObjectCreationHandling.Replace
+									};
 
-								runner.SavedState.SavePath = savePath;
+									runner.SavedState = JsonConvert.DeserializeObject<SavedScriptState>(json, settings);
+
+									runner.SavedState.SavePath = savePath;
+								}
 							}
+
+							foreach (KeyValuePair<string, object> pair in runner.SavedState.Variables)
+							{
+								runner.Probe.Protocol.VariableValue[pair.Key] = pair.Value;
+							}
+
+							runner.SavedState.Restored = true;
 						}
 						else
 						{
-							clearedState = true;
-
 							ClearSavedState(script);
-						}
-					}
 
-					if (restoredState)
-					{
-						foreach (KeyValuePair<string, object> pair in runner.SavedState.Variables)
-						{
-							runner.Probe.Protocol.VariableValue[pair.Key] = pair.Value;
-						}
-					}
-					else
-					{
-						if (clearedState)
-						{
 							foreach (InputGroup inputGroup in script.InputGroups)
 							{
 								foreach (Input input in inputGroup.Inputs)
@@ -151,23 +140,27 @@ namespace Sensus.Probes.User.Scripts
 									input.Reset();
 								}
 							}
-						}
 
+							runner.SavedState = new SavedScriptState(savePath);
+						}
+					}
+					else
+					{
 						runner.SavedState = new SavedScriptState(savePath);
 					}
 
 					return runner.SavedState;
 				}
-			}
-			catch (Exception e)
-			{
-				SensusServiceHelper.Get().Logger.Log("Error restoring script saved state:  " + e.Message, LoggingLevel.Normal, typeof(ScriptRunner));
-
-				await SensusServiceHelper.Get().FlashNotificationAsync("Could not restore your previous progress.");
-
-				if (runner.SaveState)
+				catch (Exception e)
 				{
-					return new SavedScriptState(savePath);
+					SensusServiceHelper.Get().Logger.Log("Error restoring script saved state:  " + e.Message, LoggingLevel.Normal, typeof(ScriptRunner));
+
+					await SensusServiceHelper.Get().FlashNotificationAsync("Could not restore your previous progress.");
+
+					if (runner.SaveState)
+					{
+						return new SavedScriptState(savePath);
+					}
 				}
 			}
 
@@ -1114,10 +1107,10 @@ namespace Sensus.Probes.User.Scripts
 
 				await RunAsync(scriptToRun);
 
-		// on android, the callback alarm has fired and the script has been run. on ios, the notification has been
-		// delivered (1) to the app in the foreground, (2) to the notification tray where the user has opened
-		// it, or (3) via push notification in the background. in any case, the script has been run. now is a good 
-		// time to update the scheduled callbacks to run this script.
+				// on android, the callback alarm has fired and the script has been run. on ios, the notification has been
+				// delivered (1) to the app in the foreground, (2) to the notification tray where the user has opened
+				// it, or (3) via push notification in the background. in any case, the script has been run. now is a good 
+				// time to update the scheduled callbacks to run this script.
 				await ScheduleScriptRunsAsync();
 
 			}, triggerTime.TimeTillTrigger, Script.Id + "." + GetType().FullName + "." + (triggerTime.Trigger - DateTime.MinValue).Days + "." + triggerTime.Window, Probe.Protocol.Id, Probe.Protocol, null, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS), ScheduledCallbackPriority.High, GetType());  // use Script.Id rather than script.Id for the callback identifier. using the former means that callbacks are unique to the script runner and not the script copies (the latter) that we will be running. the latter would always be unique.

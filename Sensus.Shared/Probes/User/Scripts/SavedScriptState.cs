@@ -28,6 +28,9 @@ namespace Sensus.Probes.User.Scripts
 		public Dictionary<string, ScriptDatum> SavedInputs { get; set; }
 		public Dictionary<string, object> Variables { get; set; }
 
+		[JsonIgnore]
+		public bool Restored { get; set; }
+
 		[JsonProperty("InputGroupStack")]
 		public List<int> InputGroupList
 		{
