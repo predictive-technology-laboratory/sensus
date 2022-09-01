@@ -75,9 +75,9 @@ namespace Sensus.Probes.User.Scripts
 			return Path.Combine(SavedStatePath, $"{Script.Id}.json");
 		}
 
-		private async Task<bool> PromptForSavedState()
+		private static async Task<bool> PromptForSavedStateAsync(Script script)
 		{
-			string continuePrompt = ContinuePrompt;
+			string continuePrompt = script.Runner.ContinuePrompt;
 
 			if (string.IsNullOrWhiteSpace(continuePrompt))
 			{
@@ -101,13 +101,13 @@ namespace Sensus.Probes.User.Scripts
 				{
 					if (runner.SavedState != null)
 					{
-						restoredState = await runner.PromptForSavedState();
+						restoredState = await PromptForSavedStateAsync(script);
 
 						clearedState = restoredState == false;
 					}
 					else if (File.Exists(savePath))
 					{
-						restoredState = await runner.PromptForSavedState();
+						restoredState = await PromptForSavedStateAsync(script);
 
 						if (restoredState)
 						{
