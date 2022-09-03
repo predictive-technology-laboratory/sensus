@@ -44,9 +44,9 @@ namespace Sensus.Probes.User.Scripts
 				{
 					InputGroupStack.Clear();
 
-					foreach (int inputGroup in value)
+					for (int index = 0; index < value.Count; index++)
 					{
-						InputGroupStack.Push(inputGroup);
+						InputGroupStack.Push(value[value.Count - index - 1]);
 					}
 				}
 				else
