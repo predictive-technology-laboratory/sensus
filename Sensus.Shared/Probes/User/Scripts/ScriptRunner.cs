@@ -316,6 +316,32 @@ namespace Sensus.Probes.User.Scripts
 		/// fired every other day at some time between 9am and 10am.
 		/// </summary>
 		/// <value>The non-DOW trigger interval days.</value>
+		[EntryIntegerUiProperty("Trigger Interval (Days):", true, 9, true)]
+		public int TriggerIntervalDays
+		{
+			get
+			{
+				return _scheduleTrigger.TriggerIntervalDays;
+			}
+			set
+			{
+				if (value < 1)
+				{
+					value = 1;
+				}
+
+				_scheduleTrigger.TriggerIntervalDays = value;
+			}
+		}
+
+		/// <summary>
+		/// For surveys that are not associated with a specific day of the week, this field indicates how 
+		/// many days to should pass between subsequent surveys. For example, if this is set to 1 and 
+		/// <see cref="TriggerWindowsString"/> is set to `9:00-10:00`, then the survey would be fired each
+		/// day at some time between 9am and 10am. If this field were set to 2, then the survey would be 
+		/// fired every other day at some time between 9am and 10am.
+		/// </summary>
+		/// <value>The non-DOW trigger interval days.</value>
 		[EntryIntegerUiProperty("Non-DOW Trigger Interval (Days):", true, 9, true)]
 		public int NonDowTriggerIntervalDays
 		{
@@ -826,7 +852,7 @@ namespace Sensus.Probes.User.Scripts
 			}
 
 			// get all trigger times starting from today
-			foreach (ScriptTriggerTime triggerTime in _scheduleTrigger.GetTriggerTimes(DateTime.Now, _maxAge))
+			foreach (ScriptTriggerTime triggerTime in _scheduleTrigger.GetTriggerTimes(DateTime.Now, Probe.Protocol.InstallDate, _maxAge))
 			{
 				// schedule all future runs, except those beyond the protocol's end date (if there is one). need to check
 				// that they're in the future because GetTriggerTimes will return all times starting from 0:00 of the current

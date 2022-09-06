@@ -86,6 +86,8 @@ namespace Sensus
 		{
 			Protocol protocol = new Protocol(name);
 
+			protocol.InstallDate = DateTime.Now;
+
 			await protocol.ResetAsync(true);
 
 			foreach (Probe probe in Probe.GetAll())
@@ -180,6 +182,8 @@ namespace Sensus
 			try
 			{
 				protocol = json.DeserializeJson<Protocol>();
+
+				protocol.InstallDate = DateTime.Now;
 			}
 			catch (Exception ex)
 			{
@@ -578,6 +582,8 @@ namespace Sensus
 		{
 			get { return _state; }
 		}
+
+		public DateTime InstallDate { get; set; }
 
 		public LocalDataStore LocalDataStore
 		{
