@@ -583,6 +583,10 @@ namespace Sensus
 			get { return _state; }
 		}
 
+		/// <summary>
+		/// This is the date(time) that the <see cref="Protocol"/> was added to Sensus on the user's device.
+		/// </summary>
+		/// <value>A <see cref="DateTime" /> value.</value>
 		public DateTime InstallDate { get; set; }
 
 		public LocalDataStore LocalDataStore

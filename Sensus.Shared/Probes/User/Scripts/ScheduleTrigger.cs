@@ -151,18 +151,31 @@ namespace Sensus.Probes.User.Scripts
 
 						if (window.DayOfTheWeek.HasValue)
 						{
+							// previously if the DOW for the window and the current trigger date matched then the script should be scheduled for the current day
+							// now that there is a TriggerIntervalDays property it should only be scheduled if the date aligns with the interval starting from the NEXT
+							// occurrence of the window's DOW after the InstallDate.
 							if (window.DayOfTheWeek.Value == triggerDateDOW)
 							{
+								// calculate the interval's starting date, the next DOW after the installDate
+								// this process might seem kind of "backwards" in that we already have the triggerDate and the DOW that it falls on, so we
+								// are checking to see if it aligns with the interval based on the InstallDate.
 								DateTime intervalDate = installDate.AddDays(7).AddDays(-(int)installDate.AddDays(7 - (int)triggerDateDOW).DayOfWeek);
 
+								// force the triggerInterval to align with 7 days. TriggerIntervalDays that are not multiples of 7 will get aligned with a multiple of 7.
+								// this means that when using both a DOW and a TriggerIntervalDays, the trigger interval represents a minimum interval meaning the actual
+								// interval will be the next largest multiple of 7 to properly align with the specified DOW
 								int triggerIntervalDays = TriggerIntervalDays + 7 - TriggerIntervalDays % 7;
 
+								// theck to see if the triggerDate aligns with the interval, if so then the script should be scheduled for that day
+								// NOTE: the Windows and their alignment with TriggerIntervalDays are isolated from each other so the script may be scheduled more often
+								// than TriggerIntervalDays due to multiple Windows having different DOWs.
 								if ((triggerDate - intervalDate).Days % triggerIntervalDays == 0)
 								{
 									scheduleWindowForCurrentDate = true;
 								}
 							}
 						}
+						// if the TriggerIntervalDays is greater than 1 then calculate an interval starting from installDate.
 						else if (TriggerIntervalDays > 1)
 						{
 							if ((triggerDate - installDate).Days % TriggerIntervalDays == 0)
