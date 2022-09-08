@@ -40,6 +40,7 @@ namespace Sensus.UI
 		private InputGroup _inputGroup;
 		private StackLayout _navigationStack;
 		private bool _canNavigateBackward;
+		//private bool _canCancel;
 		private List<Input> _displayedInputs;
 		private int _displayedInputCount;
 		private TaskCompletionSource<NavigationResult> _responseTaskCompletionSource;
@@ -47,8 +48,8 @@ namespace Sensus.UI
 		private bool _confirmNavigation;
 		private Timer _timer;
 		private bool _savedState;
-		private readonly string _incompleteSubmissionConfirmation;
-		private readonly string _submitConfirmation;
+		//private readonly string _incompleteSubmissionConfirmation;
+		//private readonly string _submitConfirmation;
 
 		public int DisplayedInputCount
 		{
@@ -87,13 +88,14 @@ namespace Sensus.UI
 
 			_inputGroup = inputGroup;
 			_canNavigateBackward = canNavigateBackward && (inputGroup.HidePreviousButton == false);
+			//_canCancel = showCancelButton;
 			_displayedInputCount = 0;
 			_responseTaskCompletionSource = new TaskCompletionSource<NavigationResult>();
 			_showNavigationButtons = inputGroup.ShowNavigationButtons;
 			_confirmNavigation = confirmNavigation;
 			_savedState = savedState;
-			_incompleteSubmissionConfirmation = incompleteSubmissionConfirmation;
-			_submitConfirmation = submitConfirmation;
+			//_incompleteSubmissionConfirmation = incompleteSubmissionConfirmation;
+			//_submitConfirmation = submitConfirmation;
 
 			IsLastPage = totalSteps <= stepNumber;
 			Title = inputGroup.Title ?? title;
@@ -524,9 +526,29 @@ namespace Sensus.UI
 
 		protected override bool OnBackButtonPressed()
 		{
-			// the only applies to phones with a hard/soft back button. iOS does not have this button. on 
+			// the only applies to phones with a hard/soft back button. iOS does not have this button. on
 			// android, allow the user to cancel/pause the page with the back button.
-			_responseTaskCompletionSource.TrySetResult(NavigationResult.Cancel);
+
+			if (_savedState == false)
+			{
+				_cancelHandler?.Invoke(this, EventArgs.Empty);
+			}
+			else
+			{
+				_responseTaskCompletionSource.SetResult(NavigationResult.Paused);
+
+				if (ReturnPage != null)
+				{
+					App app = Application.Current as App;
+
+					app.DetailPage = ReturnPage;
+				}
+			}
+
+			if (ReturnPage != null)
+			{
+				return true;
+			}
 
 			return base.OnBackButtonPressed();
 		}
