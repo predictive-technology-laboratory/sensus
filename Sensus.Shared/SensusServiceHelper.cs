@@ -2066,7 +2066,7 @@ namespace Sensus
 				Logger.Log("\"" + script.Runner.Name + "\" was paused.", LoggingLevel.Normal, typeof(Script));
 
 				await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Cancelled) ?? Task.CompletedTask);
-				// temporary ScriptState value until the Nuget package is updated
+
 				script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Paused, DateTimeOffset.UtcNow, script), CancellationToken.None);
 
 				if (savedState != null && result.InputGroups != null)
