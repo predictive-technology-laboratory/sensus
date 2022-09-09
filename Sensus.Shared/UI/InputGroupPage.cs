@@ -223,6 +223,7 @@ namespace Sensus.UI
 			foreach (Input input in inputGroup.Inputs)
 			{
 				input.InputGroupPage = this;
+				input.ScriptRunner = inputGroup.ScriptRunner;
 
 				if (input.Display)
 				{

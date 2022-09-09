@@ -70,6 +70,8 @@ namespace Sensus.UI.Inputs
 
 		[JsonIgnore]
 		public InputGroupPage InputGroupPage { get; set; }
+		[JsonIgnore]
+		public ScriptRunner ScriptRunner { get; set; }
 
 		/// <summary>
 		/// The name by which this input will be referred to within the Sensus app.
@@ -402,18 +404,15 @@ namespace Sensus.UI.Inputs
 				{
 					IVariableDefiningInput input = this as IVariableDefiningInput;
 					string definedVariable = input.DefinedVariable;
-					if (definedVariable != null)
+					if (definedVariable != null && GetScriptRunner() is ScriptRunner runner)
 					{
-						ScriptRunner runner = GetScriptRunner();
-						Protocol protocolForInput = runner.Probe.Protocol; // GetProtocol();
+						Protocol protocolForInput = runner.Probe.Protocol;
 
 						if (protocolForInput != null)
 						{
 							// if the input is complete, set the variable on the protocol
 							if (_complete)
 							{
-								//string variableValue = inputValue.ToString();
-
 								protocolForInput.VariableValue[definedVariable] = inputValue; // variableValue;
 
 								if (runner.SaveState && runner.SavedState != null)
@@ -921,12 +920,14 @@ namespace Sensus.UI.Inputs
 		{
 			try
 			{
-				return SensusServiceHelper.Get().RegisteredProtocols.SingleOrDefault(protocol => protocol.Probes.OfType<ScriptProbe>()             // get script probes
-																								 .Single()                                         // must be only 1 script probe
-																								 .ScriptRunners                                    // get runners
-																								 .SelectMany(runner => runner.Script.InputGroups)  // get input groups for each runner
-																								 .SelectMany(inputGroup => inputGroup.Inputs)      // get inputs for each input group
-																								 .Any(input => input.Id == _id));                  // check if any inputs are the current one. must check ids rather than object references, as we make deep copies of inputs when instantiating scripts to run.
+				//return SensusServiceHelper.Get().RegisteredProtocols.SingleOrDefault(protocol => protocol.Probes.OfType<ScriptProbe>()             // get script probes
+				//																				 .Single()                                         // must be only 1 script probe
+				//																				 .ScriptRunners                                    // get runners
+				//																				 .SelectMany(runner => runner.Script.InputGroups)  // get input groups for each runner
+				//																				 .SelectMany(inputGroup => inputGroup.Inputs)      // get inputs for each input group
+				//																				 .Any(input => input.Id == _id));                  // check if any inputs are the current one. must check ids rather than object references, as we make deep copies of inputs when instantiating scripts to run.
+
+				return GetScriptRunner()?.Probe.Protocol;
 			}
 			catch (Exception ex)
 			{
@@ -936,6 +937,7 @@ namespace Sensus.UI.Inputs
 				// a new id. this is by design in the use case where authentication servers wish to push out an updated
 				// protocol.
 				SensusServiceHelper.Get().Logger.Log("Exception while getting protocol for input:  " + ex.Message, LoggingLevel.Normal, GetType());
+
 				return null;
 			}
 		}
@@ -948,10 +950,15 @@ namespace Sensus.UI.Inputs
 		{
 			try
 			{
+				if (ScriptRunner != null)
+				{
+					return ScriptRunner;
+				}
+
 				return SensusServiceHelper.Get().RegisteredProtocols.SelectMany(protocol => protocol.Probes.OfType<ScriptProbe>())                  // get script probes
-																								 .Single()                                          // must be only 1 script probe
-																								 .ScriptRunners                                     // get runners
-																								 .First(runner => runner.Script.InputGroups         // get input groups for each runner
+																								.Single()                                           // must be only 1 script probe
+																								.ScriptRunners                                      // get runners
+																								.First(runner => runner.Script.InputGroups          // get input groups for each runner
 																									.SelectMany(inputGroup => inputGroup.Inputs)    // get inputs for each input group
 																									.Any(input => input.Id == _id));                // check if any inputs are the current one. must check ids rather than object references, as we make deep copies of inputs when instantiating scripts to run.
 			}
@@ -963,6 +970,7 @@ namespace Sensus.UI.Inputs
 				// a new id. this is by design in the use case where authentication servers wish to push out an updated
 				// protocol.
 				SensusServiceHelper.Get().Logger.Log("Exception while getting script runner for input:  " + ex.Message, LoggingLevel.Normal, GetType());
+
 				return null;
 			}
 		}

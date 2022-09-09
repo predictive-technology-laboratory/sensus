@@ -19,6 +19,7 @@ using System.Collections.Specialized;
 using Sensus.UI.UiProperties;
 using Newtonsoft.Json;
 using System.ComponentModel;
+using Sensus.Probes.User.Scripts;
 
 namespace Sensus.UI.Inputs
 {
@@ -33,6 +34,9 @@ namespace Sensus.UI.Inputs
 		public ObservableCollection<Input> Inputs { get; }
 
 		public virtual bool HasInputs => Inputs.Any();
+
+		[JsonIgnore]
+		public ScriptRunner ScriptRunner { get; set; }
 
 		/// <summary>
 		/// Name of the input group.
