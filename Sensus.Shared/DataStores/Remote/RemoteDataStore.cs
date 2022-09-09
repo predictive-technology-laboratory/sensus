@@ -184,12 +184,12 @@ namespace Sensus.DataStores.Remote
 			set { _userNotificationMessage = value; }
 		}
 
-			/// <summary>
+		/// <summary>
 			/// Tolerance in milliseconds for running the <see cref="RemoteDataStore"/> before the scheduled 
 			/// time, if doing so will increase the number of batched actions and thereby decrease battery consumption.
 			/// </summary>
 			/// <value>The delay tolerance before.</value>
-			[EntryIntegerUiProperty("Delay Tolerance Before (MS):", true, 60, true)]
+		[EntryIntegerUiProperty("Delay Tolerance Before (MS):", true, 60, true)]
 		public int DelayToleranceBeforeMS { get; set; }
 
 		/// <summary>
