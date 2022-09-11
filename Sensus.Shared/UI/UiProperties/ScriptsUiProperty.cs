@@ -110,24 +110,29 @@ namespace Sensus.UI.UiProperties
 			{
 				picker.SelectedIndexChanged += async (s, e) =>
 				{
-					if (picker.Items[picker.SelectedIndex] == NEW_STRING)
+					if (picker.SelectedIndex >= 0)
 					{
-						ScriptRunner newScriptRunner = new ScriptRunner("New Script", probe)
+						if (picker.SelectedIndex == scripts.Count)
 						{
-							ScriptGroup = _scriptGroup
-						};
+							ScriptRunner newScriptRunner = new ScriptRunner("New Script", probe)
+							{
+								ScriptGroup = _scriptGroup
+							};
 
-						await (Application.Current as App).DetailPage.Navigation.PushAsync(new ScriptRunnerPage(newScriptRunner));
+							await (Application.Current as App).DetailPage.Navigation.PushAsync(new ScriptRunnerPage(newScriptRunner));
 
-						probe.ScriptRunners.Add(newScriptRunner);
+							scripts.Add(newScriptRunner);
 
-						property.SetValue(o, newScriptRunner);
+							probe.ScriptRunners.Add(newScriptRunner);
 
-						picker.Items.Insert(picker.Items.IndexOf(NEW_STRING), newScriptRunner.Caption);
-					}
-					else if (picker.SelectedIndex >= 0)
-					{
-						property.SetValue(o, scripts[picker.SelectedIndex]);
+							property.SetValue(o, newScriptRunner);
+
+							picker.Items.Insert(picker.SelectedIndex, newScriptRunner.Caption);
+						}
+						else
+						{
+							property.SetValue(o, scripts[picker.SelectedIndex]);
+						}
 					}
 					else
 					{
