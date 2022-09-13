@@ -2235,11 +2235,14 @@ namespace Sensus
 
 				// remove the submitted script. this should be done before the script is marked 
 				// as not submitting in order to prevent the user from reopening it.
-				if (result.NavigationResult != InputGroupPage.NavigationResult.Cancel && script.Runner.KeepUntilCompleted == false)
+				if (result.NavigationResult != InputGroupPage.NavigationResult.Cancel)
 				{
-					if (RemoveScripts(script))
+					if (script.Runner.KeepUntilCompleted == false)
 					{
-						await IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.Badge, script.Runner.Probe.Protocol);
+						if (RemoveScripts(script))
+						{
+							await IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.Badge, script.Runner.Probe.Protocol);
+						}
 					}
 
 					submitted = true;
