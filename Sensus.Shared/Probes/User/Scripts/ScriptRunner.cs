@@ -1073,13 +1073,13 @@ namespace Sensus.Probes.User.Scripts
 
 		public List<string> ReminderCallbackIds { get; set; }
 
-		private async Task ScheduleReminderAsync(Script script, TimeSpan timeSpan, bool repeats, string notificationMessage)
+		private async Task ScheduleReminderAsync(Script script, DateTimeOffset startDate, TimeSpan timeSpan, bool repeats, string notificationMessage)
 		{
-			if (script.RunTime?.Add(timeSpan) > DateTimeOffset.Now || repeats)
+			if (startDate > DateTimeOffset.Now || repeats)
 			{
 				string id = $"{Script.Id}.{GetType().FullName}.Reminder";
 
-				if (repeats)
+				if (repeats && timeSpan > TimeSpan.Zero)
 				{
 					id += $".{DateTime.Now:s}+";
 				}
@@ -1088,9 +1088,9 @@ namespace Sensus.Probes.User.Scripts
 
 				if (SensusContext.Current.CallbackScheduler.ContainsCallback(id) == false)
 				{
-					ScheduledCallback callback = new ScheduledCallback(c => Task.CompletedTask, timeSpan, id, Probe.Protocol.Id, Probe.Protocol, null, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS), ScheduledCallbackPriority.High, GetType());
+					ScheduledCallback callback = new ScheduledCallback(c => Task.CompletedTask, startDate - DateTimeOffset.Now, id, Probe.Protocol.Id, Probe.Protocol, null, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS), ScheduledCallbackPriority.High, GetType());
 
-					if (repeats)
+					if (repeats && timeSpan > TimeSpan.Zero)
 					{
 						callback.RepeatDelay = timeSpan;
 
@@ -1130,13 +1130,13 @@ namespace Sensus.Probes.User.Scripts
 		}
 		public async Task ScheduleReminderAsync(Script script, DateTime dateTime, string notificationMessage)
 		{
-			TimeSpan timeSpan = dateTime - DateTime.Now;
+			//TimeSpan timeSpan = dateTime - DateTime.Now;
 
-			await ScheduleReminderAsync(script, timeSpan, false, notificationMessage);
+			await ScheduleReminderAsync(script, dateTime, TimeSpan.Zero, false, notificationMessage);
 		}
 		public async Task ScheduleRemindersAsync(Script script, string notificationMessage = null)
 		{
-			if (string.IsNullOrWhiteSpace(script.Runner.ReminderIntervals) == false)
+			if (script.RunTime != null && string.IsNullOrWhiteSpace(script.Runner.ReminderIntervals) == false)
 			{
 				IEnumerable<string> intervalStrings = script.Runner.ReminderIntervals.Split(",").Select(x => x.Trim());
 
@@ -1152,13 +1152,18 @@ namespace Sensus.Probes.User.Scripts
 						repeats = true;
 					}
 
+					TimeSpan timeSpan = TimeSpan.Zero;
+					DateTimeOffset dateTime = script.RunTime.Value.Add(timeSpan);
+
 					if (int.TryParse(parsableInterval, out int interval))
 					{
-						await ScheduleReminderAsync(script, TimeSpan.FromSeconds(interval), repeats, notificationMessage);
+						timeSpan = TimeSpan.FromSeconds(interval);
+
+						await ScheduleReminderAsync(script, dateTime, timeSpan, repeats, notificationMessage);
 					}
-					else if (parsableInterval.Contains(":") && TimeSpan.TryParse(parsableInterval, out TimeSpan timeSpan))
+					else if (parsableInterval.Contains(":") && TimeSpan.TryParse(parsableInterval, out timeSpan))
 					{
-						await ScheduleReminderAsync(script, timeSpan, repeats, notificationMessage);
+						await ScheduleReminderAsync(script, dateTime, timeSpan, repeats, notificationMessage);
 					}
 				}
 			}
@@ -1263,9 +1268,9 @@ namespace Sensus.Probes.User.Scripts
 		{
 			SensusServiceHelper.Get().Logger.Log($"Running \"{Name}\".", LoggingLevel.Normal, GetType());
 
-			await ScheduleRemindersAsync(script);
-
 			script.RunTime = DateTimeOffset.UtcNow;
+
+			await ScheduleRemindersAsync(script);
 
 			// this method can be called with previous / current datum values (e.g., when the script is first triggered). it 
 			// can also be called without previous / current datum values (e.g., when triggering on a schedule). if
