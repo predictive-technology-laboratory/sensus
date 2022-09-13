@@ -342,6 +342,27 @@ namespace Sensus.Probes.User.Scripts
 		/// fired every other day at some time between 9am and 10am.
 		/// </summary>
 		/// <value>The non-DOW trigger interval days.</value>
+		[EntryIntegerUiProperty("Trigger Interval (Days):", true, 9, true)]
+		public bool TriggerIntervalInclusive
+		{
+			get
+			{
+				return _scheduleTrigger.TriggerIntervalInclusive;
+			}
+			set
+			{
+				_scheduleTrigger.TriggerIntervalInclusive = value;
+			}
+		}
+
+		/// <summary>
+		/// For surveys that are not associated with a specific day of the week, this field indicates how 
+		/// many days to should pass between subsequent surveys. For example, if this is set to 1 and 
+		/// <see cref="TriggerWindowsString"/> is set to `9:00-10:00`, then the survey would be fired each
+		/// day at some time between 9am and 10am. If this field were set to 2, then the survey would be 
+		/// fired every other day at some time between 9am and 10am.
+		/// </summary>
+		/// <value>The non-DOW trigger interval days.</value>
 		[EntryIntegerUiProperty("Non-DOW Trigger Interval (Days):", true, 9, true)]
 		public int NonDowTriggerIntervalDays
 		{
@@ -443,10 +464,17 @@ namespace Sensus.Probes.User.Scripts
 
 				if (changed)
 				{
+					if (_hasSubmitted)
+					{
+						SubmissionDate = DateTime.Now;
+					}
+
 					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasSubmitted)));
 				}
 			}
 		}
+
+		public DateTime? SubmissionDate { get; set; }
 
 		[JsonIgnore]
 		public List<DateTime> ScheduledTimes
@@ -554,6 +582,9 @@ namespace Sensus.Probes.User.Scripts
 		[OnOffUiProperty("Trigger Next Script First Time Only:", true, 26)]
 		public bool TriggerNextScriptFirstTimeOnly { get; set; }
 
+		[ScriptsUiProperty("Required Scripts:", true, 26, false)]
+		public List<ScriptRunner> RequiredScripts { get; set; }
+
 		[OnOffUiProperty("Confirm Navigation:", true, 27)]
 		public bool ConfirmNavigation { get; set; }
 
@@ -605,6 +636,8 @@ namespace Sensus.Probes.User.Scripts
 			ConfirmNavigation = true;
 			SubmitConfirmation = "Are you ready to submit your responses?";
 			ReminderCallbackIds = new List<string>();
+
+			RequiredScripts = new List<ScriptRunner>();
 
 			Triggers.CollectionChanged += (o, e) =>
 			{
@@ -718,6 +751,11 @@ namespace Sensus.Probes.User.Scripts
 
 		public async Task StartAsync()
 		{
+			if (RequiredScripts == null)
+			{
+				RequiredScripts = new();
+			}
+
 			await ScheduleScriptRunsAsync();
 
 			// use the async version below for a couple reasons. first, we're in a non-async method and we want to ensure
@@ -733,6 +771,7 @@ namespace Sensus.Probes.User.Scripts
 		{
 			await UnscheduleCallbacksAsync();
 			HasSubmitted = false;
+			SubmissionDate = null;
 			RunTimes.Clear();
 			CompletionTimes.Clear();
 			SavedState = null;
@@ -839,7 +878,7 @@ namespace Sensus.Probes.User.Scripts
 
 			// abort if we already have enough runs scheduled in the future. only allow a maximum of 32 script-run callbacks 
 			// to be scheduled app-wide leaving room for other callbacks (e.g., the storage and polling systems). android's 
-			// app-level limit is 500, and ios 9 has a limit of 64. not sure about ios 10+. 
+			// app-level limit is 500, and ios 9 has a limit of 64. not sure about ios 10+.
 			int scriptRunCallbacksForThisRunner = (32 / Probe.ScriptRunners.Count);
 			scriptRunCallbacksForThisRunner = Math.Max(scriptRunCallbacksForThisRunner, 1);  // schedule at least 1 run, regardless of the os cap.
 			scriptRunCallbacksForThisRunner = Math.Min(scriptRunCallbacksForThisRunner, 3);  // cap the runs, as each one takes some time to schedule.
@@ -851,8 +890,22 @@ namespace Sensus.Probes.User.Scripts
 				}
 			}
 
+			DateTime baseIntervalDate = Probe.Protocol.InstallDate;
+
+			if (RequiredScripts.Any())
+			{
+				if (RequiredScripts.All(x => x.SubmissionDate != null))
+				{
+					baseIntervalDate = RequiredScripts.Max(x => x.SubmissionDate) ?? Probe.Protocol.InstallDate;
+				}
+				else
+				{
+					return;
+				}
+			}
+
 			// get all trigger times starting from today
-			foreach (ScriptTriggerTime triggerTime in _scheduleTrigger.GetTriggerTimes(DateTime.Now, Probe.Protocol.InstallDate, _maxAge))
+			foreach (ScriptTriggerTime triggerTime in _scheduleTrigger.GetTriggerTimes(DateTime.Now, baseIntervalDate, _maxAge))
 			{
 				// schedule all future runs, except those beyond the protocol's end date (if there is one). need to check
 				// that they're in the future because GetTriggerTimes will return all times starting from 0:00 of the current
@@ -984,7 +1037,7 @@ namespace Sensus.Probes.User.Scripts
 
 		public async Task ScheduleNextScriptToRunAsync()
 		{
-			if (NextScript != null && (TriggerNextScriptFirstTimeOnly == false || HasSubmitted == false))
+			if (NextScript != null && NextScript.Enabled && (TriggerNextScriptFirstTimeOnly == false || HasSubmitted == false))
 			{
 				// if there is no window then run it immmediately
 				if (NextScriptRunDelayMS == 0)
@@ -997,6 +1050,21 @@ namespace Sensus.Probes.User.Scripts
 
 					await SensusServiceHelper.Get().SaveAsync();
 				}
+			}
+		}
+
+		public async Task ScheduleDepedentScriptsAsync()
+		{
+			IEnumerable<ScriptRunner> dependents = Probe.ScriptRunners.Where(x => x.Enabled && x.RequiredScripts != null && x.RequiredScripts.Contains(this));
+
+			if (dependents.Any())
+			{
+				foreach (ScriptRunner runner in dependents)
+				{
+					await runner.ScheduleScriptRunsAsync();
+				}
+
+				await SensusServiceHelper.Get().SaveAsync();
 			}
 		}
 

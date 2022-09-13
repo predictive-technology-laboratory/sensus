@@ -2158,12 +2158,14 @@ namespace Sensus
 						}
 					}
 
+					script.Runner.HasSubmitted = true;
+					
 					if (await script.Runner.ScheduleScriptFromInputAsync(script) == false)
 					{
 						await script.Runner.ScheduleNextScriptToRunAsync();
 					}
 
-					script.Runner.HasSubmitted = true;
+					await script.Runner.ScheduleDepedentScriptsAsync();
 				}
 
 				// process/store all inputs in the script
