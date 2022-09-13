@@ -600,10 +600,10 @@ namespace Sensus.Probes.User.Scripts
 		[EntryStringUiProperty("Submit Confirmation:", true, 31, false)]
 		public string SubmitConfirmation { get; set; }
 
-		[EntryStringUiProperty("Reminder Intervals (S):", true, 8, false)]
+		[EntryStringUiProperty("Reminder Intervals (S):", true, 32, false)]
 		public string ReminderIntervals { get; set; }
 
-		[EntryStringUiProperty("Reminder Message:", true, 8, false)]
+		[EntryStringUiProperty("Reminder Message:", true, 33, false)]
 		public string ReminderMessage { get; set; }
 
 		[JsonIgnore]
@@ -1003,7 +1003,7 @@ namespace Sensus.Probes.User.Scripts
 
 						if (scheduler.ScheduleMode == ScheduleModes.Reminder)
 						{
-							await ScheduleReminderAsync(script, scheduledTime);
+							await ScheduleReminderAsync(script, scheduledTime, scheduler.NotificationMessage);
 						}
 						else if (scheduler.ScheduleMode == ScheduleModes.Self)
 						{
@@ -1070,7 +1070,7 @@ namespace Sensus.Probes.User.Scripts
 
 		public List<string> ReminderCallbackIds { get; set; }
 
-		private async Task ScheduleReminderAsync(Script script, TimeSpan timeSpan, bool repeats)
+		private async Task ScheduleReminderAsync(Script script, TimeSpan timeSpan, bool repeats, string notificationMessage)
 		{
 			if (script.RunTime?.Add(timeSpan) > DateTimeOffset.Now || repeats)
 			{
@@ -1094,7 +1094,11 @@ namespace Sensus.Probes.User.Scripts
 						callback.RepeatPredicate = () => script.Runner.Probe.State == ProbeState.Running;
 					}
 
-					if (string.IsNullOrWhiteSpace(script.Runner.ReminderMessage) == false)
+					if (string.IsNullOrWhiteSpace(notificationMessage) == false)
+					{
+						callback.UserNotificationMessage = notificationMessage;
+					}
+					else if (string.IsNullOrWhiteSpace(script.Runner.ReminderMessage) == false)
 					{
 						callback.UserNotificationMessage = script.Runner.ReminderMessage;
 					}
@@ -1121,13 +1125,13 @@ namespace Sensus.Probes.User.Scripts
 				}
 			}
 		}
-		public async Task ScheduleReminderAsync(Script script, DateTime dateTime)
+		public async Task ScheduleReminderAsync(Script script, DateTime dateTime, string notificationMessage)
 		{
 			TimeSpan timeSpan = dateTime - DateTime.Now;
 
-			await ScheduleReminderAsync(script, timeSpan, false);
+			await ScheduleReminderAsync(script, timeSpan, false, notificationMessage);
 		}
-		public async Task ScheduleRemindersAsync(Script script)
+		public async Task ScheduleRemindersAsync(Script script, string notificationMessage = null)
 		{
 			if (string.IsNullOrWhiteSpace(script.Runner.ReminderIntervals) == false)
 			{
@@ -1147,11 +1151,11 @@ namespace Sensus.Probes.User.Scripts
 
 					if (int.TryParse(parsableInterval, out int interval))
 					{
-						await ScheduleReminderAsync(script, TimeSpan.FromSeconds(interval), repeats);
+						await ScheduleReminderAsync(script, TimeSpan.FromSeconds(interval), repeats, notificationMessage);
 					}
 					else if (parsableInterval.Contains(":") && TimeSpan.TryParse(parsableInterval, out TimeSpan timeSpan))
 					{
-						await ScheduleReminderAsync(script, timeSpan, repeats);
+						await ScheduleReminderAsync(script, timeSpan, repeats, notificationMessage);
 					}
 				}
 			}

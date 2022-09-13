@@ -16,6 +16,9 @@ namespace Sensus.UI.Inputs
 		[EntryIntegerUiProperty("Days in Future:", true, 15, false)]
 		public int DaysInFuture { get; set; }
 
+		[EntryStringUiProperty("Notification Message", true, 16, false)]
+		public string NotificationMessage { get; set; }
+
 		public override bool RequireFutureDate => true;
 
 		public override string DefaultName
