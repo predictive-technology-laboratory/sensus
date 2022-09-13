@@ -1090,7 +1090,12 @@ namespace Sensus.Probes.User.Scripts
 
 				if (SensusContext.Current.CallbackScheduler.ContainsCallback(id) == false)
 				{
-					ScheduledCallback callback = new ScheduledCallback(c => Task.CompletedTask, startDate - DateTimeOffset.Now, id, Probe.Protocol.Id, Probe.Protocol, null, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS), ScheduledCallbackPriority.High, GetType());
+					ScheduledCallback callback = new ScheduledCallback(c =>
+					{
+						Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Reminded, DateTimeOffset.Now, script), CancellationToken.None);
+
+						return Task.CompletedTask;
+					}, startDate - DateTimeOffset.Now, id, Probe.Protocol.Id, Probe.Protocol, null, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS), ScheduledCallbackPriority.High, GetType());
 
 					if (repeats && timeSpan > TimeSpan.Zero)
 					{
