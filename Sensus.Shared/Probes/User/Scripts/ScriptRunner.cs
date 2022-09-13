@@ -606,6 +606,9 @@ namespace Sensus.Probes.User.Scripts
 		[EntryStringUiProperty("Reminder Message:", true, 33, false)]
 		public string ReminderMessage { get; set; }
 
+		[EntryStringUiProperty("Notification Message:", true, 34, false)]
+		public string NotificationMessage { get; set; }
+
 		[JsonIgnore]
 		public string Caption
 		{

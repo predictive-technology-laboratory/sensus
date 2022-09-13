@@ -1056,7 +1056,7 @@ namespace Sensus
 				await RemoveExpiredScriptsAsync();
 
 				// update the pending surveys notification
-				await IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.BadgeTextAlert, script.Runner.Probe.Protocol);
+				await IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.BadgeTextAlert, script.Runner.Probe.Protocol, script.Runner.NotificationMessage);
 
 				// save the app state. if the app crashes we want to keep the surveys around so they can be 
 				// taken. this will not result in duplicate surveys in cases where the script probe restarts
@@ -1069,7 +1069,7 @@ namespace Sensus
 				}
 				catch (Exception ex)
 				{
-					SensusException.Report("Exception while saving app state after adding survey:  " + ex.Message, ex);
+					SensusException.Report("Exception while saving app state after adding survey: " + ex.Message, ex);
 				}
 			}
 		}
@@ -1113,7 +1113,7 @@ namespace Sensus
 			return RemoveScripts(_scriptsToRun.ToArray());
 		}
 
-		public async Task IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode notificationMode, Protocol protocol)
+		public async Task IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode notificationMode, Protocol protocol, string notificationMessage = null)
 		{
 			// clear any existing notifications/badges
 			CancelPendingSurveysNotification();
@@ -1124,11 +1124,6 @@ namespace Sensus
 
 				if (numScriptsToRun > 0 && notificationMode != PendingSurveyNotificationMode.None)
 				{
-					string s = numScriptsToRun == 1 ? "" : "s";
-					string pendingSurveysTitle = numScriptsToRun == 0 ? null : $"You have {numScriptsToRun} pending survey{s}.";
-					DateTime? nextExpirationDate = _scriptsToRun.Select(script => script.ExpirationDate).Where(expirationDate => expirationDate.HasValue).OrderBy(expirationDate => expirationDate).FirstOrDefault();
-					string nextExpirationMessage = nextExpirationDate == null ? (numScriptsToRun == 1 ? "This survey does" : "These surveys do") + " not expire." : "Next expiration:  " + nextExpirationDate.Value.ToShortDateString() + " at " + nextExpirationDate.Value.ToShortTimeString();
-
 					string notificationId = null;
 					bool alertUser = false;
 
@@ -1139,20 +1134,36 @@ namespace Sensus
 					else if (notificationMode == PendingSurveyNotificationMode.BadgeText)
 					{
 						notificationId = Notifier.PENDING_SURVEY_TEXT_NOTIFICATION_ID;
+
 						alertUser = false;
 					}
 					else if (notificationMode == PendingSurveyNotificationMode.BadgeTextAlert)
 					{
 						notificationId = Notifier.PENDING_SURVEY_TEXT_NOTIFICATION_ID;
+
 						alertUser = true;
 					}
 					else
 					{
-						SensusException.Report("Unrecognized pending survey notification mode:  " + notificationMode);
+						SensusException.Report("Unrecognized pending survey notification mode: " + notificationMode);
+
 						return;
 					}
+					
+					string s = numScriptsToRun == 1 ? "" : "s";
+					DateTime? nextExpirationDate = _scriptsToRun.Select(script => script.ExpirationDate).Where(expirationDate => expirationDate.HasValue).OrderBy(expirationDate => expirationDate).FirstOrDefault();
+					string nextExpirationMessage = nextExpirationDate == null ? (numScriptsToRun == 1 ? "This survey does" : "These surveys do") + " not expire." : "Next expiration:  " + nextExpirationDate.Value.ToShortDateString() + " at " + nextExpirationDate.Value.ToShortTimeString();
 
-					await SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, notificationId, alertUser, protocol, numScriptsToRun, NotificationUserResponseAction.DisplayPendingSurveys, null);
+					if (string.IsNullOrWhiteSpace(notificationMessage))
+					{
+						string pendingSurveysTitle = numScriptsToRun == 0 ? null : $"You have {numScriptsToRun} pending survey{s}.";
+
+						await SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, notificationId, alertUser, protocol, numScriptsToRun, NotificationUserResponseAction.DisplayPendingSurveys, null);
+					}
+					else
+					{
+						await SensusContext.Current.Notifier.IssueNotificationAsync(notificationMessage, nextExpirationMessage, notificationId, alertUser, protocol, numScriptsToRun, NotificationUserResponseAction.DisplayPendingSurveys, null);
+					}
 				}
 			});
 		}
