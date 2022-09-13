@@ -986,8 +986,10 @@ namespace Sensus.Probes.User.Scripts
 			{
 				try
 				{
-					if (scheduler.Value is DateTime scheduledTime)
+					if (scheduler.Complete && scheduler.Value is DateTime scheduledTime)
 					{
+						await scheduler.ScriptRunner.UnscheduleRemindersAsync();
+
 						if (scheduler.TimeOnly)
 						{
 							int daysFromNow = 0;

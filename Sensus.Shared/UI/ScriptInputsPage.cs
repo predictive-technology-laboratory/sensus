@@ -191,7 +191,7 @@ namespace Sensus.UI
 						}
 						else if (input is ScriptSchedulerInput scriptSchedulerInput)
 						{
-							scriptSchedulerInput.Runner = script.Runner;
+							scriptSchedulerInput.ScriptRunner = script.Runner;
 						}
 
 						inputGroup.Inputs.Add(input);

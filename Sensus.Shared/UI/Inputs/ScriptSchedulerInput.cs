@@ -5,7 +5,11 @@ namespace Sensus.UI.Inputs
 {
 	public class ScriptSchedulerInput : DateTimeInput
 	{
-		public ScriptRunner Runner { get; set; }
+		public ScriptRunner Runner
+		{
+			get => ScriptRunner;
+			set => ScriptRunner = value;
+		}
 
 		[ListUiProperty("Schedule Mode:", true, 14, new object[] { ScheduleModes.Reminder, ScheduleModes.Self, ScheduleModes.Next, ScheduleModes.Select }, true)]
 		public ScheduleModes ScheduleMode { get; set; }

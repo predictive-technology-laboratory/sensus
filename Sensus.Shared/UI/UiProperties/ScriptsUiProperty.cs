@@ -170,7 +170,7 @@ namespace Sensus.UI.UiProperties
 			}
 			else if (o is ScriptSchedulerInput scriptSchedulerInput)
 			{
-				probe = scriptSchedulerInput.Runner.Probe;
+				probe = scriptSchedulerInput.ScriptRunner.Probe;
 
 				runners = probe.ScriptRunners.ToList();
 			}
