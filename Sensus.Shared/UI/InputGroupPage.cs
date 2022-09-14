@@ -40,7 +40,6 @@ namespace Sensus.UI
 		private InputGroup _inputGroup;
 		private StackLayout _navigationStack;
 		private bool _canNavigateBackward;
-		//private bool _canCancel;
 		private List<Input> _displayedInputs;
 		private int _displayedInputCount;
 		private TaskCompletionSource<NavigationResult> _responseTaskCompletionSource;
@@ -48,8 +47,6 @@ namespace Sensus.UI
 		private bool _confirmNavigation;
 		private Timer _timer;
 		private bool _savedState;
-		//private readonly string _incompleteSubmissionConfirmation;
-		//private readonly string _submitConfirmation;
 
 		public int DisplayedInputCount
 		{
@@ -88,14 +85,11 @@ namespace Sensus.UI
 
 			_inputGroup = inputGroup;
 			_canNavigateBackward = canNavigateBackward && (inputGroup.HidePreviousButton == false);
-			//_canCancel = showCancelButton;
 			_displayedInputCount = 0;
 			_responseTaskCompletionSource = new TaskCompletionSource<NavigationResult>();
 			_showNavigationButtons = inputGroup.ShowNavigationButtons;
 			_confirmNavigation = confirmNavigation;
 			_savedState = savedState;
-			//_incompleteSubmissionConfirmation = incompleteSubmissionConfirmation;
-			//_submitConfirmation = submitConfirmation;
 
 			IsLastPage = totalSteps <= stepNumber;
 			Title = inputGroup.Title ?? title;
