@@ -85,11 +85,6 @@ namespace Sensus.UI
 
 			contentLayout.Children.Add(viewScheduledTriggersButton);
 
-			Disappearing += (s, e) =>
-			{
-				scriptRunner.Probe.ManageUserInitiatedScript(scriptRunner);
-			};
-
 			Content = new ScrollView
 			{
 				Content = contentLayout

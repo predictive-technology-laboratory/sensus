@@ -66,21 +66,21 @@ namespace Sensus.Probes.User.Scripts
 
 #elif __IOS__
 
-        public static IScriptProbeAgent GetAgent(string agentId)
-        {
-            return GetAgents().SingleOrDefault(agent => agent.Id == agentId);
-        }
+		public static IScriptProbeAgent GetAgent(string agentId)
+		{
+			return GetAgents().SingleOrDefault(agent => agent.Id == agentId);
+		}
 
-        public static List<IScriptProbeAgent> GetAgents()
-        {
-            // get agents from the current assembly. they must be linked at compile time.
-            return Assembly.GetExecutingAssembly()
-                           .GetTypes()
-                           .Where(t => !t.IsAbstract && t.GetInterfaces().Contains(typeof(IScriptProbeAgent)))
-                           .Select(Activator.CreateInstance)
-                           .Cast<IScriptProbeAgent>()
-                           .ToList();
-        }
+		public static List<IScriptProbeAgent> GetAgents()
+		{
+			// get agents from the current assembly. they must be linked at compile time.
+			return Assembly.GetExecutingAssembly()
+						   .GetTypes()
+						   .Where(t => !t.IsAbstract && t.GetInterfaces().Contains(typeof(IScriptProbeAgent)))
+						   .Select(Activator.CreateInstance)
+						   .Cast<IScriptProbeAgent>()
+						   .ToList();
+		}
 
 #endif
 
@@ -109,8 +109,8 @@ namespace Sensus.Probes.User.Scripts
 							_agent = GetAgent(AgentAssemblyBytes, AgentId);
 						}
 #elif __IOS__
-                        // there is no assembly in ios per apple restrictions on dynamically loaded code. agents are baked into the app instead.
-                        _agent = GetAgent(AgentId);
+						// there is no assembly in ios per apple restrictions on dynamically loaded code. agents are baked into the app instead.
+						_agent = GetAgent(AgentId);
 #endif
 
 						// set the agent's policy if we previously received one (e.g., via push notification)
@@ -238,71 +238,43 @@ namespace Sensus.Probes.User.Scripts
 		public ScriptProbe()
 		{
 			_scriptRunners = new ObservableCollection<ScriptRunner>();
+
 			UserInitiatedScripts = new ObservableCollection<Script>();
-
-			_scriptRunners.CollectionChanged += (s, e) =>
-			{
-				lock (UserInitiatedScripts)
-				{
-					if (e.NewItems != null && e.Action == NotifyCollectionChangedAction.Add)
-					{
-						foreach (ScriptRunner runner in e.NewItems)
-						{
-							AddUserInitiatedScript(runner);
-						}
-					}
-
-					if (e.OldItems != null && e.Action != NotifyCollectionChangedAction.Add && e.Action != NotifyCollectionChangedAction.Move)
-					{
-						foreach (ScriptRunner runner in e.OldItems)
-						{
-							RemoveUserInitiatedScript(runner);
-						}
-					}
-				}
-			};
 		}
 
-		private void AddUserInitiatedScript(ScriptRunner runner, int position = -1)
-		{
-			if (runner.AllowUserInitiation)
-			{
-				Script copy = runner.Script.Copy(true);
-
-				copy.Shuffle();
-
-				if (position < 0)
-				{
-					position = UserInitiatedScripts.Count;
-				}
-
-				UserInitiatedScripts.Insert(position, copy);
-			}
-		}
-
-		private int RemoveUserInitiatedScript(ScriptRunner runner)
-		{
-			if (UserInitiatedScripts.FirstOrDefault(x => x.Runner == runner) is Script existingScript)
-			{
-				//UserInitiatedScripts.Remove(existingScript);
-
-				int index = UserInitiatedScripts.IndexOf(existingScript);
-
-				UserInitiatedScripts.RemoveAt(index);
-
-				return index;
-			}
-
-			return -1;
-		}
-
-		public void ManageUserInitiatedScript(ScriptRunner runner)
+		private void AddUserInitiatedScript(ScriptRunner runner)
 		{
 			lock (UserInitiatedScripts)
 			{
-				int index = RemoveUserInitiatedScript(runner);
+				if (UserInitiatedScripts.FirstOrDefault(x => x.Runner == runner) is Script existingScript)
+				{
+					Script copy = runner.Script.Copy(true);
 
-				AddUserInitiatedScript(runner, index);
+					copy.Shuffle();
+
+					int position = UserInitiatedScripts.IndexOf(existingScript);
+
+					UserInitiatedScripts[position] = copy;
+				}
+				else
+				{
+					Script copy = runner.Script.Copy(true);
+
+					copy.Shuffle();
+
+					UserInitiatedScripts.Add(copy);
+				}
+			}
+		}
+
+		private void RemoveUserInitiatedScript(ScriptRunner runner)
+		{
+			lock (UserInitiatedScripts)
+			{
+				foreach (Script existingScript in UserInitiatedScripts.Where(x => x.Runner == runner))
+				{ 
+					UserInitiatedScripts.Remove(existingScript);
+				}
 			}
 		}
 
@@ -330,6 +302,11 @@ namespace Sensus.Probes.User.Scripts
 				if (scriptRunner.Enabled)
 				{
 					await scriptRunner.StartAsync();
+
+					if (scriptRunner.AllowUserInitiation)
+					{
+						AddUserInitiatedScript(scriptRunner);
+					}
 				}
 			}
 
@@ -402,6 +379,8 @@ namespace Sensus.Probes.User.Scripts
 			foreach (ScriptRunner scriptRunner in _scriptRunners)
 			{
 				await scriptRunner.StopAsync();
+
+				RemoveUserInitiatedScript(scriptRunner);
 			}
 
 			if (_agentIntervalDeliveryScheduledCallback != null)
