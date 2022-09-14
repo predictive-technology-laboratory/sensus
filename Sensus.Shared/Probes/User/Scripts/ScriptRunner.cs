@@ -988,41 +988,61 @@ namespace Sensus.Probes.User.Scripts
 				{
 					if (scheduler.Complete && scheduler.Value is DateTime scheduledTime)
 					{
-						await scheduler.ScriptRunner.UnscheduleRemindersAsync();
+						ScriptRunner runner = scheduler.ScheduledScript;
 
-						if (scheduler.TimeOnly)
+						if (scheduler.ScheduleMode == ScheduleModes.Self)
 						{
-							int daysFromNow = 0;
-
-							if (scheduler.DaysInFuture > 0)
-							{
-								daysFromNow = scheduler.DaysInFuture;
-							}
-							else if (scheduledTime.TimeOfDay < DateTime.Now.TimeOfDay)
-							{
-								daysFromNow = 1;
-							}
-
-							scheduledTime = DateTime.Now.Date.AddDays(daysFromNow).Add(scheduledTime.TimeOfDay);
-						}
-
-						if (scheduler.ScheduleMode == ScheduleModes.Reminder)
-						{
-							await ScheduleReminderAsync(script, scheduledTime, scheduler.NotificationMessage);
-						}
-						else if (scheduler.ScheduleMode == ScheduleModes.Self)
-						{
-							await script.Runner.ScheduleScriptRunAsync(scheduledTime);
+							runner = this;
 						}
 						else if (scheduler.ScheduleMode == ScheduleModes.Next && NextScript != null)
 						{
-							await NextScript.ScheduleScriptRunAsync(scheduledTime);
-
-							scheduledNext = true;
+							runner = NextScript;
 						}
-						else if (scheduler.ScheduleMode == ScheduleModes.Select && scheduler.ScheduledScript != null)
+						else if (runner == null)
 						{
-							await scheduler.ScheduledScript.ScheduleScriptRunAsync(scheduledTime);
+							if (scheduler.ScheduleMode == ScheduleModes.Reminder)
+							{
+								if (string.IsNullOrWhiteSpace(scheduler.ScriptGroup) == false)
+								{
+									runner = SensusServiceHelper.Get().ScriptsToRun.LastOrDefault(x => x.Runner.ScriptGroup == scheduler.ScriptGroup)?.Runner;
+								}
+								else
+								{
+									runner = SensusServiceHelper.Get().ScriptsToRun.LastOrDefault()?.Runner;
+								}
+							}
+						}
+
+						if (runner != null)
+						{
+							if (scheduler.TimeOnly)
+							{
+								int daysFromNow = 0;
+
+								if (scheduler.DaysInFuture > 0)
+								{
+									daysFromNow = scheduler.DaysInFuture;
+								}
+								else if (scheduledTime.TimeOfDay < DateTime.Now.TimeOfDay)
+								{
+									daysFromNow = 1;
+								}
+
+								scheduledTime = DateTime.Now.Date.AddDays(daysFromNow).Add(scheduledTime.TimeOfDay);
+							}
+
+							if (scheduler.ScheduleMode == ScheduleModes.Reminder)
+							{
+								await runner.UnscheduleRemindersAsync();
+
+								await runner.ScheduleReminderAsync(runner.Script, scheduledTime, scheduler.NotificationMessage);
+							}
+							else
+							{
+								await runner.ScheduleScriptRunAsync(scheduledTime);
+
+								scheduledNext = runner == NextScript;
+							}
 						}
 					}
 				}
@@ -1137,8 +1157,6 @@ namespace Sensus.Probes.User.Scripts
 		}
 		public async Task ScheduleReminderAsync(Script script, DateTime dateTime, string notificationMessage)
 		{
-			//TimeSpan timeSpan = dateTime - DateTime.Now;
-
 			await ScheduleReminderAsync(script, dateTime, TimeSpan.Zero, false, notificationMessage);
 		}
 		public async Task ScheduleRemindersAsync(Script script, string notificationMessage = null)

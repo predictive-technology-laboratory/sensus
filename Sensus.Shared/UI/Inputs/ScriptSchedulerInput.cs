@@ -23,6 +23,9 @@ namespace Sensus.UI.Inputs
 		[EntryStringUiProperty("Notification Message", true, 16, false)]
 		public string NotificationMessage { get; set; }
 
+		[EntryStringUiProperty("Script Group", true, 16, false)]
+		public string ScriptGroup { get; set; }
+
 		public override bool RequireFutureDate => true;
 
 		public override string DefaultName
