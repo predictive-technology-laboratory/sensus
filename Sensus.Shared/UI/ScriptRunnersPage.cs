@@ -73,9 +73,12 @@ namespace Sensus.UI
 				}
 				else if (selectedAction == "Copy")
 				{
-					ScriptRunner copy = selectedScriptRunner.Copy();
+					ScriptRunner copy = await selectedScriptRunner.CopyAsync();
 
-					probe.ScriptRunners.Add(copy);
+					if (copy != null)
+					{
+						probe.ScriptRunners.Add(copy);
+					}
 				}
 				else if (selectedAction == "Delete")
 				{

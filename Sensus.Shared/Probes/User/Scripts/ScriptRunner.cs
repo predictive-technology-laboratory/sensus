@@ -1434,14 +1434,19 @@ namespace Sensus.Probes.User.Scripts
 			return Name + " - Copy";
 		}
 
-		public ScriptRunner Copy()
+		public async Task<ScriptRunner> CopyAsync()
 		{
+			JsonIgnoreContractResolver resolver = new JsonIgnoreContractResolver();
+
+			resolver.Ignore((ScriptRunner x) => x.ScheduledCallbackTimes);
+
 			JsonSerializerSettings settings = new JsonSerializerSettings
 			{
 				PreserveReferencesHandling = PreserveReferencesHandling.None,
 				ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
 				TypeNameHandling = TypeNameHandling.All,
 				ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+				ContractResolver = resolver
 			};
 
 			try
@@ -1453,9 +1458,8 @@ namespace Sensus.Probes.User.Scripts
 				copy.Probe = Probe;
 
 				copy.Name = GetCopyName();
-				copy.HasSubmitted = false;
 
-				copy.SavedState = null;
+				await copy.ResetAsync();
 
 				foreach (InputGroup inputGroup in copy.Script.InputGroups)
 				{
@@ -1467,8 +1471,11 @@ namespace Sensus.Probes.User.Scripts
 			catch (Exception ex)
 			{
 				string message = $"Failed to copy script runner:  {ex.Message}";
+
 				SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+
 				SensusException.Report(message, ex);
+
 				return null;
 			}
 			finally
