@@ -26,7 +26,6 @@ using Sensus.Callbacks;
 using Sensus.Exceptions;
 using Sensus.Context;
 using Newtonsoft.Json.Linq;
-using System.Collections.Specialized;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -151,9 +150,6 @@ namespace Sensus.Probes.User.Scripts
 			get { return _scriptRunners; }
 		}
 
-		[JsonIgnore]
-		public ObservableCollection<Script> UserInitiatedScripts { get; set; }
-
 		public sealed override string DisplayName
 		{
 			get { return "Scripted Interactions"; }
@@ -238,44 +234,6 @@ namespace Sensus.Probes.User.Scripts
 		public ScriptProbe()
 		{
 			_scriptRunners = new ObservableCollection<ScriptRunner>();
-
-			UserInitiatedScripts = new ObservableCollection<Script>();
-		}
-
-		private void AddUserInitiatedScript(ScriptRunner runner)
-		{
-			lock (UserInitiatedScripts)
-			{
-				if (UserInitiatedScripts.FirstOrDefault(x => x.Runner == runner) is Script existingScript)
-				{
-					Script copy = runner.Script.Copy(true);
-
-					copy.Shuffle();
-
-					int position = UserInitiatedScripts.IndexOf(existingScript);
-
-					UserInitiatedScripts[position] = copy;
-				}
-				else
-				{
-					Script copy = runner.Script.Copy(true);
-
-					copy.Shuffle();
-
-					UserInitiatedScripts.Add(copy);
-				}
-			}
-		}
-
-		private void RemoveUserInitiatedScript(ScriptRunner runner)
-		{
-			lock (UserInitiatedScripts)
-			{
-				foreach (Script existingScript in UserInitiatedScripts.Where(x => x.Runner == runner))
-				{ 
-					UserInitiatedScripts.Remove(existingScript);
-				}
-			}
 		}
 
 		protected override async Task InitializeAsync()
@@ -302,11 +260,6 @@ namespace Sensus.Probes.User.Scripts
 				if (scriptRunner.Enabled)
 				{
 					await scriptRunner.StartAsync();
-
-					if (scriptRunner.AllowUserInitiation)
-					{
-						AddUserInitiatedScript(scriptRunner);
-					}
 				}
 			}
 
@@ -379,8 +332,6 @@ namespace Sensus.Probes.User.Scripts
 			foreach (ScriptRunner scriptRunner in _scriptRunners)
 			{
 				await scriptRunner.StopAsync();
-
-				RemoveUserInitiatedScript(scriptRunner);
 			}
 
 			if (_agentIntervalDeliveryScheduledCallback != null)

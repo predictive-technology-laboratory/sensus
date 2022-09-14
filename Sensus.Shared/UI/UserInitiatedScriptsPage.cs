@@ -35,7 +35,8 @@ namespace Sensus.UI
 
 		public static IEnumerable<Script> GetUserInitiatedScripts(Protocol protocol)
 		{
-			return protocol.Probes.OfType<ScriptProbe>().SelectMany(x => x.UserInitiatedScripts);
+			//return protocol.Probes.OfType<ScriptProbe>().SelectMany(x => x.UserInitiatedScripts);
+			return protocol.Probes.OfType<ScriptProbe>().SelectMany(x => x.ScriptRunners.Where(y => y.Enabled && y.AllowUserInitiation).Select(y => y.Script));
 		}
 
 		public UserInitiatedScriptsPage(Protocol protocol) : base(GetUserInitiatedScripts(protocol), true)
@@ -59,16 +60,22 @@ namespace Sensus.UI
 
 		protected override async Task<bool> RunScriptAsync(Script script)
 		{
+			script = script.Copy(true);
+
 			script.RunTime = DateTimeOffset.UtcNow;
 
-			bool submitted = await base.RunScriptAsync(script);
+			return await base.RunScriptAsync(script);
 
-			foreach (Input input in script.InputGroups.SelectMany(x => x.Inputs))
-			{
-				input.Reset();
-			}
+			//script.RunTime = DateTimeOffset.UtcNow;
 
-			return submitted;
+			//bool submitted = await base.RunScriptAsync(script);
+
+			//foreach (Input input in script.InputGroups.SelectMany(x => x.Inputs))
+			//{
+			//	input.Reset();
+			//}
+
+			//return submitted;
 		}
 	}
 }
