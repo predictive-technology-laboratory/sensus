@@ -1097,7 +1097,7 @@ namespace Sensus.Probes.User.Scripts
 
 		private async Task ScheduleReminderAsync(Script script, DateTimeOffset startDate, TimeSpan timeSpan, bool repeats, string notificationMessage)
 		{
-			if (startDate > DateTimeOffset.Now || repeats)
+			if (startDate > DateTimeOffset.UtcNow || repeats)
 			{
 				string id = $"{Script.Id}.{GetType().FullName}.Reminder";
 
@@ -1178,18 +1178,20 @@ namespace Sensus.Probes.User.Scripts
 					}
 
 					TimeSpan timeSpan = TimeSpan.Zero;
-					DateTimeOffset dateTime = script.RunTime.Value.Add(timeSpan);
+					DateTimeOffset dateTime = script.RunTime.Value;
 
 					if (int.TryParse(parsableInterval, out int interval))
 					{
 						timeSpan = TimeSpan.FromSeconds(interval);
-
-						await ScheduleReminderAsync(script, dateTime, timeSpan, repeats, notificationMessage);
 					}
-					else if (parsableInterval.Contains(":") && TimeSpan.TryParse(parsableInterval, out timeSpan))
+					else if (parsableInterval.Contains(":"))
 					{
-						await ScheduleReminderAsync(script, dateTime, timeSpan, repeats, notificationMessage);
+						TimeSpan.TryParse(parsableInterval, out timeSpan);
 					}
+
+					dateTime = dateTime.Add(timeSpan);
+
+					await ScheduleReminderAsync(script, dateTime, timeSpan, repeats, notificationMessage);
 				}
 			}
 		}

@@ -2160,6 +2160,7 @@ namespace Sensus
 							script.Runner.CompletionTimes.RemoveAll(completionTime => completionTime < script.Runner.Probe.Protocol.ParticipationHorizon);
 						}
 
+						// if KeepUntilCompleted is true then we need to remove it now that it has been completed
 						if (script.Runner.KeepUntilCompleted)
 						{
 							if (RemoveScripts(script))
