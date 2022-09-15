@@ -2264,6 +2264,18 @@ namespace Sensus
 				Logger.Log("\"" + script.Runner.Name + "\" has completed processing.", LoggingLevel.Normal, typeof(Script));
 			}
 
+			// if the script wasn't removed from the list of available scripts then it needs to be reset.
+			if (_scriptsToRun.Contains(script))
+			{
+				foreach (InputGroup inputGroup in script.InputGroups)
+				{
+					foreach (Input input in inputGroup.Inputs)
+					{
+						input.Reset();
+					}
+				}
+			}
+
 			return submitted;
 		}
 
