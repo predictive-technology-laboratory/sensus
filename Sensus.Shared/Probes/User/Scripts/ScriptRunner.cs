@@ -981,6 +981,7 @@ namespace Sensus.Probes.User.Scripts
 			IEnumerable<ScriptSchedulerInput> schedulers = script.InputGroups.SelectMany(x => x.Inputs).OfType<ScriptSchedulerInput>();
 			bool scheduledNext = false;
 			bool save = schedulers.Any();
+			HashSet<ScriptRunner> reminderScripts = new();
 
 			foreach (ScriptSchedulerInput scheduler in schedulers)
 			{
@@ -1013,36 +1014,44 @@ namespace Sensus.Probes.User.Scripts
 							}
 						}
 
-						if (runner != null)
+						if (runner == null)
 						{
-							if (scheduler.TimeOnly)
+							runner = this;
+						}
+
+						if (scheduler.TimeOnly)
+						{
+							int daysFromNow = 0;
+
+							if (scheduler.DaysInFuture > 0)
 							{
-								int daysFromNow = 0;
-
-								if (scheduler.DaysInFuture > 0)
-								{
-									daysFromNow = scheduler.DaysInFuture;
-								}
-								else if (scheduledTime.TimeOfDay < DateTime.Now.TimeOfDay)
-								{
-									daysFromNow = 1;
-								}
-
-								scheduledTime = DateTime.Now.Date.AddDays(daysFromNow).Add(scheduledTime.TimeOfDay);
+								daysFromNow = scheduler.DaysInFuture;
+							}
+							else if (scheduledTime.TimeOfDay < DateTime.Now.TimeOfDay)
+							{
+								daysFromNow = 1;
 							}
 
-							if (scheduler.ScheduleMode == ScheduleModes.Reminder)
+							scheduledTime = DateTime.Now.Date.AddDays(daysFromNow).Add(scheduledTime.TimeOfDay);
+						}
+
+						if (scheduler.ScheduleMode == ScheduleModes.Reminder)
+						{
+							// don't unschedule reminders for a script that might have already been scheduled here
+							if (reminderScripts.Contains(runner) == false)
 							{
 								await runner.UnscheduleRemindersAsync();
 
-								await runner.ScheduleReminderAsync(runner.Script, scheduledTime, scheduler.NotificationMessage);
+								reminderScripts.Add(runner);
 							}
-							else
-							{
-								await runner.ScheduleScriptRunAsync(scheduledTime);
 
-								scheduledNext = runner == NextScript;
-							}
+							await runner.ScheduleReminderAsync(runner.Script, scheduledTime, scheduler.NotificationMessage);
+						}
+						else
+						{
+							await runner.ScheduleScriptRunAsync(scheduledTime);
+
+							scheduledNext = runner == NextScript;
 						}
 					}
 				}
