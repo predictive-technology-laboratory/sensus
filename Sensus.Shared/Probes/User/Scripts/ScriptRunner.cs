@@ -1104,18 +1104,11 @@ namespace Sensus.Probes.User.Scripts
 
 		public List<string> ReminderCallbackIds { get; set; }
 
-		private async Task ScheduleReminderAsync(Script script, DateTimeOffset startDate, TimeSpan timeSpan, bool repeats, string notificationMessage)
+		private async Task ScheduleReminderAsync(Script script, DateTimeOffset startDate, TimeSpan interval, bool repeats, string notificationMessage)
 		{
 			if (startDate > DateTimeOffset.UtcNow || repeats)
 			{
-				string id = $"{Script.Id}.{GetType().FullName}.Reminder";
-
-				if (repeats && timeSpan > TimeSpan.Zero)
-				{
-					id += $".{DateTime.Now:s}+";
-				}
-
-				id += timeSpan.ToString();
+				string id = $"{Script.Id}.{GetType().FullName}.Reminder-{startDate:s}-{interval}";
 
 				if (SensusContext.Current.CallbackScheduler.ContainsCallback(id) == false)
 				{
@@ -1126,9 +1119,9 @@ namespace Sensus.Probes.User.Scripts
 						return Task.CompletedTask;
 					}, startDate - DateTimeOffset.Now, id, Probe.Protocol.Id, Probe.Protocol, null, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS), ScheduledCallbackPriority.High, GetType());
 
-					if (repeats && timeSpan > TimeSpan.Zero)
+					if (repeats && interval > TimeSpan.Zero)
 					{
-						callback.RepeatDelay = timeSpan;
+						callback.RepeatDelay = interval;
 
 						callback.RepeatPredicate = () => script.Runner.Probe.State == ProbeState.Running;
 					}
@@ -1155,11 +1148,11 @@ namespace Sensus.Probes.User.Scripts
 							ReminderCallbackIds.Add(id);
 						}
 
-						SensusServiceHelper.Get().Logger.Log($"Scheduled {timeSpan} second reminder for {script.Id}", LoggingLevel.Normal, GetType());
+						SensusServiceHelper.Get().Logger.Log($"Scheduled {interval} second reminder for {script.Id}", LoggingLevel.Normal, GetType());
 					}
 					else
 					{
-						SensusServiceHelper.Get().Logger.Log($"Could not schedule {timeSpan} second reminder for {script.Id}", LoggingLevel.Normal, GetType());
+						SensusServiceHelper.Get().Logger.Log($"Could not schedule {interval} second reminder for {script.Id}", LoggingLevel.Normal, GetType());
 					}
 				}
 			}
