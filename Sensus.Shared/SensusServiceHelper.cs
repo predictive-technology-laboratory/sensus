@@ -2065,10 +2065,10 @@ namespace Sensus
 			await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Opened) ?? Task.CompletedTask);
 			script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Opened, DateTimeOffset.UtcNow, script), CancellationToken.None);
 
+			await script.Runner.UnscheduleRemindersAsync();
+
 			// determine what happens with the script state.
 			SavedScriptState savedState = await ScriptRunner.ManageStateAsync(script);
-
-			await script.Runner.UnscheduleRemindersAsync();
 
 			foreach (InputGroup inputGroup in script.InputGroups)
 			{

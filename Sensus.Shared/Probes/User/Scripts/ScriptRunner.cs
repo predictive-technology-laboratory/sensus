@@ -1112,18 +1112,24 @@ namespace Sensus.Probes.User.Scripts
 
 				if (SensusContext.Current.CallbackScheduler.ContainsCallback(id) == false)
 				{
-					ScheduledCallback callback = new ScheduledCallback(c =>
+					ScheduledCallback callback = new ScheduledCallback(async c =>
 					{
 						Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Reminded, DateTimeOffset.Now, script), CancellationToken.None);
 
-						return Task.CompletedTask;
+						await Task.CompletedTask;
 					}, startDate - DateTimeOffset.Now, id, Probe.Protocol.Id, Probe.Protocol, null, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS), ScheduledCallbackPriority.High, GetType());
 
 					if (repeats && interval > TimeSpan.Zero)
 					{
 						callback.RepeatDelay = interval;
 
-						callback.RepeatPredicate = () => script.Runner.Probe.State == ProbeState.Running;
+						callback.RepeatPredicate = () =>
+						{
+							bool probeRunning = script.Runner.Probe.State == ProbeState.Running;
+							bool scriptSubmitting = script.Submitting;
+
+							return probeRunning && (scriptSubmitting == false);
+						};
 					}
 
 					if (string.IsNullOrWhiteSpace(notificationMessage) == false)
@@ -1143,9 +1149,9 @@ namespace Sensus.Probes.User.Scripts
 
 					if (await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(callback) == ScheduledCallbackState.Scheduled)
 					{
-						if (ReminderCallbackIds.Contains(id) == false)
+						if (ReminderCallbackIds.Contains(callback.Id) == false)
 						{
-							ReminderCallbackIds.Add(id);
+							ReminderCallbackIds.Add(callback.Id);
 						}
 
 						SensusServiceHelper.Get().Logger.Log($"Scheduled {interval} second reminder for {script.Id}", LoggingLevel.Normal, GetType());
