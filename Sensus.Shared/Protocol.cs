@@ -2028,6 +2028,8 @@ namespace Sensus
 			// to send it off rather than show it in the UI.
 			Protocol protocolCopy = await CopyAsync(false, false);
 
+			protocolCopy.InstallDate = DateTime.MinValue;
+
 			// write protocol to file and share
 			string sharePath = SensusServiceHelper.Get().GetSharePath(".json");
 			protocolCopy.Save(sharePath);
