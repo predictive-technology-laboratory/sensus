@@ -342,7 +342,7 @@ namespace Sensus.Probes.User.Scripts
 		/// fired every other day at some time between 9am and 10am.
 		/// </summary>
 		/// <value>The non-DOW trigger interval days.</value>
-		[EntryIntegerUiProperty("Trigger Interval (Days):", true, 9, true)]
+		[OnOffUiProperty("Trigger Interval Inclusive:", true, 9)]
 		public bool TriggerIntervalInclusive
 		{
 			get
