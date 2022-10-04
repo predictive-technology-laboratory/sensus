@@ -2075,7 +2075,7 @@ namespace Sensus
 				inputGroup.ScriptRunner = script.Runner;
 			}
 
-			PromptForInputsResult result = await PromptForInputsAsync(script.RunTime, script.Runner.Name, script.InputGroups, null, script.Runner.AllowCancel, null, script.Runner.ConfirmNavigation, null, script.Runner.IncompleteSubmissionConfirmation, script.Runner.SubmitConfirmation, script.Runner.DisplayProgress, script.Runner.UseDetailPage, null, savedState);
+			PromptForInputsResult result = await PromptForInputsAsync(script.RunTime, script.Runner.Name, script.InputGroups, null, script.Runner.AllowCancel, null, script.Runner.ConfirmNavigation, script.Runner.CancelConfirmation, script.Runner.IncompleteSubmissionConfirmation, script.Runner.SubmitConfirmation, script.Runner.DisplayProgress, script.Runner.UseDetailPage, null, savedState);
 
 			if (result.NavigationResult == InputGroupPage.NavigationResult.Paused)
 			{

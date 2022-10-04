@@ -600,6 +600,9 @@ namespace Sensus.Probes.User.Scripts
 		[EntryStringUiProperty("Submit Confirmation:", true, 31, false)]
 		public string SubmitConfirmation { get; set; }
 
+		[EntryStringUiProperty("Cancel Confirmation:", true, 31, false)]
+		public string CancelConfirmation { get; set; }
+
 		[EntryStringUiProperty("Reminder Intervals (S):", true, 32, false)]
 		public string ReminderIntervals { get; set; }
 
