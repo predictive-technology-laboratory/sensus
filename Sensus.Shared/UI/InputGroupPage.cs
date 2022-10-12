@@ -210,61 +210,6 @@ namespace Sensus.UI
 				Content = scrollView;
 			}
 
-			#region inputs
-			List<Input> displayedInputs = new List<Input>();
-			int viewNumber = 1;
-			int inputSeparatorHeight = 10;
-			foreach (Input input in inputGroup.Inputs)
-			{
-				input.InputGroupPage = this;
-				input.ScriptRunner = inputGroup.ScriptRunner;
-
-				if (input.Display)
-				{
-					View inputView = input.GetView(viewNumber);
-
-					if (inputView != null)
-					{
-						// frame all enabled inputs that request a frame
-						if (input.Enabled && input.Frame)
-						{
-							inputView = new Frame
-							{
-								StyleClass = new List<string> { "InputFrame" },
-								Content = inputView,
-								VerticalOptions = LayoutOptions.Start,
-								Padding = new Thickness(10)
-							};
-						}
-
-						// add some vertical separation between inputs
-						if (_displayedInputCount > 0)
-						{
-							contentLayout.Children.Add(new BoxView { Color = Color.Transparent, HeightRequest = inputSeparatorHeight });
-						}
-
-						contentLayout.Children.Add(inputView);
-						displayedInputs.Add(input);
-
-						if (input.DisplayNumber)
-						{
-							viewNumber++;
-						}
-
-						_displayedInputCount++;
-					}
-				}
-			}
-
-			_displayedInputs = displayedInputs;
-
-			// add final separator if we displayed any inputs
-			if (_displayedInputCount > 0)
-			{
-				contentLayout.Children.Add(new BoxView { Color = Color.Transparent, HeightRequest = inputSeparatorHeight });
-			}
-			#endregion
-
 			_cancelHandler = async (o, e) =>
 			{
 				if (_confirmNavigation == false || string.IsNullOrWhiteSpace(cancelConfirmation) || await DisplayAlert("Confirm", cancelConfirmation, "Yes", "No"))
@@ -331,6 +276,61 @@ namespace Sensus.UI
 					}
 				});
 			};
+
+			#region inputs
+			List<Input> displayedInputs = new List<Input>();
+			int viewNumber = 1;
+			int inputSeparatorHeight = 10;
+			foreach (Input input in inputGroup.Inputs)
+			{
+				input.InputGroupPage = this;
+				input.ScriptRunner = inputGroup.ScriptRunner;
+
+				if (input.Display)
+				{
+					View inputView = input.GetView(viewNumber);
+
+					if (inputView != null)
+					{
+						// frame all enabled inputs that request a frame
+						if (input.Enabled && input.Frame)
+						{
+							inputView = new Frame
+							{
+								StyleClass = new List<string> { "InputFrame" },
+								Content = inputView,
+								VerticalOptions = LayoutOptions.Start,
+								Padding = new Thickness(10)
+							};
+						}
+
+						// add some vertical separation between inputs
+						if (_displayedInputCount > 0)
+						{
+							contentLayout.Children.Add(new BoxView { Color = Color.Transparent, HeightRequest = inputSeparatorHeight });
+						}
+
+						contentLayout.Children.Add(inputView);
+						displayedInputs.Add(input);
+
+						if (input.DisplayNumber)
+						{
+							viewNumber++;
+						}
+
+						_displayedInputCount++;
+					}
+				}
+			}
+
+			_displayedInputs = displayedInputs;
+
+			// add final separator if we displayed any inputs
+			if (_displayedInputCount > 0)
+			{
+				contentLayout.Children.Add(new BoxView { Color = Color.Transparent, HeightRequest = inputSeparatorHeight });
+			}
+			#endregion
 
 			if (inputGroup.ShowNavigationButtons != ShowNavigationOptions.Never)
 			{
