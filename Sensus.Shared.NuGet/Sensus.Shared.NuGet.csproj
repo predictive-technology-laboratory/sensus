@@ -29,7 +29,7 @@
     <Compile Remove="Class1.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
   <Import Project="..\Sensus.Shared.Core\Sensus.Shared.Core.projitems" Label="Shared" />
 </Project>

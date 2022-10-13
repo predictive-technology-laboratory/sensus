@@ -58,7 +58,7 @@ namespace Sensus.Android.Callbacks
             //
             // https://developer.android.com/reference/android/app/PendingIntent.html 
             //
-            return PendingIntent.GetService(_service, 0, callbackIntent, PendingIntentFlags.CancelCurrent);
+            return PendingIntent.GetService(_service, 0, callbackIntent, PendingIntentFlags.CancelCurrent | PendingIntentFlags.Immutable);
         }
 
         private void ScheduleCallbackAlarm(ScheduledCallback callback, PendingIntent callbackPendingIntent)

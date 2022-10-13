@@ -22,7 +22,7 @@ namespace Sensus.Android
     /// <summary>
     /// Starts Sensus service on boot completion or app update.
     /// </summary>
-    [BroadcastReceiver]
+    [BroadcastReceiver(Exported = false)]
     [IntentFilter(new string[] { Intent.ActionBootCompleted, Intent.ActionMyPackageReplaced }, Categories = new string[] { Intent.CategoryDefault })]
     public class AndroidSensusServiceBootStarter : BroadcastReceiver
     {

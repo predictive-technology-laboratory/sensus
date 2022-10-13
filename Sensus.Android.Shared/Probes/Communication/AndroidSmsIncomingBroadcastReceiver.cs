@@ -23,7 +23,7 @@ using System;
 
 namespace Sensus.Android.Probes.Communication
 {
-    [BroadcastReceiver]
+    [BroadcastReceiver(Exported = false)]
     [IntentFilter(new string[] { "android.provider.Telephony.SMS_RECEIVED" }, Categories = new string[] { Intent.CategoryDefault })]
     public class AndroidSmsIncomingBroadcastReceiver : BroadcastReceiver
     {
