@@ -46,6 +46,7 @@ namespace Sensus.UI.Inputs
 		private string _groupId;
 		private string _labelText;
 		private int _labelFontSize;
+		[JsonIgnore] // make sure the _view is never serialized/deserialized, e.g. when copying. TODO: Look into copy settings and AllowNonPublicDefaultConstructor vs. ignoring private fields
 		private View _view;
 		private bool _displayNumber;
 		private bool _complete;
