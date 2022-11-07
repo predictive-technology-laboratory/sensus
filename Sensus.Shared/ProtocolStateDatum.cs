@@ -26,7 +26,7 @@ namespace Sensus
 		{
 			get
 			{
-				return $"{ProtocolName} state changd to {State}.";
+				return $"{ProtocolName} state changed to {State}.";
 			}
 		}
 
