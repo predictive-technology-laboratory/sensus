@@ -702,7 +702,7 @@ namespace Sensus.UI.Inputs
 		{
 			object correctValue = CorrectValue;
 
-			if (correctValue != null)
+			if (CorrectScore != 0 || IncorrectScore != 0)
 			{
 				if (correctValue is string stringValue && Regex.IsMatch(stringValue, @"^=(={2})*[^=]"))
 				{
@@ -711,31 +711,7 @@ namespace Sensus.UI.Inputs
 					protocol.VariableValue.TryGetValue(stringValue.Substring(1), out correctValue);
 				}
 
-				if (correctValue != null && value != null)
-				{
-					if (correctValue.Equals(value))
-					{
-						return true;
-					}
-					else if (JsonConvert.SerializeObject(correctValue) == JsonConvert.SerializeObject(value))
-					{
-						return true;
-					}
-					else if (JsonConvert.SerializeObject(correctValue) == value as string)
-					{
-						return true;
-					}
-					else if (correctValue as string == JsonConvert.SerializeObject(value))
-					{
-						return true;
-					}
-				}
-				else if (correctValue == null && value == null)
-				{
-					return true;
-				}
-
-				return false;
+				return ObjectComparer.Compare(correctValue, value, ComparisonOperators.Equal);
 			}
 
 			return true;
