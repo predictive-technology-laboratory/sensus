@@ -11,9 +11,11 @@ namespace Sensus.Probes.User.Scripts
 	{
 		public SavedScriptState()
 		{
-			InputGroupStack = new Stack<int>();
-			SavedInputs = new Dictionary<string, ScriptDatum>();
-			Variables = new Dictionary<string, object>();
+			InputGroupStack = new();
+			SavedInputs = new();
+			Variables = new();
+			Scores = new();
+			CorrectScores = new();
 		}
 
 		public SavedScriptState(string savePath) : this()
@@ -27,6 +29,8 @@ namespace Sensus.Probes.User.Scripts
 		public Stack<int> InputGroupStack { get; set; }
 		public Dictionary<string, ScriptDatum> SavedInputs { get; set; }
 		public Dictionary<string, object> Variables { get; set; }
+		public Dictionary<string, float> Scores { get; set; }
+		public Dictionary<string, float> CorrectScores { get; set; }
 
 		[JsonIgnore]
 		public bool Restored { get; set; }

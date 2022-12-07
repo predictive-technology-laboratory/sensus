@@ -1365,7 +1365,7 @@ namespace Sensus
 
 			// keep a stack of input groups that were displayed so that the user can navigate backward. not all groups are displayed due to display
 			// conditions, so we can't simply decrement the index to navigate backwards.
-			Stack<int> inputGroupBackStack = new Stack<int>();
+			Stack<int> inputGroupBackStack = new();
 
 			// assign inputs to scoreinputs by scoregroup
 			IEnumerable<Input> allInputs = inputGroups.SelectMany(x => x.Inputs);
@@ -1380,12 +1380,12 @@ namespace Sensus
 				return x.ScoreGroup;
 			});
 
-			foreach (ScoreInput scoreInput in allInputs.OfType<ScoreInput>())
+			foreach (ScoreInput scoreInput in allScoreInputs)
 			{
 				scoreInput.ClearInputs();
 			}
 
-			IEnumerable<ScoreInput> groupedScoreInputs = allInputs.OfType<ScoreInput>().Where(x => string.IsNullOrWhiteSpace(x.ScoreGroup) == false);
+			IEnumerable<ScoreInput> groupedScoreInputs = allScoreInputs.Where(x => string.IsNullOrWhiteSpace(x.ScoreGroup) == false);
 
 			// if the score group key is null, then the ScoreKeeperInputs accumulates the score of the other ScoreInputs in the collection of InputGroups
 			foreach (ScoreInput scoreInput in scoreInputLookup[null])
@@ -1401,6 +1401,17 @@ namespace Sensus
 				if (savedState.InputGroupStack.Any())
 				{
 					startInputGroupIndex = savedState.InputGroupStack.FirstOrDefault() + 1;
+				}
+
+				savedState.Scores ??= new();
+				savedState.CorrectScores ??= new();
+
+				foreach (ScoreInput scoreInput in allScoreInputs)
+				{
+					savedState.Scores.TryGetValue(scoreInput.ScoreGroup, out float score);
+					savedState.CorrectScores.TryGetValue(scoreInput.ScoreGroup, out float correctScore);
+
+					scoreInput.OffsetScore(score, correctScore);
 				}
 			}
 
@@ -1436,7 +1447,7 @@ namespace Sensus
 					{
 						int stepNumber = inputGroupIndex + 1;
 
-						InputGroupPage inputGroupPage = new InputGroupPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, confirmNavigation, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, title, savedState != null);
+						InputGroupPage inputGroupPage = new(inputGroup, stepNumber, inputGroups.Count(), inputGroupBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, confirmNavigation, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, title, savedState != null);
 
 						// do not display prompts page under the following conditions:
 						//
@@ -1462,6 +1473,15 @@ namespace Sensus
 						// display the page if we've not been canceled
 						else if (!cancellationToken.GetValueOrDefault().IsCancellationRequested)
 						{
+							if (savedState != null)
+							{
+								foreach (ScoreInput scoreInput in allScoreInputs)
+								{
+									savedState.Scores[scoreInput.ScoreGroup] = scoreInput.Score;
+									savedState.CorrectScores[scoreInput.ScoreGroup] = scoreInput.CorrectScore;
+								}
+							}
+
 							foreach (Input input in inputGroup.Inputs)
 							{
 								if (input is not ScoreInput && string.IsNullOrWhiteSpace(input.ScoreGroup) == false)
