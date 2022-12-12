@@ -220,10 +220,6 @@ namespace Sensus.UI.Inputs
 								{
 									Complete = true;
 								}
-								else
-								{
-									Attempts += 1;
-								}
 
 								SetFeedback(true);
 							};
