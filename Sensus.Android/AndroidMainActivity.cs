@@ -29,8 +29,8 @@ using Plugin.CurrentActivity;
 using System.Threading.Tasks;
 using Sensus.Exceptions;
 using Sensus.Notifications;
-using Sensus.Android.Notifications;
-using Sensus.Android.Probes.Apps;
+using Xamarin.Essentials;
+using Platform = Xamarin.Essentials.Platform;
 //using Sensus.Android.Probes.Apps.Accessibility;
 
 #if __ANDROID_23__
@@ -73,6 +73,8 @@ namespace Sensus.Android
 
 			Forms.Init(this, savedInstanceState);
 			FormsMaps.Init(this, savedInstanceState);
+			Platform.Init(this, savedInstanceState);
+
 			ZXing.Net.Mobile.Forms.Android.Platform.Init();
 
 			// initialize the current activity plugin here as well as in the service,

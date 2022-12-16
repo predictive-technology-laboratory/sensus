@@ -93,7 +93,7 @@ namespace Sensus.Android.Probes.Movement
         public AndroidAwarenessProbe()
         {
             _awarenessBroadcastReceiver = new AndroidAwarenessProbeBroadcastReceiver();
-            _fencePendingIntent = PendingIntent.GetBroadcast(Application.Context, 0, new Intent(AWARENESS_PENDING_INTENT_ACTION), 0);
+            _fencePendingIntent = PendingIntent.GetBroadcast(Application.Context, 0, new Intent(AWARENESS_PENDING_INTENT_ACTION), PendingIntentFlags.Immutable);
         }
 
         protected override async Task InitializeAsync()

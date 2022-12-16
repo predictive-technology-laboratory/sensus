@@ -61,7 +61,7 @@ namespace Sensus.Android.Notifications
             Application.Context.RegisterReceiver(_foregroundServiceNotificationActionReceiver, foregroundServiceNotificationActionIntentFilter);
 
             // create notification builder for the foreground service and set initial content
-            PendingIntent mainActivityPendingIntent = PendingIntent.GetActivity(Application.Context, 0, new Intent(Application.Context, typeof(AndroidMainActivity)), 0);
+            PendingIntent mainActivityPendingIntent = PendingIntent.GetActivity(Application.Context, 0, new Intent(Application.Context, typeof(AndroidMainActivity)), PendingIntentFlags.Immutable);
             _foregroundServiceNotificationBuilder = CreateNotificationBuilder(AndroidNotifier.SensusNotificationChannel.ForegroundService)
                                                         .SetSmallIcon(Resource.Drawable.ic_launcher)
                                                         .SetContentIntent(mainActivityPendingIntent)
@@ -228,7 +228,7 @@ namespace Sensus.Android.Notifications
                 notificationIntent.PutExtra(NOTIFICATION_USER_RESPONSE_ACTION_KEY, userResponseAction.ToString());
                 notificationIntent.PutExtra(NOTIFICATION_USER_RESPONSE_MESSAGE_KEY, userResponseMessage);
 
-                PendingIntent notificationPendingIntent = PendingIntent.GetActivity(Application.Context, 0, notificationIntent, PendingIntentFlags.OneShot);
+                PendingIntent notificationPendingIntent = PendingIntent.GetActivity(Application.Context, 0, notificationIntent, PendingIntentFlags.OneShot | PendingIntentFlags.Immutable);
 
                 SensusNotificationChannel notificationChannel = SensusNotificationChannel.Default;
 
@@ -336,7 +336,7 @@ namespace Sensus.Android.Notifications
                     if (numPausableProtocols > 0)
                     {
                         Intent pauseActionIntent = new Intent(FOREGROUND_SERVICE_NOTIFICATION_ACTION_PAUSE);
-                        PendingIntent pauseActionPendingIntent = PendingIntent.GetBroadcast(Application.Context, 0, pauseActionIntent, PendingIntentFlags.CancelCurrent);
+                        PendingIntent pauseActionPendingIntent = PendingIntent.GetBroadcast(Application.Context, 0, pauseActionIntent, PendingIntentFlags.CancelCurrent | PendingIntentFlags.Immutable);
                         string pauseActionTitle = "Pause " + numPausableProtocols + " " + (numPausableProtocols == 1 ? "study" : "studies") + ".";
                         _foregroundServiceNotificationBuilder.AddAction(new Notification.Action(Resource.Drawable.ic_media_pause_light, pauseActionTitle, pauseActionPendingIntent));  // note that notification actions no longer display the icon
                     }
@@ -346,7 +346,7 @@ namespace Sensus.Android.Notifications
                     if (numPausedStudies > 0)
                     {
                         Intent resumeActionIntent = new Intent(FOREGROUND_SERVICE_NOTIFICATION_ACTION_RESUME);
-                        PendingIntent resumeActionPendingIntent = PendingIntent.GetBroadcast(Application.Context, 0, resumeActionIntent, PendingIntentFlags.CancelCurrent);
+                        PendingIntent resumeActionPendingIntent = PendingIntent.GetBroadcast(Application.Context, 0, resumeActionIntent, PendingIntentFlags.CancelCurrent | PendingIntentFlags.Immutable);
                         string resumeActionTitle = "Resume " + numPausedStudies + " " + (numPausedStudies == 1 ? "study" : "studies") + ".";
                         _foregroundServiceNotificationBuilder.AddAction(new Notification.Action(Resource.Drawable.ic_media_play_light, resumeActionTitle, resumeActionPendingIntent));  // note that notification actions no longer display the icon
                     }

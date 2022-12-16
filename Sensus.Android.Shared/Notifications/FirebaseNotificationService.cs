@@ -23,7 +23,7 @@ using Sensus.Notifications;
 
 namespace Sensus.Android.Notifications
 {
-    [Service]
+    [Service(Exported = false)]
     [IntentFilter(new[] { "com.google.firebase.MESSAGING_EVENT" })]
     public class FirebaseNotificationService : FirebaseMessagingService
     {
