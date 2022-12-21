@@ -365,13 +365,13 @@ namespace Sensus.iOS
         protected override async Task RegisterWithNotificationHubAsync(Tuple<string, string> hubSas)
         {
             SBNotificationHub notificationHub = new SBNotificationHub(hubSas.Item2, hubSas.Item1);
-            await notificationHub.RegisterNativeAsyncAsync(_pushNotificationTokenData, new NSSet());
+            await notificationHub.RegisterNativeAsync(_pushNotificationTokenData, new NSSet());
         }
 
         protected override async Task UnregisterFromNotificationHubAsync(Tuple<string, string> hubSas)
         {
             SBNotificationHub notificationHub = new SBNotificationHub(hubSas.Item2, hubSas.Item1);
-            await notificationHub.UnregisterAllAsyncAsync(_pushNotificationTokenData);
+            await notificationHub.UnregisterAllAsync(_pushNotificationTokenData);
         }
 
         protected override void RequestNewPushNotificationToken()
