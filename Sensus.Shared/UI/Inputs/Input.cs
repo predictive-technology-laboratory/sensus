@@ -702,7 +702,7 @@ namespace Sensus.UI.Inputs
 		{
 			object correctValue = CorrectValue;
 
-			if (CorrectScore != 0 || IncorrectScore != 0)
+			if (correctValue != null)
 			{
 				if (correctValue is string stringValue && Regex.IsMatch(stringValue, @"^=(={2})*[^=]"))
 				{
