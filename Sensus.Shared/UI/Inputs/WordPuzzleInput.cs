@@ -83,15 +83,15 @@ namespace Sensus.UI.Inputs
 
 			if (base.GetView(index) == null)
 			{
-				_value = new List<string>();
-				_missingLetterIndexes = new HashSet<int>();
+				_value = new();
+				_missingLetterIndexes = new();
 
 				if (words.Count > 0)
 				{
-					Random random = new Random();
+					Random random = new();
 					string word = words[random.Next(words.Count)].ToLower();
 
-					List<(int Index, string Letter)> choices = new List<(int, string)>();
+					List<(int Index, string Letter)> choices = new();
 
 					int missingLetterCount = Math.Min(MissingLetterCount, ChoiceCount - 1);
 
@@ -122,7 +122,7 @@ namespace Sensus.UI.Inputs
 
 					choices = choices.OrderBy(x => random.Next()).ToList();
 
-					ButtonGridView wordGrid = new ButtonGridView(ColumnCount, null)
+					ButtonGridView wordGrid = new(ColumnCount, null)
 					{
 						HorizontalOptions = LayoutOptions.FillAndExpand
 					};
@@ -147,7 +147,7 @@ namespace Sensus.UI.Inputs
 
 					ButtonWithValue[] wordButtons = wordGrid.Buttons.ToArray();
 
-					_choiceGrid = new ButtonGridView(0, null)
+					_choiceGrid = new(0, null)
 					{
 						HorizontalOptions = LayoutOptions.FillAndExpand
 					};
@@ -176,25 +176,15 @@ namespace Sensus.UI.Inputs
 							{
 								if (Correct == false)
 								{
+									List<string> correctValues = _value;
+									
 									_value = _value.Union(new[] { button.Value }).OrderBy(x => x).ToList();
-
-									foreach (ButtonWithValue otherButton in _choiceGrid.Buttons)
-									{
-										otherButton.State = ButtonStates.Default;
-									}
 
 									button.State = ButtonStates.Incorrect;
 
-									if (_value.Count >= MissingLetterCount)
-									{
-										Complete = true;
-									}
-									else
-									{
-										Attempts += 1;
-									}
+									Complete = true;
 
-									SetFeedback(false);
+									_value = correctValues;
 								}
 							};
 						}
@@ -204,11 +194,6 @@ namespace Sensus.UI.Inputs
 							{
 								_value = _value.Union(new[] { button.Value }).OrderBy(x => x).ToList();
 								_missingLetterIndexes.Remove(letterIndex);
-
-								foreach (ButtonWithValue otherButton in _choiceGrid.Buttons)
-								{
-									otherButton.State = ButtonStates.Default;
-								}
 
 								button.State = ButtonStates.Correct;
 
@@ -220,13 +205,11 @@ namespace Sensus.UI.Inputs
 								{
 									Complete = true;
 								}
-
-								SetFeedback(true);
 							};
 						}
 					}
 
-					Label label = new Label()
+					Label label = new()
 					{
 						Text = "Select a Tile:",
 						HorizontalTextAlignment = TextAlignment.Center
@@ -239,7 +222,7 @@ namespace Sensus.UI.Inputs
 
 					_choiceGrid.Arrange();
 
-					StackLayout puzzleLayout = new StackLayout()
+					StackLayout puzzleLayout = new()
 					{
 						Children = { wordGrid, label, _choiceGrid }
 					};
@@ -257,7 +240,7 @@ namespace Sensus.UI.Inputs
 
 		public override void Reset()
 		{
-			_value = new List<string>();
+			_value = new();
 
 			base.Reset();
 		}
