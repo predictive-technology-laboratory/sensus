@@ -156,13 +156,16 @@ namespace Sensus.UI.Inputs
 					{
 						DelayEnded += (s, e) =>
 						{
-							foreach (ButtonWithValue otherButton in _choiceGrid.Buttons)
+							Device.BeginInvokeOnMainThread(() =>
 							{
-								if (otherButton.State == ButtonStates.Incorrect)
+								foreach (ButtonWithValue otherButton in _choiceGrid.Buttons)
 								{
-									otherButton.State = ButtonStates.Default;
+									if (otherButton.State == ButtonStates.Incorrect)
+									{
+										otherButton.State = ButtonStates.Default;
+									}
 								}
-							}
+							});
 						};
 					}
 

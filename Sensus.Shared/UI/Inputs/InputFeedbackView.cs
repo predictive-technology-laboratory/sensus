@@ -122,9 +122,9 @@ namespace Sensus.UI.Inputs
 
 									InvokeEventHandler(_delayEnded);
 								}
-								catch
+								finally
 								{
-
+									IsVisible = _persistAfterDelay;
 								}
 							}
 						});
