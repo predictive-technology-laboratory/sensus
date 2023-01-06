@@ -938,7 +938,14 @@ namespace Sensus.Probes.User.Scripts
 			}
 
 			// save the app state to retain the callback schedule in case the app terminates
-			await SensusServiceHelper.Get().SaveAsync();
+			try
+			{
+				await SensusServiceHelper.Get().SaveAsync();
+			}
+			catch (Exception ex)
+			{
+				SensusException.Report($"Exception while saving app state after scheduling {Script.Id}: " + ex.Message, ex);
+			}
 		}
 
 		/// <summary>
@@ -983,7 +990,6 @@ namespace Sensus.Probes.User.Scripts
 		{
 			IEnumerable<ScriptSchedulerInput> schedulers = script.InputGroups.SelectMany(x => x.Inputs).OfType<ScriptSchedulerInput>();
 			bool scheduledNext = false;
-			bool save = schedulers.Any();
 			HashSet<ScriptRunner> reminderScripts = new();
 
 			foreach (ScriptSchedulerInput scheduler in schedulers)
@@ -1017,10 +1023,7 @@ namespace Sensus.Probes.User.Scripts
 							}
 						}
 
-						if (runner == null)
-						{
-							runner = this;
-						}
+						runner ??= this;
 
 						if (scheduler.TimeOnly)
 						{
@@ -1064,11 +1067,6 @@ namespace Sensus.Probes.User.Scripts
 				}
 			}
 
-			if (save)
-			{
-				await SensusServiceHelper.Get().SaveAsync();
-			}
-
 			return scheduledNext;
 		}
 
@@ -1084,8 +1082,6 @@ namespace Sensus.Probes.User.Scripts
 				else // schedule it to be run
 				{
 					await NextScript.ScheduleScriptRunAsync(DateTime.Now.AddMilliseconds(NextScriptRunDelayMS));
-
-					await SensusServiceHelper.Get().SaveAsync();
 				}
 			}
 		}
@@ -1100,8 +1096,6 @@ namespace Sensus.Probes.User.Scripts
 				{
 					await runner.ScheduleScriptRunsAsync();
 				}
-
-				await SensusServiceHelper.Get().SaveAsync();
 			}
 		}
 

@@ -2198,6 +2198,15 @@ namespace Sensus
 					script.Runner.HasSubmitted = true;
 
 					await script.Runner.ScheduleDepedentScriptsAsync();
+
+					try
+					{
+						await SaveAsync();
+					}
+					catch (Exception ex)
+					{
+						SensusException.Report($"Exception while saving app state after submitting {script.Runner.Script.Id}: " + ex.Message, ex);
+					}
 				}
 
 				// process/store all inputs in the script
