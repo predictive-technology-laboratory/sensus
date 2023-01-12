@@ -270,10 +270,7 @@ namespace Sensus.Probes.User.Scripts
 			}
 		}
 
-
 		public bool ManualRun { get; set; }
-
-
 
 		/// <summary>
 		/// Label of the <see cref="Input"/> that generated this <see cref="ScriptDatum"/>. This 
@@ -335,7 +332,6 @@ namespace Sensus.Probes.User.Scripts
 		{
 			_completionRecords = new List<InputCompletionRecord>();
 		}
-
 
 		public ScriptDatum(DateTimeOffset timestamp, string scriptId, string scriptName, string groupId, string inputId, string runId, string inputLabel, string inputName, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset? locationTimestamp, DateTimeOffset runTimestamp, List<InputCompletionRecord> completionRecords, DateTimeOffset submissionTimestamp, bool manualRun)
 			: base(timestamp)
