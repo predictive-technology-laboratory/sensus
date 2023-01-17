@@ -89,7 +89,10 @@ namespace Sensus.UI.Inputs
 
 		protected virtual void StartProgress(double delay)
 		{
-			InvokeEventHandler(_delayStarted);
+			SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+			{
+				InvokeEventHandler(_delayStarted);
+			});
 
 			if (_progressBar != null)
 			{
