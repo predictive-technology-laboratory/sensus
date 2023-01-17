@@ -95,7 +95,7 @@ namespace Sensus.UI.Inputs
 
 					int missingLetterCount = Math.Min(MissingLetterCount, ChoiceCount - 1);
 
-					while (choices.Count < ChoiceCount)
+					while (choices.Count < ChoiceCount && choices.Count < word.Length)
 					{
 						if (choices.Count < missingLetterCount)
 						{
