@@ -2211,54 +2211,58 @@ namespace Sensus
 
 				// process/store all inputs in the script
 				bool inputStored = false;
-				foreach (InputGroup inputGroup in script.InputGroups)
+
+				if (result.InputGroups != null)
 				{
-					foreach (Input input in inputGroup.Inputs)
+					foreach (InputGroup inputGroup in result.InputGroups)
 					{
-						if (result.NavigationResult == InputGroupPage.NavigationResult.Cancel)
+						foreach (Input input in inputGroup.Inputs)
 						{
-							input.Reset();
-						}
-						else if (input.Store)
-						{
-							if (input.Complete == false && savedState != null)
+							if (result.NavigationResult == InputGroupPage.NavigationResult.Cancel)
 							{
-								if (savedState.SavedInputs.TryGetValue($"{inputGroup.Id}.{input.Id}", out ScriptDatum savedInput))
+								input.Reset();
+							}
+							else if (input.Store)
+							{
+								if (input.Complete == false && savedState != null)
 								{
-									savedInput.SubmissionTimestamp = input.SubmissionTimestamp ?? DateTimeOffset.UtcNow;
-									savedInput.Latitude = input.Latitude;
-									savedInput.Longitude = input.Longitude;
-									savedInput.LocationTimestamp = input.LocationUpdateTimestamp;
+									if (savedState.SavedInputs.TryGetValue($"{inputGroup.Id}.{input.Id}", out ScriptDatum savedInput))
+									{
+										savedInput.SubmissionTimestamp = input.SubmissionTimestamp ?? DateTimeOffset.UtcNow;
+										savedInput.Latitude = input.Latitude;
+										savedInput.Longitude = input.Longitude;
+										savedInput.LocationTimestamp = input.LocationUpdateTimestamp;
 
-									await script.Runner.Probe.StoreDatumAsync(savedInput, CancellationToken.None);
+										await script.Runner.Probe.StoreDatumAsync(savedInput, CancellationToken.None);
+									}
 								}
-							}
-							else if (input.Display)
-							{
-								// the _script.Id allows us to link the data to the script that the user created. it never changes. on the other hand, the script
-								// that is passed into this method is always a copy of the user-created script. the script.Id allows us to link the various data
-								// collected from the user into a single logical response. each run of the script has its own script.Id so that responses can be
-								// grouped across runs. this is the difference between scriptId and runId in the following line.
-								await script.Runner.Probe.StoreDatumAsync(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow),
-																								  script.Runner.Script.Id,
-																								  script.Runner.Name,
-																								  input.GroupId,
-																								  input.Id,
-																								  script.Id,
-																								  input.LabelText,
-																								  input.Name,
-																								  input.Value,
-																								  script.CurrentDatum?.Id,
-																								  input.Latitude,
-																								  input.Longitude,
-																								  input.LocationUpdateTimestamp,
-																								  script.RunTime.Value,
-																								  input.CompletionRecords,
-																								  input.SubmissionTimestamp ?? DateTimeOffset.UtcNow,
-																								  manualRun), CancellationToken.None);
-							}
+								else if (input.Display)
+								{
+									// the _script.Id allows us to link the data to the script that the user created. it never changes. on the other hand, the script
+									// that is passed into this method is always a copy of the user-created script. the script.Id allows us to link the various data
+									// collected from the user into a single logical response. each run of the script has its own script.Id so that responses can be
+									// grouped across runs. this is the difference between scriptId and runId in the following line.
+									await script.Runner.Probe.StoreDatumAsync(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow),
+																									  script.Runner.Script.Id,
+																									  script.Runner.Name,
+																									  input.GroupId,
+																									  input.Id,
+																									  script.Id,
+																									  input.LabelText,
+																									  input.Name,
+																									  input.Value,
+																									  script.CurrentDatum?.Id,
+																									  input.Latitude,
+																									  input.Longitude,
+																									  input.LocationUpdateTimestamp,
+																									  script.RunTime.Value,
+																									  input.CompletionRecords,
+																									  input.SubmissionTimestamp ?? DateTimeOffset.UtcNow,
+																									  manualRun), CancellationToken.None);
+								}
 
-							inputStored = true;
+								inputStored = true;
+							}
 						}
 					}
 				}
