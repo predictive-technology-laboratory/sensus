@@ -1164,11 +1164,13 @@ namespace Sensus.Probes.User.Scripts
 		{
 			await ScheduleReminderAsync(script, dateTime, TimeSpan.Zero, false, notificationMessage);
 		}
-		public async Task ScheduleRemindersAsync(Script script, string notificationMessage = null)
+		private static IEnumerable<(TimeSpan Interval, bool Repeats)> ParseIntervals(string intervals)
 		{
-			if (script.RunTime != null && string.IsNullOrWhiteSpace(script.Runner.ReminderIntervals) == false)
+			List<(TimeSpan interval, bool repeats)> parsedIntervals = new();
+
+			if (string.IsNullOrWhiteSpace(intervals) == false)
 			{
-				IEnumerable<string> intervalStrings = script.Runner.ReminderIntervals.Split(",").Select(x => x.Trim());
+				IEnumerable<string> intervalStrings = intervals.Split(",").Select(x => x.Trim());
 
 				foreach (string intervalString in intervalStrings)
 				{
@@ -1183,7 +1185,6 @@ namespace Sensus.Probes.User.Scripts
 					}
 
 					TimeSpan timeSpan = TimeSpan.Zero;
-					DateTimeOffset dateTime = script.RunTime.Value;
 
 					if (int.TryParse(parsableInterval, out int interval))
 					{
@@ -1194,9 +1195,24 @@ namespace Sensus.Probes.User.Scripts
 						TimeSpan.TryParse(parsableInterval, out timeSpan);
 					}
 
-					dateTime = dateTime.Add(timeSpan);
+					if (timeSpan > TimeSpan.Zero)
+					{
+						parsedIntervals.Add((timeSpan, repeats));
+					}
+				}
+			}
 
-					await ScheduleReminderAsync(script, dateTime, timeSpan, repeats, notificationMessage);
+			return parsedIntervals;
+		}
+		public async Task ScheduleRemindersAsync(Script script, string notificationMessage = null)
+		{
+			if (script.RunTime != null && string.IsNullOrWhiteSpace(script.Runner.ReminderIntervals) == false)
+			{
+				foreach ((TimeSpan interval, bool repeats) in ParseIntervals(script.Runner.ReminderIntervals))
+				{
+					DateTimeOffset dateTime = script.RunTime.Value.Add(interval);
+
+					await ScheduleReminderAsync(script, dateTime, interval, repeats, notificationMessage);
 				}
 			}
 		}
