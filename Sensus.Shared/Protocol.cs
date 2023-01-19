@@ -2007,6 +2007,15 @@ namespace Sensus
 			}
 		}
 
+		public async Task SaveAsync(string path)
+		{
+			using FileStream file = new(path, FileMode.Create, FileAccess.Write);
+			// once upon a time, we made the poor decision to encode protocols as unicode (UTF-16). can't switch to UTF-8 now...
+			byte[] encryptedBytes = SensusContext.Current.SymmetricEncryption.Encrypt(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), Encoding.Unicode);
+
+			await file.WriteAsync(encryptedBytes, 0, encryptedBytes.Length);
+		}
+
 		public async Task<Protocol> CopyAsync(bool resetId, bool register)
 		{
 			Protocol protocolCopy = JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS).DeserializeJson<Protocol>();
