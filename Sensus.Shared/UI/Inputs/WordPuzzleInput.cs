@@ -93,9 +93,10 @@ namespace Sensus.UI.Inputs
 
 					List<(int Index, string Letter)> choices = new();
 
-					int missingLetterCount = Math.Min(MissingLetterCount, ChoiceCount - 1);
+					int choiceCount = Math.Min(ChoiceCount, word.Length);
+					int missingLetterCount = Math.Max(Math.Min(MissingLetterCount, word.Length), 1);
 
-					while (choices.Count < ChoiceCount && choices.Count < word.Length)
+					while (choices.Count < choiceCount)
 					{
 						if (choices.Count < missingLetterCount)
 						{
@@ -204,7 +205,7 @@ namespace Sensus.UI.Inputs
 
 								wordButtons[letterIndex].Text = choice.ToUpper();
 
-								if (_value.Count >= MissingLetterCount)
+								if (_missingLetterIndexes.Count == 0)
 								{
 									Complete = true;
 								}
@@ -218,7 +219,7 @@ namespace Sensus.UI.Inputs
 						HorizontalTextAlignment = TextAlignment.Center
 					};
 
-					if (MissingLetterCount > 1)
+					if (_missingLetterIndexes.Count > 1)
 					{
 						label.Text = "Select Tiles:";
 					}
