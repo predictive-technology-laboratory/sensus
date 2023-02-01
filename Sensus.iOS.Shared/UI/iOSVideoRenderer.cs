@@ -61,6 +61,27 @@ namespace Sensus.iOS.UI
 					_playerViewController.Player = _player;
 
 					SetNativeControl(_playerViewController.View);
+
+					if ((UIApplication.SharedApplication.KeyWindow ?? UIApplication.SharedApplication.Windows?.FirstOrDefault()) is UIWindow window)
+					{
+						UIViewController viewController = window.RootViewController;
+
+						while (viewController.PresentedViewController != null)
+						{
+							viewController = viewController.PresentedViewController;
+						}
+
+						if (viewController != null && viewController.View is UIView view)
+						{
+							UIEdgeInsets insets = view.SafeAreaInsets;
+
+							_playerViewController.AdditionalSafeAreaInsets = new(insets.Top * -1, insets.Left, insets.Bottom * -1, insets.Right);
+
+							viewController.View.AddSubview(_playerViewController.View);
+
+							AddSubview(_playerViewController.View);
+						}
+					}
 				}
 
 				if (e.NewElement.Source is VideoPlayer.FileSource fileSource)
