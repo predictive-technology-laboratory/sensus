@@ -13,6 +13,7 @@
 // limitations under the License.
 
 using System;
+using System.Text.RegularExpressions;
 
 namespace Sensus.Probes.Apps
 {
@@ -36,6 +37,18 @@ namespace Sensus.Probes.Apps
 			}
 		}
 
+		public static DateTime GetTimestamp(string line)
+		{
+			string lineTimestamp = Regex.Match(line, @"^.*?(?=:\s+)").Value;
+
+			if (string.IsNullOrEmpty(lineTimestamp) == false && DateTime.TryParse(lineTimestamp, out DateTime localTimestamp))
+			{
+				return TimeZoneInfo.ConvertTimeToUtc(localTimestamp);
+			}
+
+			return DateTime.Now;
+		}
+
 		/// <summary>
 		/// For JSON deserialization.
 		/// </summary>
@@ -44,9 +57,9 @@ namespace Sensus.Probes.Apps
 
 		}
 
-		public LogDatum(string logMessage, DateTimeOffset timestamp) : base(timestamp)
+		public LogDatum(string message) : base(GetTimestamp(message))
 		{
-			_logMessage = logMessage;
+			_logMessage = message;
 		}
 
 		/// <summary>
