@@ -1692,19 +1692,43 @@ namespace Sensus
 			_name = name;
 		}
 
-		private void AddProbe(Probe probe)
+		private void SetAnonymizers(Probe probe)
 		{
-			probe.Protocol = this;
-
 			// since the new probe was just bound to this protocol, we need to let this protocol know about this probe's default anonymization preferences.
 			foreach (PropertyInfo anonymizableProperty in probe.DatumType.GetProperties().Where(property => property.GetCustomAttribute<Anonymizable>() != null))
 			{
 				Anonymizable anonymizableAttribute = anonymizableProperty.GetCustomAttribute<Anonymizable>(true);
 				_jsonAnonymizer.SetAnonymizer(anonymizableProperty, anonymizableAttribute.DefaultAnonymizer);
 			}
+		}
+
+		private void AddProbe(Probe probe)
+		{
+			probe.Protocol = this;
+
+			SetAnonymizers(probe);
 
 			_probes.Add(probe);
-			_probes.Sort(new Comparison<Probe>((p1, p2) => p1.DisplayName.CompareTo(p2.DisplayName)));
+			_probes.Sort((p1, p2) => p1.DisplayName.CompareTo(p2.DisplayName));
+		}
+
+		public async Task AddMissingProbesAsync()
+		{
+			Type[] types = Probes.Select(x => x.GetType()).ToArray();
+			IEnumerable<Probe> probes = Probe.GetAll().Where(x => types.Contains(x.GetType()) == false);
+
+			await SensusServiceHelper.Get().FlashNotificationAsync($"Adding {probes.Count()} probes.");
+
+			foreach (Probe probe in probes)
+			{
+				probe.Protocol = this;
+
+				_probes.Add(probe);
+			}
+
+			_probes.Sort((p1, p2) => p1.DisplayName.CompareTo(p2.DisplayName));
+
+			await SensusServiceHelper.Get().SaveAsync();
 		}
 
 		public bool TryGetProbe(Type type, out Probe probe)
