@@ -81,6 +81,5 @@ namespace Sensus.Probes.Apps
 		{
 			return base.ToString() + Environment.NewLine + _logMessage;
 		}
-
 	}
 }

@@ -36,6 +36,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)MediaObject.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MediaStorageMethods.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ObjectComparer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\ListeningLogProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\SavedScriptState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ConstrainedTimePicker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\DarkModeCompatibleTextCellcs.cs" />
