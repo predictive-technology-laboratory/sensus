@@ -1,6 +1,6 @@
-﻿using Sensus.Context;
-using Syncfusion.SfChart.XForms;
+﻿using Syncfusion.SfChart.XForms;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -25,7 +25,11 @@ namespace Sensus.Probes.Apps
 			{
 				LogDatum logDatum = new(value);
 
-				Task.Run(async () => await _probe.StoreDatumAsync(logDatum));
+				// do not use Probe.StoreDatumAsync() because:
+				// - it only adds datum records while the protocol is in the running state and would miss messages logged while the protocol is in the Starting and Stopping states
+				// - it can log messages and lead to an infinite loop
+				// - and to a lesser extent, because it is async
+				_probe.StoreDatum(logDatum);
 			}
 		}
 
@@ -80,6 +84,39 @@ namespace Sensus.Probes.Apps
 			if (SensusServiceHelper.Get().Logger is Logger logger)
 			{
 				logger.RemoveOtherOutput(_writer);
+			}
+		}
+
+		public void StoreDatum(LogDatum datum)
+		{
+			// store non-null data
+			if (StoreData && datum != null)
+			{
+				try
+				{
+					// set properties that we were unable to set within the datum constructor.
+					datum.ProtocolId = Protocol.Id;
+					datum.ParticipantId = Protocol.ParticipantId;
+
+					// tag the data if we're in tagging mode, indicated with a non-null event id on the protocol. avoid 
+					// any race conditions related to starting/stopping a tagging by getting the required values and
+					// then checking both for validity. we need to guarantee that any tagged datum has both an id and tags.
+					string taggedEventId = Protocol.TaggedEventId;
+					List<string> taggedEventTags = Protocol.TaggedEventTags.ToList();
+					if (!string.IsNullOrWhiteSpace(taggedEventId) && taggedEventTags.Count > 0)
+					{
+						datum.TaggedEventId = taggedEventId;
+						datum.TaggedEventTags = taggedEventTags;
+					}
+
+					// write datum to local data store. catch any exceptions, as the caller (e.g., a listening 
+					// probe) could very well be unprotected on the UI thread. throwing an exception here can crash the app.
+					Protocol.LocalDataStore.WriteDatum(datum, CancellationToken.None);
+				}
+				catch
+				{
+					// we can't log this exception since it would cause this method to be called again and might lead to 
+				}
 			}
 		}
 	}

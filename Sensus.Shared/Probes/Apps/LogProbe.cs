@@ -15,12 +15,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Syncfusion.SfChart.XForms;
 
 namespace Sensus.Probes.Apps
@@ -101,7 +98,7 @@ namespace Sensus.Probes.Apps
 
 			if (SensusServiceHelper.Get().Logger is Logger logger)
 			{
-				_path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), Protocol.Id, nameof(LogProbe));
+				_path = Path.Combine(Protocol.StorageDirectory, nameof(LogProbe));
 
 				Directory.CreateDirectory(_path);
 
