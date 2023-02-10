@@ -66,15 +66,18 @@ namespace Sensus
 
 						if (_otherOutputs != null)
 						{
-							foreach (TextWriter otherOutput in _otherOutputs)
+							lock (_otherOutputs)
 							{
-								try
+								foreach (TextWriter otherOutput in _otherOutputs)
 								{
-									otherOutput.WriteLine(message);
-								}
-								catch (Exception writeException)
-								{
-									Console.Error.WriteLine("Failed to write to output:  " + writeException.Message);
+									try
+									{
+										otherOutput.WriteLine(message);
+									}
+									catch (Exception writeException)
+									{
+										Console.Error.WriteLine("Failed to write to output:  " + writeException.Message);
+									}
 								}
 							}
 						}
@@ -236,7 +239,10 @@ namespace Sensus
 		{
 			lock (_otherOutputs)
 			{
-				_otherOutputs.Add(writer);
+				if (_otherOutputs.Contains(writer) == false)
+				{
+					_otherOutputs.Add(writer);
+				}
 			}
 		}
 

@@ -51,6 +51,7 @@ using Plugin.Geolocator.Abstractions;
 using Newtonsoft.Json.Linq;
 using static Sensus.Adaptation.SensingAgent;
 using Sensus.Adaptation;
+using Sensus.Probes.Apps;
 
 #if __IOS__
 using HealthKit;
@@ -2180,6 +2181,12 @@ namespace Sensus
 							}
 						}
 #endif
+						IEnumerable<ILogProbe> logProbes = _probes.OfType<ILogProbe>().Where(x => x.Enabled);
+
+						foreach (ILogProbe logProbe in logProbes)
+						{
+							logProbe.AttachToLogger();
+						}
 
 						SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal, GetType());
 						int probesEnabled = 0;

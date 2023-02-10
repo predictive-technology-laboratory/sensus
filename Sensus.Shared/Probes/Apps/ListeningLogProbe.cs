@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Sensus.Probes.Apps
 {
-	public class ListeningLogProbe : ListeningProbe
+	public class ListeningLogProbe : ListeningProbe, ILogProbe
 	{
 		private class LogProbeDatumWriter : TextWriter
 		{
@@ -33,11 +33,16 @@ namespace Sensus.Probes.Apps
 			}
 		}
 
-		private LogProbeDatumWriter _writer;
+		private readonly LogProbeDatumWriter _writer;
 
 		public override string DisplayName => "Log";
 
 		public override Type DatumType => typeof(LogDatum);
+
+		public ListeningLogProbe()
+		{
+			_writer = new(this);
+		}
 
 		protected override bool DefaultKeepDeviceAwake => false;
 
@@ -65,22 +70,25 @@ namespace Sensus.Probes.Apps
 			throw new NotImplementedException();
 		}
 
-		protected override async Task ProtectedStartAsync()
+		public void AttachToLogger()
 		{
-			await base.ProtectedStartAsync();
-
 			if (SensusServiceHelper.Get().Logger is Logger logger)
 			{
-				_writer ??= new(this);
-
 				logger.AddOtherOutput(_writer);
 			}
+		}
+
+		protected override async Task ProtectedStartAsync()
+		{
+			AttachToLogger();
+
+			await base.ProtectedStartAsync();
 		}
 
 		protected override async Task ProtectedStopAsync()
 		{
 			await base.ProtectedStopAsync();
-
+			
 			if (SensusServiceHelper.Get().Logger is Logger logger)
 			{
 				logger.RemoveOtherOutput(_writer);

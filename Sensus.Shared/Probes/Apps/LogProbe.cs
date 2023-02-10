@@ -25,27 +25,27 @@ namespace Sensus.Probes.Apps
 	/// <summary>
 	/// Collects keystroke information as <see cref="LogDatum"/>
 	/// </summary>
-	public class LogProbe : PollingProbe
+	public class LogProbe : PollingProbe, ILogProbe
 	{
 		private class LogProbeDatumWriter : TextWriter
 		{
 			public override Encoding Encoding => Encoding.Default;
-			private readonly string _path;
 			private readonly object _writeLock;
 
-			public LogProbeDatumWriter(string path, object writeLock)
+			public LogProbeDatumWriter(object writeLock)
 			{
-				_path = path;
 				_writeLock = writeLock;
 			}
 
+			public string LogPath { get; set; }
+
 			public override void WriteLine(string value)
 			{
-				string path = Path.Combine(_path, $"{Guid.NewGuid()}.txt");
+				string path = Path.Combine(LogPath, $"{Guid.NewGuid()}.txt");
 
 				while (File.Exists(path))
 				{
-					path = Path.Combine(_path, $"{Guid.NewGuid()}.txt");
+					path = Path.Combine(LogPath, $"{Guid.NewGuid()}.txt");
 				}
 
 				lock (_writeLock)
@@ -59,7 +59,7 @@ namespace Sensus.Probes.Apps
 
 		private readonly object _writeLocker;
 		private string _path;
-		private LogProbeDatumWriter _writer;
+		private readonly LogProbeDatumWriter _writer;
 
 		public override int DefaultPollingSleepDurationMS => (int)TimeSpan.FromHours(1).TotalMilliseconds;
 
@@ -70,6 +70,7 @@ namespace Sensus.Probes.Apps
 		public LogProbe()
 		{
 			_writeLocker = new();
+			_writer = new(_writeLocker);
 		}
 
 		protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
@@ -92,20 +93,23 @@ namespace Sensus.Probes.Apps
 			throw new NotImplementedException();
 		}
 
-		protected override async Task ProtectedStartAsync()
+		public void AttachToLogger()
 		{
-			await base.ProtectedStartAsync();
-
 			if (SensusServiceHelper.Get().Logger is Logger logger)
 			{
-				_path = Path.Combine(Protocol.StorageDirectory, nameof(LogProbe));
+				_path = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), Protocol.Id), nameof(LogProbe));
+
+				_writer.LogPath = _path;
 
 				Directory.CreateDirectory(_path);
 
-				_writer ??= new(_path, _writeLocker);
-
 				logger.AddOtherOutput(_writer);
 			}
+		}
+
+		protected override async Task ProtectedStartAsync()
+		{
+			await base.ProtectedStartAsync();
 		}
 
 		protected override async Task ProtectedStopAsync()
