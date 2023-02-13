@@ -18,16 +18,16 @@ namespace Sensus.UI
 {
 	public partial class App : Application
 	{
-		public Page MasterPage
+		public Page FlyoutPage
 		{
-			get { return (MainPage as SensusMasterDetailPage).Master; }
+			get { return (MainPage as SensusFlyoutPage).Flyout; }
 		}
 
 		public Page DetailPage
 		{
 			get
 			{
-				return (MainPage as MasterDetailPage).Detail;
+				return (MainPage as FlyoutPage).Detail;
 			}
 			set
 			{
@@ -36,16 +36,16 @@ namespace Sensus.UI
 					value.Parent = null;
 				}
 
-				if (MainPage is MasterDetailPage masterDetailPage)
+				if (MainPage is FlyoutPage flyoutPage)
 				{
-					masterDetailPage.Detail = value;
+					flyoutPage.Detail = value;
 				}
 			}
 		}
 
 		public App()
 		{
-			MainPage = new SensusMasterDetailPage();
+			MainPage = new SensusFlyoutPage();
 
 			InitializeComponent();
 		}

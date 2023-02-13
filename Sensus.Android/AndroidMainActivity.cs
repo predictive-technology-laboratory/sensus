@@ -147,7 +147,7 @@ namespace Sensus.Android
 
 			// temporarily hide UI while we bind to service. allowing the user to click around before the service helper is initialized 
 			// may result in a crash.
-			(Xamarin.Forms.Application.Current as App).MasterPage.IsVisible = false;
+			(Xamarin.Forms.Application.Current as App).FlyoutPage.IsVisible = false;
 			(Xamarin.Forms.Application.Current as App).DetailPage.IsVisible = false;
 
 			// ensure the service is bound any time the activity is resumed
@@ -178,7 +178,7 @@ namespace Sensus.Android
 				{
 					SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
 					{
-						(Xamarin.Forms.Application.Current as App).MasterPage.IsVisible = true;
+						(Xamarin.Forms.Application.Current as App).FlyoutPage.IsVisible = true;
 						(Xamarin.Forms.Application.Current as App).DetailPage.IsVisible = true;
 					});
 				}

@@ -2,9 +2,9 @@
 
 namespace Sensus.UI
 {
-	public static class MasterDetailPageExtensions
+	public static class FlyoutPageExtensions
 	{
-		public static void RegisterNavigationEvents(this MasterDetailPage page)
+		public static void RegisterNavigationEvents(this FlyoutPage page)
 		{
 			page.PropertyChanging += (o, e) =>
 			{

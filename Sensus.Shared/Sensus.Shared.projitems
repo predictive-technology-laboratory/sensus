@@ -45,7 +45,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\NavigationButtonLocations.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\SliderWithOptionsInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\TimedTextInput.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\MasterDetailPageExtensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\FlyoutPageExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\MediaView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MessageEventDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\UserMessage.cs" />
@@ -271,9 +271,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Encryption\AsymmetricEncryption.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\IVariableDefiningInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\ActivityDatum.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\SensusMasterPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\SensusDetailPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SensusDetailPageItem.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\SensusMasterDetailPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\SensusFlyoutPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\Compressor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataStores\IClearableDataStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TrackedEvent.cs" />

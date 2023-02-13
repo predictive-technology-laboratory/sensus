@@ -18,15 +18,15 @@ using Xamarin.Forms;
 
 namespace Sensus.UI
 {
-	public class SensusMasterDetailPage : MasterDetailPage
+	public class SensusFlyoutPage : FlyoutPage
 	{
-		private SensusMasterPage _masterPage;
+		private SensusDetailPage _flyoutPage;
 
-		public SensusMasterDetailPage()
+		public SensusFlyoutPage()
 		{
-			_masterPage = new SensusMasterPage();
+			_flyoutPage = new SensusDetailPage();
 
-			_masterPage.MasterPageItemsListView.ItemSelected += (sender, e) =>
+			_flyoutPage.MenuItemListView.ItemSelected += (sender, e) =>
 			{
 				try
 				{
@@ -44,16 +44,16 @@ namespace Sensus.UI
 							IsPresented = false;
 						}
 
-						_masterPage.MasterPageItemsListView.SelectedItem = null;
+						_flyoutPage.MenuItemListView.SelectedItem = null;
 					}
 				}
 				catch (Exception ex)
 				{
-					SensusException.Report("Exception while handling master-detail menu selection:  " + ex.Message, ex);
+					SensusException.Report("Exception while handling detail menu item selection:  " + ex.Message, ex);
 				}
 			};
 
-			Master = _masterPage;
+			Flyout = _flyoutPage;
 
 			// the SensusServiceHelper is not yet loaded when this page is constructed. as a result, we cannot assign the 
 			// ProtocolsPage to the Detail property. instead, just assign a blank content page and show the user the master
@@ -73,8 +73,6 @@ namespace Sensus.UI
 			});
 
 			IsPresented = true;
-
-			this.RegisterNavigationEvents();
 		}
 	}
 }

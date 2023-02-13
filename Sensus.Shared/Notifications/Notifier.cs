@@ -79,9 +79,9 @@ namespace Sensus.Notifications
 					if (action == NotificationUserResponseAction.DisplayPendingSurveys)
 					{
 						App app = Application.Current as App;
-						SensusMasterDetailPage masterDetailPage = app.MainPage as SensusMasterDetailPage;
+						SensusFlyoutPage detailPage = app.MainPage as SensusFlyoutPage;
 
-						masterDetailPage.IsPresented = false;
+						detailPage.IsPresented = false;
 
 						app.DetailPage = new NavigationPage(new PendingScriptsPage());
 					}
