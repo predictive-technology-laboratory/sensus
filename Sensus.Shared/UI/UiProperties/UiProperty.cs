@@ -17,6 +17,7 @@ using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 using Xamarin.Forms;
+using Xamarin.Essentials;
 
 namespace Sensus.UI.UiProperties
 {
@@ -115,13 +116,10 @@ namespace Sensus.UI.UiProperties
 					NumberOfTapsRequired = 1
 				};
 
-				labelTapRecognizer.Tapped += (sender, e) => 
+				labelTapRecognizer.Tapped += async (sender, e) => 
 				{
 					// https://predictive-technology-laboratory.github.io/sensus/api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_PollingSleepDurationMS
-					Device.OpenUri(new Uri("https://predictive-technology-laboratory.github.io/sensus/api/" + 
-										   property.DeclaringType + 
-										   ".html#" + 
-										   property.DeclaringType.ToString().Replace('.', '_') + "_" + property.Name));
+					await Launcher.OpenAsync(new Uri($"https://predictive-technology-laboratory.github.io/sensus/api/{property.DeclaringType}.html#{property.DeclaringType.ToString().Replace('.', '_') + "_" + property.Name}"));
 				};
 
 				propertyLabel.GestureRecognizers.Add(labelTapRecognizer);
