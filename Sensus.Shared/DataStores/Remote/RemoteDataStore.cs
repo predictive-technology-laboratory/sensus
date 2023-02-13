@@ -159,9 +159,9 @@ namespace Sensus.DataStores.Remote
 
 		/// <summary>
 		/// Available on iOS only. Whether or not to alert the user with a notification when polling should occur and the
-		/// app is in the background. See the <see cref="PollingProbe"/> overview for information about background considerations. 
+		/// app is in the background. See the <see cref="Probes.PollingProbe"/> overview for information about background considerations. 
 		/// The notifications issued when this setting is enabled encourage the user to bring the app to the foreground so that 
-		/// data polling may occur. Depending on how many <see cref="PollingProbe"/>s are enabled, these notifications can
+		/// data polling may occur. Depending on how many <see cref="Probes.PollingProbe"/>s are enabled, these notifications can
 		/// become excessive for the user.
 		/// </summary>
 		/// <value><c>true</c> to alert user when backgrounded; otherwise, <c>false</c>.</value>
