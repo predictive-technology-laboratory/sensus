@@ -39,16 +39,16 @@ namespace Sensus.Probes.Apps
 		private string _className;
 		private string _beforeText;
 		private string _action;
-		private string _windowChanges;
+		//private string _windowChanges;
 		private int _removedCount;
 		private int _maxScrollX;
 		private int _maxScrollY;
-		private int _scrollDeltaY;
+		//private int _scrollDeltaY;
 		private int _scrollX;
 		private int _scrollY;
 		private bool _scrollable;
 		private object _source;
-		private int _scrollDeltaX;
+		//private int _scrollDeltaX;
 		private int _toIndex;
 		private int _windowId;
 
