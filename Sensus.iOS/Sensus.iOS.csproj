@@ -143,58 +143,58 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Contents.json">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-App-29x29%401x.png">
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_1024x1024_app_store.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-App-29x29%402x.png">
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_120x120_iphone_app.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-App-29x29%403x.png">
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_120x120_iphone_spotlight.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-App-40x40%401x.png">
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_152x152_ipad_app.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-App-40x40%402x.png">
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_167x167_ipad_pro_app.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-App-40x40%403x.png">
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_180x180_iphone_app.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-App-57x57%401x.png">
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_20x20_ipad_notification.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-App-57x57%402x.png">
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_29x29_ipad_settings.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-App-60x60%402x.png">
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_40x40_ipad_notification.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-App-60x60%403x.png">
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_40x40_ipad_spotlight.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-App-72x72%401x.png">
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_40x40_iphone_notification.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-App-72x72%402x.png">
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_58x58_ipad_settings.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-App-76x76%401x.png">
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_58x58_iphone.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-App-76x76%402x.png">
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_60x60_iphone_notification.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-App-83.5x83.5%402x.png">
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_76x76_ipad_app.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-Small-50x50%401x.png">
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_80x80_ipad_spotlight.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-Small-50x50%402x.png">
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_80x80_iphone_spotlight.png">
       <Visible>false</Visible>
     </ImageAsset>
-    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\Icon-App-1024x1024%401x.png">
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\icon_87x87_iphone.png">
       <Visible>false</Visible>
     </ImageAsset>
   </ItemGroup>
