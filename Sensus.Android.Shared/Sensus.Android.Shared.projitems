@@ -32,7 +32,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\AndroidCallbackScheduler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\AndroidNotifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\FirebaseNotificationService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Notifications\FirebaseRegistrationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\AndroidSensorListener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\AndroidSmsIncomingBroadcastReceiver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\AndroidSmsOutgoingObserver.cs" />
