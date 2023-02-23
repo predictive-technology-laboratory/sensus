@@ -61,6 +61,11 @@ namespace Sensus.Probes.Apps
 
 		}
 
+		public ImageMetadataDatum(DateTimeOffset timestamp) : base(timestamp)
+		{
+
+		}
+
 		public ImageMetadataDatum(int fileSize, int? width, int? height, int? orientation, double? xResolution, double? yResolution, int? resolutionUnit, bool? isColor, int? flash, double? fNumber, double? exposureTime, string software, double? latitude, double? longitude, string mimeType, string imageBase64, DateTimeOffset timestamp) : base(timestamp)
 		{
 			_fileSize = fileSize;
@@ -123,6 +128,10 @@ namespace Sensus.Probes.Apps
 				_height = value;
 			}
 		}
+		/// <summary>
+		/// The duration of a video.
+		/// </summary>
+		public int? Duration { get; set; }
 		/// <summary>
 		/// The orientation of the image.
 		/// </summary>
@@ -238,7 +247,7 @@ namespace Sensus.Probes.Apps
 		/// <summary>
 		/// The software that created the image.
 		/// </summary>
-		[Anonymizable("Software:", typeof(StringHashAnonymizer), false)]
+		[Anonymizable(null, typeof(StringHashAnonymizer), false)]
 		public string Software
 		{
 			get
@@ -280,6 +289,10 @@ namespace Sensus.Probes.Apps
 				_longitude = value;
 			}
 		}
+		/// <summary>
+		/// The altitude of the location where the image was taken.
+		/// </summary>
+		public double? Altitude { get; set; }
 		/// <summary>
 		/// The MIME type of the image.
 		/// </summary>

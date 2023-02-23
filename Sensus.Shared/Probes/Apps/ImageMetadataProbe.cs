@@ -118,67 +118,65 @@ namespace Sensus.Probes.Apps
 			throw new NotImplementedException();
 		}
 
-		public async Task<byte[]> ReadFile(FileStream fileStream)
+		protected static void SetExifData(Stream stream, ref ImageMetadataDatum datum)
 		{
-			const int BUFFER_SIZE = 1024;
-			byte[] fileBuffer = new byte[fileStream.Length];
-			byte[] buffer = new byte[BUFFER_SIZE];
-			int totalBytesRead = 0;
-			int bytesRead = 0;
-
-			while ((bytesRead = await fileStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+			try
 			{
-				Array.Copy(buffer, 0, fileBuffer, totalBytesRead, bytesRead);
+				stream.Position = 0;
 
-				totalBytesRead += bytesRead;
+				JpegInfo exif = ExifReader.ReadJpeg(stream);
+
+				double latitude = 0;
+				double longitude = 0;
+
+				if (datum.FileSize == 0)
+				{
+					datum.FileSize = exif.FileSize;
+				}
+
+				datum.Width ??= exif.Width;
+				datum.Height ??= exif.Height;
+				datum.Orientation = (int)exif.Orientation;
+				datum.XResolution = exif.XResolution;
+				datum.YResolution = exif.YResolution;
+				datum.ResolutionUnit = (int)exif.ResolutionUnit;
+				datum.IsColor = exif.IsColor;
+				datum.Flash = (int)exif.Flash;
+				datum.FNumber = exif.FNumber;
+				datum.ExposureTime = exif.ExposureTime;
+				datum.Software = exif.Software;
+
+				if (exif.GpsLatitude != null && exif.GpsLongitude != null)
+				{
+					latitude = (Math.Truncate(exif.GpsLatitude[0]) + (exif.GpsLatitude[1] / 60) + (exif.GpsLatitude[2] / 3600)) * (exif.GpsLatitudeRef == ExifGpsLatitudeRef.North ? 1 : -1);
+					longitude = (Math.Truncate(exif.GpsLongitude[0]) + (exif.GpsLongitude[1] / 60) + (exif.GpsLongitude[2] / 3600)) * (exif.GpsLongitudeRef == ExifGpsLongitudeRef.East ? 1 : -1);
+				}
+
+				datum.Latitude = latitude;
+				datum.Longitude = longitude;
 			}
-
-			return fileBuffer;
+			catch (Exception e)
+			{
+				SensusServiceHelper.Get().Logger.Log($"Exception while reading EXIF data: {e.Message}", LoggingLevel.Normal, typeof(ImageMetadataProbe));
+			}
 		}
 
-		public async Task CreateAndStoreDatumAsync(string path, string mimeType, DateTime timestamp)
+		protected static async Task<string> GetImageBase64(Stream stream)
 		{
-			if (File.Exists(path))
+			try
 			{
-				using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
-				{
-					string imageBase64 = null;
+				stream.Position = 0;
 
-					if (mimeType == JPEG_MIME_TYPE)
-					{
-						JpegInfo info = ExifReader.ReadJpeg(fs);
+				byte[] bytes = await SensusServiceHelper.ReadAllBytesAsync(stream);
 
-						double latitude = 0;
-						double longitude = 0;
-
-						if (info.GpsLatitude != null && info.GpsLongitude != null)
-						{
-							latitude = (Math.Truncate(info.GpsLatitude[0]) + (info.GpsLatitude[1] / 60) + (info.GpsLatitude[2] / 3600)) * (info.GpsLatitudeRef == ExifGpsLatitudeRef.North ? 1 : -1);
-							longitude = (Math.Truncate(info.GpsLongitude[0]) + (info.GpsLongitude[1] / 60) + (info.GpsLongitude[2] / 3600)) * (info.GpsLongitudeRef == ExifGpsLongitudeRef.East ? 1 : -1);
-						}
-
-						if (StoreImages)
-						{
-							fs.Position = 0;
-
-							imageBase64 = Convert.ToBase64String(await ReadFile(fs));
-						}
-
-						await StoreDatumAsync(new ImageMetadataDatum(info.FileSize, info.Width, info.Height, (int)info.Orientation, info.XResolution, info.YResolution, (int)info.ResolutionUnit, info.IsColor, (int)info.Flash, info.FNumber, info.ExposureTime, info.Software, latitude, longitude, mimeType, imageBase64, timestamp));
-					}
-					else // the file is something else...
-					{
-						if (StoreVideos || (StoreImages && mimeType.StartsWith(IMAGE_DISCRETE_TYPE)))
-						{
-							fs.Position = 0;
-
-							imageBase64 = Convert.ToBase64String(await ReadFile(fs));
-						}
-
-						await StoreDatumAsync(new ImageMetadataDatum((int)fs.Length, null, null, null, null, null, null, null, null, null, null, null, null, null, mimeType, imageBase64, timestamp));
-					}
-				}
+				return Convert.ToBase64String(bytes);
 			}
+			catch (Exception e)
+			{
+				SensusServiceHelper.Get().Logger.Log($"Exception while converting media to base64: {e.Message}", LoggingLevel.Normal, typeof(ImageMetadataProbe));
+			}
+
+			return null;
 		}
 	}
 }

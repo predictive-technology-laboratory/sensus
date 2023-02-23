@@ -13,52 +13,46 @@
 // limitations under the License.
 
 using Android.App;
-using Android.Database;
+using Android.App.Job;
+using Android.Content;
 using Android.Provider;
 using Plugin.Permissions.Abstractions;
 using Sensus.Probes.Apps;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Environment = Android.OS.Environment;
-using File = Java.IO.File;
 using Uri = Android.Net.Uri;
+using Class = Java.Lang.Class;
+using Stream = System.IO.Stream;
+using Android.Database;
+using static Android.Provider.MediaStore;
+using Android.Media;
 
 namespace Sensus.Android.Probes.Apps
 {
 	public class AndroidImageMetadataProbe : ImageMetadataProbe
 	{
-		List<AndroidImageFileObserver> _fileObservers;
-		private const int QUERY_LAST_IMAGE_COUNT = 100;
+		private static JobScheduler _scheduler;
+		private static JobInfo _jobInfo;
+
+		private static readonly List<AndroidImageMetadataProbe> _probes;
+
+		static AndroidImageMetadataProbe()
+		{
+			_probes = new();
+		}
+
+		public AndroidImageMetadataProbe()
+		{
+			_scheduler = (JobScheduler)Application.Context.GetSystemService(Class.FromType(typeof(JobScheduler)));
+		}
 
 		protected override async Task InitializeAsync()
 		{
 			await base.InitializeAsync();
 
-			if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Storage) == PermissionStatus.Granted)
-			{
-				// Different phones and camera apps can save images in different physical locations, so look at the last QUERY_LAST_IMAGE_COUNT number of images and observe the location(s) they were saved in.
-				ICursor cursor = Application.Context.ContentResolver.Query(MediaStore.Images.Media.ExternalContentUri, new string[] { MediaStore.Images.Media.InterfaceConsts.Data }, null, null, MediaStore.Images.Media.InterfaceConsts.DateTaken + $" DESC LIMIT {QUERY_LAST_IMAGE_COUNT}");
-				List<string> paths = new List<string> { Environment.GetExternalStoragePublicDirectory(Environment.DirectoryDcim).CanonicalPath };
-
-				while (cursor.MoveToNext())
-				{
-					string path = cursor.GetString(cursor.GetColumnIndex(MediaStore.Images.Media.InterfaceConsts.Data));
-					Uri uri = Uri.Parse(path);
-
-					path = File.Separator + Path.Combine(uri.PathSegments.Take(uri.PathSegments.Count - 1).ToArray());
-
-					if (paths.Any(x => path.StartsWith(x)) == false)
-					{
-						paths.Add(path);
-					}
-				}
-
-				_fileObservers = paths.Distinct().Select(x => new AndroidImageFileObserver(x, this)).ToList();
-			}
-			else
+			if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Storage) != PermissionStatus.Granted)
 			{
 				throw new Exception("Failed to obtain Storage permission from user.");
 			}
@@ -68,14 +62,119 @@ namespace Sensus.Android.Probes.Apps
 		{
 			await base.StartListeningAsync();
 
-			_fileObservers.ForEach(x => x.StartWatching());
+			if (_scheduler != null)
+			{
+				lock (_probes)
+				{
+					_probes.Add(this);
+				}
+
+				ScheduleJob();
+			}
 		}
 
 		protected override async Task StopListeningAsync()
 		{
 			await base.StopListeningAsync();
 
-			_fileObservers.ForEach(x => x.StopWatching());
+			if (_scheduler != null && _jobInfo != null)
+			{
+				lock (_probes)
+				{
+					_probes.Remove(this);
+				}
+
+				if (_probes.Count == 0 && _scheduler.AllPendingJobs.Contains(_jobInfo))
+				{
+					_scheduler.Cancel(_jobInfo.Id);
+				}
+			}
+		}
+
+		public static void ScheduleJob()
+		{
+			int id = _scheduler.AllPendingJobs.Select(x => x.Id).DefaultIfEmpty().Max() + 1 % (int.MaxValue - 1);
+
+			JobInfo.Builder builder = new(id, new ComponentName(Application.Context, Class.FromType(typeof(AndroidImageJobService))));
+
+			builder.AddTriggerContentUri(new JobInfo.TriggerContentUri(Images.Media.ExternalContentUri, TriggerContentUriFlags.NotifyForDescendants));
+			builder.AddTriggerContentUri(new JobInfo.TriggerContentUri(Video.Media.ExternalContentUri, TriggerContentUriFlags.NotifyForDescendants));
+
+			_jobInfo = builder.Build();
+
+			_scheduler.Schedule(_jobInfo);
+		}
+
+		private static readonly string[] _columns =
+		{
+				IMediaColumns.MimeType,
+				IMediaColumns.Width,
+				IMediaColumns.Height,
+				IMediaColumns.Size,
+				IMediaColumns.Duration,
+				IMediaColumns.DateAdded,
+		};
+
+		private static readonly Dictionary<string, int> _columnMap = _columns.Select((x, i) => new { Name = x, Index = i }).ToDictionary(x => x.Name, x => x.Index);
+
+		public static async Task CreateDatumAsync(Uri path)
+		{
+			try
+			{
+				ICursor cursor = Application.Context.ContentResolver.Query(path, _columns, null, null, null);
+
+				if (cursor.MoveToFirst())
+				{
+					int added = cursor.GetInt(_columnMap[IMediaColumns.DateAdded]);
+					string mimeType = cursor.GetString(_columnMap[IMediaColumns.MimeType]);
+					ImageMetadataDatum baseDatum = new(DateTimeOffset.FromUnixTimeSeconds(added).ToLocalTime().DateTime)
+					{
+						FileSize = cursor.GetInt(_columnMap[IMediaColumns.Size]),
+						Width = cursor.GetInt(_columnMap[IMediaColumns.Width]),
+						Height = cursor.GetInt(_columnMap[IMediaColumns.Height]),
+						Duration = cursor.GetInt(_columnMap[IMediaColumns.Duration]),
+						MimeType = mimeType
+					};
+
+					bool setExifData = mimeType == JPEG_MIME_TYPE;
+					bool storeImage = _probes.Any(x => x.StoreImages || x.StoreVideos);
+
+					if (setExifData || storeImage)
+					{
+						Stream stream = Application.Context.ContentResolver.OpenInputStream(path);
+
+						if (setExifData)
+						{
+							SetExifData(stream, ref baseDatum);
+						}
+
+						if (storeImage)
+						{
+							baseDatum.ImageBase64 = await GetImageBase64(stream);
+						}
+
+						stream.Close();
+					}
+
+					foreach (AndroidImageMetadataProbe probe in _probes)
+					{
+						if (mimeType.StartsWith(IMAGE_DISCRETE_TYPE) || (mimeType.StartsWith(VIDEO_DISCRETE_TYPE) && probe.StoreVideos))
+						{
+							Stream stream = Application.Context.ContentResolver.OpenInputStream(path);
+
+							baseDatum.ImageBase64 ??= await GetImageBase64(stream);
+						}
+
+						ImageMetadataDatum datum = new(baseDatum.FileSize, baseDatum.Width, baseDatum.Height, baseDatum.Orientation, baseDatum.XResolution, baseDatum.YResolution, baseDatum.ResolutionUnit, baseDatum.IsColor, baseDatum.Flash, baseDatum.FNumber, baseDatum.ExposureTime, baseDatum.Software, baseDatum.Latitude, baseDatum.Longitude, mimeType, baseDatum.ImageBase64, baseDatum.Timestamp);
+
+						await probe.StoreDatumAsync(datum);
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				SensusServiceHelper.Get().Logger.Log($"Exception creating {nameof(ImageMetadataDatum)}: {e.Message}", LoggingLevel.Normal, typeof(AndroidImageMetadataProbe));
+			}
 		}
 	}
 }
