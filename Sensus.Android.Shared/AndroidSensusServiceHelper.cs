@@ -44,6 +44,9 @@ using Android.Webkit;
 using BatteryStatus = Android.OS.BatteryStatus;
 using Firebase.Messaging;
 using Firebase.Installations;
+using Xamarin.Essentials;
+using FileProvider = Android.Support.V4.Content.FileProvider;
+using System.Linq;
 
 namespace Sensus.Android
 {
@@ -84,33 +87,11 @@ namespace Sensus.Android
 				if (connectivityManager == null)
 				{
 					Logger.Log("No connectivity manager available for WiFi check.", LoggingLevel.Normal, GetType());
-					return false;
-				}
-
-				// see the Backwards Compatibility article for more information
-#if __ANDROID_21__
-				if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
-				{
-					foreach (Network network in connectivityManager.GetAllNetworks())
-					{
-						// we've seen NREs in the following lines. 
-						if ((connectivityManager.GetNetworkInfo(network)?.IsConnected ?? false) &&
-							(connectivityManager.GetNetworkCapabilities(network)?.HasTransport(TransportType.Wifi) ?? false))
-						{
-							return true;
-						}
-					}
 
 					return false;
 				}
-				else
-#endif
-				{
-					// ignore deprecation warning
-#pragma warning disable 618
-					return connectivityManager.GetNetworkInfo(ConnectivityType.Wifi).IsConnected;
-#pragma warning restore 618
-				}
+
+				return Connectivity.ConnectionProfiles.Contains(ConnectionProfile.WiFi) && Connectivity.NetworkAccess == NetworkAccess.Internet;
 			}
 		}
 
