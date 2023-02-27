@@ -15,9 +15,9 @@
 using System;
 using Newtonsoft.Json;
 using Plugin.Geolocator.Abstractions;
-using Plugin.Permissions.Abstractions;
 using Syncfusion.SfChart.XForms;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 
 namespace Sensus.Probes.Location
 {
@@ -84,7 +84,7 @@ namespace Sensus.Probes.Location
         {
             await base.InitializeAsync();
 
-            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
+            if (await SensusServiceHelper.Get().ObtainLocationPermissionAsync() != PermissionStatus.Granted)
             {
                 // throw standard exception instead of NotSupportedException, since the user might decide to enable GPS in the future
                 // and we'd like the probe to be restarted at that time.

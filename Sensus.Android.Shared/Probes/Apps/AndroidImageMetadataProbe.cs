@@ -16,7 +16,6 @@ using Android.App;
 using Android.App.Job;
 using Android.Content;
 using Android.Provider;
-using Plugin.Permissions.Abstractions;
 using Sensus.Probes.Apps;
 using System;
 using System.Collections.Generic;
@@ -28,6 +27,7 @@ using Stream = System.IO.Stream;
 using Android.Database;
 using static Android.Provider.MediaStore;
 using Android.Media;
+using Xamarin.Essentials;
 
 namespace Sensus.Android.Probes.Apps
 {
@@ -52,7 +52,7 @@ namespace Sensus.Android.Probes.Apps
 		{
 			await base.InitializeAsync();
 
-			if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Storage) != PermissionStatus.Granted)
+			if (await SensusServiceHelper.Get().ObtainPermissionAsync<Permissions.StorageRead>() != PermissionStatus.Granted)
 			{
 				throw new Exception("Failed to obtain Storage permission from user.");
 			}

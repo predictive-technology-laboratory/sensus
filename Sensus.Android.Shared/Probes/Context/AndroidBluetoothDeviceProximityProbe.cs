@@ -14,7 +14,6 @@
 
 using System;
 using Sensus.Probes.Context;
-using Plugin.Permissions.Abstractions;
 using Android.Bluetooth.LE;
 using Android.Bluetooth;
 using Android.OS;
@@ -29,6 +28,7 @@ using System.Linq;
 using Sensus.Probes;
 using Android.App;
 using Android.Content;
+using Xamarin.Essentials;
 
 namespace Sensus.Android.Probes.Context
 {
@@ -85,7 +85,7 @@ namespace Sensus.Android.Probes.Context
 			await base.InitializeAsync();
 
 			// BLE requires location permissions
-			if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
+			if (await SensusServiceHelper.Get().ObtainLocationPermissionAsync() != PermissionStatus.Granted)
 			{
 				// throw standard exception instead of NotSupportedException, since the user might decide to enable location in the future
 				// and we'd like the probe to be restarted at that time.

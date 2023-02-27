@@ -24,7 +24,7 @@ using Sensus.Context;
 using Sensus.Callbacks;
 using Newtonsoft.Json;
 using Sensus.UI.Inputs;
-using Plugin.Permissions.Abstractions;
+
 using System.ComponentModel;
 using Sensus.Notifications;
 using Sensus.Exceptions;
@@ -751,7 +751,7 @@ namespace Sensus.Probes.User.Scripts
 
 			if (Script.InputGroups.Any(inputGroup => inputGroup.Geotag))
 			{
-				await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location);
+				await SensusServiceHelper.Get().ObtainLocationPermissionAsync();
 			}
 		}
 

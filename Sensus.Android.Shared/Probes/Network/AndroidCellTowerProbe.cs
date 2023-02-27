@@ -17,58 +17,58 @@ using Android.Telephony;
 using Sensus.Probes.Network;
 using System;
 using System.Threading.Tasks;
-using Plugin.Permissions.Abstractions;
+using Xamarin.Essentials;
 
 namespace Sensus.Android.Probes.Network
 {
-    public class AndroidCellTowerProbe : CellTowerProbe
-    {
-        private TelephonyManager _telephonyManager;
-        private AndroidCellTowerChangeListener _cellTowerChangeListener;
+	public class AndroidCellTowerProbe : CellTowerProbe
+	{
+		private TelephonyManager _telephonyManager;
+		private AndroidCellTowerChangeListener _cellTowerChangeListener;
 
-        public AndroidCellTowerProbe()
-        {
-            _cellTowerChangeListener = new AndroidCellTowerChangeListener();
-            _cellTowerChangeListener.CellTowerChanged += async (o, cellTowerLocation) =>
-            {
-                await StoreDatumAsync(new CellTowerDatum(DateTimeOffset.UtcNow, cellTowerLocation));
-            };
-        }
+		public AndroidCellTowerProbe()
+		{
+			_cellTowerChangeListener = new AndroidCellTowerChangeListener();
+			_cellTowerChangeListener.CellTowerChanged += async (o, cellTowerLocation) =>
+			{
+				await StoreDatumAsync(new CellTowerDatum(DateTimeOffset.UtcNow, cellTowerLocation));
+			};
+		}
 
-        protected override async Task InitializeAsync()
-        {
-            await base.InitializeAsync();
+		protected override async Task InitializeAsync()
+		{
+			await base.InitializeAsync();
 
-            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) == PermissionStatus.Granted)
-            {
-                _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
-                if (_telephonyManager == null)
-                {
-                    throw new NotSupportedException("No telephony present.");
-                }
-            }
-            else
-            {
-                // throw standard exception instead of NotSupportedException, since the user might decide to enable location in the future
-                // and we'd like the probe to be restarted at that time.
-                string error = "Cell tower location is not permitted on this device. Cannot start cell tower probe.";
-                await SensusServiceHelper.Get().FlashNotificationAsync(error);
-                throw new Exception(error);
-            }
-        }
+			if (await SensusServiceHelper.Get().ObtainLocationPermissionAsync() == PermissionStatus.Granted)
+			{
+				_telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
+				if (_telephonyManager == null)
+				{
+					throw new NotSupportedException("No telephony present.");
+				}
+			}
+			else
+			{
+				// throw standard exception instead of NotSupportedException, since the user might decide to enable location in the future
+				// and we'd like the probe to be restarted at that time.
+				string error = "Cell tower location is not permitted on this device. Cannot start cell tower probe.";
+				await SensusServiceHelper.Get().FlashNotificationAsync(error);
+				throw new Exception(error);
+			}
+		}
 
-        protected override async Task StartListeningAsync()
-        {
-            await base.StartListeningAsync();
+		protected override async Task StartListeningAsync()
+		{
+			await base.StartListeningAsync();
 
-            _telephonyManager.Listen(_cellTowerChangeListener, PhoneStateListenerFlags.CellLocation);
-        }
+			_telephonyManager.Listen(_cellTowerChangeListener, PhoneStateListenerFlags.CellLocation);
+		}
 
-        protected override async Task StopListeningAsync()
-        {
-            await base.StopListeningAsync();
+		protected override async Task StopListeningAsync()
+		{
+			await base.StopListeningAsync();
 
-            _telephonyManager.Listen(_cellTowerChangeListener, PhoneStateListenerFlags.None);
-        }
-    }
+			_telephonyManager.Listen(_cellTowerChangeListener, PhoneStateListenerFlags.None);
+		}
+	}
 }

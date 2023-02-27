@@ -20,7 +20,7 @@ using Foundation;
 using System.IO;
 using Sensus;
 using System.Threading;
-using Plugin.Permissions.Abstractions;
+
 using System.Threading.Tasks;
 using System.Linq;
 

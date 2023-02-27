@@ -16,97 +16,98 @@ using Android.App;
 using Android.Telephony;
 using Sensus.Probes.Communication;
 using System;
-using Plugin.Permissions.Abstractions;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Collections.Generic;
 using Plugin.ContactService.Shared;
 using System.Text.RegularExpressions;
+using Xamarin.Essentials;
+using Contact = Plugin.ContactService.Shared.Contact;
 
 namespace Sensus.Android.Probes.Communication
 {
-    public class AndroidTelephonyProbe : ListeningTelephonyProbe
-    {
-        private TelephonyManager _telephonyManager;
-        private EventHandler<string> _outgoingCallCallback;
-        private AndroidTelephonyIdleIncomingListener _idleIncomingCallListener;
-        private DateTime? _outgoingIncomingTime;
+	public class AndroidTelephonyProbe : ListeningTelephonyProbe
+	{
+		private TelephonyManager _telephonyManager;
+		private EventHandler<string> _outgoingCallCallback;
+		private AndroidTelephonyIdleIncomingListener _idleIncomingCallListener;
+		private DateTime? _outgoingIncomingTime;
 
-        public AndroidTelephonyProbe()
-        {
-            _outgoingCallCallback = async (sender, outgoingNumber) =>
-            {
-                _outgoingIncomingTime = DateTime.Now;
-                Contact contact = await SensusServiceHelper.GetContactAsync(outgoingNumber);
-                bool isContact = contact != null;
+		public AndroidTelephonyProbe()
+		{
+			_outgoingCallCallback = async (sender, outgoingNumber) =>
+			{
+				_outgoingIncomingTime = DateTime.Now;
+				Contact contact = await SensusServiceHelper.GetContactAsync(outgoingNumber);
+				bool isContact = contact != null;
 
-                await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.OutgoingCall, outgoingNumber, null, isContact, contact?.Name, contact?.Email));
-            };
+				await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.OutgoingCall, outgoingNumber, null, isContact, contact?.Name, contact?.Email));
+			};
 
-            _idleIncomingCallListener = new AndroidTelephonyIdleIncomingListener();
+			_idleIncomingCallListener = new AndroidTelephonyIdleIncomingListener();
 
-            _idleIncomingCallListener.IncomingCall += async (o, incomingNumber) =>
-            {
-                _outgoingIncomingTime = DateTime.Now;
-                Contact contact = await SensusServiceHelper.GetContactAsync(incomingNumber);
-                bool isContact = contact != null;
-                
+			_idleIncomingCallListener.IncomingCall += async (o, incomingNumber) =>
+			{
+				_outgoingIncomingTime = DateTime.Now;
+				Contact contact = await SensusServiceHelper.GetContactAsync(incomingNumber);
+				bool isContact = contact != null;
 
-                await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber, null, isContact, contact?.Name, contact?.Email));
-            };
 
-            _idleIncomingCallListener.Idle += async (o, phoneNumber) =>
-            {
+				await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber, null, isContact, contact?.Name, contact?.Email));
+			};
 
-                // only calculate call duration if we have previously received an incoming or outgoing call event (android might report idle upon startup)
-                double? callDurationSeconds = null;
-                if (_outgoingIncomingTime != null)
-                {
-                    callDurationSeconds = (DateTime.Now - _outgoingIncomingTime.Value).TotalSeconds;
-                }
-                Contact contact = await SensusServiceHelper.GetContactAsync(phoneNumber);
-                bool isContact = contact != null;
+			_idleIncomingCallListener.Idle += async (o, phoneNumber) =>
+			{
 
-                await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.Idle, phoneNumber, callDurationSeconds, isContact, contact?.Name, contact?.Email));
-            };
-        }
+				// only calculate call duration if we have previously received an incoming or outgoing call event (android might report idle upon startup)
+				double? callDurationSeconds = null;
+				if (_outgoingIncomingTime != null)
+				{
+					callDurationSeconds = (DateTime.Now - _outgoingIncomingTime.Value).TotalSeconds;
+				}
+				Contact contact = await SensusServiceHelper.GetContactAsync(phoneNumber);
+				bool isContact = contact != null;
 
-        protected override async Task InitializeAsync()
-        {
-            await base.InitializeAsync();
+				await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.Idle, phoneNumber, callDurationSeconds, isContact, contact?.Name, contact?.Email));
+			};
+		}
 
-            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Phone) == PermissionStatus.Granted)
-            {
-                _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
-                if (_telephonyManager == null)
-                {
-                    throw new NotSupportedException("No telephony present.");
-                }
-            }
-            else
-            {
-                // throw standard exception instead of NotSupportedException, since the user might decide to enable phone in the future
-                // and we'd like the probe to be restarted at that time.
-                string error = "Telephony not permitted on this device. Cannot start telephony probe.";
-                await SensusServiceHelper.Get().FlashNotificationAsync(error);
-                throw new Exception(error);
-            }
-        }
+		protected override async Task InitializeAsync()
+		{
+			await base.InitializeAsync();
 
-        protected override async Task StartListeningAsync()
-        {
-            await base.StartListeningAsync();
+			if (await SensusServiceHelper.Get().ObtainPermissionAsync<Permissions.Phone>() == PermissionStatus.Granted)
+			{
+				_telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
+				if (_telephonyManager == null)
+				{
+					throw new NotSupportedException("No telephony present.");
+				}
+			}
+			else
+			{
+				// throw standard exception instead of NotSupportedException, since the user might decide to enable phone in the future
+				// and we'd like the probe to be restarted at that time.
+				string error = "Telephony not permitted on this device. Cannot start telephony probe.";
+				await SensusServiceHelper.Get().FlashNotificationAsync(error);
+				throw new Exception(error);
+			}
+		}
 
-            AndroidTelephonyOutgoingBroadcastReceiver.OUTGOING_CALL += _outgoingCallCallback;
-            _telephonyManager.Listen(_idleIncomingCallListener, PhoneStateListenerFlags.CallState);
-        }
+		protected override async Task StartListeningAsync()
+		{
+			await base.StartListeningAsync();
 
-        protected override async Task StopListeningAsync()
-        {
-            await base.StopListeningAsync();
+			AndroidTelephonyOutgoingBroadcastReceiver.OUTGOING_CALL += _outgoingCallCallback;
+			_telephonyManager.Listen(_idleIncomingCallListener, PhoneStateListenerFlags.CallState);
+		}
 
-            AndroidTelephonyOutgoingBroadcastReceiver.OUTGOING_CALL -= _outgoingCallCallback;
-            _telephonyManager.Listen(_idleIncomingCallListener, PhoneStateListenerFlags.None);
-        }
-    }
+		protected override async Task StopListeningAsync()
+		{
+			await base.StopListeningAsync();
+
+			AndroidTelephonyOutgoingBroadcastReceiver.OUTGOING_CALL -= _outgoingCallCallback;
+			_telephonyManager.Listen(_idleIncomingCallListener, PhoneStateListenerFlags.None);
+		}
+	}
 }

@@ -34,9 +34,7 @@ using Sensus.Probes.Location;
 using Sensus.Probes.User.Scripts;
 using Sensus.Notifications;
 
-using Plugin.Permissions;
 using Plugin.Geolocator.Abstractions;
-using Plugin.Permissions.Abstractions;
 using Sensus.Callbacks;
 using ZXing;
 using ZXing.Net.Mobile.Forms;
@@ -51,6 +49,8 @@ using Plugin.FilePicker.Abstractions;
 using Plugin.ContactService.Shared;
 using System.Text.RegularExpressions;
 using System.Net.Http;
+using Xamarin.Essentials;
+using Contact = Plugin.ContactService.Shared.Contact;
 
 namespace Sensus
 {
@@ -356,7 +356,7 @@ namespace Sensus
 
 		public static async Task<Contact> GetContactAsync(string phoneNumber)
 		{
-			if (await Get().ObtainPermissionAsync(Permission.Contacts) == PermissionStatus.Granted)
+			if (await Get().ObtainPermissionAsync<Permissions.ContactsRead>() == PermissionStatus.Granted)
 			{
 				IList<Contact> contacts = await Plugin.ContactService.CrossContactService.Current.GetContactListAsync();
 
@@ -1149,7 +1149,7 @@ namespace Sensus
 
 						return;
 					}
-					
+
 					string s = numScriptsToRun == 1 ? "" : "s";
 					DateTime? nextExpirationDate = _scriptsToRun.Select(script => script.ExpirationDate).Where(expirationDate => expirationDate.HasValue).OrderBy(expirationDate => expirationDate).FirstOrDefault();
 					string nextExpirationMessage = nextExpirationDate == null ? (numScriptsToRun == 1 ? "This survey does" : "These surveys do") + " not expire." : "Next expiration:  " + nextExpirationDate.Value.ToShortDateString() + " at " + nextExpirationDate.Value.ToShortTimeString();
@@ -1207,7 +1207,7 @@ namespace Sensus
 				// we've seen exceptions where we don't ask for permission, leaving this up to the ZXing library
 				// to take care of. the library does ask for permission, but if it's denied we get an exception
 				// kicked back. ask explicitly here, and bail out if permission is not granted.
-				if (await ObtainPermissionAsync(Permission.Camera) != PermissionStatus.Granted)
+				if (await ObtainPermissionAsync<Permissions.Camera>() != PermissionStatus.Granted)
 				{
 					resultCompletionSource.TrySetResult(null);
 					return;
@@ -1658,7 +1658,7 @@ namespace Sensus
 		{
 			SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
 			{
-				if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
+				if (await ObtainLocationPermissionAsync() != PermissionStatus.Granted)
 				{
 					await FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
 				}
@@ -1680,7 +1680,7 @@ namespace Sensus
 		{
 			SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
 			{
-				if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
+				if (await ObtainLocationPermissionAsync() != PermissionStatus.Granted)
 				{
 					await FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
 				}
@@ -1777,116 +1777,115 @@ namespace Sensus
 			return convertedJSON.ToString();
 		}
 
-		public async Task<PermissionStatus> ObtainPermissionAsync(Permission permission)
+		public async Task<PermissionStatus> ObtainPermissionAsync<TPermission>() where TPermission : Permissions.BasePermission, new()
 		{
 			return await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
 			{
-				if (await CrossPermissions.Current.CheckPermissionStatusAsync(permission) == PermissionStatus.Granted)
-				{
-					return PermissionStatus.Granted;
-				}
-
-				// if the user has previously denied our permission request, then we should be given an opportunity to
-				// display a rationale for the request. if the user has selected the "don't ask again" option, then
-				// we will not be able to display the rationale and all requests for the permission will fail.
-				if (await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
-				{
-					string rationale = null;
-
-					if (permission == Permission.Calendar)
-					{
-						rationale = "Sensus collects calendar information for studies you enroll in.";
-					}
-					else if (permission == Permission.Camera)
-					{
-						rationale = "Sensus uses the camera to scan barcodes. Sensus will not record images or video.";
-					}
-					else if (permission == Permission.Contacts)
-					{
-						rationale = "Sensus collects calendar information for studies you enroll in.";
-					}
-					else if (permission == Permission.Location)
-					{
-						rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
-					}
-					else if (permission == Permission.LocationAlways)
-					{
-						rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
-					}
-					else if (permission == Permission.LocationWhenInUse)
-					{
-						rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
-					}
-					else if (permission == Permission.MediaLibrary)
-					{
-						rationale = "Sensus collects media for studies you enroll in.";
-					}
-					else if (permission == Permission.Microphone)
-					{
-						rationale = "Sensus uses the microphone to collect sound level information for studies you enroll in. Sensus will not record audio.";
-					}
-					else if (permission == Permission.Phone)
-					{
-						rationale = "Sensus collects call information for studies you enroll in. Sensus will not record audio from calls.";
-					}
-					else if (permission == Permission.Photos)
-					{
-						rationale = "Sensus collects photos for studies you enroll in.";
-					}
-					else if (permission == Permission.Reminders)
-					{
-						rationale = "Sensus collects reminder information for studies you enroll in.";
-					}
-					else if (permission == Permission.Sensors)
-					{
-						rationale = "Sensus uses movement sensors to collect information for studies you enroll in.";
-					}
-					else if (permission == Permission.Sms)
-					{
-						rationale = "Sensus collects text messages for studies you enroll in.";
-					}
-					else if (permission == Permission.Speech)
-					{
-						rationale = "Sensus uses the microphone for studies you enroll in.";
-					}
-					else if (permission == Permission.Storage)
-					{
-						rationale = "Sensus must be able to write to your device's storage for proper operation.";
-					}
-					else if (permission == Permission.Contacts)
-					{
-						rationale = "Sensus collects Contact information.";
-					}
-					else
-					{
-						SensusException.Report("Missing rationale for permission request:  " + permission);
-					}
-
-					if (rationale != null)
-					{
-						await Application.Current.MainPage.DisplayAlert("Permission Request", $"On the next screen, Sensus will request access to your device's {permission.ToString().ToUpper()}. {rationale}", "OK");
-					}
-				}
-
 				try
 				{
-					PermissionStatus permissionStatus;
+					PermissionStatus status = await Permissions.CheckStatusAsync<TPermission>();
 
-					// it's happened that the returned dictionary doesn't contain an entry for the requested permission, so check for that.
-					if (!(await CrossPermissions.Current.RequestPermissionsAsync(permission)).TryGetValue(permission, out permissionStatus))
+					if (Permissions.ShouldShowRationale<TPermission>())
 					{
-						throw new Exception($"Permission status not returned for request:  {permission}");
+						string rationale = null;
+						Type permission = typeof(TPermission);
+
+						if (permission == typeof(Permissions.CalendarRead))
+						{
+							rationale = "Sensus collects calendar information for studies you enroll in.";
+						}
+						else if (permission == typeof(Permissions.Camera))
+						{
+							rationale = "Sensus uses the camera to scan barcodes. Sensus will not record images or video.";
+						}
+						else if (permission == typeof(Permissions.ContactsRead))
+						{
+							rationale = "Sensus collects calendar information for studies you enroll in.";
+						}
+						//else if (permission == typeof(Permissions.Location))
+						//{
+						//	rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
+						//}
+						else if (permission == typeof(Permissions.LocationAlways))
+						{
+							rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
+						}
+						else if (permission == typeof(Permissions.LocationWhenInUse))
+						{
+							rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
+						}
+						else if (permission == typeof(Permissions.Media))
+						{
+							rationale = "Sensus collects media for studies you enroll in.";
+						}
+						else if (permission == typeof(Permissions.Microphone))
+						{
+							rationale = "Sensus uses the microphone to collect sound level information for studies you enroll in. Sensus will not record audio.";
+						}
+						else if (permission == typeof(Permissions.Phone))
+						{
+							rationale = "Sensus collects call information for studies you enroll in. Sensus will not record audio from calls.";
+						}
+						else if (permission == typeof(Permissions.Photos))
+						{
+							rationale = "Sensus collects photos for studies you enroll in.";
+						}
+						else if (permission == typeof(Permissions.Reminders))
+						{
+							rationale = "Sensus collects reminder information for studies you enroll in.";
+						}
+						else if (permission == typeof(Permissions.Sensors))
+						{
+							rationale = "Sensus uses movement sensors to collect information for studies you enroll in.";
+						}
+						else if (permission == typeof(Permissions.Sms))
+						{
+							rationale = "Sensus collects text messages for studies you enroll in.";
+						}
+						else if (permission == typeof(Permissions.Speech))
+						{
+							rationale = "Sensus uses the microphone for studies you enroll in.";
+						}
+						else if (permission == typeof(Permissions.StorageRead))
+						{
+							rationale = "Sensus must be able to read your device's storage for proper operation.";
+						}
+						else if (permission == typeof(Permissions.StorageWrite))
+						{
+							rationale = "Sensus must be able to write to your device's storage for proper operation.";
+						}
+						else
+						{
+							SensusException.Report("Missing rationale for permission request: " + permission.Name);
+						}
+
+						if (rationale != null)
+						{
+							await Application.Current.MainPage.DisplayAlert("Permission Request", $"Sensus will request {permission.Name} permission. {rationale}", "OK");
+						}
 					}
 
-					return permissionStatus;
+					if (status != PermissionStatus.Granted)
+					{
+						status = await Permissions.RequestAsync<TPermission>();
+					}
+
+					return status;
 				}
 				catch (Exception ex)
 				{
-					_logger.Log($"Failed to obtain permission:  {ex.Message}", LoggingLevel.Normal, GetType());
+					_logger.Log($"Failed to obtain permission: {ex.Message}", LoggingLevel.Normal, GetType());
 
 					return PermissionStatus.Unknown;
 				}
 			});
+		}
+
+		public async Task<PermissionStatus> ObtainLocationPermissionAsync()
+		{
+			await ObtainPermissionAsync<Permissions.LocationWhenInUse>();
+
+			return await ObtainPermissionAsync<Permissions.LocationAlways>();
 		}
 
 		public async Task UpdatePushNotificationRegistrationsAsync(CancellationToken cancellationToken)

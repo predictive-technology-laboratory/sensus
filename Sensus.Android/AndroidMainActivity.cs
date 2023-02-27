@@ -412,8 +412,10 @@ namespace Sensus.Android
 #if __ANDROID_23__
 		public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
 		{
-			PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+			//PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 			ZXing.Net.Mobile.Android.PermissionsHandler.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+
+			Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 		}
 #endif
 
