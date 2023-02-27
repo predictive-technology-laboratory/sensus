@@ -96,8 +96,7 @@ namespace Sensus.Android.Probes.Context
 				throw new Exception(error);
 			}
 
-			BluetoothManager bluetoothManager = Application.Context.GetSystemService(global::Android.Content.Context.BluetoothService) as BluetoothManager;
-			_bluetoothAdapter = bluetoothManager.Adapter;
+			_bluetoothAdapter = AndroidSensusServiceHelper.BluetoothManager?.Adapter;
 
 			if ((_bluetoothAdapter?.IsEnabled ?? false) == false)
 			{

@@ -23,7 +23,6 @@ using Android.Net;
 using Android.OS;
 using Android.Provider;
 using Android.Speech;
-using Android.Support.V4.Content;
 using Android.Widget;
 using Newtonsoft.Json;
 using Sensus.Probes.Location;
@@ -35,7 +34,6 @@ using Android.Bluetooth;
 using Android.Hardware;
 using Sensus.Android.Probes.Context;
 using System.Threading.Tasks;
-using Sensus.Context;
 using Firebase.Iid;
 using Sensus.Exceptions;
 using WindowsAzure.Messaging;
@@ -46,6 +44,8 @@ using Firebase.Messaging;
 using Firebase.Installations;
 using Xamarin.Essentials;
 using FileProvider = AndroidX.Core.Content.FileProvider;
+using AndroidContext = Android.Content.Context;
+using SensusContext = Sensus.Context.SensusContext;
 using System.Linq;
 
 namespace Sensus.Android
@@ -62,6 +62,8 @@ namespace Sensus.Android
 		private DateTime? _wakeLockTimestamp;
 		private ManualResetEventSlim _focusEvent;
 		private string _pushNotificationToken;
+
+		public static BluetoothManager BluetoothManager => Application.Context.GetSystemService(AndroidContext.BluetoothService) as BluetoothManager;
 
 		public override string DeviceId
 		{
@@ -334,6 +336,7 @@ namespace Sensus.Android
 						}
 
 						Java.IO.File file = new Java.IO.File(path);
+
 						global::Android.Net.Uri uri = FileProvider.GetUriForFile(Application.Context, "edu.virginia.sie.ptl.sensus.fileprovider", file);
 						intent.PutExtra(Intent.ExtraStream, uri);
 
@@ -535,7 +538,7 @@ namespace Sensus.Android
 		/// <param name="rationale">Rationale.</param>
 		public override async Task<bool> EnableBluetoothAsync(bool lowEnergy, string rationale)
 		{
-			BluetoothAdapter bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
+			BluetoothAdapter bluetoothAdapter = BluetoothManager?.Adapter;
 
 			// ensure that the device has the required feature
 			if (bluetoothAdapter == null || !Application.Context.PackageManager.HasSystemFeature(lowEnergy ? PackageManager.FeatureBluetoothLe : PackageManager.FeatureBluetooth))
@@ -613,7 +616,7 @@ namespace Sensus.Android
 
 		public override async Task<bool> DisableBluetoothAsync(bool reenable, bool lowEnergy = true, string rationale = null)
 		{
-			BluetoothAdapter bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
+			BluetoothAdapter bluetoothAdapter = BluetoothManager?.Adapter;
 
 			// check whether bluetooth is enabled
 			if (bluetoothAdapter?.IsEnabled ?? false)
