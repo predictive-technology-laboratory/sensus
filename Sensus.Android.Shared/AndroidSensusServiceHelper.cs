@@ -45,7 +45,7 @@ using BatteryStatus = Android.OS.BatteryStatus;
 using Firebase.Messaging;
 using Firebase.Installations;
 using Xamarin.Essentials;
-using FileProvider = Android.Support.V4.Content.FileProvider;
+using FileProvider = AndroidX.Core.Content.FileProvider;
 using System.Linq;
 
 namespace Sensus.Android

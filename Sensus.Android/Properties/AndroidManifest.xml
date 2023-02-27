@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" android:installLocation="auto" package="edu.virginia.sie.ptl.sensus" android:versionName="15.18.0" android:versionCode="1520803134">
 	<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="31" />
 	<application android:label="SensusMobile" android:icon="@drawable/ic_launcher" android:theme="@style/SensusTheme" android:hardwareAccelerated="true" tools:replace="android:theme">
-		<provider android:name="android.support.v4.content.FileProvider" android:authorities="edu.virginia.sie.ptl.sensus.fileprovider" android:grantUriPermissions="true" android:exported="false">
+		<provider android:name="androidx.core.content.FileProvider" android:authorities="edu.virginia.sie.ptl.sensus.fileprovider" android:grantUriPermissions="true" android:exported="false">
 			<meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/filepaths" />
 		</provider>
 		<!-- Google Maps V2 API Key. -->
