@@ -19,43 +19,45 @@ using Sensus.Probes.Network;
 using System;
 using System.Threading.Tasks;
 
+#warning AndroidListeningWlanProbe uses obsolete code.
+#pragma warning disable CS0618 // Type or member is obsolete
 namespace Sensus.Android.Probes.Network
 {
-    public class AndroidListeningWlanProbe : ListeningWlanProbe
-    {
-        private AndroidWlanBroadcastReceiver _wlanBroadcastReceiver;
-        private EventHandler<WlanDatum> _wlanConnectionChangedCallback;
+	public class AndroidListeningWlanProbe : ListeningWlanProbe
+	{
+		private AndroidWlanBroadcastReceiver _wlanBroadcastReceiver;
+		private EventHandler<WlanDatum> _wlanConnectionChangedCallback;
 
-        public AndroidListeningWlanProbe()
-        {
-            _wlanBroadcastReceiver = new AndroidWlanBroadcastReceiver();
+		public AndroidListeningWlanProbe()
+		{
+			_wlanBroadcastReceiver = new AndroidWlanBroadcastReceiver();
 
-            _wlanConnectionChangedCallback = async (sender, wlanDatum) =>
-            {
-                await StoreDatumAsync(wlanDatum);
-            };
-        }
+			_wlanConnectionChangedCallback = async (sender, wlanDatum) =>
+			{
+				await StoreDatumAsync(wlanDatum);
+			};
+		}
 
-        protected override async Task StartListeningAsync()
-        {
-            await base.StartListeningAsync();
+		protected override async Task StartListeningAsync()
+		{
+			await base.StartListeningAsync();
 
-            // register receiver for all WLAN intent actions
-#pragma warning disable CS0618 // Type or member is obsolete
-            Application.Context.RegisterReceiver(_wlanBroadcastReceiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
-#pragma warning restore CS0618 // Type or member is obsolete
+			// register receiver for all WLAN intent actions
 
-            AndroidWlanBroadcastReceiver.WIFI_CONNECTION_CHANGED += _wlanConnectionChangedCallback;
-        }
+			Application.Context.RegisterReceiver(_wlanBroadcastReceiver, new IntentFilter(ConnectivityManager.ConnectivityAction));
 
-        protected override async Task StopListeningAsync()
-        {
-            await base.StopListeningAsync();
+			AndroidWlanBroadcastReceiver.WIFI_CONNECTION_CHANGED += _wlanConnectionChangedCallback;
+		}
 
-            // stop broadcast receiver
-            Application.Context.UnregisterReceiver(_wlanBroadcastReceiver);
+		protected override async Task StopListeningAsync()
+		{
+			await base.StopListeningAsync();
 
-            AndroidWlanBroadcastReceiver.WIFI_CONNECTION_CHANGED -= _wlanConnectionChangedCallback;
-        }
-    }
+			// stop broadcast receiver
+			Application.Context.UnregisterReceiver(_wlanBroadcastReceiver);
+
+			AndroidWlanBroadcastReceiver.WIFI_CONNECTION_CHANGED -= _wlanConnectionChangedCallback;
+		}
+	}
 }
+#pragma warning restore CS0618 // Type or member is obsolete

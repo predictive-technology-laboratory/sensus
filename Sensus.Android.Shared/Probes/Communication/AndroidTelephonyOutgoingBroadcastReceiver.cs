@@ -17,36 +17,39 @@ using Android.Content;
 using Sensus.Exceptions;
 using System;
 
+#warning AndroidWlanBroadcastReceiver has obsolete code.
+#pragma warning disable CS0618 // Type or member is obsolete
 namespace Sensus.Android.Probes.Communication
 {
-    /// <summary>
-    /// Listens for new outgoing calls. See <see cref="AndroidTelephonyIdleIncomingListener"/> for why we need both classes.
-    /// </summary>
-    [BroadcastReceiver(Exported = false)]
-    [IntentFilter(new string[] { Intent.ActionNewOutgoingCall }, Categories = new string[] { Intent.CategoryDefault })]
-    public class AndroidTelephonyOutgoingBroadcastReceiver : BroadcastReceiver
-    {
-        public static event EventHandler<string> OUTGOING_CALL;
+	/// <summary>
+	/// Listens for new outgoing calls. See <see cref="AndroidTelephonyIdleIncomingListener"/> for why we need both classes.
+	/// </summary>
+	[BroadcastReceiver(Exported = false)]
+	[IntentFilter(new string[] { Intent.ActionNewOutgoingCall }, Categories = new string[] { Intent.CategoryDefault })]
+	public class AndroidTelephonyOutgoingBroadcastReceiver : BroadcastReceiver
+	{
+		public static event EventHandler<string> OUTGOING_CALL;
 
-        public override void OnReceive(global::Android.Content.Context context, Intent intent)
-        {
-            // this method is usually called on the UI thread and can crash the app if it throws an exception
-            try
-            {
-                if (intent == null)
-                {
-                    throw new ArgumentNullException(nameof(intent));
-                }
+		public override void OnReceive(global::Android.Content.Context context, Intent intent)
+		{
+			// this method is usually called on the UI thread and can crash the app if it throws an exception
+			try
+			{
+				if (intent == null)
+				{
+					throw new ArgumentNullException(nameof(intent));
+				}
 
-                if (intent.Action == Intent.ActionNewOutgoingCall)
-                {
-                    OUTGOING_CALL?.Invoke(this, intent.GetStringExtra(Intent.ExtraPhoneNumber));
-                }
-            }
-            catch (Exception ex)
-            {
-                SensusException.Report("Exception in telephony broadcast receiver:  " + ex.Message, ex);
-            }
-        }
-    }
+				if (intent.Action == Intent.ActionNewOutgoingCall)
+				{
+					OUTGOING_CALL?.Invoke(this, intent.GetStringExtra(Intent.ExtraPhoneNumber));
+				}
+			}
+			catch (Exception ex)
+			{
+				SensusException.Report("Exception in telephony broadcast receiver:  " + ex.Message, ex);
+			}
+		}
+	}
 }
+#pragma warning restore CS0618 // Type or member is obsolete

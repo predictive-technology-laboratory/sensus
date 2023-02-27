@@ -17,39 +17,43 @@ using System;
 using Android.Telephony.Cdma;
 using Android.Telephony.Gsm;
 
+#warning AndroidCellTowerChangeListener has obsolete code.
+#pragma warning disable CS0618 // Type or member is obsolete
 namespace Sensus.Android.Probes.Network
 {
-    public class AndroidCellTowerChangeListener : PhoneStateListener
-    {
-        public event EventHandler<string> CellTowerChanged;
+	public class AndroidCellTowerChangeListener : PhoneStateListener
+	{
+		public event EventHandler<string> CellTowerChanged;
 
-        public override void OnCellLocationChanged(CellLocation location)
-        {
-            if (CellTowerChanged != null)
-            {
-                string cellTowerInformation = null;
+		[Obsolete]
+		public override void OnCellLocationChanged(CellLocation location)
+		{
+			if (CellTowerChanged != null)
+			{
+				string cellTowerInformation = null;
 
-                if (location is CdmaCellLocation)
-                {
-                    CdmaCellLocation cdmaLocation = location as CdmaCellLocation;
-                    cellTowerInformation = "[base_station_id=" + cdmaLocation.BaseStationId + "," +
-                                            "base_station_lat=" + cdmaLocation.BaseStationLatitude + "," +
-                                            "base_station_lon=" + cdmaLocation.BaseStationLongitude + "," +
-                                            "network_id=" + cdmaLocation.NetworkId + "," +
-                                            "system_id=" + cdmaLocation.SystemId + "]";
-                }
-                else if (location is GsmCellLocation)
-                {
-                    GsmCellLocation gsmLocation = location as GsmCellLocation;
-                    cellTowerInformation = "[cid=" + gsmLocation.Cid + ",lac=" + gsmLocation.Lac + "]";
-                }
-                else
-                {
-                    cellTowerInformation = location?.ToString();
-                }
+				if (location is CdmaCellLocation)
+				{
+					CdmaCellLocation cdmaLocation = location as CdmaCellLocation;
+					cellTowerInformation = "[base_station_id=" + cdmaLocation.BaseStationId + "," +
+											"base_station_lat=" + cdmaLocation.BaseStationLatitude + "," +
+											"base_station_lon=" + cdmaLocation.BaseStationLongitude + "," +
+											"network_id=" + cdmaLocation.NetworkId + "," +
+											"system_id=" + cdmaLocation.SystemId + "]";
+				}
+				else if (location is GsmCellLocation)
+				{
+					GsmCellLocation gsmLocation = location as GsmCellLocation;
+					cellTowerInformation = "[cid=" + gsmLocation.Cid + ",lac=" + gsmLocation.Lac + "]";
+				}
+				else
+				{
+					cellTowerInformation = location?.ToString();
+				}
 
-                CellTowerChanged(this, cellTowerInformation);
-            }
-        }
-    }
+				CellTowerChanged(this, cellTowerInformation);
+			}
+		}
+	}
 }
+#pragma warning restore CS0618 // Type or member is obsolete
