@@ -211,9 +211,6 @@
     <PackageReference Include="SkiaSharp.Views.Forms">
       <Version>2.88.3</Version>
     </PackageReference>
-    <PackageReference Include="Square.OkHttp3">
-      <Version>4.9.3.2</Version>
-    </PackageReference>
     <PackageReference Include="System.AppContext">
       <Version>4.3.0</Version>
     </PackageReference>
