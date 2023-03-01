@@ -24,7 +24,6 @@ using Sensus.Context;
 using Sensus.UI.Inputs;
 using Xamarin.Forms;
 using System.Threading;
-using Plugin.Clipboard;
 using Newtonsoft.Json;
 using Sensus.Encryption;
 using System.IO;
@@ -33,6 +32,7 @@ using System.Threading.Tasks;
 using System.Net;
 using Sensus.Adaptation;
 using Newtonsoft.Json.Linq;
+using Xamarin.Essentials;
 
 namespace Sensus.UI
 {
@@ -68,7 +68,8 @@ namespace Sensus.UI
 
 			copyIdButton.Clicked += async (o, e) =>
 			{
-				CrossClipboard.Current.SetText(_protocol.Id);
+				await Clipboard.SetTextAsync(_protocol.Id);
+
 				await SensusServiceHelper.Get().FlashNotificationAsync("Copied study identifier to clipboard.");
 			};
 
