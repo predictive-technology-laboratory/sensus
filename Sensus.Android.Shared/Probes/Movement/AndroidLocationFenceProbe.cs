@@ -21,6 +21,10 @@ using Android.Gms.Awareness.Snapshot;
 using Android.Gms.Awareness;
 using Android.Gms.Awareness.Fence;
 using Xamarin.Essentials;
+using Android.App;
+using AndroidLocation = Android.Locations.Location;
+using AndroidTask = Android.Gms.Tasks.Task;
+using Android.Gms.Extensions;
 
 namespace Sensus.Android.Probes.Movement
 {
@@ -31,6 +35,7 @@ namespace Sensus.Android.Probes.Movement
 	{
 		public const string AWARENESS_EXITING_LOCATION_FENCE_KEY = "EXITING_LOCATION_FENCE";
 
+		private SnapshotClient _snapshotClient;
 		private int _locationChangeRadiusMeters;
 
 		/// <summary>
@@ -87,18 +92,16 @@ namespace Sensus.Android.Probes.Movement
 		{
 			await base.InitializeAsync();
 
-			if (AwarenessApiClient.IsConnected)
+			// we need location permission in order to snapshot / fence the user's location.
+			if (await SensusServiceHelper.Get().ObtainLocationPermissionAsync() != PermissionStatus.Granted)
 			{
-				// we need location permission in order to snapshot / fence the user's location.
-				if (await SensusServiceHelper.Get().ObtainLocationPermissionAsync() != PermissionStatus.Granted)
-				{
-					string error = "Geolocation is not permitted on this device. Cannot start location fences.";
-					await SensusServiceHelper.Get().FlashNotificationAsync(error);
-				}
+				string error = "Geolocation is not permitted on this device. Cannot start location fences.";
+
+				throw new Exception(error);
 			}
 			else
 			{
-				throw new Exception("Failed to connect with Google Awareness API.");
+				_snapshotClient = Awareness.GetSnapshotClient(Application.Context);
 			}
 		}
 
@@ -115,11 +118,10 @@ namespace Sensus.Android.Probes.Movement
 			if (await SensusServiceHelper.Get().ObtainLocationPermissionAsync() == PermissionStatus.Granted)
 			{
 				// store current location
-				ILocationResult locationResult = await Awareness.SnapshotApi.GetLocationAsync(AwarenessApiClient);
-				global::Android.Locations.Location location = locationResult.Location;
-				DateTimeOffset timestamp = new DateTimeOffset(1970, 1, 1, 0, 0, 0, new TimeSpan()).AddMilliseconds(location.Time);
+				LocationResponse locationResponse = (await _snapshotClient.GetLocation()) as LocationResponse;
+				AndroidLocation location = locationResponse.Location;
+				DateTimeOffset timestamp = DateTimeOffset.FromUnixTimeMilliseconds(location.Time);
 				await StoreDatumAsync(new LocationDatum(timestamp, location.HasAccuracy ? location.Accuracy : -1, location.Latitude, location.Longitude));
-
 				// replace the previous location fence with one around the current location. additions and removals are handled
 				// in the order specified below.
 				FenceUpdateRequestBuilder locationFenceRequestBuilder = new FenceUpdateRequestBuilder();
