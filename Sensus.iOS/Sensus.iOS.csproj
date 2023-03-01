@@ -408,9 +408,6 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <PackageReference Include="Xam.Plugin.Geolocator">
       <Version>4.5.0.6</Version>
     </PackageReference>
-    <PackageReference Include="Xam.Plugin.Media">
-      <Version>5.0.1</Version>
-    </PackageReference>
     <PackageReference Include="Xamarin.Azure.NotificationHubs.iOS">
       <Version>3.1.1</Version>
     </PackageReference>
