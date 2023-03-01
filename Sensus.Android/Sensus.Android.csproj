@@ -409,9 +409,6 @@
     <PackageReference Include="Xamarin.Kotlin.StdLib">
       <Version>1.7.22</Version>
     </PackageReference>
-    <PackageReference Include="Xamarin.Plugin.FilePicker">
-      <Version>2.1.41</Version>
-    </PackageReference>
     <PackageReference Include="Xamarin.Plugins.Clipboard">
       <Version>2.3.0</Version>
     </PackageReference>

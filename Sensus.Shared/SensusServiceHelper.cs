@@ -44,9 +44,6 @@ using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
 using Sensus.DataStores.Remote;
-using Plugin.FilePicker;
-using Plugin.FilePicker.Abstractions;
-using Plugin.ContactService.Shared;
 using System.Text.RegularExpressions;
 using System.Net.Http;
 using Xamarin.Essentials;
@@ -1289,17 +1286,22 @@ namespace Sensus
 
 			try
 			{
-				FileData data = await CrossFilePicker.Current.PickFile();
+				FileResult result = await FilePicker.PickAsync();
 
-				if (data != null)
+				if (result != null)
 				{
-					text = Encoding.UTF8.GetString(data.DataArray);
+					using Stream stream = await result.OpenReadAsync();
+					using StreamReader reader = new(stream);
+
+					text = await reader.ReadToEndAsync();
 				}
 			}
 			catch (Exception ex)
 			{
 				string message = "Error choosing file: " + ex.Message;
+
 				Logger.Log(message, LoggingLevel.Normal, GetType());
+
 				await FlashNotificationAsync(message);
 			}
 
