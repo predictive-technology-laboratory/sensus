@@ -26,6 +26,9 @@ using System.Reflection;
 using Newtonsoft.Json;
 using Sensus.Extensions;
 using Newtonsoft.Json.Linq;
+#if __IOS__
+using UIKit;
+#endif
 
 namespace Sensus.Notifications
 {
@@ -182,33 +185,36 @@ namespace Sensus.Notifications
 				SensusServiceHelper.Get().Logger.Log("Push notification targets a protocol that is stopped but should be running. Starting protocol.", LoggingLevel.Normal, GetType());
 
 #if __IOS__
-                // starting the protocol can be time consuming and run afoul of ios push notification processing 
-                // constraints. start a background task and let the time consuming aspects of app startup 
-                // (e.g., scheduling callbacks for script runs) take care of monitoring the background time remaining.
-                nint startProtocolTaskId = -1;
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-                {
-                    SensusServiceHelper.Get().Logger.Log("Starting background task for protocol start on push notification.", LoggingLevel.Normal, GetType());
+				// starting the protocol can be time consuming and run afoul of ios push notification processing 
+				// constraints. start a background task and let the time consuming aspects of app startup 
+				// (e.g., scheduling callbacks for script runs) take care of monitoring the background time remaining.
+				nint taskId = 0;
 
-                    startProtocolTaskId = UIKit.UIApplication.SharedApplication.BeginBackgroundTask(() =>
-                    {
-                        // can't think of anything to do if we run out of time. report the error.
-                        SensusException.Report("Ran out of background time when starting protocol for push notification.");
-                    });
-                });
+				SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+				{
+					SensusServiceHelper.Get().Logger.Log("Starting background task for protocol start on push notification.", LoggingLevel.Normal, GetType());
+
+					taskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
+					{
+						// can't think of anything to do if we run out of time. report the error.
+						SensusServiceHelper.Get().Logger.Log("Ran out of background time when starting protocol for push notification.", LoggingLevel.Normal, GetType());
+
+						UIApplication.SharedApplication.EndBackgroundTask(taskId);
+					});
+				});
 #endif
 
 				// all is lost if we cannot start the protocol. so don't pass the cancellation token to StartAsync.
 				await protocol.StartAsync(CancellationToken.None);
 
 #if __IOS__
-                // end the ios background task.
-                SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-                {
-                    UIKit.UIApplication.SharedApplication.EndBackgroundTask(startProtocolTaskId);
+				// end the ios background task.
+				SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+				{
+					UIApplication.SharedApplication.EndBackgroundTask(taskId);
 
-                    SensusServiceHelper.Get().Logger.Log("Ended background task for protocol start on push notification.", LoggingLevel.Normal, GetType());
-                });
+					SensusServiceHelper.Get().Logger.Log("Ended background task for protocol start on push notification.", LoggingLevel.Normal, GetType());
+				});
 #endif
 			}
 			#endregion
@@ -307,15 +313,15 @@ namespace Sensus.Notifications
 						string invocationId = pendingUpdate.Content.Value<string>("invocation-id");
 
 #if __IOS__
-                        // cancel any previously delivered local notifications for the callback. we do not need to cancel
-                        // any pending notifications, as they will either (a) be canceled if the callback is non-repeating
-                        // or (b) be replaced if the callback is repeating and gets rescheduled. furthermore, there is a 
-                        // race condition on app activation in which the callback is updated, run, and rescheduled, after
-                        // which the push notification is delivered and is processed. cancelling the newly rescheduled
-                        // pending local push notification at this point will terminate the local invocation loop, and the 
-                        // callback command at this point will contain an invalid invocation ID causing it to not be 
-                        // rescheduled). thus, both local and remote invocation will terminate and the probe will halt.
-                        UserNotifications.UNUserNotificationCenter.Current.RemoveDeliveredNotifications(new[] { callbackId });
+						// cancel any previously delivered local notifications for the callback. we do not need to cancel
+						// any pending notifications, as they will either (a) be canceled if the callback is non-repeating
+						// or (b) be replaced if the callback is repeating and gets rescheduled. furthermore, there is a 
+						// race condition on app activation in which the callback is updated, run, and rescheduled, after
+						// which the push notification is delivered and is processed. cancelling the newly rescheduled
+						// pending local push notification at this point will terminate the local invocation loop, and the 
+						// callback command at this point will contain an invalid invocation ID causing it to not be 
+						// rescheduled). thus, both local and remote invocation will terminate and the probe will halt.
+						UserNotifications.UNUserNotificationCenter.Current.RemoveDeliveredNotifications(new[] { callbackId });
 #endif
 
 						await SensusContext.Current.CallbackScheduler.RaiseCallbackAsync(callbackId, invocationId);
