@@ -202,9 +202,6 @@
     <PackageReference Include="PInvoke.NCrypt">
       <Version>0.7.124</Version>
     </PackageReference>
-    <PackageReference Include="Plugin.CurrentActivity">
-      <Version>2.1.0.4</Version>
-    </PackageReference>
     <PackageReference Include="Portable.BouncyCastle">
       <Version>1.9.0</Version>
     </PackageReference>

@@ -77,14 +77,6 @@ namespace Sensus.Android
 
 			ZXing.Net.Mobile.Forms.Android.Platform.Init();
 
-			// initialize the current activity plugin here as well as in the service,
-			// since this activity will be starting the service after it is created.
-			// only initializing the plugin in the service was keeping the plugin from
-			// being properly initialized, presumably because the plugin missed the 
-			// lifecycle events of the activity. we want the plugin to have be 
-			// initialized regardless of how the app comes to be created.
-			CrossCurrentActivity.Current.Init(this, savedInstanceState);
-
 #if UI_TESTING
             Forms.ViewInitialized += (sender, e) =>
             {
