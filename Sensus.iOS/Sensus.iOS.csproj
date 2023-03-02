@@ -246,9 +246,6 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.2</Version>
     </PackageReference>
-    <PackageReference Include="PCLCrypto">
-      <Version>2.0.147</Version>
-    </PackageReference>
     <PackageReference Include="PInvoke.NCrypt">
       <Version>0.7.124</Version>
     </PackageReference>
