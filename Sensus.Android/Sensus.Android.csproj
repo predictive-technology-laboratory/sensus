@@ -187,9 +187,6 @@
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.2</Version>
     </PackageReference>
-    <PackageReference Include="PCLStorage">
-      <Version>1.0.2</Version>
-    </PackageReference>
     <PackageReference Include="PInvoke.NCrypt">
       <Version>0.7.124</Version>
     </PackageReference>
