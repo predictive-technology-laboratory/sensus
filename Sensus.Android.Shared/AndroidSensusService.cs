@@ -76,24 +76,7 @@ namespace Sensus.Android
 				serviceHelper.Logger.Log(message + "Service helper already exists.", LoggingLevel.Normal, typeof(AndroidSensusService));
 			}
 
-			// after android 26, starting a foreground service requires the use of StartForegroundService rather than StartService.
-			// in either case, the service itself will call StartForeground after it has started. more info:  
-			// 
-			//     https://developer.android.com/reference/android/content/Context.html#startForegroundService(android.content.Intent)
-			//
-			// also see notes on backwards compatibility for how the compiler directives are used below:
-			//
-			//    see the Backwards Compatibility article for more information
-#if __ANDROID_26__
-			if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-			{
-				Application.Context.StartForegroundService(serviceIntent);
-			}
-			else
-#endif
-			{
-				Application.Context.StartService(serviceIntent);
-			}
+			Application.Context.StartForegroundService(serviceIntent);
 		}
 
 		private readonly List<AndroidSensusServiceBinder> _bindings = new List<AndroidSensusServiceBinder>();
