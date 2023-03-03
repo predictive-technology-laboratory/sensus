@@ -67,22 +67,7 @@ namespace Sensus.Android
 					_utteranceWait.Reset();
 					_utteranceIdToWaitFor = Guid.NewGuid().ToString();
 
-					// see the Backwards Compatibility article for more information
-#if __ANDROID_21__
-					if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
-					{
-						_textToSpeech.Speak(text, QueueMode.Add, null, _utteranceIdToWaitFor);
-					}
-					else
-#endif
-					{
-						// ignore deprecation warning
-#pragma warning disable 618
-						Dictionary<string, string> speakParams = new Dictionary<string, string>();
-						speakParams.Add(TextToSpeech.Engine.KeyParamUtteranceId, _utteranceIdToWaitFor);
-						_textToSpeech.Speak(text, QueueMode.Add, speakParams);
-#pragma warning restore 618
-					}
+					_textToSpeech.Speak(text, QueueMode.Add, null, _utteranceIdToWaitFor);
 
 					_utteranceWait.WaitOne();
 				}
