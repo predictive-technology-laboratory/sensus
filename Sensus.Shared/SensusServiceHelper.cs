@@ -1885,9 +1885,14 @@ namespace Sensus
 
 		public async Task<PermissionStatus> ObtainLocationPermissionAsync()
 		{
-			await ObtainPermissionAsync<Permissions.LocationWhenInUse>();
+			PermissionStatus status = await ObtainPermissionAsync<Permissions.LocationWhenInUse>();
 
-			return await ObtainPermissionAsync<Permissions.LocationAlways>();
+			if (status == PermissionStatus.Granted)
+			{
+				return await ObtainPermissionAsync<Permissions.LocationAlways>();
+			}
+
+			else return status;
 		}
 
 		public async Task UpdatePushNotificationRegistrationsAsync(CancellationToken cancellationToken)
