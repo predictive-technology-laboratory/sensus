@@ -47,6 +47,7 @@ using FileProvider = AndroidX.Core.Content.FileProvider;
 using AndroidContext = Android.Content.Context;
 using SensusContext = Sensus.Context.SensusContext;
 using System.Linq;
+using Android.Telephony;
 
 namespace Sensus.Android
 {
@@ -64,7 +65,8 @@ namespace Sensus.Android
 		private string _pushNotificationToken;
 
 		public static BluetoothManager BluetoothManager => Application.Context.GetSystemService(AndroidContext.BluetoothService) as BluetoothManager;
-
+		public static TelephonyManager TelephonyManager => Application.Context.GetSystemService(AndroidContext.TelephonyService) as TelephonyManager;
+		
 		public override string DeviceId
 		{
 			get { return _deviceId; }
