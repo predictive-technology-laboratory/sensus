@@ -16,25 +16,19 @@ using Android.App;
 using Android.Telephony;
 using Sensus.Probes.Network;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 
-#warning AndroidCellTowerProbe uses obsolete code.
-#pragma warning disable CS0618 // Type or member is obsolete
 namespace Sensus.Android.Probes.Network
 {
 	public class AndroidCellTowerProbe : CellTowerProbe
 	{
-		private TelephonyManager _telephonyManager;
-		private AndroidCellTowerChangeListener _cellTowerChangeListener;
+		private readonly AndroidCellInfoListener _listener;
 
 		public AndroidCellTowerProbe()
 		{
-			_cellTowerChangeListener = new AndroidCellTowerChangeListener();
-			_cellTowerChangeListener.CellTowerChanged += async (o, cellTowerLocation) =>
-			{
-				await StoreDatumAsync(new CellTowerDatum(DateTimeOffset.UtcNow, cellTowerLocation));
-			};
+			_listener = new(this);
 		}
 
 		protected override async Task InitializeAsync()
@@ -43,8 +37,7 @@ namespace Sensus.Android.Probes.Network
 
 			if (await SensusServiceHelper.Get().ObtainLocationPermissionAsync() == PermissionStatus.Granted)
 			{
-				_telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
-				if (_telephonyManager == null)
+				if (AndroidSensusServiceHelper.TelephonyManager == null)
 				{
 					throw new NotSupportedException("No telephony present.");
 				}
@@ -59,19 +52,53 @@ namespace Sensus.Android.Probes.Network
 			}
 		}
 
+		public async Task CreateDatumsAsync(IList<CellInfo> cellInfos)
+		{
+			foreach (CellInfo cellInfo in cellInfos)
+			{
+				string cellIdentity = cellInfo.CellIdentity.ToString();
+
+				if (cellInfo is CellInfoCdma cdma)
+				{
+					cellIdentity = $"[base_station_id={cdma.CellIdentity.BasestationId},base_station_lat={cdma.CellIdentity.Latitude},base_station_lon={cdma.CellIdentity.Longitude},network_id={cdma.CellIdentity.NetworkId},system_id={cdma.CellIdentity.SystemId}]";
+				}
+				else if (cellInfo is CellInfoGsm gsm)
+				{
+					cellIdentity = $"[cid={gsm.CellIdentity.Cid},lac={gsm.CellIdentity.Lac}]";
+				}
+				else if (cellInfo is CellInfoLte lte)
+				{
+
+				}
+				else if (cellInfo is CellInfoNr nr)
+				{
+
+				}
+				else if (cellInfo is CellInfoTdscdma tdscdma)
+				{
+
+				}
+				else if (cellInfo is CellInfoWcdma wcdma)
+				{
+
+				}
+
+				await StoreDatumAsync(new CellTowerDatum(DateTimeOffset.FromUnixTimeMilliseconds(cellInfo.TimestampMillis), cellIdentity));
+			}
+		}
+
 		protected override async Task StartListeningAsync()
 		{
 			await base.StartListeningAsync();
 
-			_telephonyManager.Listen(_cellTowerChangeListener, PhoneStateListenerFlags.CellLocation);
+			AndroidSensusServiceHelper.TelephonyManager.RegisterTelephonyCallback(Application.Context.MainExecutor, _listener);
 		}
 
 		protected override async Task StopListeningAsync()
 		{
 			await base.StopListeningAsync();
 
-			_telephonyManager.Listen(_cellTowerChangeListener, PhoneStateListenerFlags.None);
+			AndroidSensusServiceHelper.TelephonyManager.UnregisterTelephonyCallback(_listener);
 		}
 	}
 }
-#pragma warning restore CS0618 // Type or member is obsolete
