@@ -13,65 +13,20 @@
 // limitations under the License.
 
 using Android.App;
-using Android.Telephony;
 using Sensus.Probes.Communication;
 using System;
 using System.Threading.Tasks;
-using System.Linq;
-using System.Collections.Generic;
-using Plugin.ContactService.Shared;
-using System.Text.RegularExpressions;
 using Xamarin.Essentials;
-using Contact = Plugin.ContactService.Shared.Contact;
 
-#warning AndroidTelephonyProbe uses obsolete code.
-#pragma warning disable CS0618 // Type or member is obsolete
 namespace Sensus.Android.Probes.Communication
 {
 	public class AndroidTelephonyProbe : ListeningTelephonyProbe
 	{
-		private TelephonyManager _telephonyManager;
-		private EventHandler<string> _outgoingCallCallback;
-		private AndroidTelephonyIdleIncomingListener _idleIncomingCallListener;
-		private DateTime? _outgoingIncomingTime;
+		private readonly AndroidCallStateListener _listener;
 
 		public AndroidTelephonyProbe()
 		{
-			_outgoingCallCallback = async (sender, outgoingNumber) =>
-			{
-				_outgoingIncomingTime = DateTime.Now;
-				Contact contact = await SensusServiceHelper.GetContactAsync(outgoingNumber);
-				bool isContact = contact != null;
-
-				await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.OutgoingCall, outgoingNumber, null, isContact, contact?.Name, contact?.Email));
-			};
-
-			_idleIncomingCallListener = new AndroidTelephonyIdleIncomingListener();
-
-			_idleIncomingCallListener.IncomingCall += async (o, incomingNumber) =>
-			{
-				_outgoingIncomingTime = DateTime.Now;
-				Contact contact = await SensusServiceHelper.GetContactAsync(incomingNumber);
-				bool isContact = contact != null;
-
-
-				await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.IncomingCall, incomingNumber, null, isContact, contact?.Name, contact?.Email));
-			};
-
-			_idleIncomingCallListener.Idle += async (o, phoneNumber) =>
-			{
-
-				// only calculate call duration if we have previously received an incoming or outgoing call event (android might report idle upon startup)
-				double? callDurationSeconds = null;
-				if (_outgoingIncomingTime != null)
-				{
-					callDurationSeconds = (DateTime.Now - _outgoingIncomingTime.Value).TotalSeconds;
-				}
-				Contact contact = await SensusServiceHelper.GetContactAsync(phoneNumber);
-				bool isContact = contact != null;
-
-				await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, TelephonyState.Idle, phoneNumber, callDurationSeconds, isContact, contact?.Name, contact?.Email));
-			};
+			_listener = new(this);
 		}
 
 		protected override async Task InitializeAsync()
@@ -80,8 +35,7 @@ namespace Sensus.Android.Probes.Communication
 
 			if (await SensusServiceHelper.Get().ObtainPermissionAsync<Permissions.Phone>() == PermissionStatus.Granted)
 			{
-				_telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
-				if (_telephonyManager == null)
+				if (AndroidSensusServiceHelper.TelephonyManager == null)
 				{
 					throw new NotSupportedException("No telephony present.");
 				}
@@ -96,21 +50,23 @@ namespace Sensus.Android.Probes.Communication
 			}
 		}
 
+		public async Task CreateDatumAsync(int state)
+		{
+			await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, (TelephonyState)state));
+		}
+
 		protected override async Task StartListeningAsync()
 		{
 			await base.StartListeningAsync();
 
-			AndroidTelephonyOutgoingBroadcastReceiver.OUTGOING_CALL += _outgoingCallCallback;
-			_telephonyManager.Listen(_idleIncomingCallListener, PhoneStateListenerFlags.CallState);
+			AndroidSensusServiceHelper.TelephonyManager.RegisterTelephonyCallback(Application.Context.MainExecutor, _listener);
 		}
 
 		protected override async Task StopListeningAsync()
 		{
 			await base.StopListeningAsync();
 
-			AndroidTelephonyOutgoingBroadcastReceiver.OUTGOING_CALL -= _outgoingCallCallback;
-			_telephonyManager.Listen(_idleIncomingCallListener, PhoneStateListenerFlags.None);
+			AndroidSensusServiceHelper.TelephonyManager.UnregisterTelephonyCallback(_listener);
 		}
 	}
 }
-#pragma warning restore CS0618 // Type or member is obsolete

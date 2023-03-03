@@ -20,6 +20,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidImageJobService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidImageMetadataProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidKeystrokeProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\AndroidCallStateListener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\AndroidBluetoothDevice.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\AndroidBluetoothDeviceReceiver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AndroidAttitudeProbe.cs" />
@@ -37,8 +38,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\AndroidSmsIncomingBroadcastReceiver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\AndroidSmsOutgoingObserver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\AndroidSmsProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\AndroidTelephonyIdleIncomingListener.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\AndroidTelephonyOutgoingBroadcastReceiver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\AndroidTelephonyProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\AndroidAmbientTemperatureProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\AndroidBluetoothBroadcastReceiver.cs" />

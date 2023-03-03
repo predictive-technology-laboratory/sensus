@@ -1,4 +1,4 @@
-// Copyright 2014 The Rector & Visitors of the University of Virginia
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,12 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Sensus.Probes.Communication
+using Android.Telephony;
+using static Android.Telephony.TelephonyCallback;
+
+namespace Sensus.Android.Probes.Communication
 {
-	public enum TelephonyState
+	public class AndroidCallStateListener : TelephonyCallback, ICallStateListener
 	{
-		Idle,
-		Ringing,
-		OffHook
+		private readonly AndroidTelephonyProbe _probe;
+
+		public AndroidCallStateListener(AndroidTelephonyProbe probe)
+		{
+			_probe = probe;
+		}
+
+		public async void OnCallStateChanged(int state)
+		{
+			await _probe.CreateDatumAsync(state);
+		}
 	}
 }
