@@ -33,10 +33,6 @@ using Xamarin.Essentials;
 using Platform = Xamarin.Essentials.Platform;
 //using Sensus.Android.Probes.Apps.Accessibility;
 
-#if __ANDROID_23__
-using Plugin.Permissions;
-#endif
-
 namespace Sensus.Android
 {
 	[Activity(Label = "SensusMobile", MainLauncher = true, LaunchMode = LaunchMode.SingleTask, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
@@ -401,7 +397,6 @@ namespace Sensus.Android
 			}
 		}
 
-#if __ANDROID_23__
 		public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
 		{
 			//PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -409,7 +404,6 @@ namespace Sensus.Android
 
 			Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 		}
-#endif
 
 		#endregion
 	}
