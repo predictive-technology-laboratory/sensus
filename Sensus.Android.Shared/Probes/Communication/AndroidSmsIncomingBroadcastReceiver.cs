@@ -23,62 +23,46 @@ using System;
 
 namespace Sensus.Android.Probes.Communication
 {
-    [BroadcastReceiver(Exported = false)]
-    [IntentFilter(new string[] { "android.provider.Telephony.SMS_RECEIVED" }, Categories = new string[] { Intent.CategoryDefault })]
-    public class AndroidSmsIncomingBroadcastReceiver : BroadcastReceiver
-    {
-        public static event EventHandler<SmsDatum> INCOMING_SMS;
+	[BroadcastReceiver(Exported = false)]
+	[IntentFilter(new string[] { "android.provider.Telephony.SMS_RECEIVED" }, Categories = new string[] { Intent.CategoryDefault })]
+	public class AndroidSmsIncomingBroadcastReceiver : BroadcastReceiver
+	{
+		public static event EventHandler<SmsDatum> INCOMING_SMS;
 
-        public override void OnReceive(global::Android.Content.Context context, Intent intent)
-        {
-            // this method is usually called on the UI thread and can crash the app if it throws an exception
-            try
-            {
-                if (intent == null)
-                {
-                    throw new ArgumentNullException(nameof(intent));
-                }
+		public override void OnReceive(global::Android.Content.Context context, Intent intent)
+		{
+			// this method is usually called on the UI thread and can crash the app if it throws an exception
+			try
+			{
+				if (intent == null)
+				{
+					throw new ArgumentNullException(nameof(intent));
+				}
 
-                if (INCOMING_SMS != null && intent.Action == "android.provider.Telephony.SMS_RECEIVED")
-                {
-                    Bundle bundle = intent.Extras;
+				if (INCOMING_SMS != null && intent.Action == "android.provider.Telephony.SMS_RECEIVED")
+				{
+					Bundle bundle = intent.Extras;
 
-                    if (bundle != null)
-                    {
-                        Java.Lang.Object[] pdus = (Java.Lang.Object[])bundle.Get("pdus");
-                        for (int i = 0; i < pdus.Length; i++)
-                        {
-                            SmsMessage message;
+					if (bundle != null)
+					{
+						Java.Lang.Object[] pdus = (Java.Lang.Object[])bundle.Get("pdus");
+						for (int i = 0; i < pdus.Length; i++)
+						{
+							SmsMessage message = SmsMessage.CreateFromPdu((byte[])pdus[i], intent.GetStringExtra("format"));
 
-                            // see the Backwards Compatibility article for more information
-#if __ANDROID_23__
-                            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
-                            {
-                                message = SmsMessage.CreateFromPdu((byte[])pdus[i], intent.GetStringExtra("format"));  // API 23
-                            }
-                            else
-#endif
-                            {
-                                // ignore deprecation warning
-#pragma warning disable 618
-                                message = SmsMessage.CreateFromPdu((byte[])pdus[i]);
-#pragma warning restore 618
-                            }
+							Contact contact = SensusServiceHelper.GetContactAsync(message.OriginatingAddress).Result;
+							bool isContact = contact != null;
 
-                            Contact contact = SensusServiceHelper.GetContactAsync(message.OriginatingAddress).Result;
-                            bool isContact = contact != null;
+							INCOMING_SMS(this, new SmsDatum(DateTimeOffset.FromUnixTimeMilliseconds(message.TimestampMillis), message.OriginatingAddress, null, message.MessageBody, false, isContact, contact?.Name, contact?.Email));
+						}
 
-
-                            INCOMING_SMS(this, new SmsDatum(DateTimeOffset.FromUnixTimeMilliseconds(message.TimestampMillis), message.OriginatingAddress, null, message.MessageBody, false, isContact, contact?.Name, contact?.Email));
-                        }
-
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                SensusException.Report("Exception in SMS broadcast receiver:  " + ex.Message, ex);
-            }
-        }
-    }
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				SensusException.Report("Exception in SMS broadcast receiver:  " + ex.Message, ex);
+			}
+		}
+	}
 }
