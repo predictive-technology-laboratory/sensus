@@ -17,7 +17,7 @@ using Android.Content;
 using Sensus.Exceptions;
 using System;
 
-#warning AndroidWlanBroadcastReceiver has obsolete code.
+#warning AndroidTelephonyOutgoingBroadcastReceiver uses obsolete code.
 #pragma warning disable CS0618 // Type or member is obsolete
 namespace Sensus.Android.Probes.Communication
 {

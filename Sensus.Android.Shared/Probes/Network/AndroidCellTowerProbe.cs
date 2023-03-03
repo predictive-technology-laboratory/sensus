@@ -19,7 +19,7 @@ using System;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 
-#warning AndroidCellTowerProbe has obsolete code.
+#warning AndroidCellTowerProbe uses obsolete code.
 #pragma warning disable CS0618 // Type or member is obsolete
 namespace Sensus.Android.Probes.Network
 {

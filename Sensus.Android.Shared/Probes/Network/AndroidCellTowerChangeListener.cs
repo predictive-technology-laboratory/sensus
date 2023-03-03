@@ -17,7 +17,7 @@ using System;
 using Android.Telephony.Cdma;
 using Android.Telephony.Gsm;
 
-#warning AndroidCellTowerChangeListener has obsolete code.
+#warning AndroidCellTowerChangeListener uses obsolete code.
 #pragma warning disable CS0618 // Type or member is obsolete
 namespace Sensus.Android.Probes.Network
 {

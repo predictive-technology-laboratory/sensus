@@ -9,6 +9,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using XamarinApplication = Xamarin.Forms.Application;
 
+#warning AndroidApplicationUsageManager uses obsolete code.
+#pragma warning disable CS0618 // Type or member is obsolete
 namespace Sensus.Android.Probes.Apps
 {
 	public class AndroidApplicationUsageManager
@@ -84,3 +86,4 @@ namespace Sensus.Android.Probes.Apps
 		}
 	}
 }
+#pragma warning restore CS0618 // Type or member is obsolete

@@ -15,7 +15,7 @@
 using Android.Telephony;
 using System;
 
-#warning AndroidTelephonyIdleIncomingListener has obsolete code.
+#warning AndroidTelephonyIdleIncomingListener uses obsolete code.
 #pragma warning disable CS0618 // Type or member is obsolete
 namespace Sensus.Android.Probes.Communication
 {
@@ -45,4 +45,4 @@ namespace Sensus.Android.Probes.Communication
 		}
 	}
 }
-#pragma warning restore CS0618
+#pragma warning restore CS0618 // Type or member is obsolete

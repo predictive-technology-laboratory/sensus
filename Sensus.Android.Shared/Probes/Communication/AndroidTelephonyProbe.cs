@@ -24,7 +24,7 @@ using System.Text.RegularExpressions;
 using Xamarin.Essentials;
 using Contact = Plugin.ContactService.Shared.Contact;
 
-#warning AndroidTelephonyProbe has obsolete code.
+#warning AndroidTelephonyProbe uses obsolete code.
 #pragma warning disable CS0618 // Type or member is obsolete
 namespace Sensus.Android.Probes.Communication
 {
@@ -113,4 +113,4 @@ namespace Sensus.Android.Probes.Communication
 		}
 	}
 }
-#pragma warning restore CS0618
+#pragma warning restore CS0618 // Type or member is obsolete
