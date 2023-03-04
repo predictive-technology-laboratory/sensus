@@ -48,6 +48,7 @@ using AndroidContext = Android.Content.Context;
 using SensusContext = Sensus.Context.SensusContext;
 using System.Linq;
 using Android.Telephony;
+using Android.Net.Wifi;
 
 namespace Sensus.Android
 {
@@ -66,7 +67,8 @@ namespace Sensus.Android
 
 		public static BluetoothManager BluetoothManager => Application.Context.GetSystemService(AndroidContext.BluetoothService) as BluetoothManager;
 		public static TelephonyManager TelephonyManager => Application.Context.GetSystemService(AndroidContext.TelephonyService) as TelephonyManager;
-		
+		public static ConnectivityManager ConnectivityManager => Application.Context.GetSystemService(AndroidContext.ConnectivityService) as ConnectivityManager;
+
 		public override string DeviceId
 		{
 			get { return _deviceId; }
