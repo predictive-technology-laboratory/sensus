@@ -29,6 +29,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AndroidMagnetometerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AndroidPedometerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\AndroidCellInfoListener.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\AndroidNetworkCallback.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\HideSliderEffect.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\SliderInputEffect.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Callbacks\AndroidCallbackScheduler.cs" />
@@ -60,7 +61,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Movement\AndroidLocationFenceProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\AndroidCellTowerProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\AndroidListeningWlanProbe.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Network\AndroidWlanBroadcastReceiver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AndroidActivityResultRequestCode.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AndroidPowerConnectionChangeBroadcastReceiver.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)AndroidPowerConnectionChangeListener.cs" />
