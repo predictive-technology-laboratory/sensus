@@ -62,7 +62,6 @@ namespace Sensus.Android
 		private bool _userDeniedBluetoothEnable;
 		private TimeSpan _wakeLockTime;
 		private DateTime? _wakeLockTimestamp;
-		private ManualResetEventSlim _focusEvent;
 		private string _pushNotificationToken;
 
 		public static BluetoothManager BluetoothManager => Application.Context.GetSystemService(AndroidContext.BluetoothService) as BluetoothManager;
@@ -209,7 +208,6 @@ namespace Sensus.Android
 			_userDeniedBluetoothEnable = false;
 			_wakeLock = (Application.Context.GetSystemService(global::Android.Content.Context.PowerService) as PowerManager).NewWakeLock(WakeLockFlags.Partial, "SENSUS");
 			_deviceId = Settings.Secure.GetString(Application.Context.ContentResolver, Settings.Secure.AndroidId);
-			_focusEvent = new ManualResetEventSlim();
 		}
 
 		#region main activity
@@ -764,39 +762,6 @@ namespace Sensus.Android
 		public SensorManager GetSensorManager()
 		{
 			return Application.Context.GetSystemService(global::Android.Content.Context.SensorService) as SensorManager;
-		}
-
-		public void WaitForFocus()
-		{
-			WaitForFocus(CancellationToken.None);
-		}
-		public void WaitForFocus(CancellationToken cancellationToken)
-		{
-			_focusEvent.Reset();
-
-			if (cancellationToken.IsCancellationRequested == false)
-			{
-				try
-				{
-					_focusEvent.Wait(cancellationToken);
-				}
-				catch (System.OperationCanceledException)
-				{
-
-				}
-			}
-		}
-
-		public void StopWaitingForFocus()
-		{
-			_focusEvent.Set();
-		}
-
-		public override async Task StopAsync()
-		{
-			await base.StopAsync();
-
-			_focusEvent.Dispose();
 		}
 
 		public override string GetMimeType(string path)

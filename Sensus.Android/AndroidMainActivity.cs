@@ -251,8 +251,6 @@ namespace Sensus.Android
 			{
 				if (hasFocus)
 				{
-					serviceHelper.StopWaitingForFocus();
-
 					serviceHelper.SetFocusedMainActivity(this);
 				}
 				else
