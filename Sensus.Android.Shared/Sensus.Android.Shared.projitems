@@ -13,13 +13,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Context\AndroidSensusContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidAccessibilityProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidAccessibilityService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidApplicationUsageManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidApplicationUsageStatsProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidApplicationUsageEventProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidCalendarProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidImageJobService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidImageMetadataProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidKeystrokeProbe.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\AndroidPermissions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\AndroidCallStateListener.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\AndroidBluetoothDevice.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Context\AndroidBluetoothDeviceReceiver.cs" />
