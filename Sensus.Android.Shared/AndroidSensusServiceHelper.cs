@@ -213,6 +213,16 @@ namespace Sensus.Android
 			_deviceId = Settings.Secure.GetString(Application.Context.ContentResolver, Settings.Secure.AndroidId);
 		}
 
+		protected override string GetPlatformRationale<TPermission>()
+		{
+			if (typeof(TPermission) == typeof(AndroidPermissions.UsageStats))
+			{
+				return "Sensus queries usage stats data.";
+			}
+
+			return null;
+		}
+
 		#region main activity
 
 		/// <summary>
