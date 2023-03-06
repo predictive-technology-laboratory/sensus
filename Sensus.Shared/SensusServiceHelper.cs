@@ -1787,88 +1787,10 @@ namespace Sensus
 				{
 					PermissionStatus status = await Permissions.CheckStatusAsync<TPermission>();
 
-					if (Permissions.ShouldShowRationale<TPermission>())
-					{
-						string rationale = null;
-						Type permission = typeof(TPermission);
-
-						if (permission == typeof(Permissions.CalendarRead))
-						{
-							rationale = "Sensus collects calendar information for studies you enroll in.";
-						}
-						else if (permission == typeof(Permissions.Camera))
-						{
-							rationale = "Sensus uses the camera to scan barcodes. Sensus will not record images or video.";
-						}
-						else if (permission == typeof(Permissions.ContactsRead))
-						{
-							rationale = "Sensus collects calendar information for studies you enroll in.";
-						}
-						//else if (permission == typeof(Permissions.Location))
-						//{
-						//	rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
-						//}
-						else if (permission == typeof(Permissions.LocationAlways))
-						{
-							rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
-						}
-						else if (permission == typeof(Permissions.LocationWhenInUse))
-						{
-							rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
-						}
-						else if (permission == typeof(Permissions.Media))
-						{
-							rationale = "Sensus collects media for studies you enroll in.";
-						}
-						else if (permission == typeof(Permissions.Microphone))
-						{
-							rationale = "Sensus uses the microphone to collect sound level information for studies you enroll in. Sensus will not record audio.";
-						}
-						else if (permission == typeof(Permissions.Phone))
-						{
-							rationale = "Sensus collects call information for studies you enroll in. Sensus will not record audio from calls.";
-						}
-						else if (permission == typeof(Permissions.Photos))
-						{
-							rationale = "Sensus collects photos for studies you enroll in.";
-						}
-						else if (permission == typeof(Permissions.Reminders))
-						{
-							rationale = "Sensus collects reminder information for studies you enroll in.";
-						}
-						else if (permission == typeof(Permissions.Sensors))
-						{
-							rationale = "Sensus uses movement sensors to collect information for studies you enroll in.";
-						}
-						else if (permission == typeof(Permissions.Sms))
-						{
-							rationale = "Sensus collects text messages for studies you enroll in.";
-						}
-						else if (permission == typeof(Permissions.Speech))
-						{
-							rationale = "Sensus uses the microphone for studies you enroll in.";
-						}
-						else if (permission == typeof(Permissions.StorageRead))
-						{
-							rationale = "Sensus must be able to read your device's storage for proper operation.";
-						}
-						else if (permission == typeof(Permissions.StorageWrite))
-						{
-							rationale = "Sensus must be able to write to your device's storage for proper operation.";
-						}
-						else
-						{
-							SensusException.Report("Missing rationale for permission request: " + permission.Name);
-						}
-
-						if (rationale != null)
-						{
-							await Application.Current.MainPage.DisplayAlert("Permission Request", $"Sensus will request {permission.Name} permission. {rationale}", "OK");
-						}
-					}
-
 					if (status != PermissionStatus.Granted)
 					{
+						await ShowPermissionRationale<TPermission>();
+
 						status = await Permissions.RequestAsync<TPermission>();
 					}
 
@@ -1893,6 +1815,98 @@ namespace Sensus
 			}
 
 			else return status;
+		}
+
+		protected virtual string GetPlatformRationale<TPermission>()
+		{
+			return null;
+		}
+		public async Task ShowPermissionRationale<TPermission>() where TPermission : Permissions.BasePermission, new()
+		{
+			if (Permissions.ShouldShowRationale<TPermission>())
+			{
+				string rationale;
+				Type permission = typeof(TPermission);
+
+				if (permission == typeof(Permissions.CalendarRead))
+				{
+					rationale = "Sensus collects calendar information for studies you enroll in.";
+				}
+				else if (permission == typeof(Permissions.Camera))
+				{
+					rationale = "Sensus uses the camera to scan barcodes. Sensus will not record images or video.";
+				}
+				else if (permission == typeof(Permissions.ContactsRead))
+				{
+					rationale = "Sensus collects calendar information for studies you enroll in.";
+				}
+				//else if (permission == typeof(Permissions.Location))
+				//{
+				//	rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
+				//}
+				else if (permission == typeof(Permissions.LocationAlways))
+				{
+					rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
+				}
+				else if (permission == typeof(Permissions.LocationWhenInUse))
+				{
+					rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
+				}
+				else if (permission == typeof(Permissions.Media))
+				{
+					rationale = "Sensus collects media for studies you enroll in.";
+				}
+				else if (permission == typeof(Permissions.Microphone))
+				{
+					rationale = "Sensus uses the microphone to collect sound level information for studies you enroll in. Sensus will not record audio.";
+				}
+				else if (permission == typeof(Permissions.Phone))
+				{
+					rationale = "Sensus collects call information for studies you enroll in. Sensus will not record audio from calls.";
+				}
+				else if (permission == typeof(Permissions.Photos))
+				{
+					rationale = "Sensus collects photos for studies you enroll in.";
+				}
+				else if (permission == typeof(Permissions.Reminders))
+				{
+					rationale = "Sensus collects reminder information for studies you enroll in.";
+				}
+				else if (permission == typeof(Permissions.Sensors))
+				{
+					rationale = "Sensus uses movement sensors to collect information for studies you enroll in.";
+				}
+				else if (permission == typeof(Permissions.Sms))
+				{
+					rationale = "Sensus collects text messages for studies you enroll in.";
+				}
+				else if (permission == typeof(Permissions.Speech))
+				{
+					rationale = "Sensus uses the microphone for studies you enroll in.";
+				}
+				else if (permission == typeof(Permissions.StorageRead))
+				{
+					rationale = "Sensus must be able to read your device's storage for proper operation.";
+				}
+				else if (permission == typeof(Permissions.StorageWrite))
+				{
+					rationale = "Sensus must be able to write to your device's storage for proper operation.";
+				}
+				else
+				{
+					rationale = GetPlatformRationale<TPermission>();
+
+					if (rationale == null)
+					{
+						_logger.Log("Missing rationale for permission request: " + permission.Name, LoggingLevel.Normal, GetType());
+					}
+				}
+
+				if (rationale != null)
+				{
+					await Application.Current.MainPage.DisplayAlert("Permission Request", $"Sensus will request {permission.Name} permission. {rationale}", "OK");
+				}
+			}
 		}
 
 		public async Task UpdatePushNotificationRegistrationsAsync(CancellationToken cancellationToken)
