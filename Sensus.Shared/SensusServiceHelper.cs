@@ -499,16 +499,34 @@ namespace Sensus
 		public abstract string DeviceId { get; }
 
 		[JsonIgnore]
-		public abstract string OperatingSystem { get; }
+		public virtual string DeviceManufacturer
+		{
+			get
+			{
+				return DeviceInfo.Manufacturer;
+			}
+		}
+
+		[JsonIgnore]
+		public virtual string DeviceModel
+		{
+			get
+			{
+				return DeviceInfo.Model;
+			}
+		}
+
+		[JsonIgnore]
+		public virtual string OperatingSystem
+		{
+			get
+			{
+				return $"{DeviceInfo.Platform} {DeviceInfo.VersionString}";
+			}
+		}
 
 		[JsonIgnore]
 		public abstract string Version { get; }
-
-		[JsonIgnore]
-		public abstract string DeviceManufacturer { get; }
-
-		[JsonIgnore]
-		public abstract string DeviceModel { get; }
 
 		#region iOS GPS listener settings
 

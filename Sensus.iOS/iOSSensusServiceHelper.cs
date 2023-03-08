@@ -32,7 +32,6 @@ using Newtonsoft.Json;
 using Sensus.Exceptions;
 using Plugin.Geolocator.Abstractions;
 using MobileCoreServices;
-using Xamarin.Essentials;
 
 namespace Sensus.iOS
 {
@@ -43,8 +42,6 @@ namespace Sensus.iOS
 		#endregion
 
 		private readonly string _deviceId;
-		private readonly string _deviceModel;
-		private readonly string _operatingSystem;
 		private NSData _pushNotificationTokenData;
 		private bool _keepAwakeEnabled;
 
@@ -79,24 +76,6 @@ namespace Sensus.iOS
 			get
 			{
 				return _deviceId;
-			}
-		}
-
-		public override string DeviceManufacturer
-		{
-			get { return "Apple"; }
-		}
-
-		public override string DeviceModel
-		{
-			get { return _deviceModel; }
-		}
-
-		public override string OperatingSystem
-		{
-			get
-			{
-				return _operatingSystem;
 			}
 		}
 
@@ -150,23 +129,23 @@ namespace Sensus.iOS
 				_deviceId = Guid.NewGuid().ToString();
 			}
 
-			try
-			{
-				_deviceModel = DeviceInfo.Model;
-			}
-			catch (Exception e)
-			{
-				Logger.Log("Exception while getting device model: " + e.Message, LoggingLevel.Normal, GetType());
-			}
+			//try
+			//{
+			//	_deviceModel = DeviceInfo.Model;
+			//}
+			//catch (Exception e)
+			//{
+			//	Logger.Log("Exception while getting device model: " + e.Message, LoggingLevel.Normal, GetType());
+			//}
 
-			try
-			{
-				_operatingSystem = UIDevice.CurrentDevice.SystemName + " " + UIDevice.CurrentDevice.SystemVersion;
-			}
-			catch (Exception e)
-			{
-				Logger.Log("Exception while getting operating system: " + e.Message, LoggingLevel.Normal, GetType());
-			}
+			//try
+			//{
+			//	_operatingSystem = UIDevice.CurrentDevice.SystemName + " " + UIDevice.CurrentDevice.SystemVersion;
+			//}
+			//catch (Exception e)
+			//{
+			//	Logger.Log("Exception while getting operating system: " + e.Message, LoggingLevel.Normal, GetType());
+			//}
 		}
 
 		public override async Task KeepDeviceAwakeAsync()

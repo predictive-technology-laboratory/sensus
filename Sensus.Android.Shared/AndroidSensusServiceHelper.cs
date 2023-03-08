@@ -76,14 +76,12 @@ namespace Sensus.Android
 			get { return _deviceId; }
 		}
 
-		public override string DeviceManufacturer
+		public override string OperatingSystem
 		{
-			get { return Build.Manufacturer; }
-		}
-
-		public override string DeviceModel
-		{
-			get { return Build.Device; }
+			get
+			{
+				return $"{DeviceInfo.Platform} {Build.VERSION.SdkInt}";
+			}
 		}
 
 		public override bool WiFiConnected
@@ -137,14 +135,6 @@ namespace Sensus.Android
 						throw new Exception("Failed to obtain battery charge percent. Level or scale <= 0.");
 					}
 				}
-			}
-		}
-
-		public override string OperatingSystem
-		{
-			get
-			{
-				return "Android " + Build.VERSION.SdkInt;
 			}
 		}
 
