@@ -45,6 +45,8 @@ namespace Sensus.UI
 		private TaskCompletionSource<NavigationResult> _responseTaskCompletionSource;
 		private ShowNavigationOptions _showNavigationButtons;
 		private bool _confirmNavigation;
+		private readonly string _incompleteSubmissionConfirmation;
+		private readonly string _submitConfirmation;
 		private Timer _timer;
 		private bool _savedState;
 
@@ -56,7 +58,7 @@ namespace Sensus.UI
 			}
 		}
 
-		public Task<NavigationResult> ResponseTask
+		protected Task<NavigationResult> ResponseTask
 		{
 			get { return _responseTaskCompletionSource.Task; }
 		}
@@ -89,6 +91,8 @@ namespace Sensus.UI
 			_responseTaskCompletionSource = new TaskCompletionSource<NavigationResult>();
 			_showNavigationButtons = inputGroup.ShowNavigationButtons;
 			_confirmNavigation = confirmNavigation;
+			_incompleteSubmissionConfirmation = incompleteSubmissionConfirmation;
+			_submitConfirmation = submitConfirmation;
 			_savedState = savedState;
 
 			IsLastPage = totalSteps <= stepNumber;
@@ -212,11 +216,9 @@ namespace Sensus.UI
 
 			_cancelHandler = async (o, e) =>
 			{
-				if (_confirmNavigation == false || string.IsNullOrWhiteSpace(cancelConfirmation) || await DisplayAlert("Confirm", cancelConfirmation, "Yes", "No"))
+				if (_confirmNavigation == false || string.IsNullOrWhiteSpace(cancelConfirmation) || await ConfirmNavigationAsync(cancelConfirmation))
 				{
-					HandleStaleNavigation();
-
-					_responseTaskCompletionSource.TrySetResult(NavigationResult.Cancel);
+					Navigate(NavigationResult.Cancel);
 				}
 			};
 
@@ -224,57 +226,13 @@ namespace Sensus.UI
 			{
 				if (_canNavigateBackward)
 				{
-					HandleStaleNavigation();
-
-					_responseTaskCompletionSource.TrySetResult(NavigationResult.Backward);
+					Navigate(NavigationResult.Backward);
 				}
 			};
 
 			_nextHandler = async (o, e) =>
 			{
-				await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-				{
-					if (!inputGroup.Valid && inputGroup.ForceValidInputs)
-					{
-						await DisplayAlert("Mandatory", "You must provide values for all required fields before proceeding.", "Back");
-					}
-					else
-					{
-						string confirmationMessage = "";
-						NavigationResult navigationResult = NavigationResult.Forward;
-
-						// warn about incomplete inputs if a message is provided
-						if (!inputGroup.Valid && !string.IsNullOrWhiteSpace(incompleteSubmissionConfirmation))
-						{
-							confirmationMessage += incompleteSubmissionConfirmation;
-						}
-
-						if (IsLastPage)
-						{
-							// confirm submission if a message is provided
-							if (!string.IsNullOrWhiteSpace(submitConfirmation))
-							{
-								// if we already warned about incomplete fields, make the submit confirmation sound natural.
-								if (!string.IsNullOrWhiteSpace(confirmationMessage))
-								{
-									confirmationMessage += " Also, this is the final page. ";
-								}
-
-								// confirm submission
-								confirmationMessage += submitConfirmation;
-							}
-
-							navigationResult = NavigationResult.Submit;
-						}
-
-						if (_confirmNavigation == false || string.IsNullOrWhiteSpace(confirmationMessage) || await DisplayAlert("Confirm", confirmationMessage, "Yes", "No"))
-						{
-							HandleStaleNavigation();
-
-							_responseTaskCompletionSource.TrySetResult(navigationResult);
-						}
-					}
-				});
+				await NavigateForwardAsync();
 			};
 
 			#region inputs
@@ -329,6 +287,10 @@ namespace Sensus.UI
 			if (_displayedInputCount > 0)
 			{
 				contentLayout.Children.Add(new BoxView { Color = Color.Transparent, HeightRequest = inputSeparatorHeight });
+			}
+			else
+			{
+
 			}
 			#endregion
 
@@ -483,6 +445,77 @@ namespace Sensus.UI
 		protected EventHandler _cancelHandler;
 		protected EventHandler _nextHandler;
 		protected EventHandler _previousHandler;
+
+		protected Task<bool> ConfirmNavigationAsync(string confirmationMessage)
+		{
+			return Application.Current.MainPage.DisplayAlert("Confirm", confirmationMessage, "Yes", "No");
+		}
+		protected async Task NavigateForwardAsync()
+		{
+			if (!_inputGroup.Valid && _inputGroup.ForceValidInputs)
+			{
+				await DisplayAlert("Mandatory", "You must provide values for all required fields before proceeding.", "Back");
+			}
+			else
+			{
+				string confirmationMessage = "";
+				NavigationResult navigationResult = NavigationResult.Forward;
+
+				// warn about incomplete inputs if a message is provided
+				if (!_inputGroup.Valid && !string.IsNullOrWhiteSpace(_incompleteSubmissionConfirmation))
+				{
+					confirmationMessage += _incompleteSubmissionConfirmation;
+				}
+
+				if (IsLastPage)
+				{
+					// confirm submission if a message is provided
+					if (!string.IsNullOrWhiteSpace(_submitConfirmation))
+					{
+						// if we already warned about incomplete fields, make the submit confirmation sound natural.
+						if (!string.IsNullOrWhiteSpace(confirmationMessage))
+						{
+							confirmationMessage += " Also, this is the final page. ";
+						}
+
+						// confirm submission
+						confirmationMessage += _submitConfirmation;
+					}
+
+					navigationResult = NavigationResult.Submit;
+				}
+
+				if (_confirmNavigation && string.IsNullOrWhiteSpace(confirmationMessage) == false)
+				{
+					if (await ConfirmNavigationAsync(confirmationMessage) == false)
+					{
+						navigationResult = NavigationResult.Backward;
+					}
+				}
+
+				Navigate(navigationResult);
+			}
+		}
+
+		public async Task<NavigationResult> WaitForNavigationAsync()
+		{
+			if (DisplayedInputCount == 0)
+			{
+				await NavigateForwardAsync();
+			}
+
+			return await _responseTaskCompletionSource.Task;
+		}
+
+		public void Navigate(NavigationResult navigationResult)
+		{
+			HandleStaleNavigation();
+
+			if (navigationResult != NavigationResult.None)
+			{
+				_responseTaskCompletionSource.TrySetResult(navigationResult);
+			}
+		}
 
 		public void Navigate(Input input, NavigationResult navigationResult)
 		{

@@ -1461,11 +1461,10 @@ namespace Sensus
 							// if we're on the final input group and no inputs were shown, then we're at the end and we're ready to submit the 
 							// users' responses. first check that the user is ready to submit. if the user isn't ready then move back to the previous 
 							// input group in the backstack, if there is one.
-							if (inputGroupIndex >= inputGroups.Count() - 1 &&                                                     // this is the final input group
-								inputGroupBackStack.Count > 0 &&                                                             // there is an input group to go back to (the current one was not displayed)
-								!string.IsNullOrWhiteSpace(submitConfirmation) &&                                               // we have a submit confirmation
-								confirmNavigation &&                                                                            // we should confirm submission
-								!(await Application.Current.MainPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No"))) // user is not ready to submit
+
+							lastNavigationResult = await inputGroupPage.WaitForNavigationAsync(); // let the InputGroupPage handle navigation
+
+							if (lastNavigationResult  == InputGroupPage.NavigationResult.Backward)
 							{
 								inputGroupIndex = inputGroupBackStack.Pop() - 1;
 							}
@@ -1532,7 +1531,7 @@ namespace Sensus
 								firstPageDisplay = false;
 							}
 
-							lastNavigationResult = await inputGroupPage.ResponseTask;
+							lastNavigationResult = await inputGroupPage.WaitForNavigationAsync();
 
 							await inputGroupPage.DisposeAsync();
 
