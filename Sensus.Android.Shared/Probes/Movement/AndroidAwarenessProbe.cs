@@ -126,12 +126,7 @@ namespace Sensus.Android.Probes.Movement
 				throw new Exception(message);
 			}
 
-			// connect awareness client
-			TaskCompletionSource<bool> clientConnectCompletionSource = new TaskCompletionSource<bool>();
-
 			_fenceClient = Awareness.GetFenceClient(Application.Context);
-
-			await clientConnectCompletionSource.Task;
 		}
 
 		protected override async Task StartListeningAsync()
