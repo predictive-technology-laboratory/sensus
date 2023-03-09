@@ -367,6 +367,9 @@
     <PackageReference Include="Xamarin.Firebase.Messaging">
       <Version>123.0.8</Version>
     </PackageReference>
+    <PackageReference Include="Xamarin.Forms">
+      <Version>5.0.0.2578</Version>
+    </PackageReference>
     <PackageReference Include="Xamarin.Forms.Contacts">
       <Version>1.0.5</Version>
     </PackageReference>

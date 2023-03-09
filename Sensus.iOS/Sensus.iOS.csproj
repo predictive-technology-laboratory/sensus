@@ -406,7 +406,7 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
       <Version>1.7.5</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Forms">
-      <Version>5.0.0.2545</Version>
+      <Version>5.0.0.2578</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Forms.Contacts">
       <Version>1.0.5</Version>
