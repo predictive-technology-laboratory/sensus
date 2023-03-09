@@ -214,10 +214,10 @@ Store. It is possible to run and debug this project on physical and virtual iOS 
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AWSSDK.KeyManagementService">
-      <Version>3.7.101.59</Version>
+      <Version>3.7.101.61</Version>
     </PackageReference>
     <PackageReference Include="AWSSDK.S3">
-      <Version>3.7.103.21</Version>
+      <Version>3.7.103.23</Version>
     </PackageReference>
     <PackageReference Include="ExifLib.PCL">
       <Version>1.0.1</Version>
