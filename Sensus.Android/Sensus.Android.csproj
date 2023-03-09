@@ -374,7 +374,7 @@
       <Version>1.0.5</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.Forms.Maps">
-      <Version>5.0.0.2545</Version>
+      <Version>5.0.0.2578</Version>
     </PackageReference>
     <PackageReference Include="Xamarin.GooglePlayServices.Awareness">
       <Version>71.1600.0</Version>
