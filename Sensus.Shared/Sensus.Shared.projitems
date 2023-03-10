@@ -40,7 +40,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\ListeningLogProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\SavedScriptState.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ConstrainedTimePicker.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\DarkModeCompatibleTextCellcs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\DarkModeCompatibleTextCell.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ButtonValueParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\NavigationButtonLocations.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\SliderWithOptionsInput.cs" />
