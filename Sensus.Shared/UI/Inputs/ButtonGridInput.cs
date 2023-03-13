@@ -38,7 +38,7 @@ namespace Sensus.UI.Inputs
 			ColumnCount = 1;
 			MaxSelectionCount = 1;
 
-			_defaultState = ButtonStates.Default;
+			_defaultState = ButtonStates.Normal;
 		}
 
 		public override object Value

@@ -163,7 +163,7 @@ namespace Sensus.UI.Inputs
 								{
 									if (otherButton.State == ButtonStates.Incorrect)
 									{
-										otherButton.State = ButtonStates.Default;
+										otherButton.State = ButtonStates.Normal;
 									}
 								}
 							});
