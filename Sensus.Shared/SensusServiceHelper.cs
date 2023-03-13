@@ -800,7 +800,7 @@ namespace Sensus
 
 		#endregion
 
-		public Task SaveAsync()
+		public virtual Task SaveAsync()
 		{
 			return Task.Run(() =>
 			{

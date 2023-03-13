@@ -430,5 +430,17 @@ namespace Sensus.iOS
 
 			return UTType.GetPreferredTag(uniformTypeIdentifier, UTType.TagClassMIMEType);
 		}
+
+		public override async Task SaveAsync()
+		{
+			nint saveTaskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
+			{
+				Logger.Log("Ran out of time while saving.", LoggingLevel.Normal, GetType());
+			});
+
+			await base.SaveAsync();
+
+			UIApplication.SharedApplication.EndBackgroundTask(saveTaskId);
+		}
 	}
 }
