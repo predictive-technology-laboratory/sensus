@@ -390,18 +390,16 @@ namespace Sensus.iOS
 				application.EndBackgroundTask(taskId);
 			});
 
-			iOSSensusServiceHelper serviceHelper = SensusServiceHelper.Get() as iOSSensusServiceHelper;
-
-			// if the callback scheduler is timer-based and gps is not running then we need to request remote notifications
 			if (SensusContext.Current.CallbackScheduler is iOSTimerCallbackScheduler scheduler)
 			{
-				bool gpsIsRunning = SensusServiceHelper.Get().GetRunningProtocols().SelectMany(x => x.Probes).OfType<ListeningLocationProbe>().Any(x => x.Enabled);
-
-				await scheduler.RequestNotificationsAsync(gpsIsRunning);
+				await scheduler.RequestNotificationsAsync();
 			}
 
 			// save app state
-			await serviceHelper.SaveAsync();
+			if (SensusServiceHelper.Get() is SensusServiceHelper serviceHelper)
+			{
+				await serviceHelper.SaveAsync();
+			}
 
 			application.EndBackgroundTask(taskId);
 			

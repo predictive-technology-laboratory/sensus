@@ -54,7 +54,7 @@ namespace Sensus.Probes.Location
 			get { return _locator; }
 		}
 
-		private bool ListeningForChanges
+		public bool ListeningForChanges
 		{
 			get { return PositionChanged != null; }
 		}
