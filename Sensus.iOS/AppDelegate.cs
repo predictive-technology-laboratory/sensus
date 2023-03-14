@@ -407,7 +407,7 @@ namespace Sensus.iOS
 		}
 
 		// This method is called when the application is about to terminate. Save data, if needed.
-		public override void WillTerminate(UIApplication uiApplication)
+		public override async void WillTerminate(UIApplication application)
 		{
 			// this method won't be called when the user kills the app using multitasking; however,
 			// it should be called if the system kills the app when it's running in the background.
@@ -440,7 +440,7 @@ namespace Sensus.iOS
 
 			// some online resources indicate that no background time can be requested from within this 
 			// method. so, instead of beginning a background task, just wait for the call to finish.
-			serviceHelper.SaveAsync().Wait();
+			await serviceHelper.SaveAsync();
 		}
 	}
 }
