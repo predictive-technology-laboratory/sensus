@@ -378,7 +378,7 @@ namespace Sensus.iOS
 		// This method should be used to release shared resources and it should store the application state.
 		// If your application supports background exection this method is called instead of WillTerminate
 		// when the user quits.
-		public async override void DidEnterBackground(UIApplication application)
+		public override async void OnResignActivation(UIApplication application)
 		{
 			nint taskId = 0;
 
@@ -404,6 +404,8 @@ namespace Sensus.iOS
 			await serviceHelper.SaveAsync();
 
 			application.EndBackgroundTask(taskId);
+			
+			base.OnResignActivation(application);
 		}
 
 		// This method is called when the application is about to terminate. Save data, if needed.
