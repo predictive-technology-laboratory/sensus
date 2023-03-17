@@ -92,6 +92,7 @@ namespace Sensus.UI.Inputs
 		{
 			_inputs = new List<Input>();
 
+			StoreCompletionRecords = false;
 			Required = false;
 		}
 
