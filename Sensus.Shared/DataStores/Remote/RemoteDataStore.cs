@@ -107,6 +107,11 @@ namespace Sensus.DataStores.Remote
 			set { _writeOnPowerConnect = value; }
 		}
 
+		/// <summary>
+		/// Whether to initiate an additional data upload each time the device is connected to WiFi.
+		/// These additional uploads will respect the other settings (e.g., <see cref="RequireWiFi"/>).
+		/// </summary>
+		/// <value><c>true</c> to upload when connected, otherwise <c>false</c>.</value>
 		[OnOffUiProperty("Write on Wifi Connect:", true, 53)]
 		public bool WriteOnWifiConnect { get; set; }
 
