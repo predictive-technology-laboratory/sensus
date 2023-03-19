@@ -229,6 +229,7 @@ namespace Sensus.DataStores.Remote
 			_writeTimeoutMinutes = 5;
 			_mostRecentSuccessfulWriteTime = null;
 			_writeOnPowerConnect = true;
+			WriteOnWifiConnect = true;
 			_requireWiFi = true;
 			_requireCharging = true;
 			_requiredBatteryChargeLevelPercent = 20;
