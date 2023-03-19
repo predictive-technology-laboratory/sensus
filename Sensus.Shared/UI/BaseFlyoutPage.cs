@@ -18,20 +18,25 @@ namespace Sensus.UI
 {
 	public class BaseFlyoutPage : FlyoutPage
 	{
+		private void InterruptNavigation()
+		{
+			if (Detail is InputGroupPage withoutNavigationPage)
+			{
+				withoutNavigationPage.Interrupt();
+			}
+			else if (Detail is NavigationPage navigationPage && navigationPage.CurrentPage is InputGroupPage withNavigationPage)
+			{
+				withNavigationPage.Interrupt();
+			}
+		}
+
 		protected void RegisterNavigationEvents()
 		{
 			PropertyChanging += (o, e) =>
 			{
 				if (e.PropertyName == nameof(Detail))
 				{
-					if (Detail is InputGroupPage withoutNavigationPage)
-					{
-						withoutNavigationPage.Interrupt();
-					}
-					else if (Detail is NavigationPage navigationPage && navigationPage.CurrentPage is InputGroupPage withNavigationPage)
-					{
-						withNavigationPage.Interrupt();
-					}
+					InterruptNavigation();
 				}
 			};
 		}
