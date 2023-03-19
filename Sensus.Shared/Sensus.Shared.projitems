@@ -39,13 +39,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\ILogProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\ListeningLogProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\User\Scripts\SavedScriptState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UI\BaseFlyoutPage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ConstrainedTimePicker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\DarkModeCompatibleTextCell.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\ButtonValueParser.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\NavigationButtonLocations.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\SliderWithOptionsInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\Inputs\TimedTextInput.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)UI\FlyoutPageExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\MediaView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)MessageEventDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Notifications\UserMessage.cs" />

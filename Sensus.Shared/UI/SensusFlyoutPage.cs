@@ -18,9 +18,42 @@ using Xamarin.Forms;
 
 namespace Sensus.UI
 {
-	public class SensusFlyoutPage : FlyoutPage
+	public class SensusFlyoutPage : BaseFlyoutPage
 	{
 		private SensusDetailPage _flyoutPage;
+
+		//private void InterruptInputGroupPage()
+		//{
+		//	if (Detail is InputGroupPage withoutNavigationPage)
+		//	{
+		//		withoutNavigationPage.Interrupt();
+		//	}
+		//	else if (Detail is NavigationPage navigationPage && navigationPage.CurrentPage is InputGroupPage withNavigationPage)
+		//	{
+		//		withNavigationPage.Interrupt();
+		//	}
+		//}
+
+		//public void RegisterNavigationEvents()
+		//{
+		//	PropertyChanging += (o, e) =>
+		//	{
+		//		if (e.PropertyName == nameof(page.Detail))
+		//		{
+		//			InterruptInputGroupPage();
+
+		//			//if (page.Detail is InputGroupPage withoutNavigationPage)
+		//			//{
+		//			//	withoutNavigationPage.Interrupt();
+		//			//}
+		//			//else if (page.Detail is NavigationPage navigationPage && navigationPage.CurrentPage is InputGroupPage withNavigationPage)
+		//			//{
+		//			//	withNavigationPage.Interrupt();
+		//			//}
+		//		}
+		//	};
+		//}
+
 
 		public SensusFlyoutPage()
 		{
@@ -74,7 +107,7 @@ namespace Sensus.UI
 
 			IsPresented = true;
 
-			this.RegisterNavigationEvents();
+			RegisterNavigationEvents();
 		}
 	}
 }
