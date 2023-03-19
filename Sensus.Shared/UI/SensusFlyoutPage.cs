@@ -73,6 +73,8 @@ namespace Sensus.UI
 			});
 
 			IsPresented = true;
+
+			this.RegisterNavigationEvents();
 		}
 	}
 }
