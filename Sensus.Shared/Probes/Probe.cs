@@ -43,15 +43,29 @@ namespace Sensus.Probes
 
 		public static List<Probe> GetAll()
 		{
-			List<Probe> probes = null;
+			List<Probe> probes = new();
 
-			// the reflection stuff we do below (at least on android) needs to be run on the main thread.
+			// the reflection stuff we do below (at least on Android) needs to be run on the main thread.
 			SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
 			{
-				probes = Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Probe))).Select(t => Activator.CreateInstance(t) as Probe).OrderBy(p => p.DisplayName).ToList();
+				IEnumerable<Type> probeTypes = Assembly.GetExecutingAssembly().GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Probe)));
+
+				foreach (Type probeType in probeTypes)
+				{
+					try
+					{
+						Probe probe = Activator.CreateInstance(probeType) as Probe;
+
+						probes.Add(probe);
+					}
+					catch (Exception e)
+					{
+						SensusServiceHelper.Get().Logger.Log($"Failed to create {probeType.Name}: {e.Message}", LoggingLevel.Normal, typeof(Probe));
+					}
+				}
 			});
 
-			return probes;
+			return probes.OrderBy(p => p.DisplayName).ToList();
 		}
 
 		#endregion
