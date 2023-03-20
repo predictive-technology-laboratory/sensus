@@ -12,11 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Android.App;
-using Android.Telephony;
 using Sensus.Probes.Network;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 
@@ -52,53 +49,23 @@ namespace Sensus.Android.Probes.Network
 			}
 		}
 
-		public async Task CreateDatumsAsync(IList<CellInfo> cellInfos)
+		public async Task CreateDatumsAsync(DateTimeOffset timestamp, string cellInfo)
 		{
-			foreach (CellInfo cellInfo in cellInfos)
-			{
-				string cellIdentity = cellInfo.CellIdentity.ToString();
-
-				if (cellInfo is CellInfoCdma cdma)
-				{
-					cellIdentity = $"[base_station_id={cdma.CellIdentity.BasestationId},base_station_lat={cdma.CellIdentity.Latitude},base_station_lon={cdma.CellIdentity.Longitude},network_id={cdma.CellIdentity.NetworkId},system_id={cdma.CellIdentity.SystemId}]";
-				}
-				else if (cellInfo is CellInfoGsm gsm)
-				{
-					cellIdentity = $"[cid={gsm.CellIdentity.Cid},lac={gsm.CellIdentity.Lac}]";
-				}
-				else if (cellInfo is CellInfoLte lte)
-				{
-
-				}
-				else if (cellInfo is CellInfoNr nr)
-				{
-
-				}
-				else if (cellInfo is CellInfoTdscdma tdscdma)
-				{
-
-				}
-				else if (cellInfo is CellInfoWcdma wcdma)
-				{
-
-				}
-
-				await StoreDatumAsync(new CellTowerDatum(DateTimeOffset.FromUnixTimeMilliseconds(cellInfo.TimestampMillis), cellIdentity));
-			}
+			await StoreDatumAsync(new CellTowerDatum(timestamp, cellInfo));
 		}
 
 		protected override async Task StartListeningAsync()
 		{
 			await base.StartListeningAsync();
 
-			AndroidSensusServiceHelper.TelephonyManager.RegisterTelephonyCallback(Application.Context.MainExecutor, _listener);
+			_listener.StartListening();
 		}
 
 		protected override async Task StopListeningAsync()
 		{
 			await base.StopListeningAsync();
 
-			AndroidSensusServiceHelper.TelephonyManager.UnregisterTelephonyCallback(_listener);
+			_listener.StopListening();
 		}
 	}
 }
