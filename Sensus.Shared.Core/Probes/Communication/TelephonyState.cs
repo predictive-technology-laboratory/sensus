@@ -16,8 +16,8 @@ namespace Sensus.Probes.Communication
 {
 	public enum TelephonyState
 	{
-		Idle,
-		Ringing,
-		OffHook
+		Idle = 0,
+		Ringing = 1,
+		OffHook = 2
 	}
 }

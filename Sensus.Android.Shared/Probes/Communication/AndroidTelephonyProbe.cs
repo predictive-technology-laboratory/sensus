@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Android.App;
 using Sensus.Probes.Communication;
 using System;
 using System.Threading.Tasks;
@@ -50,23 +49,23 @@ namespace Sensus.Android.Probes.Communication
 			}
 		}
 
-		public async Task CreateDatumAsync(int state)
+		public async Task CreateDatumAsync(TelephonyState state)
 		{
-			await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, (TelephonyState)state));
+			await StoreDatumAsync(new TelephonyDatum(DateTimeOffset.UtcNow, state));
 		}
 
 		protected override async Task StartListeningAsync()
 		{
 			await base.StartListeningAsync();
 
-			AndroidSensusServiceHelper.TelephonyManager.RegisterTelephonyCallback(Application.Context.MainExecutor, _listener);
+			_listener.StartListening();
 		}
 
 		protected override async Task StopListeningAsync()
 		{
 			await base.StopListeningAsync();
 
-			AndroidSensusServiceHelper.TelephonyManager.UnregisterTelephonyCallback(_listener);
+			_listener.StopListening();
 		}
 	}
 }

@@ -12,23 +12,98 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using Android.App;
+using Android.OS;
 using Android.Telephony;
-using static Android.Telephony.TelephonyCallback;
+using Sensus.Probes.Communication;
 
 namespace Sensus.Android.Probes.Communication
 {
-	public class AndroidCallStateListener : TelephonyCallback, ICallStateListener
+	public class AndroidCallStateListener
 	{
 		private readonly AndroidTelephonyProbe _probe;
+		private readonly AndroidCallStateCallback _callback;
+		private readonly AndroidPhoneStateListenerShim _listener;
+
+		private class AndroidCallStateCallback : TelephonyCallback, TelephonyCallback.ICallStateListener
+		{
+			private readonly AndroidCallStateListener _listener;
+
+			public AndroidCallStateCallback(AndroidCallStateListener listener)
+			{
+				_listener = listener;
+			}
+
+			public void OnCallStateChanged(int state)
+			{
+				_listener.OnCallStateChanged(state);
+			}
+		}
+
+#pragma warning disable CS0618 // Type or member is obsolete
+		private class AndroidPhoneStateListenerShim : PhoneStateListener
+		{
+			private readonly AndroidCallStateListener _listener;
+
+			public AndroidPhoneStateListenerShim(AndroidCallStateListener listener)
+			{
+				_listener = listener;
+			}
+
+			[Obsolete]
+			public override void OnCallStateChanged(CallState state, string phoneNumber)
+			{
+				_listener.OnCallStateChanged((int)state);
+			}
+		}
+#pragma warning restore CS0618 // Type or member is obsolete
 
 		public AndroidCallStateListener(AndroidTelephonyProbe probe)
 		{
 			_probe = probe;
+
+			if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
+			{
+				_callback = new AndroidCallStateCallback(this);
+			}
+			else
+			{
+				_listener = new AndroidPhoneStateListenerShim(this);
+			}
+		}
+
+		public void StartListening()
+		{
+			if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
+			{
+				AndroidSensusServiceHelper.TelephonyManager.RegisterTelephonyCallback(Application.Context.MainExecutor, _callback);
+			}
+			else
+			{
+#pragma warning disable CS0618 // Type or member is obsolete
+				AndroidSensusServiceHelper.TelephonyManager.Listen(_listener, PhoneStateListenerFlags.CallState);
+#pragma warning restore CS0618 // Type or member is obsolete
+			}
+		}
+
+		public void StopListening()
+		{
+			if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
+			{
+				AndroidSensusServiceHelper.TelephonyManager.UnregisterTelephonyCallback(null);
+			}
+			else
+			{
+#pragma warning disable CS0618 // Type or member is obsolete
+				AndroidSensusServiceHelper.TelephonyManager.Listen(_listener, PhoneStateListenerFlags.None);
+#pragma warning restore CS0618 // Type or member is obsolete
+			}
 		}
 
 		public async void OnCallStateChanged(int state)
 		{
-			await _probe.CreateDatumAsync(state);
+			await _probe.CreateDatumAsync((TelephonyState)state);
 		}
 	}
 }
