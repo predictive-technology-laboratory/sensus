@@ -24,8 +24,7 @@ using System.Collections.Generic;
 using Sensus.Extensions;
 using Sensus.Notifications;
 using Newtonsoft.Json.Linq;
-using Plugin.Connectivity;
-using Plugin.Connectivity.Abstractions;
+using Xamarin.Essentials;
 
 namespace Sensus.DataStores.Remote
 {
@@ -50,7 +49,7 @@ namespace Sensus.DataStores.Remote
 		private string _userNotificationMessage;
 
 		private EventHandler<bool> _powerConnectionChanged;
-		private ConnectivityChangedEventHandler _wifiConnectionChanged;
+		private EventHandler<ConnectivityChangedEventArgs> _wifiConnectionChanged;
 		private CancellationTokenSource _powerConnectWriteCancellationToken;
 		private CancellationTokenSource _wifiConnectWriteCancellationToken;
 
@@ -171,8 +170,10 @@ namespace Sensus.DataStores.Remote
 		/// </summary>
 		/// <value><c>true</c> to alert user when backgrounded; otherwise, <c>false</c>.</value>
 		[OnOffUiProperty("(iOS) Alert User When Backgrounded:", true, 57)]
-		public bool AlertUserWhenBackgrounded {
-			get { return _alertUserWhenBackgrounded; } set { _alertUserWhenBackgrounded = value; }
+		public bool AlertUserWhenBackgrounded
+		{
+			get { return _alertUserWhenBackgrounded; }
+			set { _alertUserWhenBackgrounded = value; }
 		}
 
 		/// <summary>
@@ -190,10 +191,10 @@ namespace Sensus.DataStores.Remote
 		}
 
 		/// <summary>
-			/// Tolerance in milliseconds for running the <see cref="RemoteDataStore"/> before the scheduled 
-			/// time, if doing so will increase the number of batched actions and thereby decrease battery consumption.
-			/// </summary>
-			/// <value>The delay tolerance before.</value>
+		/// Tolerance in milliseconds for running the <see cref="RemoteDataStore"/> before the scheduled 
+		/// time, if doing so will increase the number of batched actions and thereby decrease battery consumption.
+		/// </summary>
+		/// <value>The delay tolerance before.</value>
 		[EntryIntegerUiProperty("Delay Tolerance Before (MS):", true, 60, true)]
 		public int DelayToleranceBeforeMS { get; set; }
 
@@ -249,7 +250,9 @@ namespace Sensus.DataStores.Remote
 					if (_writeOnPowerConnect)
 					{
 						SensusServiceHelper.Get().Logger.Log("Writing to remote on power connect signal.", LoggingLevel.Normal, GetType());
+
 						_powerConnectWriteCancellationToken = new CancellationTokenSource();
+
 						await WriteLocalDataStoreAsync(_powerConnectWriteCancellationToken.Token);
 					}
 				}
@@ -261,12 +264,14 @@ namespace Sensus.DataStores.Remote
 			};
 			_wifiConnectionChanged = async (sender, args) =>
 			{
-				if (args.IsConnected)
+				if (args.NetworkAccess == NetworkAccess.Internet)
 				{
 					if (WriteOnWifiConnect)
 					{
 						SensusServiceHelper.Get().Logger.Log("Writing to remote on Wifi connect signal.", LoggingLevel.Normal, GetType());
+
 						_wifiConnectWriteCancellationToken = new CancellationTokenSource();
+
 						await WriteLocalDataStoreAsync(_wifiConnectWriteCancellationToken.Token);
 					}
 				}
@@ -290,17 +295,19 @@ namespace Sensus.DataStores.Remote
 			// we can't wake up the app on ios. this is problematic since data need to be stored locally and remotely
 			// in something of a reliable schedule; otherwise, we risk data loss (e.g., from device restarts, app kills, etc.).
 			// so, do the best possible thing and bug the user with a notification indicating that data need to be stored.
-			if (_alertUserWhenBackgrounded) {
+			if (_alertUserWhenBackgrounded)
+			{
 				_writeCallback.UserNotificationMessage = _userNotificationMessage;
 			}
-			
+
 #endif
 
 			await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_writeCallback);
 
 			// hook into the AC charge event signal -- add handler to AC broadcast receiver
 			SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;
-			CrossConnectivity.Current.ConnectivityChanged += _wifiConnectionChanged;
+			// subscribe to Wifi connection event
+			Connectivity.ConnectivityChanged += _wifiConnectionChanged;
 		}
 
 		public override async Task StopAsync()
@@ -311,7 +318,8 @@ namespace Sensus.DataStores.Remote
 
 			// unhook from the AC charge event signal -- remove handler to AC broadcast receiver
 			SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged -= _powerConnectionChanged;
-			CrossConnectivity.Current.ConnectivityChanged -= _wifiConnectionChanged;
+			// unsubscribe from Wifi connection event
+			Connectivity.ConnectivityChanged -= _wifiConnectionChanged;
 		}
 
 		public override void Reset()
