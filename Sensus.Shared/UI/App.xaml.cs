@@ -20,7 +20,7 @@ namespace Sensus.UI
 	{
 		public Page FlyoutPage
 		{
-			get { return (MainPage as SensusFlyoutPage).Flyout; }
+			get { return (MainPage as FlyoutPage).Flyout; }
 		}
 
 		public Page DetailPage
