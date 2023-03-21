@@ -232,7 +232,24 @@ namespace Sensus.UI
 
 			_nextHandler = async (o, e) =>
 			{
-				await NavigateForwardAsync();
+				if (!_inputGroup.Valid && _inputGroup.ForceValidInputs)
+				{
+					await DisplayAlert("Mandatory", "You must provide values for all required fields before proceeding.", "Back");
+				}
+				else
+				{
+					if (await ConfirmForwardNavigationAsync())
+					{
+						if (IsLastPage)
+						{
+							Navigate(NavigationResult.Submit);
+						}
+						else
+						{
+							Navigate(NavigationResult.Forward);
+						}
+					}
+				}
 			};
 
 			#region inputs
@@ -287,10 +304,6 @@ namespace Sensus.UI
 			if (_displayedInputCount > 0)
 			{
 				contentLayout.Children.Add(new BoxView { Color = Color.Transparent, HeightRequest = inputSeparatorHeight });
-			}
-			else
-			{
-
 			}
 			#endregion
 
@@ -450,60 +463,42 @@ namespace Sensus.UI
 		{
 			return Application.Current.MainPage.DisplayAlert("Confirm", confirmationMessage, "Yes", "No");
 		}
-		protected async Task NavigateForwardAsync()
+		public async Task<bool> ConfirmForwardNavigationAsync()
 		{
-			if (!_inputGroup.Valid && _inputGroup.ForceValidInputs)
+			string confirmationMessage = "";
+
+			// warn about incomplete inputs if a message is provided
+			if (!_inputGroup.Valid && !string.IsNullOrWhiteSpace(_incompleteSubmissionConfirmation))
 			{
-				await DisplayAlert("Mandatory", "You must provide values for all required fields before proceeding.", "Back");
+				confirmationMessage += _incompleteSubmissionConfirmation;
 			}
-			else
+
+			if (IsLastPage)
 			{
-				string confirmationMessage = "";
-				NavigationResult navigationResult = NavigationResult.Forward;
-
-				// warn about incomplete inputs if a message is provided
-				if (!_inputGroup.Valid && !string.IsNullOrWhiteSpace(_incompleteSubmissionConfirmation))
+				// confirm submission if a message is provided
+				if (!string.IsNullOrWhiteSpace(_submitConfirmation))
 				{
-					confirmationMessage += _incompleteSubmissionConfirmation;
-				}
-
-				if (IsLastPage)
-				{
-					// confirm submission if a message is provided
-					if (!string.IsNullOrWhiteSpace(_submitConfirmation))
+					// if we already warned about incomplete fields, make the submit confirmation sound natural.
+					if (!string.IsNullOrWhiteSpace(confirmationMessage))
 					{
-						// if we already warned about incomplete fields, make the submit confirmation sound natural.
-						if (!string.IsNullOrWhiteSpace(confirmationMessage))
-						{
-							confirmationMessage += " Also, this is the final page. ";
-						}
-
-						// confirm submission
-						confirmationMessage += _submitConfirmation;
+						confirmationMessage += " Also, this is the final page. ";
 					}
 
-					navigationResult = NavigationResult.Submit;
+					// confirm submission
+					confirmationMessage += _submitConfirmation;
 				}
-
-				if (_confirmNavigation && string.IsNullOrWhiteSpace(confirmationMessage) == false)
-				{
-					if (await ConfirmNavigationAsync(confirmationMessage) == false)
-					{
-						navigationResult = NavigationResult.Backward;
-					}
-				}
-
-				Navigate(navigationResult);
 			}
+
+			if (_confirmNavigation && string.IsNullOrWhiteSpace(confirmationMessage) == false)
+			{
+				return await ConfirmNavigationAsync(confirmationMessage);
+			}
+
+			return true;
 		}
 
 		public async Task<NavigationResult> WaitForNavigationAsync()
 		{
-			if (DisplayedInputCount == 0)
-			{
-				await NavigateForwardAsync();
-			}
-
 			return await _responseTaskCompletionSource.Task;
 		}
 

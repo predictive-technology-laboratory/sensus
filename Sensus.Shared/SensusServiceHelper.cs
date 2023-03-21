@@ -1481,12 +1481,16 @@ namespace Sensus
 							// if we're on the final input group and no inputs were shown, then we're at the end and we're ready to submit the 
 							// users' responses. first check that the user is ready to submit. if the user isn't ready then move back to the previous 
 							// input group in the backstack, if there is one.
-
-							lastNavigationResult = await inputGroupPage.WaitForNavigationAsync(); // let the InputGroupPage handle navigation
-
-							if (lastNavigationResult  == InputGroupPage.NavigationResult.Backward)
+							if (inputGroupPage.IsLastPage)
 							{
-								inputGroupIndex = inputGroupBackStack.Pop() - 1;
+								if (await inputGroupPage.ConfirmForwardNavigationAsync())
+								{
+									lastNavigationResult = InputGroupPage.NavigationResult.Submit;
+								}
+								else if (inputGroupBackStack.Count > 0)
+								{
+									inputGroupIndex = inputGroupBackStack.Pop() - 1;
+								}
 							}
 						}
 						// display the page if we've not been canceled
