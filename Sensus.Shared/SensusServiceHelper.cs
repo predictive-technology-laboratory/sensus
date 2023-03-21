@@ -1557,6 +1557,9 @@ namespace Sensus
 
 							lastNavigationResult = await inputGroupPage.WaitForNavigationAsync();
 
+							// set returnPage back in case it was cleared by being interrupted
+							returnPage = inputGroupPage.ReturnPage;
+
 							await inputGroupPage.DisposeAsync();
 
 							if (savedState == null && lastNavigationResult == InputGroupPage.NavigationResult.Paused)
@@ -1592,7 +1595,7 @@ namespace Sensus
 
 			if (useDetailPage)
 			{
-				if (app.DetailPage == currentPage && lastNavigationResult != InputGroupPage.NavigationResult.Paused)
+				if (app.DetailPage == currentPage && returnPage != null)
 				{
 					app.DetailPage = returnPage;
 				}

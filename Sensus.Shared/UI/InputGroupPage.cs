@@ -440,7 +440,7 @@ namespace Sensus.UI
 				// allow the cancellation token to set the result of this page
 				cancellationToken?.Register(() =>
 				{
-					_responseTaskCompletionSource.TrySetResult(NavigationResult.Cancel);
+					Interrupt(false, true);
 				});
 				#endregion
 			}
@@ -552,28 +552,16 @@ namespace Sensus.UI
 			// the only applies to phones with a hard/soft back button. iOS does not have this button. on
 			// android, allow the user to cancel/pause the page with the back button.
 
-			if (_savedState == false)
+			if (_canNavigateBackward)
 			{
-				_cancelHandler?.Invoke(this, EventArgs.Empty);
+				Navigate(NavigationResult.Backward);
 			}
 			else
 			{
-				_responseTaskCompletionSource.SetResult(NavigationResult.Paused);
-
-				if (ReturnPage != null)
-				{
-					App app = Application.Current as App;
-
-					app.DetailPage = ReturnPage;
-				}
+				Interrupt(true, true);
 			}
 
-			if (ReturnPage != null)
-			{
-				return true;
-			}
-
-			return base.OnBackButtonPressed();
+			return true;
 		}
 
 		private void HandleStaleNavigation()
@@ -636,17 +624,26 @@ namespace Sensus.UI
 			}
 		}
 
-		public void Interrupt()
+		public void Interrupt(bool useHandler, bool useReturnPage)
 		{
 			if (_responseTaskCompletionSource.Task.IsCompleted == false)
 			{
+				if (useReturnPage == false)
+				{
+					ReturnPage = null;
+				}
+
 				if (_savedState)
 				{
 					_responseTaskCompletionSource.TrySetResult(NavigationResult.Paused);
 				}
+				else if (useHandler)
+				{
+					_cancelHandler?.Invoke(this, EventArgs.Empty);
+				}
 				else
 				{
-					_responseTaskCompletionSource.TrySetResult(NavigationResult.Cancel);
+					Navigate(NavigationResult.Cancel);
 				}
 			}
 		}

@@ -12,21 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using Xamarin.Forms;
 
 namespace Sensus.UI
 {
 	public class BaseFlyoutPage : FlyoutPage
 	{
-		private void InterruptNavigation()
+		private void InterruptScript()
 		{
-			if (Detail is InputGroupPage withoutNavigationPage)
+			try
 			{
-				withoutNavigationPage.Interrupt();
+				if (Detail is InputGroupPage withoutNavigationPage)
+				{
+					withoutNavigationPage.Interrupt(false, false);
+				}
+				else if (Detail is NavigationPage navigationPage && navigationPage.CurrentPage is InputGroupPage withNavigationPage)
+				{
+					withNavigationPage.Interrupt(false, false);
+				}
 			}
-			else if (Detail is NavigationPage navigationPage && navigationPage.CurrentPage is InputGroupPage withNavigationPage)
+			catch (Exception e)
 			{
-				withNavigationPage.Interrupt();
+				SensusServiceHelper.Get().Logger.Log($"Error interrupting script: {e.Message}", LoggingLevel.Normal, GetType());
 			}
 		}
 
@@ -36,7 +44,7 @@ namespace Sensus.UI
 			{
 				if (e.PropertyName == nameof(Detail))
 				{
-					InterruptNavigation();
+					InterruptScript();
 				}
 			};
 		}
