@@ -2134,6 +2134,11 @@ namespace Sensus
 			// determine what happens with the script state.
 			SavedScriptState savedState = await ScriptRunner.ManageStateAsync(script);
 
+			if (savedState.Restored)
+			{
+				script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Restored, DateTimeOffset.UtcNow, script), CancellationToken.None);
+			}
+
 			foreach (InputGroup inputGroup in script.InputGroups)
 			{
 				inputGroup.ScriptRunner = script.Runner;

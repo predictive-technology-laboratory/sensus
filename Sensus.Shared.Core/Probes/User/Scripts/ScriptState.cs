@@ -80,5 +80,10 @@ namespace Sensus.Probes.User.Scripts
 		/// The user got a reminder to open the script.
 		/// </summary>
 		Reminded,
+
+		/// <summary>
+		/// The script was restored by the user after it was <see cref="Paused"/>
+		/// </summary>
+		Restored,
 	}
 }
