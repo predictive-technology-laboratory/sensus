@@ -2134,7 +2134,7 @@ namespace Sensus
 			// determine what happens with the script state.
 			SavedScriptState savedState = await ScriptRunner.ManageStateAsync(script);
 
-			if (savedState.Restored)
+			if (savedState?.Restored ?? false)
 			{
 				script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Restored, DateTimeOffset.UtcNow, script, savedState.SessionId), CancellationToken.None);
 			}
