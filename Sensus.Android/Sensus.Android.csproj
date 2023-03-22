@@ -155,10 +155,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AWSSDK.KeyManagementService">
-      <Version>3.7.101.61</Version>
+      <Version>3.7.101.71</Version>
     </PackageReference>
     <PackageReference Include="AWSSDK.S3">
-      <Version>3.7.103.23</Version>
+      <Version>3.7.103.33</Version>
     </PackageReference>
     <PackageReference Include="ExifLib.PCL">
       <Version>1.0.1</Version>
