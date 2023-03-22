@@ -1104,7 +1104,7 @@ namespace Sensus
 				{
 					// let the script agent know and store a datum to record the event
 					await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Expired) ?? Task.CompletedTask);
-					script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Expired, DateTimeOffset.UtcNow, script), CancellationToken.None);
+					script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Expired, DateTimeOffset.UtcNow, script, script.Runner.SavedState?.SessionId), CancellationToken.None);
 
 					if (RemoveScripts(script))
 					{
@@ -1122,7 +1122,7 @@ namespace Sensus
 			{
 				// let the script agent know and store a datum to record the event
 				await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Deleted) ?? Task.CompletedTask);
-				script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Deleted, DateTimeOffset.UtcNow, script), CancellationToken.None);
+				script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Deleted, DateTimeOffset.UtcNow, script, script.Runner.SavedState?.SessionId), CancellationToken.None);
 			}
 
 			return RemoveScripts(_scriptsToRun.ToArray());
@@ -2127,7 +2127,7 @@ namespace Sensus
 
 			// let the script agent know and store a datum to record the event
 			await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Opened) ?? Task.CompletedTask);
-			script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Opened, DateTimeOffset.UtcNow, script), CancellationToken.None);
+			script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Opened, DateTimeOffset.UtcNow, script, script.Runner.SavedState?.SessionId), CancellationToken.None);
 
 			await script.Runner.UnscheduleRemindersAsync();
 
@@ -2136,7 +2136,7 @@ namespace Sensus
 
 			if (savedState.Restored)
 			{
-				script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Restored, DateTimeOffset.UtcNow, script), CancellationToken.None);
+				script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Restored, DateTimeOffset.UtcNow, script, savedState.SessionId), CancellationToken.None);
 			}
 
 			foreach (InputGroup inputGroup in script.InputGroups)
@@ -2152,7 +2152,7 @@ namespace Sensus
 
 				await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Cancelled) ?? Task.CompletedTask);
 
-				script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Paused, DateTimeOffset.UtcNow, script), CancellationToken.None);
+				script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Paused, DateTimeOffset.UtcNow, script, savedState?.SessionId), CancellationToken.None);
 
 				if (savedState != null && result.InputGroups != null)
 				{
@@ -2182,6 +2182,7 @@ namespace Sensus
 																				input.GroupId,
 																				input.Id,
 																				script.Id,
+																				savedState.SessionId,
 																				input.LabelText,
 																				input.Name,
 																				input.Value,
@@ -2211,13 +2212,13 @@ namespace Sensus
 				{
 					// let the script agent know and store a datum to record the event
 					await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Cancelled) ?? Task.CompletedTask);
-					script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Cancelled, DateTimeOffset.UtcNow, script), CancellationToken.None);
+					script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Cancelled, DateTimeOffset.UtcNow, script, savedState?.SessionId), CancellationToken.None);
 				}
 				else if (result.NavigationResult == InputGroupPage.NavigationResult.Submit)
 				{
 					// let the script agent know and store a datum to record the event
 					await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Submitted) ?? Task.CompletedTask);
-					script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Submitted, DateTimeOffset.UtcNow, script), CancellationToken.None);
+					script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Submitted, DateTimeOffset.UtcNow, script, savedState?.SessionId), CancellationToken.None);
 
 					// track times when script is completely valid and wasn't cancelled by the user
 					if (script.Valid)
@@ -2292,22 +2293,23 @@ namespace Sensus
 									// collected from the user into a single logical response. each run of the script has its own script.Id so that responses can be
 									// grouped across runs. this is the difference between scriptId and runId in the following line.
 									await script.Runner.Probe.StoreDatumAsync(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow),
-																									  script.Runner.Script.Id,
-																									  script.Runner.Name,
-																									  input.GroupId,
-																									  input.Id,
-																									  script.Id,
-																									  input.LabelText,
-																									  input.Name,
-																									  input.Value,
-																									  script.CurrentDatum?.Id,
-																									  input.Latitude,
-																									  input.Longitude,
-																									  input.LocationUpdateTimestamp,
-																									  script.RunTime.Value,
-																									  input.CompletionRecords,
-																									  input.SubmissionTimestamp ?? DateTimeOffset.UtcNow,
-																									  manualRun), CancellationToken.None);
+																									script.Runner.Script.Id,
+																									script.Runner.Name,
+																									input.GroupId,
+																									input.Id,
+																									script.Id,
+																									savedState?.SessionId,
+																									input.LabelText,
+																									input.Name,
+																									input.Value,
+																									script.CurrentDatum?.Id,
+																									input.Latitude,
+																									input.Longitude,
+																									input.LocationUpdateTimestamp,
+																									script.RunTime.Value,
+																									input.CompletionRecords,
+																									input.SubmissionTimestamp ?? DateTimeOffset.UtcNow,
+																									manualRun), CancellationToken.None);
 								}
 
 								inputStored = true;

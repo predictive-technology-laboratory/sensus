@@ -1111,7 +1111,7 @@ namespace Sensus.Probes.User.Scripts
 				{
 					ScheduledCallback callback = new ScheduledCallback(async c =>
 					{
-						Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Reminded, DateTimeOffset.Now, script), CancellationToken.None);
+						Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Reminded, DateTimeOffset.Now, script, null), CancellationToken.None);
 
 						await Task.CompletedTask;
 					}, startDate - DateTimeOffset.Now, id, Probe.Protocol.Id, Probe.Protocol, null, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS), ScheduledCallbackPriority.High, GetType());
@@ -1364,7 +1364,7 @@ namespace Sensus.Probes.User.Scripts
 
 				if (deliverFutureTime.Item1)
 				{
-					Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.AgentAccepted, script.RunTime.Value, script), CancellationToken.None);
+					Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.AgentAccepted, script.RunTime.Value, script, null), CancellationToken.None);
 				}
 				else
 				{
@@ -1372,13 +1372,13 @@ namespace Sensus.Probes.User.Scripts
 					{
 						SensusServiceHelper.Get().Logger.Log("Agent has declined survey without deferral.", LoggingLevel.Normal, GetType());
 
-						Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.AgentDeclined, script.RunTime.Value, script), CancellationToken.None);
+						Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.AgentDeclined, script.RunTime.Value, script, null), CancellationToken.None);
 					}
 					else if (deliverFutureTime.Item2.Value > DateTimeOffset.UtcNow)
 					{
 						SensusServiceHelper.Get().Logger.Log("Agent has deferred survey until:  " + deliverFutureTime.Item2.Value, LoggingLevel.Normal, GetType());
 
-						Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.AgentDeferred, script.RunTime.Value, script), CancellationToken.None);
+						Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.AgentDeferred, script.RunTime.Value, script, null), CancellationToken.None);
 
 						// check whether we need to expire the rescheduled script at some future point
 						DateTime? expiration = null;
@@ -1419,7 +1419,7 @@ namespace Sensus.Probes.User.Scripts
 
 			// let the script agent know and store a datum to record the event
 			await (Probe.Agent?.ObserveAsync(script, ScriptState.Delivered) ?? Task.CompletedTask);
-			Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Delivered, script.RunTime.Value, script), CancellationToken.None);
+			Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Delivered, script.RunTime.Value, script, null), CancellationToken.None);
 		}
 
 		private string GetCopyName()

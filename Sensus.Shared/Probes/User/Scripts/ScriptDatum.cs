@@ -153,6 +153,15 @@ namespace Sensus.Probes.User.Scripts
 		}
 
 		/// <summary>
+		/// Identifier for the <see cref="SavedScriptState"/>. This identifier changes for each new session,
+		/// e.g. a new invocation or when the script is resumed from being paused by the user or because the app was backgrounded.
+		/// Use this identifier to tie together all generated <see cref="ScriptDatum"/> values for a single session of the <see cref="Script"/>.
+		/// When there is no saved state this should be the same value as the RunId.
+		/// </summary>
+		/// <value>The session identifier.</value>
+		public string SessionId { get; set; }
+
+		/// <summary>
 		/// User's response to an <see cref="Input"/> within a particular invocation of a <see cref="Script"/>. The <see cref="Response"/>
 		/// will be empty (null) when the user does not respond to the <see cref="Input"/>. Even when <see cref="Input.Required"/>
 		/// is enabled, the user is still allowed to skip the <see cref="Input"/> after a warning message, resulting in a null 
@@ -333,7 +342,7 @@ namespace Sensus.Probes.User.Scripts
 			_completionRecords = new List<InputCompletionRecord>();
 		}
 
-		public ScriptDatum(DateTimeOffset timestamp, string scriptId, string scriptName, string groupId, string inputId, string runId, string inputLabel, string inputName, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset? locationTimestamp, DateTimeOffset runTimestamp, List<InputCompletionRecord> completionRecords, DateTimeOffset submissionTimestamp, bool manualRun)
+		public ScriptDatum(DateTimeOffset timestamp, string scriptId, string scriptName, string groupId, string inputId, string runId, string sessionId, string inputLabel, string inputName, object response, string triggerDatumId, double? latitude, double? longitude, DateTimeOffset? locationTimestamp, DateTimeOffset runTimestamp, List<InputCompletionRecord> completionRecords, DateTimeOffset submissionTimestamp, bool manualRun)
 			: base(timestamp)
 		{
 			_scriptId = scriptId;
@@ -341,6 +350,7 @@ namespace Sensus.Probes.User.Scripts
 			_groupId = groupId;
 			_inputId = inputId;
 			_runId = runId;
+			SessionId = sessionId ?? _runId;
 			_inputLabel = inputLabel;
 			_inputName = inputName;
 			_response = response;

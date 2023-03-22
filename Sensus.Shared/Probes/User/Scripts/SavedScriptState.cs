@@ -20,6 +20,7 @@ namespace Sensus.Probes.User.Scripts
 
 		public SavedScriptState(string savePath) : this()
 		{
+			SessionId = Guid.NewGuid().ToString();
 			SavePath = savePath;
 		}
 
@@ -27,6 +28,7 @@ namespace Sensus.Probes.User.Scripts
 		public string SavePath { get; set; }
 		[JsonIgnore]
 		public Stack<int> InputGroupStack { get; set; }
+		public string SessionId { get; set; }
 		public Dictionary<string, ScriptDatum> SavedInputs { get; set; }
 		public Dictionary<string, object> Variables { get; set; }
 		public Dictionary<string, float> Scores { get; set; }
