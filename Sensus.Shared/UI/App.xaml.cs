@@ -45,14 +45,25 @@ namespace Sensus.UI
 
 		public App()
 		{
-			MainPage = new SensusFlyoutPage();
-
 			InitializeComponent();
+
+			MainPage = new SensusFlyoutPage();
 		}
 
 		protected override void OnStart()
 		{
 			base.OnStart();
+		}
+
+		public static void InterruptScript()
+		{
+			if (Current is App app)
+			{
+				if (app.MainPage is BaseFlyoutPage flyoutPage)
+				{
+					flyoutPage.InterruptScript(true);
+				}
+			}
 		}
 	}
 }

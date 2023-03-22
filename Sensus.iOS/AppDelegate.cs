@@ -390,6 +390,8 @@ namespace Sensus.iOS
 				application.EndBackgroundTask(taskId);
 			});
 
+			App.InterruptScript();
+
 			if (SensusContext.Current.CallbackScheduler is iOSTimerCallbackScheduler scheduler)
 			{
 				await scheduler.RequestNotificationsAsync();
@@ -414,6 +416,8 @@ namespace Sensus.iOS
 			// it should also be called if the system shuts down due to loss of battery power.
 			// there doesn't appear to be a way to gracefully stop the app when the user kills it
 			// via multitasking...we'll have to live with that.
+
+			App.InterruptScript();
 
 			SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
 

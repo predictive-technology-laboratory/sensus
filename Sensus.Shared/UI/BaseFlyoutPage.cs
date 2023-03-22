@@ -19,17 +19,17 @@ namespace Sensus.UI
 {
 	public class BaseFlyoutPage : FlyoutPage
 	{
-		private void InterruptScript()
+		public void InterruptScript(bool useReturnPage)
 		{
 			try
 			{
 				if (Detail is InputGroupPage withoutNavigationPage)
 				{
-					withoutNavigationPage.Interrupt(false, false);
+					withoutNavigationPage.Interrupt(false, useReturnPage);
 				}
 				else if (Detail is NavigationPage navigationPage && navigationPage.CurrentPage is InputGroupPage withNavigationPage)
 				{
-					withNavigationPage.Interrupt(false, false);
+					withNavigationPage.Interrupt(false, useReturnPage);
 				}
 			}
 			catch (Exception e)
@@ -44,7 +44,7 @@ namespace Sensus.UI
 			{
 				if (e.PropertyName == nameof(Detail))
 				{
-					InterruptScript();
+					InterruptScript(false);
 				}
 			};
 		}

@@ -180,6 +180,8 @@ namespace Sensus.Android
 		{
 			Console.Error.WriteLine("--------------------------- Pausing activity ---------------------------");
 
+			App.InterruptScript();
+
 			base.OnPause();
 
 			// we disconnect from the service within onpause because onresume always blocks the user while rebinding
@@ -191,6 +193,8 @@ namespace Sensus.Android
 		protected override async void OnStop()
 		{
 			Console.Error.WriteLine("--------------------------- Stopping activity ---------------------------");
+
+			App.InterruptScript();
 
 			base.OnStop();
 
@@ -205,6 +209,8 @@ namespace Sensus.Android
 		protected override void OnDestroy()
 		{
 			Console.Error.WriteLine("--------------------------- Destroying activity ---------------------------");
+
+			App.InterruptScript();
 
 			base.OnDestroy();
 
