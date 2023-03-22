@@ -84,6 +84,11 @@ namespace Sensus.Callbacks
 			return callback.State;
 		}
 
+		public DateTime GetNextCallbackTime()
+		{
+			return _idCallback.Values.Min(x => x.NextExecution ?? DateTime.MaxValue);
+		}
+
 		/// <summary>
 		/// Batches the <see cref="ScheduledCallback.NextExecution"/> value within the parameters of toleration (<see cref="ScheduledCallback.DelayToleranceBefore"/>
 		/// and <see cref="ScheduledCallback.DelayToleranceAfter"/>), given the <see cref="ScheduledCallback"/>s that are already scheduled to run.

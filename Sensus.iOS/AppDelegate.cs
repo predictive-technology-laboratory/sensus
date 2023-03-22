@@ -36,6 +36,7 @@ using Sensus.Notifications;
 using System.Collections.Generic;
 using System.Linq;
 using Sensus.Probes.Location;
+using BackgroundTasks;
 
 namespace Sensus.iOS
 {
@@ -45,6 +46,16 @@ namespace Sensus.iOS
 	[Register("AppDelegate")]
 	public class AppDelegate : FormsApplicationDelegate
 	{
+		public const string BACKGROUND_TASK_NAME = "Maintenance";
+		protected static readonly string BackgroundTaskIdentifier = null;
+		private bool _backgroundTaskRegistered;
+		private const int BACKGROUND_TASK_DELAY = 30;
+
+		static AppDelegate()
+		{
+			BackgroundTaskIdentifier = $"{NSBundle.MainBundle.BundleIdentifier}.{BACKGROUND_TASK_NAME}";
+		}
+
 		public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
 		{
 			DateTime finishLaunchStartTime = DateTime.Now;
@@ -59,7 +70,9 @@ namespace Sensus.iOS
 				PowerConnectionChangeListener = new iOSPowerConnectionChangeListener()
 			};
 
-			SensusContext.Current.CallbackScheduler = new iOSTimerCallbackScheduler(); // new UNUserNotificationCallbackScheduler();
+			iOSTimerCallbackScheduler scheduler = new iOSTimerCallbackScheduler();
+
+			SensusContext.Current.CallbackScheduler = scheduler;
 			SensusContext.Current.Notifier = new UNUserNotificationNotifier();
 			UNUserNotificationCenter.Current.Delegate = new UNUserNotificationDelegate();
 
@@ -129,6 +142,8 @@ namespace Sensus.iOS
 
 			// must come after app load
 			base.FinishedLaunching(application, launchOptions);
+
+			RegisterBackgroundTask();
 
 			// record how long we took to launch. ios is eager to kill apps that don't start fast enough, so log information
 			// to help with debugging.
@@ -210,6 +225,8 @@ namespace Sensus.iOS
 
 			try
 			{
+				CancelMaintenanceBackgroundTask();
+
 				await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
 				{
 					// request authorization to show notifications to the user for data/survey requests.
@@ -305,7 +322,7 @@ namespace Sensus.iOS
 				taskId = application.BeginBackgroundTask(() =>
 				{
 					SensusServiceHelper.Get().Logger.Log("Cancelling token for remote notification processing due to iOS background processing limitations.", LoggingLevel.Normal, GetType());
-					
+
 					cancellationTokenSource.Cancel();
 
 					application.EndBackgroundTask(taskId);
@@ -397,6 +414,8 @@ namespace Sensus.iOS
 				await scheduler.RequestNotificationsAsync();
 			}
 
+			ScheduleMaintenanceBackgroundTask();
+
 			// save app state
 			if (SensusServiceHelper.Get() is SensusServiceHelper serviceHelper)
 			{
@@ -446,5 +465,128 @@ namespace Sensus.iOS
 			// method. so, instead of beginning a background task, just wait for the call to finish.
 			await serviceHelper.SaveAsync();
 		}
+
+		#region Background Processing
+		public void RegisterBackgroundTask()
+		{
+			try
+			{
+				if (UIDevice.CurrentDevice.CheckSystemVersion(13, 0))
+				{
+					if (_backgroundTaskRegistered == false)
+					{
+						_backgroundTaskRegistered = BGTaskScheduler.Shared.Register(BackgroundTaskIdentifier, null, BackgroundMaintenanceTask);
+
+						if (_backgroundTaskRegistered == false)
+						{
+							throw new Exception("Unknown failure.");
+						}
+					}
+				}
+				else
+				{
+					throw new Exception($"Background processing requires iOS 13.0+. Device is iOS {UIDevice.CurrentDevice.SystemVersion}");
+				}
+			}
+			catch (Exception e)
+			{
+				if (SensusServiceHelper.Get() is SensusServiceHelper serviceHelper)
+				{
+					serviceHelper.Logger.Log($"Error registering maintanance background task: {e.Message}", LoggingLevel.Normal, GetType());
+				}
+			}
+		}
+
+		public void ScheduleMaintenanceBackgroundTask()
+		{
+			if (_backgroundTaskRegistered)
+			{
+				if (SensusServiceHelper.Get() is iOSSensusServiceHelper serviceHelper)
+				{
+					try
+					{
+						DateTime nextCallbackTime = SensusContext.Current.CallbackScheduler.GetNextCallbackTime().AddSeconds(BACKGROUND_TASK_DELAY);
+
+						if (nextCallbackTime < DateTime.MaxValue)
+						{
+							BGProcessingTaskRequest request = new(BackgroundTaskIdentifier)
+							{
+								EarliestBeginDate = (NSDate)nextCallbackTime,
+								RequiresExternalPower = false,
+								RequiresNetworkConnectivity = false
+							};
+
+							if (BGTaskScheduler.Shared.Submit(request, out NSError error))
+							{
+								serviceHelper.Logger.Log($"Scheduled maintanance background task. Earliest time: {nextCallbackTime}", LoggingLevel.Normal, GetType());
+							}
+							else
+							{
+								throw new Exception(error.LocalizedDescription);
+							}
+						}
+					}
+					catch (Exception e)
+					{
+						serviceHelper.Logger.Log($"Failed to schedule maintanance background task: {e.Message}", LoggingLevel.Normal, GetType());
+					}
+				}
+			}
+		}
+
+		public void CancelMaintenanceBackgroundTask()
+		{
+			if (_backgroundTaskRegistered)
+			{
+				if (SensusServiceHelper.Get() is iOSSensusServiceHelper serviceHelper)
+				{
+					try
+					{
+						BGTaskScheduler.Shared.Cancel(BackgroundTaskIdentifier);
+
+						SensusServiceHelper.Get().Logger.Log($"Canceled maintanence background task.", LoggingLevel.Normal, GetType());
+					}
+					catch (Exception e)
+					{
+						serviceHelper.Logger.Log($"Failed to cancel maintanance background task: {e.Message}", LoggingLevel.Normal, GetType());
+					}
+				}
+			}
+		}
+
+		public async void BackgroundMaintenanceTask(BGTask task)
+		{
+			if (SensusServiceHelper.Get() is iOSSensusServiceHelper serviceHelper)
+			{
+				try
+				{
+					if (task is BGProcessingTask processingTask)
+					{
+						processingTask.ExpirationHandler = () =>
+						{
+							serviceHelper.Logger.Log("Maintenance background task time expired.", LoggingLevel.Normal, GetType());
+						};
+
+						serviceHelper.Logger.Log("Starting maintenance background task.", LoggingLevel.Normal, GetType());
+
+						ScheduleMaintenanceBackgroundTask();
+
+						if (SensusContext.Current.CallbackScheduler is iOSCallbackScheduler scheduler)
+						{
+							await scheduler.UpdateCallbacksOnActivationAsync();
+						}
+
+						serviceHelper.Logger.Log("Finished maintenance background task.", LoggingLevel.Normal, GetType());
+					}
+				}
+				catch (Exception e)
+				{
+					serviceHelper.Logger.Log($"Error during maintenance background task: {e.Message}", LoggingLevel.Normal, GetType());
+				}
+			}
+
+			task.SetTaskCompleted(true);
+		}
+		#endregion
 	}
 }
