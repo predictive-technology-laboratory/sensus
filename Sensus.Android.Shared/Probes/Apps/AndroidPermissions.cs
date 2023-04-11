@@ -25,6 +25,7 @@ using Process = Android.OS.Process;
 using Uri = Android.Net.Uri;
 using System;
 using Android;
+using Android.Content.PM;
 
 namespace Sensus.Android
 {
@@ -150,25 +151,58 @@ namespace Sensus.Android
 						using AppOpsPermissionListener listener = new(resetEvent);
 						bool confirmDisable = true;
 
-						Intent usageSettings = new(Settings.ActionUsageAccessSettings);
-						usageSettings.SetData(Uri.FromParts("package", Application.Context.PackageName, null));
-						usageSettings.AddFlags(ActivityFlags.NewTask | ActivityFlags.ClearTask | ActivityFlags.NoHistory | ActivityFlags.NoUserAction);
-
 						while (status != PermissionStatus.Granted && confirmDisable == true)
 						{
 							await Task.Run(() =>
 							{
 								AndroidSensusServiceHelper.AppOpsManager.StartWatchingMode(AppOpsManager.OpstrGetUsageStats, Application.Context.PackageName, listener);
-								Platform.CurrentActivity.RegisterActivityLifecycleCallbacks(listener);
+
+								if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
+								{
+									Platform.CurrentActivity.Application.RegisterActivityLifecycleCallbacks(listener);
+								}
+								else
+								{
+									Platform.CurrentActivity.RegisterActivityLifecycleCallbacks(listener);
+								}
 
 								resetEvent.Reset();
 
-								Platform.CurrentActivity.StartActivity(usageSettings);
+								Intent usageSettings = new(Settings.ActionUsageAccessSettings, Uri.FromParts("package", Application.Context.PackageName, null));
+
+								usageSettings.AddFlags(ActivityFlags.NewTask | ActivityFlags.ClearTask | ActivityFlags.NoHistory | ActivityFlags.NoUserAction);
+
+								if (usageSettings.ResolveActivityInfo(Application.Context.PackageManager, PackageInfoFlags.MatchSystemOnly) != null)
+								{
+									Platform.CurrentActivity.StartActivity(usageSettings);
+								}
+								else
+								{
+									usageSettings = new(Settings.ActionUsageAccessSettings);
+
+									ActivityInfo activity = usageSettings.ResolveActivityInfo(Application.Context.PackageManager, PackageInfoFlags.MatchSystemOnly);
+
+									ComponentName component = new(activity.ApplicationInfo.PackageName, activity.Name);
+
+									usageSettings.AddFlags(ActivityFlags.NewTask | ActivityFlags.ClearTask | ActivityFlags.NoHistory | ActivityFlags.NoUserAction);
+
+									usageSettings.SetComponent(component);
+
+									Platform.CurrentActivity.StartActivity(usageSettings);
+								}
 
 								resetEvent.Wait();
 
 								AndroidSensusServiceHelper.AppOpsManager.StopWatchingMode(listener);
-								Platform.CurrentActivity.UnregisterActivityLifecycleCallbacks(listener);
+
+								if (Build.VERSION.SdkInt < BuildVersionCodes.Q)
+								{
+									Platform.CurrentActivity.Application.UnregisterActivityLifecycleCallbacks(listener);
+								}
+								else
+								{
+									Platform.CurrentActivity.UnregisterActivityLifecycleCallbacks(listener);
+								}
 							});
 
 							status = CheckStatus();
@@ -179,7 +213,6 @@ namespace Sensus.Android
 							}
 						}
 					}
-
 				}
 				catch (Exception e)
 				{
