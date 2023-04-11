@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Plugin.Permissions.Abstractions;
 using Syncfusion.SfChart.XForms;
+using Xamarin.Essentials;
 
 namespace Sensus.Probes.Apps
 {
@@ -77,7 +77,7 @@ namespace Sensus.Probes.Apps
 
 			_lastPollTime = DateTime.Now;
 
-			if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Calendar) != PermissionStatus.Granted)
+			if (await SensusServiceHelper.Get().ObtainPermissionAsync<Permissions.CalendarRead>() != PermissionStatus.Granted)
 			{
 				// throw standard exception instead of NotSupportedException, since the user might decide to enable location in the future
 				// and we'd like the probe to be restarted at that time.

@@ -23,7 +23,7 @@ namespace Sensus.Android.Probes.Context
     /// <summary>
     /// A general-purpose broadcast receiver for monitoring BLE states.
     /// </summary>
-    [BroadcastReceiver]
+    [BroadcastReceiver(Exported = false)]
     [IntentFilter(new string[] { BluetoothDevice.ActionFound, BluetoothAdapter.ActionStateChanged }, Categories = new string[] { Intent.CategoryDefault })]
     public class AndroidBluetoothBroadcastReceiver : BroadcastReceiver
     {

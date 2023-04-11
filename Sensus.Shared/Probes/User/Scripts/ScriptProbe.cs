@@ -19,7 +19,6 @@ using System.Text.RegularExpressions;
 using System.Collections.ObjectModel;
 using Syncfusion.SfChart.XForms;
 using System.Collections.Generic;
-using Microsoft.AppCenter.Analytics;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.Reflection;
@@ -27,7 +26,6 @@ using Sensus.Callbacks;
 using Sensus.Exceptions;
 using Sensus.Context;
 using Newtonsoft.Json.Linq;
-using System.Collections.Specialized;
 
 namespace Sensus.Probes.User.Scripts
 {
@@ -67,21 +65,21 @@ namespace Sensus.Probes.User.Scripts
 
 #elif __IOS__
 
-        public static IScriptProbeAgent GetAgent(string agentId)
-        {
-            return GetAgents().SingleOrDefault(agent => agent.Id == agentId);
-        }
+		public static IScriptProbeAgent GetAgent(string agentId)
+		{
+			return GetAgents().SingleOrDefault(agent => agent.Id == agentId);
+		}
 
-        public static List<IScriptProbeAgent> GetAgents()
-        {
-            // get agents from the current assembly. they must be linked at compile time.
-            return Assembly.GetExecutingAssembly()
-                           .GetTypes()
-                           .Where(t => !t.IsAbstract && t.GetInterfaces().Contains(typeof(IScriptProbeAgent)))
-                           .Select(Activator.CreateInstance)
-                           .Cast<IScriptProbeAgent>()
-                           .ToList();
-        }
+		public static List<IScriptProbeAgent> GetAgents()
+		{
+			// get agents from the current assembly. they must be linked at compile time.
+			return Assembly.GetExecutingAssembly()
+						   .GetTypes()
+						   .Where(t => !t.IsAbstract && t.GetInterfaces().Contains(typeof(IScriptProbeAgent)))
+						   .Select(Activator.CreateInstance)
+						   .Cast<IScriptProbeAgent>()
+						   .ToList();
+		}
 
 #endif
 
@@ -110,8 +108,8 @@ namespace Sensus.Probes.User.Scripts
 							_agent = GetAgent(AgentAssemblyBytes, AgentId);
 						}
 #elif __IOS__
-                        // there is no assembly in ios per apple restrictions on dynamically loaded code. agents are baked into the app instead.
-                        _agent = GetAgent(AgentId);
+						// there is no assembly in ios per apple restrictions on dynamically loaded code. agents are baked into the app instead.
+						_agent = GetAgent(AgentId);
 #endif
 
 						// set the agent's policy if we previously received one (e.g., via push notification)
@@ -151,9 +149,6 @@ namespace Sensus.Probes.User.Scripts
 		{
 			get { return _scriptRunners; }
 		}
-
-		[JsonIgnore]
-		public ObservableCollection<Script> UserInitiatedScripts { get; set; }
 
 		public sealed override string DisplayName
 		{
@@ -239,72 +234,6 @@ namespace Sensus.Probes.User.Scripts
 		public ScriptProbe()
 		{
 			_scriptRunners = new ObservableCollection<ScriptRunner>();
-			UserInitiatedScripts = new ObservableCollection<Script>();
-
-			_scriptRunners.CollectionChanged += (s, e) =>
-			{
-				lock (UserInitiatedScripts)
-				{
-					if (e.NewItems != null && e.Action == NotifyCollectionChangedAction.Add)
-					{
-						foreach (ScriptRunner runner in e.NewItems)
-						{
-							AddUserInitiatedScript(runner);
-						}
-					}
-
-					if (e.OldItems != null && e.Action != NotifyCollectionChangedAction.Add && e.Action != NotifyCollectionChangedAction.Move)
-					{
-						foreach (ScriptRunner runner in e.OldItems)
-						{
-							RemoveUserInitiatedScript(runner);
-						}
-					}
-				}
-			};
-		}
-
-		private void AddUserInitiatedScript(ScriptRunner runner, int position = -1)
-		{
-			if (runner.AllowUserInitiation)
-			{
-				Script copy = runner.Script.Copy(true);
-
-				copy.Shuffle();
-
-				if (position < 0)
-				{
-					position = UserInitiatedScripts.Count;
-				}
-
-				UserInitiatedScripts.Insert(position, copy);
-			}
-		}
-
-		private int RemoveUserInitiatedScript(ScriptRunner runner)
-		{
-			if (UserInitiatedScripts.FirstOrDefault(x => x.Runner == runner) is Script existingScript)
-			{
-				//UserInitiatedScripts.Remove(existingScript);
-
-				int index = UserInitiatedScripts.IndexOf(existingScript);
-
-				UserInitiatedScripts.RemoveAt(index);
-
-				return index;
-			}
-
-			return -1;
-		}
-
-		public void ManageUserInitiatedScript(ScriptRunner runner)
-		{
-			lock (UserInitiatedScripts)
-			{
-				int index = RemoveUserInitiatedScript(runner);
-
-				AddUserInitiatedScript(runner, index);
-			}
 		}
 
 		protected override async Task InitializeAsync()
@@ -332,6 +261,12 @@ namespace Sensus.Probes.User.Scripts
 				{
 					await scriptRunner.StartAsync();
 				}
+			}
+
+			// reschedule reminders
+			foreach (Script script in SensusServiceHelper.Get().ScriptsToRun)
+			{
+				await script.Runner.ScheduleRemindersAsync(script);
 			}
 
 			// if the probe agent has requested survey delivery at regular intervals, schedule a repeating callback.
@@ -373,8 +308,6 @@ namespace Sensus.Probes.User.Scripts
 				{
 					{ "Triggers Scheduled", triggersScheduled.ToString() }
 				};
-
-				Analytics.TrackEvent(eventName, properties);
 
 				events.Add(new AnalyticsTrackedEvent(eventName, properties));
 			}

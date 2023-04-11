@@ -20,13 +20,11 @@ using System;
 using Sensus.Callbacks;
 using Sensus.Context;
 using System.IO;
-using Microsoft.AppCenter.Analytics;
 using System.Collections.Generic;
 using Sensus.Extensions;
 using Sensus.Notifications;
 using Newtonsoft.Json.Linq;
-using Plugin.Connectivity;
-using Plugin.Connectivity.Abstractions;
+using Xamarin.Essentials;
 
 namespace Sensus.DataStores.Remote
 {
@@ -51,7 +49,7 @@ namespace Sensus.DataStores.Remote
 		private string _userNotificationMessage;
 
 		private EventHandler<bool> _powerConnectionChanged;
-		private ConnectivityChangedEventHandler _wifiConnectionChanged;
+		private EventHandler<ConnectivityChangedEventArgs> _wifiConnectionChanged;
 		private CancellationTokenSource _powerConnectWriteCancellationToken;
 		private CancellationTokenSource _wifiConnectWriteCancellationToken;
 
@@ -108,6 +106,11 @@ namespace Sensus.DataStores.Remote
 			set { _writeOnPowerConnect = value; }
 		}
 
+		/// <summary>
+		/// Whether to initiate an additional data upload each time the device is connected to WiFi.
+		/// These additional uploads will respect the other settings (e.g., <see cref="RequireWiFi"/>).
+		/// </summary>
+		/// <value><c>true</c> to upload when connected, otherwise <c>false</c>.</value>
 		[OnOffUiProperty("Write on Wifi Connect:", true, 53)]
 		public bool WriteOnWifiConnect { get; set; }
 
@@ -160,15 +163,17 @@ namespace Sensus.DataStores.Remote
 
 		/// <summary>
 		/// Available on iOS only. Whether or not to alert the user with a notification when polling should occur and the
-		/// app is in the background. See the <see cref="PollingProbe"/> overview for information about background considerations. 
+		/// app is in the background. See the <see cref="Probes.PollingProbe"/> overview for information about background considerations. 
 		/// The notifications issued when this setting is enabled encourage the user to bring the app to the foreground so that 
-		/// data polling may occur. Depending on how many <see cref="PollingProbe"/>s are enabled, these notifications can
+		/// data polling may occur. Depending on how many <see cref="Probes.PollingProbe"/>s are enabled, these notifications can
 		/// become excessive for the user.
 		/// </summary>
 		/// <value><c>true</c> to alert user when backgrounded; otherwise, <c>false</c>.</value>
 		[OnOffUiProperty("(iOS) Alert User When Backgrounded:", true, 57)]
-		public bool AlertUserWhenBackgrounded {
-			get { return _alertUserWhenBackgrounded; } set { _alertUserWhenBackgrounded = value; }
+		public bool AlertUserWhenBackgrounded
+		{
+			get { return _alertUserWhenBackgrounded; }
+			set { _alertUserWhenBackgrounded = value; }
 		}
 
 		/// <summary>
@@ -185,12 +190,12 @@ namespace Sensus.DataStores.Remote
 			set { _userNotificationMessage = value; }
 		}
 
-			/// <summary>
-			/// Tolerance in milliseconds for running the <see cref="RemoteDataStore"/> before the scheduled 
-			/// time, if doing so will increase the number of batched actions and thereby decrease battery consumption.
-			/// </summary>
-			/// <value>The delay tolerance before.</value>
-			[EntryIntegerUiProperty("Delay Tolerance Before (MS):", true, 60, true)]
+		/// <summary>
+		/// Tolerance in milliseconds for running the <see cref="RemoteDataStore"/> before the scheduled 
+		/// time, if doing so will increase the number of batched actions and thereby decrease battery consumption.
+		/// </summary>
+		/// <value>The delay tolerance before.</value>
+		[EntryIntegerUiProperty("Delay Tolerance Before (MS):", true, 60, true)]
 		public int DelayToleranceBeforeMS { get; set; }
 
 		/// <summary>
@@ -225,6 +230,7 @@ namespace Sensus.DataStores.Remote
 			_writeTimeoutMinutes = 5;
 			_mostRecentSuccessfulWriteTime = null;
 			_writeOnPowerConnect = true;
+			WriteOnWifiConnect = true;
 			_requireWiFi = true;
 			_requireCharging = true;
 			_requiredBatteryChargeLevelPercent = 20;
@@ -244,7 +250,9 @@ namespace Sensus.DataStores.Remote
 					if (_writeOnPowerConnect)
 					{
 						SensusServiceHelper.Get().Logger.Log("Writing to remote on power connect signal.", LoggingLevel.Normal, GetType());
+
 						_powerConnectWriteCancellationToken = new CancellationTokenSource();
+
 						await WriteLocalDataStoreAsync(_powerConnectWriteCancellationToken.Token);
 					}
 				}
@@ -256,12 +264,14 @@ namespace Sensus.DataStores.Remote
 			};
 			_wifiConnectionChanged = async (sender, args) =>
 			{
-				if (args.IsConnected)
+				if (args.NetworkAccess == NetworkAccess.Internet)
 				{
 					if (WriteOnWifiConnect)
 					{
 						SensusServiceHelper.Get().Logger.Log("Writing to remote on Wifi connect signal.", LoggingLevel.Normal, GetType());
+
 						_wifiConnectWriteCancellationToken = new CancellationTokenSource();
+
 						await WriteLocalDataStoreAsync(_wifiConnectWriteCancellationToken.Token);
 					}
 				}
@@ -285,17 +295,19 @@ namespace Sensus.DataStores.Remote
 			// we can't wake up the app on ios. this is problematic since data need to be stored locally and remotely
 			// in something of a reliable schedule; otherwise, we risk data loss (e.g., from device restarts, app kills, etc.).
 			// so, do the best possible thing and bug the user with a notification indicating that data need to be stored.
-			if (_alertUserWhenBackgrounded) {
+			if (_alertUserWhenBackgrounded)
+			{
 				_writeCallback.UserNotificationMessage = _userNotificationMessage;
 			}
-			
+
 #endif
 
 			await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(_writeCallback);
 
 			// hook into the AC charge event signal -- add handler to AC broadcast receiver
 			SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged += _powerConnectionChanged;
-			CrossConnectivity.Current.ConnectivityChanged += _wifiConnectionChanged;
+			// subscribe to Wifi connection event
+			Connectivity.ConnectivityChanged += _wifiConnectionChanged;
 		}
 
 		public override async Task StopAsync()
@@ -306,7 +318,8 @@ namespace Sensus.DataStores.Remote
 
 			// unhook from the AC charge event signal -- remove handler to AC broadcast receiver
 			SensusContext.Current.PowerConnectionChangeListener.PowerConnectionChanged -= _powerConnectionChanged;
-			CrossConnectivity.Current.ConnectivityChanged -= _wifiConnectionChanged;
+			// unsubscribe from Wifi connection event
+			Connectivity.ConnectivityChanged -= _wifiConnectionChanged;
 		}
 
 		public override void Reset()
@@ -332,8 +345,6 @@ namespace Sensus.DataStores.Remote
 						{ "Storage Latency", (timeElapsedSincePreviousWrite.TotalMilliseconds).RoundToWhole(1000).ToString() }
 					};
 
-					Analytics.TrackEvent(eventName, properties);
-
 					events.Add(new AnalyticsTrackedEvent(eventName, properties));
 				}
 			}
@@ -345,8 +356,6 @@ namespace Sensus.DataStores.Remote
 				{
 					{ "Missing Callback", _writeCallback.Id }
 				};
-
-				Analytics.TrackEvent(eventName, properties);
 
 				events.Add(new AnalyticsTrackedEvent(eventName, properties));
 

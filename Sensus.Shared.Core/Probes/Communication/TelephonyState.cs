@@ -14,10 +14,10 @@
 
 namespace Sensus.Probes.Communication
 {
-    public enum TelephonyState
-    {
-        Idle,
-        OutgoingCall,
-        IncomingCall
-    }
+	public enum TelephonyState
+	{
+		Idle = 0,
+		Ringing = 1,
+		OffHook = 2
+	}
 }

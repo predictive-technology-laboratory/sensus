@@ -16,51 +16,51 @@ using System;
 using Sensus.Probes.Movement;
 using CoreMotion;
 using Foundation;
-using Plugin.Permissions.Abstractions;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 
 namespace Sensus.iOS.Probes.Movement
 {
-    public class iOSAccelerometerProbe : AccelerometerProbe
-    {
-        private CMMotionManager _motionManager;
+	public class iOSAccelerometerProbe : AccelerometerProbe
+	{
+		private CMMotionManager _motionManager;
 
-        protected override async Task InitializeAsync()
-        {
-            await base.InitializeAsync();
+		protected override async Task InitializeAsync()
+		{
+			await base.InitializeAsync();
 
-            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Sensors) == PermissionStatus.Granted)
-            {
-                _motionManager = new CMMotionManager();
-            }
-            else
-            {
-                // throw standard exception instead of NotSupportedException, since the user might decide to enable sensors in the future
-                // and we'd like the probe to be restarted at that time.
-                string error = "This device does not contain an accelerometer, or the user has denied access to it. Cannot start accelerometer probe.";
-                await SensusServiceHelper.Get().FlashNotificationAsync(error);
-                throw new Exception(error);
-            }
-        }
+			if (await SensusServiceHelper.Get().ObtainPermissionAsync<Permissions.Sensors>() == PermissionStatus.Granted)
+			{
+				_motionManager = new CMMotionManager();
+			}
+			else
+			{
+				// throw standard exception instead of NotSupportedException, since the user might decide to enable sensors in the future
+				// and we'd like the probe to be restarted at that time.
+				string error = "This device does not contain an accelerometer, or the user has denied access to it. Cannot start accelerometer probe.";
+				await SensusServiceHelper.Get().FlashNotificationAsync(error);
+				throw new Exception(error);
+			}
+		}
 
-        protected override async Task StartListeningAsync()
-        {
-            await base.StartListeningAsync();
+		protected override async Task StartListeningAsync()
+		{
+			await base.StartListeningAsync();
 
-            _motionManager?.StartAccelerometerUpdates(new NSOperationQueue(), async (data, error) =>
-            {
-                if (data != null && error == null)
-                {
-                    await StoreDatumAsync(new AccelerometerDatum(DateTimeOffset.UtcNow, data.Acceleration.X, data.Acceleration.Y, data.Acceleration.Z));
-                }
-            });
-        }
+			_motionManager?.StartAccelerometerUpdates(new NSOperationQueue(), async (data, error) =>
+			{
+				if (data != null && error == null)
+				{
+					await StoreDatumAsync(new AccelerometerDatum(DateTimeOffset.UtcNow, data.Acceleration.X, data.Acceleration.Y, data.Acceleration.Z));
+				}
+			});
+		}
 
-        protected override async Task StopListeningAsync()
-        {
-            await base.StopListeningAsync();
+		protected override async Task StopListeningAsync()
+		{
+			await base.StopListeningAsync();
 
-            _motionManager?.StopAccelerometerUpdates();
-        }
-    }
+			_motionManager?.StopAccelerometerUpdates();
+		}
+	}
 }

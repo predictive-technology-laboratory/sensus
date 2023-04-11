@@ -19,6 +19,7 @@ using System.Collections.Specialized;
 using Sensus.UI.UiProperties;
 using Newtonsoft.Json;
 using System.ComponentModel;
+using Sensus.Probes.User.Scripts;
 
 namespace Sensus.UI.Inputs
 {
@@ -33,6 +34,9 @@ namespace Sensus.UI.Inputs
 		public ObservableCollection<Input> Inputs { get; }
 
 		public virtual bool HasInputs => Inputs.Any();
+
+		[JsonIgnore]
+		public ScriptRunner ScriptRunner { get; set; }
 
 		/// <summary>
 		/// Name of the input group.
@@ -98,11 +102,11 @@ namespace Sensus.UI.Inputs
 		/// to the next and/or previous page.
 		/// </summary>
 		/// <value><c>true</c> to hide the navigation buttons; otherwise, <c>false</c>.</value>
-		[ListUiProperty("Show Navigation:", true, 2, new object[] { ShowNavigationOptions.Always, ShowNavigationOptions.WhenValid, ShowNavigationOptions.WhenComplete, ShowNavigationOptions.WhenCorrect, ShowNavigationOptions.Never }, false)]
-		public ShowNavigationOptions ShowNavigationButtons { get; set; }
+		[ListUiProperty("Show Navigation:", true, 2, new object[] { ShowNavigationOptions.Always, ShowNavigationOptions.WhenValid, ShowNavigationOptions.WhenComplete, ShowNavigationOptions.WhenCorrect, ShowNavigationOptions.AfterTimeout, ShowNavigationOptions.Never }, false)]
+		public virtual ShowNavigationOptions ShowNavigationButtons { get; set; }
 
-		[OnOffUiProperty("Place Navigation at Bottom:", true, 3)]
-		public bool PlaceNavigationAtBottom { get; set; }
+		[ListUiProperty("Place Navigation:", true, 3, new object[] { NavigationButtonLocations.Inline, NavigationButtonLocations.End, NavigationButtonLocations.Outside }, false)]
+		public virtual NavigationButtonLocations NavigationPlacement { get; set; }
 
 		[OnOffUiProperty("Prevent Navigation Backward:", true, 3)]
 		public bool HidePreviousButton { get; set; }
@@ -165,7 +169,7 @@ namespace Sensus.UI.Inputs
 		[EntryStringUiProperty("Title:", true, 13, false)]
 		public virtual string Title { get; set; }
 
-		[OnOffUiProperty("Use Navigation View", true, 14)]
+		[OnOffUiProperty("Use Navigation Bar:", true, 14)]
 		public virtual bool UseNavigationBar { get; set; }
 
 		[EntryIntegerUiProperty("Timeout (S):", true, 15, false)]

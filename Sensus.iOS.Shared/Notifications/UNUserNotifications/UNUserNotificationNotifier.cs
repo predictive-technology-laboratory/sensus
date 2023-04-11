@@ -25,170 +25,160 @@ using System.Threading.Tasks;
 
 namespace Sensus.iOS.Notifications.UNUserNotifications
 {
-    public class UNUserNotificationNotifier : iOSNotifier
-    {
-        public override async Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, int? badgeNumber, NotificationUserResponseAction userResponseAction, string userResponseMessage)
-        {
-            await IssueNotificationAsync(title, message, id, alertUser, protocol, badgeNumber, userResponseAction, userResponseMessage, DateTime.Now, null);
-        }
+	public class UNUserNotificationNotifier : iOSNotifier
+	{
+		public override async Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, int? badgeNumber, NotificationUserResponseAction userResponseAction, string userResponseMessage)
+		{
+			await IssueNotificationAsync(title, message, id, alertUser, protocol, badgeNumber, userResponseAction, userResponseMessage, DateTime.Now, null);
+		}
 
-        public async Task IssueSilentNotificationAsync(string id, DateTime triggerDateTime, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
-        {
-            // the user should never see a silent notification since we cancel them when the app is backgrounded. but there are race conditions that
-            // might result in a silent notifiation being scheduled just before the app is backgrounded. give a generic message so that the notification
-            // isn't totally confusing to the user. furthermore, it appears that notifications must have content in order to come back.
-            await IssueNotificationAsync("Notice", "Sensus is running. You may safely ignore this notification if desired. Tap to open Sensus.", id, false, null, null, NotificationUserResponseAction.None, null, triggerDateTime, info, requestCreated);
-        }
+		public async Task IssueSilentNotificationAsync(string id, DateTime triggerDateTime, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
+		{
+			// the user should never see a silent notification since we cancel them when the app is backgrounded. but there are race conditions that
+			// might result in a silent notifiation being scheduled just before the app is backgrounded. give a generic message so that the notification
+			// isn't totally confusing to the user. furthermore, it appears that notifications must have content in order to come back.
+			await IssueNotificationAsync("Notice", "Sensus is running. You may safely ignore this notification if desired. Tap to open Sensus.", id, false, null, null, NotificationUserResponseAction.None, null, triggerDateTime, info, requestCreated);
+		}
 
-        public async Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, int? badgeNumber, NotificationUserResponseAction userResponseAction, string userResponseMessage, DateTime triggerDateTime, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
-        {
-            // the callback scheduler will pass in an initialized user info (containing the callback id, invocation id, etc.), but 
-            // other requests for notifications might not come with such information. initialize the user info if needed.
-            if (info == null)
-            {
-                info = new NSMutableDictionary();
-            }
+		public async Task IssueNotificationAsync(string title, string message, string id, bool alertUser, Protocol protocol, int? badgeNumber, NotificationUserResponseAction userResponseAction, string userResponseMessage, DateTime triggerDateTime, NSMutableDictionary info, Action<UNNotificationRequest> requestCreated = null)
+		{
+			// the callback scheduler will pass in an initialized user info (containing the callback id, invocation id, etc.), but 
+			// other requests for notifications might not come with such information. initialize the user info if needed.
+			if (info == null)
+			{
+				info = new NSMutableDictionary();
+			}
 
-            info.SetValueForKey(new NSString(id), new NSString(NOTIFICATION_ID_KEY));
-            info.SetValueForKey(new NSString(userResponseAction.ToString()), new NSString(NOTIFICATION_USER_RESPONSE_ACTION_KEY));
+			info.SetValueForKey(new NSString(id), new NSString(NOTIFICATION_ID_KEY));
+			info.SetValueForKey(new NSString(userResponseAction.ToString()), new NSString(NOTIFICATION_USER_RESPONSE_ACTION_KEY));
 
-            // values may not be null
-            if (userResponseMessage != null)
-            {
-                info.SetValueForKey(new NSString(userResponseMessage), new NSString(NOTIFICATION_USER_RESPONSE_MESSAGE_KEY));
-            }
+			// values may not be null
+			if (userResponseMessage != null)
+			{
+				info.SetValueForKey(new NSString(userResponseMessage), new NSString(NOTIFICATION_USER_RESPONSE_MESSAGE_KEY));
+			}
 
-            UNMutableNotificationContent content = new UNMutableNotificationContent
-            {
-                UserInfo = info
-            };
+			UNMutableNotificationContent content = new UNMutableNotificationContent
+			{
+				UserInfo = info
+			};
 
-            // the following properties are allowed to be null, but they cannot be set to null.
+			// the following properties are allowed to be null, but they cannot be set to null.
 
-            if (!string.IsNullOrWhiteSpace(title))
-            {
-                content.Title = title;
-            }
+			if (!string.IsNullOrWhiteSpace(title))
+			{
+				content.Title = title;
+			}
 
-            if (!string.IsNullOrWhiteSpace(message))
-            {
-                content.Body = message;
-            }
+			if (!string.IsNullOrWhiteSpace(message))
+			{
+				content.Body = message;
+			}
 
-            // if the notification is configured to alert users and the trigger time doesn't fall within 
-            // one of the protocol's alert exclusion windows, then set the sound.
-            bool triggerIsWithinExclusionWindow = protocol?.TimeIsWithinAlertExclusionWindow(triggerDateTime.TimeOfDay) ?? false;
-            if (alertUser && !triggerIsWithinExclusionWindow)
-            {
-                content.Sound = UNNotificationSound.Default;
-            }
-            else
-            {
-                content.Sound = null;
-            }
+			// if the notification is configured to alert users and the trigger time doesn't fall within 
+			// one of the protocol's alert exclusion windows, then set the sound.
+			bool triggerIsWithinExclusionWindow = protocol?.TimeIsWithinAlertExclusionWindow(triggerDateTime.TimeOfDay) ?? false;
+			if (alertUser && !triggerIsWithinExclusionWindow)
+			{
+				content.Sound = UNNotificationSound.Default;
+			}
+			else
+			{
+				content.Sound = null;
+			}
 
-            if (badgeNumber != null)
-            {
-                content.Badge = NSNumber.FromInt32(badgeNumber.Value);
-            }
+			if (badgeNumber != null)
+			{
+				content.Badge = NSNumber.FromInt32(badgeNumber.Value);
+			}
 
-            UNCalendarNotificationTrigger trigger = null;
+			UNCalendarNotificationTrigger trigger = null;
 
-            // we're going to specify an absolute trigger date below. if this time is in the past by the time
-            // the notification center processes it (race condition), then the notification will not be scheduled. 
-            // so ensure that we leave some time to avoid the race condition by triggering an immediate notification
-            // for any trigger date that is not greater than several seconds into the future.
-            if (triggerDateTime > DateTime.Now + iOSCallbackScheduler.CALLBACK_NOTIFICATION_HORIZON_THRESHOLD)
-            {
-                NSDateComponents triggerDateComponents = new NSDateComponents
-                {
-                    Year = triggerDateTime.Year,
-                    Month = triggerDateTime.Month,
-                    Day = triggerDateTime.Day,
-                    Hour = triggerDateTime.Hour,
-                    Minute = triggerDateTime.Minute,
-                    Second = triggerDateTime.Second,
-                    Calendar = NSCalendar.CurrentCalendar,
-                    TimeZone = NSTimeZone.LocalTimeZone
-                };
+			// we're going to specify an absolute trigger date below. if this time is in the past by the time
+			// the notification center processes it (race condition), then the notification will not be scheduled. 
+			// so ensure that we leave some time to avoid the race condition by triggering an immediate notification
+			// for any trigger date that is not greater than several seconds into the future.
+			if (triggerDateTime > DateTime.Now + iOSCallbackScheduler.CALLBACK_NOTIFICATION_HORIZON_THRESHOLD)
+			{
+				NSDateComponents triggerDateComponents = new NSDateComponents
+				{
+					Year = triggerDateTime.Year,
+					Month = triggerDateTime.Month,
+					Day = triggerDateTime.Day,
+					Hour = triggerDateTime.Hour,
+					Minute = triggerDateTime.Minute,
+					Second = triggerDateTime.Second,
+					Calendar = NSCalendar.CurrentCalendar,
+					TimeZone = NSTimeZone.LocalTimeZone
+				};
 
-                trigger = UNCalendarNotificationTrigger.CreateTrigger(triggerDateComponents, false);
-            }
+				trigger = UNCalendarNotificationTrigger.CreateTrigger(triggerDateComponents, false);
+			}
 
-            UNNotificationRequest notificationRequest = UNNotificationRequest.FromIdentifier(id, content, trigger);
-            requestCreated?.Invoke(notificationRequest);
+			UNNotificationRequest notificationRequest = UNNotificationRequest.FromIdentifier(id, content, trigger);
+			requestCreated?.Invoke(notificationRequest);
 
 
-            // Issue notification only if notifications are allowed during Alert Exclusion Windows
-            if (protocol.TimeIsWithinAlertExclusionWindow(DateTime.Now.TimeOfDay))
-            {
-                if (protocol.AllowNotificationsAlertExclusionWindows)
-                {
-                    await IssueNotificationAsync(notificationRequest);
-                }
-            }
-            else
-            {
-                await IssueNotificationAsync(notificationRequest);
-            }
+			// Issue notification only if notifications are allowed during Alert Exclusion Windows
+			if ((triggerIsWithinExclusionWindow == false) || (protocol?.AllowNotificationsAlertExclusionWindows ?? false))
+			{
+				await IssueNotificationAsync(notificationRequest);
+			}
+		}
 
-           
-            
-        }
+		public async Task IssueNotificationAsync(UNNotificationRequest request)
+		{
+			// although we should never, we might be getting in null requests from somewhere. bail if we do.
+			if (request == null)
+			{
+				SensusException.Report("Null notification request.");
+				return;
+			}
 
-        public async Task IssueNotificationAsync(UNNotificationRequest request)
-        {
-            // although we should never, we might be getting in null requests from somewhere. bail if we do.
-            if (request == null)
-            {
-                SensusException.Report("Null notification request.");
-                return;
-            }
+			// don't issue silent notifications from the background, as they will be displayed to the user upon delivery, and this will confuse the user (they're 
+			// not designed to be seen). this can happen in a race condition where sensus transitions to the background but has a small amount of time to execute,
+			// and in that time a silent callback (e.g., for local data store) is scheduled. checking for background state below will help mitigate this.
+			bool abort = false;
 
-            // don't issue silent notifications from the background, as they will be displayed to the user upon delivery, and this will confuse the user (they're 
-            // not designed to be seen). this can happen in a race condition where sensus transitions to the background but has a small amount of time to execute,
-            // and in that time a silent callback (e.g., for local data store) is scheduled. checking for background state below will help mitigate this.
-            bool abort = false;
+			SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+			{
+				iOSCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as iOSCallbackScheduler;
+				ScheduledCallback callback = callbackScheduler.TryGetCallback(request?.Content?.UserInfo);
+				abort = (callback?.Silent ?? false) && UIApplication.SharedApplication.ApplicationState == UIApplicationState.Background;
+			});
 
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-            {
-                iOSCallbackScheduler callbackScheduler = SensusContext.Current.CallbackScheduler as iOSCallbackScheduler;
-                ScheduledCallback callback = callbackScheduler.TryGetCallback(request?.Content?.UserInfo);
-                abort = (callback?.Silent ?? false) && UIApplication.SharedApplication.ApplicationState == UIApplicationState.Background;
-            });
+			if (abort)
+			{
+				SensusServiceHelper.Get().Logger.Log("Aborting notification:  Will not issue silent notification from background.", LoggingLevel.Normal, GetType());
+				return;
+			}
 
-            if (abort)
-            {
-                SensusServiceHelper.Get().Logger.Log("Aborting notification:  Will not issue silent notification from background.", LoggingLevel.Normal, GetType());
-                return;
-            }
+			await UNUserNotificationCenter.Current.AddNotificationRequestAsync(request);
 
-            await UNUserNotificationCenter.Current.AddNotificationRequestAsync(request);
+			SensusServiceHelper.Get().Logger.Log("Notification " + request.Identifier + " requested for " + ((request.Trigger as UNCalendarNotificationTrigger)?.NextTriggerDate.ToString() ?? "[time not specified]") + ".", LoggingLevel.Normal, GetType());
+		}
 
-            SensusServiceHelper.Get().Logger.Log("Notification " + request.Identifier + " requested for " + ((request.Trigger as UNCalendarNotificationTrigger)?.NextTriggerDate.ToString() ?? "[time not specified]") + ".", LoggingLevel.Normal, GetType());
-        }
+		public override void CancelNotification(string id)
+		{
+			if (id == null)
+			{
+				return;
+			}
 
-        public override void CancelNotification(string id)
-        {
-            if (id == null)
-            {
-                return;
-            }
+			string[] ids = new string[] { id };
+			UNUserNotificationCenter.Current.RemoveDeliveredNotifications(ids);
+			UNUserNotificationCenter.Current.RemovePendingNotificationRequests(ids);
+		}
 
-            string[] ids = new string[] { id };
-            UNUserNotificationCenter.Current.RemoveDeliveredNotifications(ids);
-            UNUserNotificationCenter.Current.RemovePendingNotificationRequests(ids);
-        }
+		public void CancelNotification(UNNotificationRequest request)
+		{
+			CancelNotification(request?.Identifier);
+		}
 
-        public void CancelNotification(UNNotificationRequest request)
-        {
-            CancelNotification(request?.Identifier);
-        }
-
-        public override void RemoveAllNotifications()
-        {
-            UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
-            UNUserNotificationCenter.Current.RemoveAllPendingNotificationRequests();
-        }
-    }
+		public override void RemoveAllNotifications()
+		{
+			UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
+			UNUserNotificationCenter.Current.RemoveAllPendingNotificationRequests();
+		}
+	}
 }

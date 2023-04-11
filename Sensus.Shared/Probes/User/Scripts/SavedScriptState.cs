@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Sensus.UI.Inputs;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,21 +11,31 @@ namespace Sensus.Probes.User.Scripts
 	{
 		public SavedScriptState()
 		{
-			InputGroupStack = new Stack<int>();
-			SavedInputs = new Dictionary<string, ScriptDatum>();
-			Variables = new Dictionary<string, string>();
+			InputGroupStack = new();
+			SavedInputs = new();
+			Variables = new();
+			Scores = new();
+			CorrectScores = new();
 		}
 
 		public SavedScriptState(string savePath) : this()
 		{
+			SessionId = Guid.NewGuid().ToString();
 			SavePath = savePath;
 		}
 
+		[JsonIgnore]
 		public string SavePath { get; set; }
 		[JsonIgnore]
 		public Stack<int> InputGroupStack { get; set; }
+		public string SessionId { get; set; }
 		public Dictionary<string, ScriptDatum> SavedInputs { get; set; }
-		public Dictionary<string, string> Variables { get; set; }
+		public Dictionary<string, object> Variables { get; set; }
+		public Dictionary<string, float> Scores { get; set; }
+		public Dictionary<string, float> CorrectScores { get; set; }
+
+		[JsonIgnore]
+		public bool Restored { get; set; }
 
 		[JsonProperty("InputGroupStack")]
 		public List<int> InputGroupList
@@ -41,9 +50,9 @@ namespace Sensus.Probes.User.Scripts
 				{
 					InputGroupStack.Clear();
 
-					foreach (int inputGroup in value)
+					for (int index = 0; index < value.Count; index++)
 					{
-						InputGroupStack.Push(inputGroup);
+						InputGroupStack.Push(value[value.Count - index - 1]);
 					}
 				}
 				else
@@ -55,11 +64,18 @@ namespace Sensus.Probes.User.Scripts
 
 		public async Task SaveAsync()
 		{
-			Directory.CreateDirectory(Path.GetDirectoryName(SavePath));
-
-			using (StreamWriter writer = new StreamWriter(SavePath))
+			try
 			{
-				await writer.WriteAsync(JsonConvert.SerializeObject(this));
+				Directory.CreateDirectory(Path.GetDirectoryName(SavePath));
+
+				using (StreamWriter writer = new StreamWriter(SavePath))
+				{
+					await writer.WriteAsync(JsonConvert.SerializeObject(this));
+				}
+			}
+			catch (Exception e)
+			{
+				SensusServiceHelper.Get()?.Logger.Log("Failed to save script state: " + e.Message, LoggingLevel.Normal, GetType());
 			}
 		}
 	}

@@ -5,20 +5,30 @@ namespace Sensus.UI.Inputs
 {
 	public static class ButtonValueParser
 	{
-		public static (string, string, bool) ParseButtonValue(string value, bool split)
+		public static (string, string, bool, bool) ParseButtonValue(string value, bool split)
 		{
 			bool isOther = false;
+			bool isExclusive = false;
 
-			if (value.StartsWith("!"))
+			value = Regex.Replace(value, "^((?<other>!)|(?<exclusive>\\^))+", m =>
 			{
-				value = Regex.Replace(value, @"^!", "");
+				if (m.Groups["other"].Success)
+				{
+					isOther = true;
+				}
+				
+				if (m.Groups["exclusive"].Success)
+				{
+					isExclusive = true;
+				}
+				
+				return "";
+			});
 
-				isOther = true;
-			}
-			else if (value.StartsWith("{!}"))
+			value = Regex.Replace(value, "{(?<escaped>(!|\\^))}", m =>
 			{
-				value = Regex.Replace(value, @"^{!}", "!");
-			}
+				return m.Groups["escaped"].Value;
+			});
 
 			string text = value;
 
@@ -37,7 +47,7 @@ namespace Sensus.UI.Inputs
 				text = pair.LastOrDefault();
 			}
 
-			return (text, value, isOther);
+			return (text, value, isOther, isExclusive);
 		}
 	}
 }

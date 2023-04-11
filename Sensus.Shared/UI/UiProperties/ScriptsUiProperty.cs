@@ -18,7 +18,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using Xamarin.Forms;
 
 namespace Sensus.UI.UiProperties
@@ -28,23 +27,108 @@ namespace Sensus.UI.UiProperties
 	/// </summary>
 	public class ScriptsUiProperty : UiProperty
 	{
-		private string _scriptGroup;
+		private readonly string _scriptGroup;
+		private StackLayout _view;
+		private IList<ScriptRunner> _current;
+		private bool _multiple;
 
 		public ScriptsUiProperty(string labelText, bool editable, int order, bool required, string scriptGroup = null) : base(labelText, editable, order, required)
 		{
 			_scriptGroup = scriptGroup;
+			_current = new List<ScriptRunner>();
 		}
 
 		private const string NEW_STRING = "New...";
 
-		public override View GetView(PropertyInfo property, object o, out BindableProperty bindingProperty, out IValueConverter converter)
+		private View GetView(PropertyInfo property, object o, List<ScriptRunner> runners, int index, ScriptProbe probe)
 		{
-			Picker picker = new Picker
+			Picker picker = new()
 			{
 				HorizontalOptions = LayoutOptions.FillAndExpand
 			};
 
-			Button clearButton = new Button
+			foreach (ScriptRunner item in runners)
+			{
+				picker.Items.Add(item.Caption);
+			}
+
+			picker.Items.Add(NEW_STRING);
+
+			picker.SelectedIndex = runners.IndexOf(_current.ElementAtOrDefault(index));
+
+			picker.SelectedIndexChanged += async (s, e) =>
+			{
+				ScriptRunner selected = null;
+
+				if (picker.SelectedIndex >= 0)
+				{
+					if (picker.SelectedIndex == runners.Count)
+					{
+						selected = new("New Script", probe)
+						{
+							ScriptGroup = _scriptGroup
+						};
+
+						await (Application.Current as App).DetailPage.Navigation.PushAsync(new ScriptRunnerPage(selected));
+
+						runners.Add(selected);
+
+						probe.ScriptRunners.Add(selected);
+
+						picker.Items.Insert(picker.SelectedIndex, selected.Caption);
+					}
+					else
+					{
+						selected = runners[picker.SelectedIndex];
+					}
+				}
+
+				if (_multiple)
+				{
+					if (_current.Count <= index)
+					{
+						index = _current.Count;
+
+						_current.Add(selected);
+
+						if (_view.Children.FirstOrDefault(x => x.IsVisible == false) is View hiddenView)
+						{
+							hiddenView.IsVisible = true;
+						}
+						else
+						{
+							_view.Children.Add(GetView(property, o, runners, index + 1, probe));
+						}
+					}
+					else if (selected != null)
+					{
+						_current[index] = selected;
+					}
+					else
+					{
+						_current.RemoveAt(index);
+
+						// possibly move the view ...
+						View moved = _view.Children[index];
+
+						_view.Children.Remove(moved);
+
+						index = _current.Count;
+
+						_view.Children.Add(moved);
+
+						moved.IsVisible = false;
+					}
+				}
+				else
+				{
+					_current[0] = selected;
+
+					property.SetValue(o, selected);
+				}
+			};
+
+			Button clearButton = new()
 			{
 				Padding = new Thickness(0),
 				FontSize = 30,
@@ -61,82 +145,90 @@ namespace Sensus.UI.UiProperties
 				picker.SelectedIndex = -1;
 			};
 
-			StackLayout view = new StackLayout
+			StackLayout view = new()
 			{
 				Orientation = StackOrientation.Horizontal,
 				Children = { picker, clearButton }
 			};
 
+			return view;
+		}
+
+		public override View GetView(PropertyInfo property, object o, out BindableProperty bindingProperty, out IValueConverter converter)
+		{
 			bindingProperty = null;
 			converter = null;
 
-			List<ScriptRunner> scripts = new List<ScriptRunner>();
-			//ScriptRunner runner = null;
+			List<ScriptRunner> runners = new();
 			ScriptProbe probe = null;
 
 			if (o is ScriptRunner scriptRunner)
 			{
-				//runner = scriptRunner;
 				probe = scriptRunner.Probe;
-				scripts = probe.ScriptRunners.Except(new[] { scriptRunner }).ToList();
+
+				runners = probe.ScriptRunners.Except(new[] { scriptRunner }).ToList();
 			}
 			else if (o is ScriptSchedulerInput scriptSchedulerInput)
 			{
-				//runner = scriptSchedulerInput.Runner;
-				probe = scriptSchedulerInput.Runner.Probe;
-				scripts = probe.ScriptRunners.ToList(); //.Except(new[] { scriptSchedulerInput.Runner }).ToList();
+				probe = scriptSchedulerInput.ScriptRunner.Probe;
+
+				runners = probe.ScriptRunners.ToList();
 			}
 			else if (o is Protocol protocol)
 			{
 				probe = protocol.Probes.OfType<ScriptProbe>().First();
-				scripts = probe.ScriptRunners.ToList();
+
+				runners = probe.ScriptRunners.ToList();
 			}
 
 			if (string.IsNullOrWhiteSpace(_scriptGroup) == false)
 			{
-				scripts = scripts.Where(x => x.ScriptGroup == _scriptGroup).ToList();
+				runners = runners.Where(x => x.ScriptGroup == _scriptGroup).ToList();
 			}
 
-			foreach (ScriptRunner item in scripts)
+			_multiple = false;
+
+			if (typeof(IList<ScriptRunner>).IsAssignableFrom(property.PropertyType))
 			{
-				picker.Items.Add(item.Caption);
-			}
+				_current = (IList<ScriptRunner>)property.GetValue(o);
 
-			picker.Items.Add(NEW_STRING);
-
-			picker.SelectedIndex = scripts.IndexOf((ScriptRunner)property.GetValue(o));
-
-			if (probe != null)
-			{
-				picker.SelectedIndexChanged += async (s, e) =>
+				if (_current == null)
 				{
-					if (picker.Items[picker.SelectedIndex] == NEW_STRING)
+					try
 					{
-						ScriptRunner newScriptRunner = new ScriptRunner("New Script", probe)
+						_current = (IList<ScriptRunner>)Activator.CreateInstance(property.PropertyType);
+					}
+					catch
+					{
+						_current = new List<ScriptRunner>();
+
+						if (property.PropertyType.IsAssignableFrom(typeof(List<ScriptRunner>)))
 						{
-							ScriptGroup = _scriptGroup
-						};
-
-						await (Application.Current as App).DetailPage.Navigation.PushAsync(new ScriptRunnerPage(newScriptRunner));
-
-						probe.ScriptRunners.Add(newScriptRunner);
-
-						property.SetValue(o, newScriptRunner);
-
-						picker.Items.Insert(picker.Items.IndexOf(NEW_STRING), newScriptRunner.Caption);
+							property.SetValue(o, _current);
+						}
 					}
-					else if (picker.SelectedIndex >= 0)
-					{
-						property.SetValue(o, scripts[picker.SelectedIndex]);
-					}
-					else
-					{
-						property.SetValue(o, null);
-					}
-				};
+				}
+
+				_multiple = true;
+			}
+			else if (property.PropertyType == typeof(ScriptRunner))
+			{
+				_current = new List<ScriptRunner>() { (ScriptRunner)property.GetValue(o) };
 			}
 
-			return view;
+			_view = new();
+
+			for (int index = 0; index < _current.Count; index++)
+			{
+				_view.Children.Add(GetView(property, o, runners, index, probe));
+			}
+
+			if (_multiple)
+			{
+				_view.Children.Add(GetView(property, o, runners, _view.Children.Count + 1, probe));
+			}
+
+			return _view;
 		}
 	}
 }

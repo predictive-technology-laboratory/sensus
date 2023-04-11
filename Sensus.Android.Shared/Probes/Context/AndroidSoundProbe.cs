@@ -19,43 +19,44 @@ using Android.Media;
 using Sensus.Probes.Context;
 using System.Threading.Tasks;
 using System.Linq;
+using Android.App;
 
 namespace Sensus.Android.Probes.Context
 {
-    public class AndroidSoundProbe : SoundProbe
-    {
-        protected override async Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
-        {
-            MediaRecorder recorder = null;
+	public class AndroidSoundProbe : SoundProbe
+	{
+		protected override async Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
+		{
+			MediaRecorder recorder = null;
 
-            try
-            {
-                recorder = new MediaRecorder();
-                recorder.SetAudioSource(AudioSource.Mic);
-                recorder.SetOutputFormat(OutputFormat.ThreeGpp);
-                recorder.SetAudioEncoder(AudioEncoder.AmrNb);
-                recorder.SetOutputFile("/dev/null");
-                recorder.Prepare();
-                recorder.Start();
+			try
+			{
+				recorder = new MediaRecorder(Application.Context);
+				recorder.SetAudioSource(AudioSource.Mic);
+				recorder.SetOutputFormat(OutputFormat.ThreeGpp);
+				recorder.SetAudioEncoder(AudioEncoder.AmrNb);
+				recorder.SetOutputFile("/dev/null");
+				recorder.Prepare();
+				recorder.Start();
 
-                // mark start time of amplitude measurement -- MaxAmplitude is always computed from previous call to MaxAmplitude
-                int dummy = recorder.MaxAmplitude;
-                await Task.Delay(SampleLengthMS);
-                double decibels = 20 * Math.Log10(recorder.MaxAmplitude);  // http://www.mathworks.com/help/signal/ref/mag2db.html
+				// mark start time of amplitude measurement -- MaxAmplitude is always computed from previous call to MaxAmplitude
+				int dummy = recorder.MaxAmplitude;
+				await Task.Delay(SampleLengthMS);
+				double decibels = 20 * Math.Log10(recorder.MaxAmplitude);  // http://www.mathworks.com/help/signal/ref/mag2db.html
 
-                return new Datum[] { new SoundDatum(DateTimeOffset.UtcNow, decibels) }.ToList();
-            }
-            finally
-            {
-                if (recorder != null)
-                {
-                    try { recorder.Stop(); }
-                    catch (Exception) { }
+				return new Datum[] { new SoundDatum(DateTimeOffset.UtcNow, decibels) }.ToList();
+			}
+			finally
+			{
+				if (recorder != null)
+				{
+					try { recorder.Stop(); }
+					catch (Exception) { }
 
-                    try { recorder.Release(); }
-                    catch (Exception) { }
-                }
-            }
-        }
-    }
+					try { recorder.Release(); }
+					catch (Exception) { }
+				}
+			}
+		}
+	}
 }

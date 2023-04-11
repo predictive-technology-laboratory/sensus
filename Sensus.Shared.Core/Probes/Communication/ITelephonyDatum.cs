@@ -1,9 +1,7 @@
 ﻿namespace Sensus.Probes.Communication
 {
-    public interface ITelephonyDatum : IDatum
-    {
-        double? CallDurationSeconds { get; set; }
-        TelephonyState State { get; set; }
-        string PhoneNumber { get; set; }
-    }
+	public interface ITelephonyDatum : IDatum
+	{
+		TelephonyState State { get; set; }
+	}
 }

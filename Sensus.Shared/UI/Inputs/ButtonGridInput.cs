@@ -17,6 +17,7 @@ using Sensus.UI.UiProperties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace Sensus.UI.Inputs
@@ -35,8 +36,9 @@ namespace Sensus.UI.Inputs
 		{
 			Buttons = new List<string>();
 			ColumnCount = 1;
+			MaxSelectionCount = 1;
 
-			_defaultState = ButtonStates.Default;
+			_defaultState = ButtonStates.Normal;
 		}
 
 		public override object Value
@@ -116,8 +118,26 @@ namespace Sensus.UI.Inputs
 		[EntryStringUiProperty("\"Other\" Response Label:", true, 4, true)]
 		public string OtherResponseLabel { get; set; }
 
+		[EditableListUiProperty("Exclusive Values:", true, 4, true)]
+		public List<string> ExclusiveValues { get; set; }
+
+		[OnOffUiProperty("Auto size buttons:", true, 4)]
+		public bool AutoSizeButtons { get; set; }
+
+		[OnOffUiProperty("Show Long Text:", true, 4)]
+		public bool ShowLongText { get; set; }
+
+		private const int LONG_TEXT_LENGTH = 30;
+
 		[JsonIgnore]
 		public List<ButtonWithValue> GridButtons => _grid?.Buttons.ToList() ?? new List<ButtonWithValue>();
+
+		private async Task<bool> HandleLongText(ButtonWithValue button)
+		{
+			Page page = Application.Current.MainPage.Navigation?.NavigationStack?.LastOrDefault() ?? Application.Current.MainPage;
+
+			return button.Text.Length < LONG_TEXT_LENGTH || ShowLongText == false || await page.DisplayAlert("Do you want to select:", button.Text, "Yes", "No");
+		}
 
 		public override View GetView(int index)
 		{
@@ -132,17 +152,20 @@ namespace Sensus.UI.Inputs
 				{
 					DelayEnded += (s, e) =>
 					{
-						foreach (ButtonWithValue otherButton in _grid.Buttons)
+						Device.BeginInvokeOnMainThread(() =>
 						{
-							if (otherButton.State == ButtonStates.Incorrect)
+							foreach (ButtonWithValue otherButton in _grid.Buttons)
 							{
-								otherButton.State = ButtonStates.Default;
+								if (otherButton.State == ButtonStates.Incorrect)
+								{
+									otherButton.State = _defaultState;
+								}
 							}
-						}
+						});
 					};
 				}
 
-				int maxSelectionCount = Math.Min(MaxSelectionCount, Buttons.Count);
+				int maxSelectionCount = Math.Max(1, Math.Min(MaxSelectionCount, Buttons.Count));
 				int minSelectionCount = Math.Min(MinSelectionCount, maxSelectionCount);
 
 				if (Required)
@@ -150,27 +173,53 @@ namespace Sensus.UI.Inputs
 					minSelectionCount = Math.Max(1, minSelectionCount);
 				}
 
-				List<string> otherValues = OtherValues?.ToList() ?? new List<string>();
+				HashSet<string> otherValues = OtherValues?.ToHashSet() ?? new HashSet<string>();
+				HashSet<string> exclusiveValues = ExclusiveValues?.ToHashSet() ?? new HashSet<string>();
 
 				StackLayout otherLayout = null;
 				Label otherLabel = null;
 				Editor otherEditor = null;
 
-				_grid = new ButtonGridView(ColumnCount, (s, e) =>
+				bool completeFunc(int selectedButtonCount, bool otherSelected) => Selectable == false || (selectedButtonCount >= minSelectionCount && (otherSelected == false || string.IsNullOrWhiteSpace(_otherResponseValue) == false));
+
+				_grid = new ButtonGridView(ColumnCount, async (s, e) =>
 				{
 					ButtonWithValue button = (ButtonWithValue)s;
 
-					if (Selectable && maxSelectionCount > 1)
+					if (Selectable)
 					{
 						List<ButtonWithValue> selectedButtons = _grid.Buttons.Where(x => x.State == ButtonStates.Selected).ToList();
+						bool isExclusive = exclusiveValues.Contains(button.Value);
 
 						if (button.State == ButtonStates.Selectable)
 						{
-							if (selectedButtons.Count < maxSelectionCount)
+							if (await HandleLongText(button))
 							{
-								selectedButtons.Add(button);
+								if (isExclusive || maxSelectionCount == 1)
+								{
+									foreach (ButtonWithValue otherButton in _grid.Buttons)
+									{
+										otherButton.State = _defaultState;
 
-								button.State = ButtonStates.Selected;
+										selectedButtons.Remove(otherButton);
+									}
+								}
+								else
+								{
+									foreach (ButtonWithValue otherButton in selectedButtons.Where(x => exclusiveValues.Contains(x.Value)).ToList())
+									{
+										otherButton.State = _defaultState;
+
+										selectedButtons.Remove(otherButton);
+									}
+								}
+
+								if (selectedButtons.Count < maxSelectionCount)
+								{
+									selectedButtons.Add(button);
+
+									button.State = ButtonStates.Selected;
+								}
 							}
 						}
 						else if (button.State == ButtonStates.Selected)
@@ -185,7 +234,44 @@ namespace Sensus.UI.Inputs
 
 						_value = selectedButtons.Select(x => x.Value).ToArray();
 
-						Complete = selectedButtons.Count >= minSelectionCount;
+						bool otherSelected = false;
+
+						if (otherValues.Any())
+						{
+							IEnumerable<ButtonWithValue> selectedOtherButtons = selectedButtons.Where(x => otherValues.Contains(x.Value));
+
+							otherSelected = selectedOtherButtons.Any();
+
+							if (otherSelected)
+							{
+								_otherResponseValue = otherEditor.Text;
+
+								if (string.IsNullOrWhiteSpace(OtherResponseLabel) && otherLabel != null)
+								{
+									if (selectedOtherButtons.Count() == 1)
+									{
+										otherLabel.Text = selectedOtherButtons.Single().Text + ":";
+
+										if (otherLabel.Text.EndsWith("::"))
+										{
+											otherLabel.Text = otherLabel.Text[0..^1];
+										}
+									}
+									else
+									{
+										otherLabel.Text = "Other:";
+									}
+								}
+							}
+							else
+							{
+								_otherResponseValue = null;
+							}
+
+							otherLayout.IsVisible = otherSelected;
+						}
+
+						Complete = completeFunc(selectedButtons.Count, otherSelected);
 					}
 					else
 					{
@@ -209,48 +295,24 @@ namespace Sensus.UI.Inputs
 								button.State = ButtonStates.Incorrect;
 							}
 						}
-						else if (Selectable)
-						{
-							button.State = ButtonStates.Selected;
-						}
 					}
-
-					if (otherLayout != null && otherValues.Any())
-					{
-						IEnumerable<ButtonWithValue> selectedOtherButtons = _grid.Buttons.Where(x => x.State == ButtonStates.Selected && otherValues.Contains(x.Value));
-
-						bool otherSelected = selectedOtherButtons.Any();
-
-						if (otherSelected)
-						{
-							_otherResponseValue = otherEditor.Text;
-						}
-						else
-						{
-							_otherResponseValue = null;
-						}
-
-						if (string.IsNullOrWhiteSpace(OtherResponseLabel) && otherLabel != null && selectedOtherButtons.Count() == 1)
-						{
-							otherLabel.Text = button.Text + ":";
-
-							if (otherLabel.Text.EndsWith("::"))
-							{
-								otherLabel.Text = otherLabel.Text[0..^1];
-							}
-						}
-
-						otherLayout.IsVisible = otherSelected;
-					}
-				});
+				})
+				{
+					AutoSize = AutoSizeButtons
+				};
 
 				foreach (string buttonValue in Buttons)
 				{
-					(string text, string value, bool isOther) = ButtonValueParser.ParseButtonValue(buttonValue, SplitValueTextPairs);
+					(string text, string value, bool isOther, bool isExclusive) = ButtonValueParser.ParseButtonValue(buttonValue, SplitValueTextPairs);
 
 					if (isOther)
 					{
 						otherValues.Add(value);
+					}
+
+					if (isExclusive)
+					{
+						exclusiveValues.Add(value);
 					}
 
 					ButtonWithValue button = _grid.AddButton(text, value);
@@ -274,11 +336,16 @@ namespace Sensus.UI.Inputs
 						AutoSize = EditorAutoSizeOption.TextChanges
 					};
 
-					otherEditor.Unfocused += (s, e) => _otherResponseValue = otherEditor.Text;
+					otherEditor.Unfocused += (s, e) =>
+					{
+						_otherResponseValue = otherEditor.Text;
+
+						Complete = completeFunc(_grid.Buttons.Count(x => x.State == ButtonStates.Selected), true);
+					};
 
 					otherLabel = new Label { Text = $"{OtherResponseLabel ?? "Other Response"}:" };
 
-					if (string.IsNullOrWhiteSpace(OtherResponseLabel) && otherValues.Count == 1 && GridButtons.FirstOrDefault(x => x.Value == otherValues[0]) is ButtonWithValue otherButton)
+					if (string.IsNullOrWhiteSpace(OtherResponseLabel) && otherValues.Count == 1 && GridButtons.FirstOrDefault(x => x.Value == otherValues.First()) is ButtonWithValue otherButton)
 					{
 						otherLabel.Text = otherButton.Text;
 					}

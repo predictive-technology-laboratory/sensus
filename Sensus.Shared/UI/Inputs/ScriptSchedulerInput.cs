@@ -5,9 +5,13 @@ namespace Sensus.UI.Inputs
 {
 	public class ScriptSchedulerInput : DateTimeInput
 	{
-		public ScriptRunner Runner { get; set; }
+		public ScriptRunner Runner
+		{
+			get => ScriptRunner;
+			set => ScriptRunner = value;
+		}
 
-		[ListUiProperty("Scheduled Script:", true, 14, new object[] { ScheduleModes.Self, ScheduleModes.Next, ScheduleModes.Select }, true)]
+		[ListUiProperty("Schedule Mode:", true, 14, new object[] { ScheduleModes.Reminder, ScheduleModes.Self, ScheduleModes.Next, ScheduleModes.Select }, true)]
 		public ScheduleModes ScheduleMode { get; set; }
 
 		[ScriptsUiProperty("Scheduled Script:", true, 15, false)]
@@ -15,6 +19,12 @@ namespace Sensus.UI.Inputs
 
 		[EntryIntegerUiProperty("Days in Future:", true, 15, false)]
 		public int DaysInFuture { get; set; }
+
+		[EntryStringUiProperty("Notification Message", true, 16, false)]
+		public string NotificationMessage { get; set; }
+
+		[EntryStringUiProperty("Script Group", true, 16, false)]
+		public string ScriptGroup { get; set; }
 
 		public override bool RequireFutureDate => true;
 

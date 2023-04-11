@@ -51,6 +51,7 @@ using Plugin.Geolocator.Abstractions;
 using Newtonsoft.Json.Linq;
 using static Sensus.Adaptation.SensingAgent;
 using Sensus.Adaptation;
+using Sensus.Probes.Apps;
 
 #if __IOS__
 using HealthKit;
@@ -60,7 +61,6 @@ using Sensus.iOS.Probes.User.Health;
 
 #if __ANDROID__
 using Sensus.Android;
-using Microsoft.AppCenter.Analytics;
 #endif
 
 namespace Sensus
@@ -86,6 +86,8 @@ namespace Sensus
 		public static async Task<Protocol> CreateAsync(string name)
 		{
 			Protocol protocol = new Protocol(name);
+
+			protocol.InstallDate = DateTime.Now;
 
 			await protocol.ResetAsync(true);
 
@@ -181,6 +183,8 @@ namespace Sensus
 			try
 			{
 				protocol = json.DeserializeJson<Protocol>();
+
+				protocol.InstallDate = DateTime.Now;
 			}
 			catch (Exception ex)
 			{
@@ -579,6 +583,12 @@ namespace Sensus
 		{
 			get { return _state; }
 		}
+
+		/// <summary>
+		/// This is the date(time) that the <see cref="Protocol"/> was added to Sensus on the user's device.
+		/// </summary>
+		/// <value>A <see cref="DateTime" /> value.</value>
+		public DateTime InstallDate { get; set; }
 
 		public LocalDataStore LocalDataStore
 		{
@@ -1683,19 +1693,43 @@ namespace Sensus
 			_name = name;
 		}
 
-		private void AddProbe(Probe probe)
+		private void SetAnonymizers(Probe probe)
 		{
-			probe.Protocol = this;
-
 			// since the new probe was just bound to this protocol, we need to let this protocol know about this probe's default anonymization preferences.
 			foreach (PropertyInfo anonymizableProperty in probe.DatumType.GetProperties().Where(property => property.GetCustomAttribute<Anonymizable>() != null))
 			{
 				Anonymizable anonymizableAttribute = anonymizableProperty.GetCustomAttribute<Anonymizable>(true);
 				_jsonAnonymizer.SetAnonymizer(anonymizableProperty, anonymizableAttribute.DefaultAnonymizer);
 			}
+		}
+
+		private void AddProbe(Probe probe)
+		{
+			probe.Protocol = this;
+
+			SetAnonymizers(probe);
 
 			_probes.Add(probe);
-			_probes.Sort(new Comparison<Probe>((p1, p2) => p1.DisplayName.CompareTo(p2.DisplayName)));
+			_probes.Sort((p1, p2) => p1.DisplayName.CompareTo(p2.DisplayName));
+		}
+
+		public async Task AddMissingProbesAsync()
+		{
+			Type[] types = Probes.Select(x => x.GetType()).ToArray();
+			IEnumerable<Probe> probes = Probe.GetAll().Where(x => types.Contains(x.GetType()) == false);
+
+			await SensusServiceHelper.Get().FlashNotificationAsync($"Adding {probes.Count()} probes.");
+
+			foreach (Probe probe in probes)
+			{
+				probe.Protocol = this;
+
+				_probes.Add(probe);
+			}
+
+			_probes.Sort((p1, p2) => p1.DisplayName.CompareTo(p2.DisplayName));
+
+			await SensusServiceHelper.Get().SaveAsync();
 		}
 
 		public bool TryGetProbe(Type type, out Probe probe)
@@ -1998,6 +2032,15 @@ namespace Sensus
 			}
 		}
 
+		public async Task SaveAsync(string path)
+		{
+			using FileStream file = new(path, FileMode.Create, FileAccess.Write);
+			// once upon a time, we made the poor decision to encode protocols as unicode (UTF-16). can't switch to UTF-8 now...
+			byte[] encryptedBytes = SensusContext.Current.SymmetricEncryption.Encrypt(JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS), Encoding.Unicode);
+
+			await file.WriteAsync(encryptedBytes, 0, encryptedBytes.Length);
+		}
+
 		public async Task<Protocol> CopyAsync(bool resetId, bool register)
 		{
 			Protocol protocolCopy = JsonConvert.SerializeObject(this, SensusServiceHelper.JSON_SERIALIZER_SETTINGS).DeserializeJson<Protocol>();
@@ -2018,6 +2061,8 @@ namespace Sensus
 			// protocol to keep it in the same study. also do not register the copy since we're just going 
 			// to send it off rather than show it in the UI.
 			Protocol protocolCopy = await CopyAsync(false, false);
+
+			protocolCopy.InstallDate = DateTime.MinValue;
 
 			// write protocol to file and share
 			string sharePath = SensusServiceHelper.Get().GetSharePath(".json");
@@ -2136,6 +2181,12 @@ namespace Sensus
 							}
 						}
 #endif
+						IEnumerable<ILogProbe> logProbes = _probes.OfType<ILogProbe>().Where(x => x.Enabled);
+
+						foreach (ILogProbe logProbe in logProbes)
+						{
+							logProbe.AttachToLogger();
+						}
 
 						SensusServiceHelper.Get().Logger.Log("Starting probes for protocol " + _name + ".", LoggingLevel.Normal, GetType());
 						int probesEnabled = 0;
@@ -2787,8 +2838,6 @@ namespace Sensus
 			{
 				{ "Wake Lock Held", androidSensusServiceHelper.WakeLockHeld.ToString() }
 			};
-
-			Analytics.TrackEvent(eventName, properties);
 
 			// don't add time to tracked event, as it'll create too many distinct values.
 			properties.Add("Wake Lock Time", androidSensusServiceHelper.WakeLockTime.ToString());

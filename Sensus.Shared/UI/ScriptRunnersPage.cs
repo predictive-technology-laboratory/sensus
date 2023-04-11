@@ -73,9 +73,12 @@ namespace Sensus.UI
 				}
 				else if (selectedAction == "Copy")
 				{
-					ScriptRunner copy = selectedScriptRunner.Copy();
+					ScriptRunner copy = await selectedScriptRunner.CopyAsync();
 
-					probe.ScriptRunners.Add(copy);
+					if (copy != null)
+					{
+						probe.ScriptRunners.Add(copy);
+					}
 				}
 				else if (selectedAction == "Delete")
 				{
@@ -86,6 +89,14 @@ namespace Sensus.UI
 						selectedScriptRunner.Triggers.Clear();
 
 						probe.ScriptRunners.Remove(selectedScriptRunner);
+
+						foreach(ScriptRunner runner in probe.ScriptRunners)
+						{
+							if (runner.NextScript == selectedScriptRunner)
+							{
+								runner.NextScript = null;
+							}
+						}
 
 						scriptRunnersList.SelectedItem = null;  // reset manually since it's not done automatically
 					}

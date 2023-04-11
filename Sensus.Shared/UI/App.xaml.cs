@@ -13,24 +13,21 @@
 // limitations under the License.
 
 using Xamarin.Forms;
-using Microsoft.AppCenter;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 
 namespace Sensus.UI
 {
 	public partial class App : Application
 	{
-		public Page MasterPage
+		public Page FlyoutPage
 		{
-			get { return (MainPage as SensusMasterDetailPage).Master; }
+			get { return (MainPage as FlyoutPage).Flyout; }
 		}
 
 		public Page DetailPage
 		{
 			get
 			{
-				return (MainPage as MasterDetailPage).Detail;
+				return (MainPage as FlyoutPage).Detail;
 			}
 			set
 			{
@@ -39,28 +36,34 @@ namespace Sensus.UI
 					value.Parent = null;
 				}
 
-				if (MainPage is MasterDetailPage masterDetailPage)
+				if (MainPage is FlyoutPage flyoutPage)
 				{
-					masterDetailPage.Detail = value;
+					flyoutPage.Detail = value;
 				}
 			}
 		}
 
 		public App()
 		{
-			MainPage = new SensusMasterDetailPage();
-
 			InitializeComponent();
+
+			MainPage = new SensusFlyoutPage();
 		}
 
 		protected override void OnStart()
 		{
 			base.OnStart();
+		}
 
-			AppCenter.Start("ios=" + SensusServiceHelper.APP_CENTER_KEY_IOS + ";" +
-							"android=" + SensusServiceHelper.APP_CENTER_KEY_ANDROID,
-							typeof(Analytics),
-							typeof(Crashes));
+		public static void InterruptScript()
+		{
+			if (Current is App app)
+			{
+				if (app.MainPage is BaseFlyoutPage flyoutPage)
+				{
+					flyoutPage.InterruptScript(true);
+				}
+			}
 		}
 	}
 }

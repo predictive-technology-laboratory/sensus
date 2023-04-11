@@ -172,7 +172,7 @@ namespace Sensus.UI.Inputs
 				RowDefinitions.Add(new RowDefinition());
 			}
 
-			for(int button = 0; button < _buttons.Count; button++)
+			for (int button = 0; button < _buttons.Count; button++)
 			{
 				Children.Add(_buttons[button], button % columnCount, button / columnCount);
 			}

@@ -679,20 +679,31 @@ namespace Sensus.UI
 			}, ToolbarItemOrder.Secondary));
 
 #if __ANDROID__
-            ToolbarItems.Add(new ToolbarItem("Stop", null, async () =>
-            {
-                if (await DisplayAlert("Confirm", "Are you sure you want to stop Sensus? This will end your participation in all studies.", "Stop Sensus", "Go Back"))
-                {
-                    // stop all protocols and then stop the service. stopping the service alone does not stop 
-                    // the service, as we want to cover the case when the os stops/destroys the service. in this
-                    // case we do not want to mark the protocols as stopped, as we'd like them to start back
-                    // up when the os (or a push notification) starts the service again.
-                    await SensusServiceHelper.Get().StopAsync();
+			ToolbarItems.Add(new ToolbarItem("Stop", null, async () =>
+			{
+				if (await DisplayAlert("Confirm", "Are you sure you want to stop Sensus? This will end your participation in all studies.", "Stop Sensus", "Go Back"))
+				{
+					// stop all protocols and then stop the service. stopping the service alone does not stop 
+					// the service, as we want to cover the case when the os stops/destroys the service. in this
+					// case we do not want to mark the protocols as stopped, as we'd like them to start back
+					// up when the os (or a push notification) starts the service again.
+					await SensusServiceHelper.Get().StopAsync();
 
-                    global::Android.App.Application.Context.StopService(AndroidSensusService.GetServiceIntent(false));
-                }
+					global::Android.App.Application.Context.StopService(AndroidSensusService.GetServiceIntent(false));
+				}
 
-            }, ToolbarItemOrder.Secondary));
+			}, ToolbarItemOrder.Secondary));
+#endif
+
+#if DEBUG
+			ToolbarItems.Add(new ToolbarItem("Save", null, async () =>
+			{
+				await SensusServiceHelper.Get().FlashNotificationAsync("Starting to save...");
+
+				await SensusServiceHelper.Get().SaveAsync();
+
+				await SensusServiceHelper.Get().FlashNotificationAsync("Finished saving.");
+			}, ToolbarItemOrder.Secondary));
 #endif
 
 			ToolbarItems.Add(new ToolbarItem("About", null, async () =>

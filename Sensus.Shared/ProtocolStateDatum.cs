@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Sensus
 {
@@ -13,6 +13,7 @@ namespace Sensus
 		/// <summary>
 		/// The new <see cref="ProtocolState"/> of the <see cref="Protocol"/> that generated this datum.
 		/// </summary>
+		[JsonConverter(typeof(StringEnumConverter))]
 		public ProtocolState State { get; set; }
 
 		public ProtocolStateDatum(string protocolName, ProtocolState state, DateTimeOffset timestamp) : base(timestamp)
@@ -25,7 +26,7 @@ namespace Sensus
 		{
 			get
 			{
-				return $"{ProtocolName} state changd to {State}.";
+				return $"{ProtocolName} state changed to {State}.";
 			}
 		}
 

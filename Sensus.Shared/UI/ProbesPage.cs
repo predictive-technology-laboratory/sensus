@@ -16,6 +16,7 @@ using System;
 using Sensus.Probes;
 using Sensus.Exceptions;
 using Xamarin.Forms;
+using System.Collections.ObjectModel;
 
 namespace Sensus.UI
 {
@@ -68,7 +69,7 @@ namespace Sensus.UI
 			_probesList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(Probe.Caption));
 			_probesList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding(nameof(Probe.Enabled), converter: new ProbeTextColorValueConverter()));
 			_probesList.ItemTemplate.SetBinding(TextCell.DetailProperty, nameof(Probe.SubCaption));
-			_probesList.ItemsSource = _protocol.Probes;
+			_probesList.ItemsSource = new ObservableCollection<Probe>(_protocol.Probes);
 			_probesList.ItemTapped += ProbeTappedAsync;
 
 			Content = _probesList;

@@ -66,7 +66,14 @@ namespace Sensus.UI
 							player.Source = new VideoPlayer.FileSource(media.GetMediaPath());
 						}
 
+						player.IsVisible = false;
+
 						Content = player;
+
+						player.SizeChanged += (s, e) =>
+						{
+							player.IsVisible = true;
+						};
 					}
 				}
 			}

@@ -16,6 +16,10 @@ using Xamarin.Forms;
 using Newtonsoft.Json;
 using Sensus.UI.UiProperties;
 using System;
+using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
+using DatePicker = Xamarin.Forms.DatePicker;
+using TimePicker = Xamarin.Forms.TimePicker;
+using iOSPlatform = Xamarin.Forms.PlatformConfiguration.iOS;
 
 namespace Sensus.UI.Inputs
 {
@@ -52,6 +56,11 @@ namespace Sensus.UI.Inputs
 
 		[OnOffUiProperty("Time Only:", true, 17)]
 		public virtual bool TimeOnly { get; set; }
+
+		[TimeUiProperty("Minimum Time (iOS):", true, 18, false)]
+		public TimeSpan? MinimumTime { get; set; }
+		[TimeUiProperty("Maximum Time (iOS):", true, 19, false)]
+		public TimeSpan? MaximumTime { get; set; }
 
 		public override object Value
 		{
@@ -111,7 +120,9 @@ namespace Sensus.UI.Inputs
 #endif
 				};
 
-				_timePicker = new TimePicker
+				_datePicker.On<iOSPlatform>().SetUpdateMode(UpdateMode.WhenFinished);
+
+				_timePicker = new ConstrainedTimePicker
 				{
 					HorizontalOptions = LayoutOptions.FillAndExpand,
 
@@ -120,6 +131,13 @@ namespace Sensus.UI.Inputs
 					, StyleId = Name
 #endif
 				};
+
+				if (MinimumTime != null)
+				{
+					
+				}
+
+				_timePicker.On<iOSPlatform>().SetUpdateMode(UpdateMode.WhenFinished);
 
 				Color defaultTextColor = _datePicker.TextColor;
 				_datePicker.TextColor = Color.Gray;

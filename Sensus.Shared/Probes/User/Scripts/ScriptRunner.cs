@@ -24,7 +24,7 @@ using Sensus.Context;
 using Sensus.Callbacks;
 using Newtonsoft.Json;
 using Sensus.UI.Inputs;
-using Plugin.Permissions.Abstractions;
+
 using System.ComponentModel;
 using Sensus.Notifications;
 using Sensus.Exceptions;
@@ -68,16 +68,16 @@ namespace Sensus.Probes.User.Scripts
 		[JsonIgnore] // do not serialize this since it is stored outside of the saved SensusServiceHelper
 		public SavedScriptState SavedState { get; set; }
 
-		private string SavedStatePath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), Probe.Protocol.Id, "SavedScriptStates");
+		private string SavedStatePath => Path.Combine(Probe.Protocol.StorageDirectory, "SavedScriptStates");
 
 		private string GetSavedStateFileName()
 		{
 			return Path.Combine(SavedStatePath, $"{Script.Id}.json");
 		}
 
-		private async Task<bool> PromptForSavedState()
+		private static async Task<bool> PromptForSavedStateAsync(Script script)
 		{
-			string continuePrompt = ContinuePrompt;
+			string continuePrompt = script.Runner.ContinuePrompt;
 
 			if (string.IsNullOrWhiteSpace(continuePrompt))
 			{
@@ -90,58 +90,49 @@ namespace Sensus.Probes.User.Scripts
 		public static async Task<SavedScriptState> ManageStateAsync(Script script)
 		{
 			ScriptRunner runner = script.Runner;
-			string savePath = runner.GetSavedStateFileName();
 
-			try
+			if (runner.SaveState)
 			{
-				bool restoredState = false;
-				bool clearedState = false;
+				string savePath = runner.GetSavedStateFileName();
 
-				if (runner.SaveState)
+				try
 				{
-					if (runner.SavedState != null)
-					{
-						restoredState = await runner.PromptForSavedState();
+					bool restoreState = runner.SavedState != null || File.Exists(savePath);
 
-						clearedState = restoredState == false;
-					}
-					else if (File.Exists(savePath))
+					if (restoreState)
 					{
-						restoredState = await runner.PromptForSavedState();
+						restoreState = await PromptForSavedStateAsync(script);
 
-						if (restoredState)
+						if (restoreState)
 						{
-							using (StreamReader reader = new StreamReader(savePath))
+							if (runner.SavedState == null)
 							{
-								string json = await reader.ReadToEndAsync();
-
-								JsonSerializerSettings settings = new JsonSerializerSettings
+								using (StreamReader reader = new StreamReader(savePath))
 								{
-									ObjectCreationHandling = ObjectCreationHandling.Replace
-								};
+									string json = await reader.ReadToEndAsync();
 
-								runner.SavedState = JsonConvert.DeserializeObject<SavedScriptState>(json, settings);
+									JsonSerializerSettings settings = new JsonSerializerSettings
+									{
+										ObjectCreationHandling = ObjectCreationHandling.Replace
+									};
+
+									runner.SavedState = JsonConvert.DeserializeObject<SavedScriptState>(json, settings);
+
+									runner.SavedState.SavePath = savePath;
+								}
 							}
+
+							foreach (KeyValuePair<string, object> pair in runner.SavedState.Variables)
+							{
+								runner.Probe.Protocol.VariableValue[pair.Key] = pair.Value;
+							}
+
+							runner.SavedState.Restored = true;
 						}
 						else
 						{
-							clearedState = true;
-
 							ClearSavedState(script);
-						}
-					}
 
-					if (restoredState)
-					{
-						foreach (KeyValuePair<string, string> pair in runner.SavedState.Variables)
-						{
-							runner.Probe.Protocol.VariableValue[pair.Key] = pair.Value;
-						}
-					}
-					else
-					{
-						if (clearedState)
-						{
 							foreach (InputGroup inputGroup in script.InputGroups)
 							{
 								foreach (Input input in inputGroup.Inputs)
@@ -149,23 +140,27 @@ namespace Sensus.Probes.User.Scripts
 									input.Reset();
 								}
 							}
-						}
 
+							runner.SavedState = new SavedScriptState(savePath);
+						}
+					}
+					else
+					{
 						runner.SavedState = new SavedScriptState(savePath);
 					}
 
 					return runner.SavedState;
 				}
-			}
-			catch (Exception e)
-			{
-				SensusServiceHelper.Get().Logger.Log("Error restoring script saved state:  " + e.Message, LoggingLevel.Normal, typeof(ScriptRunner));
-
-				await SensusServiceHelper.Get().FlashNotificationAsync("Could not restore your previous progress.");
-
-				if (runner.SaveState)
+				catch (Exception e)
 				{
-					return new SavedScriptState(savePath);
+					SensusServiceHelper.Get().Logger.Log("Error restoring script saved state:  " + e.Message, LoggingLevel.Normal, typeof(ScriptRunner));
+
+					await SensusServiceHelper.Get().FlashNotificationAsync("Could not restore your previous progress.");
+
+					if (runner.SaveState)
+					{
+						return new SavedScriptState(savePath);
+					}
 				}
 			}
 
@@ -321,6 +316,53 @@ namespace Sensus.Probes.User.Scripts
 		/// fired every other day at some time between 9am and 10am.
 		/// </summary>
 		/// <value>The non-DOW trigger interval days.</value>
+		[EntryIntegerUiProperty("Trigger Interval (Days):", true, 9, true)]
+		public int TriggerIntervalDays
+		{
+			get
+			{
+				return _scheduleTrigger.TriggerIntervalDays;
+			}
+			set
+			{
+				if (value < 1)
+				{
+					value = 1;
+				}
+
+				_scheduleTrigger.TriggerIntervalDays = value;
+			}
+		}
+
+		/// <summary>
+		/// For surveys that are not associated with a specific day of the week, this field indicates how 
+		/// many days to should pass between subsequent surveys. For example, if this is set to 1 and 
+		/// <see cref="TriggerWindowsString"/> is set to `9:00-10:00`, then the survey would be fired each
+		/// day at some time between 9am and 10am. If this field were set to 2, then the survey would be 
+		/// fired every other day at some time between 9am and 10am.
+		/// </summary>
+		/// <value>The non-DOW trigger interval days.</value>
+		[OnOffUiProperty("Trigger Interval Inclusive:", true, 9)]
+		public bool TriggerIntervalInclusive
+		{
+			get
+			{
+				return _scheduleTrigger.TriggerIntervalInclusive;
+			}
+			set
+			{
+				_scheduleTrigger.TriggerIntervalInclusive = value;
+			}
+		}
+
+		/// <summary>
+		/// For surveys that are not associated with a specific day of the week, this field indicates how 
+		/// many days to should pass between subsequent surveys. For example, if this is set to 1 and 
+		/// <see cref="TriggerWindowsString"/> is set to `9:00-10:00`, then the survey would be fired each
+		/// day at some time between 9am and 10am. If this field were set to 2, then the survey would be 
+		/// fired every other day at some time between 9am and 10am.
+		/// </summary>
+		/// <value>The non-DOW trigger interval days.</value>
 		[EntryIntegerUiProperty("Non-DOW Trigger Interval (Days):", true, 9, true)]
 		public int NonDowTriggerIntervalDays
 		{
@@ -422,10 +464,17 @@ namespace Sensus.Probes.User.Scripts
 
 				if (changed)
 				{
+					if (_hasSubmitted)
+					{
+						SubmissionDate = DateTime.Now;
+					}
+
 					PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasSubmitted)));
 				}
 			}
 		}
+
+		public DateTime? SubmissionDate { get; set; }
 
 		[JsonIgnore]
 		public List<DateTime> ScheduledTimes
@@ -533,6 +582,9 @@ namespace Sensus.Probes.User.Scripts
 		[OnOffUiProperty("Trigger Next Script First Time Only:", true, 26)]
 		public bool TriggerNextScriptFirstTimeOnly { get; set; }
 
+		[ScriptsUiProperty("Required Scripts:", true, 26, false)]
+		public List<ScriptRunner> RequiredScripts { get; set; }
+
 		[OnOffUiProperty("Confirm Navigation:", true, 27)]
 		public bool ConfirmNavigation { get; set; }
 
@@ -547,6 +599,18 @@ namespace Sensus.Probes.User.Scripts
 
 		[EntryStringUiProperty("Submit Confirmation:", true, 31, false)]
 		public string SubmitConfirmation { get; set; }
+
+		[EntryStringUiProperty("Cancel Confirmation:", true, 31, false)]
+		public string CancelConfirmation { get; set; }
+
+		[EntryStringUiProperty("Reminder Intervals (S):", true, 32, false)]
+		public string ReminderIntervals { get; set; }
+
+		[EntryStringUiProperty("Reminder Message:", true, 33, false)]
+		public string ReminderMessage { get; set; }
+
+		[EntryStringUiProperty("Notification Message:", true, 34, false)]
+		public string NotificationMessage { get; set; }
 
 		[JsonIgnore]
 		public string Caption
@@ -577,6 +641,9 @@ namespace Sensus.Probes.User.Scripts
 			ShuffleInputGroups = false;
 			ConfirmNavigation = true;
 			SubmitConfirmation = "Are you ready to submit your responses?";
+			ReminderCallbackIds = new List<string>();
+
+			RequiredScripts = new List<ScriptRunner>();
 
 			Triggers.CollectionChanged += (o, e) =>
 			{
@@ -684,12 +751,17 @@ namespace Sensus.Probes.User.Scripts
 
 			if (Script.InputGroups.Any(inputGroup => inputGroup.Geotag))
 			{
-				await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location);
+				await SensusServiceHelper.Get().ObtainLocationPermissionAsync();
 			}
 		}
 
 		public async Task StartAsync()
 		{
+			if (RequiredScripts == null)
+			{
+				RequiredScripts = new();
+			}
+
 			await ScheduleScriptRunsAsync();
 
 			// use the async version below for a couple reasons. first, we're in a non-async method and we want to ensure
@@ -705,6 +777,7 @@ namespace Sensus.Probes.User.Scripts
 		{
 			await UnscheduleCallbacksAsync();
 			HasSubmitted = false;
+			SubmissionDate = null;
 			RunTimes.Clear();
 			CompletionTimes.Clear();
 			SavedState = null;
@@ -720,9 +793,20 @@ namespace Sensus.Probes.User.Scripts
 		{
 			await UnscheduleCallbacksAsync();
 
+			await UnscheduleRemindersAsync();
+
 			if (SensusServiceHelper.Get().RemoveScriptsForRunner(this))
 			{
 				await SensusServiceHelper.Get().IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.None, Probe.Protocol);
+			}
+
+			try
+			{
+				Directory.Delete(SavedStatePath, true);
+			}
+			catch (Exception e)
+			{
+				SensusServiceHelper.Get().Logger.Log($"Failed to delete saved state: {e.Message}", LoggingLevel.Normal, GetType());
 			}
 		}
 
@@ -733,8 +817,9 @@ namespace Sensus.Probes.User.Scripts
 
 		public async Task ScheduleScriptRunsAsync()
 		{
-			if (_scheduleTrigger.WindowCount == 0 ||               // there are no windows to schedule
+			if (
 				SensusServiceHelper.Get() == null ||               // the service helper hasn't loaded
+				(_scheduleTrigger.WindowCount == 0 && _scheduledCallbackTimes.Count == 0) ||               // there are no windows to schedule and no scheduled callback times
 				Probe == null ||                                   // there is no probe
 				Probe.Protocol.State == ProtocolState.Stopped ||   // protocol has stopped
 				Probe.Protocol.State == ProtocolState.Stopping ||  // protocol is about to stop
@@ -799,7 +884,7 @@ namespace Sensus.Probes.User.Scripts
 
 			// abort if we already have enough runs scheduled in the future. only allow a maximum of 32 script-run callbacks 
 			// to be scheduled app-wide leaving room for other callbacks (e.g., the storage and polling systems). android's 
-			// app-level limit is 500, and ios 9 has a limit of 64. not sure about ios 10+. 
+			// app-level limit is 500, and ios 9 has a limit of 64. not sure about ios 10+.
 			int scriptRunCallbacksForThisRunner = (32 / Probe.ScriptRunners.Count);
 			scriptRunCallbacksForThisRunner = Math.Max(scriptRunCallbacksForThisRunner, 1);  // schedule at least 1 run, regardless of the os cap.
 			scriptRunCallbacksForThisRunner = Math.Min(scriptRunCallbacksForThisRunner, 3);  // cap the runs, as each one takes some time to schedule.
@@ -811,8 +896,22 @@ namespace Sensus.Probes.User.Scripts
 				}
 			}
 
+			DateTime baseIntervalDate = Probe.Protocol.InstallDate;
+
+			if (RequiredScripts.Any())
+			{
+				if (RequiredScripts.All(x => x.SubmissionDate != null))
+				{
+					baseIntervalDate = RequiredScripts.Max(x => x.SubmissionDate) ?? Probe.Protocol.InstallDate;
+				}
+				else
+				{
+					return;
+				}
+			}
+
 			// get all trigger times starting from today
-			foreach (ScriptTriggerTime triggerTime in _scheduleTrigger.GetTriggerTimes(DateTime.Now, _maxAge))
+			foreach (ScriptTriggerTime triggerTime in _scheduleTrigger.GetTriggerTimes(DateTime.Now, baseIntervalDate, _maxAge))
 			{
 				// schedule all future runs, except those beyond the protocol's end date (if there is one). need to check
 				// that they're in the future because GetTriggerTimes will return all times starting from 0:00 of the current
@@ -839,7 +938,14 @@ namespace Sensus.Probes.User.Scripts
 			}
 
 			// save the app state to retain the callback schedule in case the app terminates
-			await SensusServiceHelper.Get().SaveAsync();
+			try
+			{
+				await SensusServiceHelper.Get().SaveAsync();
+			}
+			catch (Exception ex)
+			{
+				SensusException.Report($"Exception while saving app state after scheduling {Script.Id}: " + ex.Message, ex);
+			}
 		}
 
 		/// <summary>
@@ -882,46 +988,91 @@ namespace Sensus.Probes.User.Scripts
 
 		public async Task<bool> ScheduleScriptFromInputAsync(Script script)
 		{
-			if (script.InputGroups.SelectMany(x => x.Inputs).OfType<ScriptSchedulerInput>().FirstOrDefault() is ScriptSchedulerInput scheduler && scheduler.Value is DateTime scheduledTime)
+			IEnumerable<ScriptSchedulerInput> schedulers = script.InputGroups.SelectMany(x => x.Inputs).OfType<ScriptSchedulerInput>();
+			bool scheduledNext = false;
+			HashSet<ScriptRunner> reminderScripts = new();
+
+			foreach (ScriptSchedulerInput scheduler in schedulers)
 			{
-				ScriptRunner runner = null;
-
-				if (scheduler.ScheduleMode == ScheduleModes.Self)
+				try
 				{
-					runner = Script.Runner;
-				}
-				else if (scheduler.ScheduleMode == ScheduleModes.Next && NextScript != null)
-				{
-					runner = NextScript;
-				}
-
-				if (scheduler.TimeOnly)
-				{
-					int daysFromNow = 0;
-
-					if (scheduler.DaysInFuture > 0)
+					if (scheduler.Complete && scheduler.Value is DateTime scheduledTime)
 					{
-						daysFromNow = scheduler.DaysInFuture;
-					}
-					else if (scheduledTime.TimeOfDay < DateTime.Now.TimeOfDay)
-					{
-						daysFromNow = 1;
-					}
+						ScriptRunner runner = scheduler.ScheduledScript;
 
-					scheduledTime = DateTime.Now.Date.AddDays(daysFromNow).Add(scheduledTime.TimeOfDay);
+						if (scheduler.ScheduleMode == ScheduleModes.Self)
+						{
+							runner = this;
+						}
+						else if (scheduler.ScheduleMode == ScheduleModes.Next && NextScript != null)
+						{
+							runner = NextScript;
+						}
+						else if (runner == null)
+						{
+							if (scheduler.ScheduleMode == ScheduleModes.Reminder)
+							{
+								if (string.IsNullOrWhiteSpace(scheduler.ScriptGroup) == false)
+								{
+									runner = SensusServiceHelper.Get().ScriptsToRun.LastOrDefault(x => x.Runner.ScriptGroup == scheduler.ScriptGroup)?.Runner;
+								}
+								else
+								{
+									runner = SensusServiceHelper.Get().ScriptsToRun.LastOrDefault()?.Runner;
+								}
+							}
+						}
+
+						runner ??= this;
+
+						if (scheduler.TimeOnly)
+						{
+							int daysFromNow = 0;
+
+							if (scheduler.DaysInFuture > 0)
+							{
+								daysFromNow = scheduler.DaysInFuture;
+							}
+							else if (scheduledTime.TimeOfDay < DateTime.Now.TimeOfDay)
+							{
+								daysFromNow = 1;
+							}
+
+							scheduledTime = DateTime.Now.Date.AddDays(daysFromNow).Add(scheduledTime.TimeOfDay);
+						}
+
+						if (scheduler.ScheduleMode == ScheduleModes.Reminder)
+						{
+							// don't unschedule reminders for a script that might have already been scheduled here
+							if (reminderScripts.Contains(runner) == false)
+							{
+								await runner.UnscheduleRemindersAsync();
+
+								reminderScripts.Add(runner);
+							}
+
+							await runner.ScheduleReminderAsync(runner.Script, scheduledTime, scheduler.NotificationMessage);
+						}
+						else
+						{
+							await runner.ScheduleScriptRunAsync(scheduledTime);
+
+							scheduledNext = runner == NextScript;
+						}
+					}
 				}
-
-				await runner.ScheduleScriptRunAsync(scheduledTime);
-
-				return scheduler.ScheduleMode == ScheduleModes.Next;
+				catch (Exception e)
+				{
+					SensusServiceHelper.Get().Logger.Log($"Failed to schedule from SchedulerInput with {scheduler.ScheduleMode}: {e.Message}", LoggingLevel.Normal, GetType());
+				}
 			}
 
-			return false;
+			return scheduledNext;
 		}
 
 		public async Task ScheduleNextScriptToRunAsync()
 		{
-			if (NextScript != null && (TriggerNextScriptFirstTimeOnly == false || HasSubmitted == false))
+			if (NextScript != null && NextScript.Enabled && (TriggerNextScriptFirstTimeOnly == false || HasSubmitted == false))
 			{
 				// if there is no window then run it immmediately
 				if (NextScriptRunDelayMS == 0)
@@ -932,6 +1083,154 @@ namespace Sensus.Probes.User.Scripts
 				{
 					await NextScript.ScheduleScriptRunAsync(DateTime.Now.AddMilliseconds(NextScriptRunDelayMS));
 				}
+			}
+		}
+
+		public async Task ScheduleDepedentScriptsAsync()
+		{
+			IEnumerable<ScriptRunner> dependents = Probe.ScriptRunners.Where(x => x.Enabled && x.RequiredScripts != null && x.RequiredScripts.Contains(this));
+
+			if (dependents.Any())
+			{
+				foreach (ScriptRunner runner in dependents)
+				{
+					await runner.ScheduleScriptRunsAsync();
+				}
+			}
+		}
+
+		public List<string> ReminderCallbackIds { get; set; }
+
+		private async Task ScheduleReminderAsync(Script script, DateTimeOffset startDate, TimeSpan interval, bool repeats, string notificationMessage)
+		{
+			if (startDate > DateTimeOffset.UtcNow || repeats)
+			{
+				string id = $"{Script.Id}.{GetType().FullName}.Reminder-{startDate:s}-{interval}";
+
+				if (SensusContext.Current.CallbackScheduler.ContainsCallback(id) == false)
+				{
+					ScheduledCallback callback = new ScheduledCallback(async c =>
+					{
+						Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Reminded, DateTimeOffset.Now, script, null), CancellationToken.None);
+
+						await Task.CompletedTask;
+					}, startDate - DateTimeOffset.Now, id, Probe.Protocol.Id, Probe.Protocol, null, TimeSpan.FromMilliseconds(DelayToleranceBeforeMS), TimeSpan.FromMilliseconds(DelayToleranceAfterMS), ScheduledCallbackPriority.High, GetType());
+
+					if (repeats && interval > TimeSpan.Zero)
+					{
+						callback.RepeatDelay = interval;
+
+						callback.RepeatPredicate = () =>
+						{
+							bool probeRunning = script.Runner.Probe.State == ProbeState.Running;
+							bool scriptSubmitting = script.Submitting;
+
+							return probeRunning && (scriptSubmitting == false);
+						};
+					}
+
+					if (string.IsNullOrWhiteSpace(notificationMessage) == false)
+					{
+						callback.UserNotificationMessage = notificationMessage;
+					}
+					else if (string.IsNullOrWhiteSpace(script.Runner.ReminderMessage) == false)
+					{
+						callback.UserNotificationMessage = script.Runner.ReminderMessage;
+					}
+					else
+					{
+						callback.UserNotificationMessage = $"{script.Runner.Name} is ready in your Surveys list. Click here to view it.";
+					}
+
+					callback.NotificationUserResponseAction = NotificationUserResponseAction.DisplayPendingSurveys;
+
+					if (await SensusContext.Current.CallbackScheduler.ScheduleCallbackAsync(callback) == ScheduledCallbackState.Scheduled)
+					{
+						if (ReminderCallbackIds.Contains(callback.Id) == false)
+						{
+							ReminderCallbackIds.Add(callback.Id);
+						}
+
+						SensusServiceHelper.Get().Logger.Log($"Scheduled {interval} second reminder for {script.Id}", LoggingLevel.Normal, GetType());
+					}
+					else
+					{
+						SensusServiceHelper.Get().Logger.Log($"Could not schedule {interval} second reminder for {script.Id}", LoggingLevel.Normal, GetType());
+					}
+				}
+			}
+		}
+		public async Task ScheduleReminderAsync(Script script, DateTime dateTime, string notificationMessage)
+		{
+			await ScheduleReminderAsync(script, dateTime, TimeSpan.Zero, false, notificationMessage);
+		}
+		private static IEnumerable<(TimeSpan Interval, bool Repeats)> ParseIntervals(string intervals)
+		{
+			List<(TimeSpan interval, bool repeats)> parsedIntervals = new();
+
+			if (string.IsNullOrWhiteSpace(intervals) == false)
+			{
+				IEnumerable<string> intervalStrings = intervals.Split(",").Select(x => x.Trim());
+
+				foreach (string intervalString in intervalStrings)
+				{
+					bool repeats = false;
+					string parsableInterval = intervalString;
+
+					if (intervalString.EndsWith("*"))
+					{
+						parsableInterval = intervalString[0..^1];
+
+						repeats = true;
+					}
+
+					TimeSpan timeSpan = TimeSpan.Zero;
+
+					if (int.TryParse(parsableInterval, out int interval))
+					{
+						timeSpan = TimeSpan.FromSeconds(interval);
+					}
+					else if (parsableInterval.Contains(":"))
+					{
+						TimeSpan.TryParse(parsableInterval, out timeSpan);
+					}
+
+					if (timeSpan > TimeSpan.Zero)
+					{
+						parsedIntervals.Add((timeSpan, repeats));
+					}
+				}
+			}
+
+			return parsedIntervals;
+		}
+		public async Task ScheduleRemindersAsync(Script script, string notificationMessage = null)
+		{
+			if (script.RunTime != null && string.IsNullOrWhiteSpace(script.Runner.ReminderIntervals) == false)
+			{
+				foreach ((TimeSpan interval, bool repeats) in ParseIntervals(script.Runner.ReminderIntervals))
+				{
+					DateTimeOffset dateTime = script.RunTime.Value.Add(interval);
+
+					await ScheduleReminderAsync(script, dateTime, interval, repeats, notificationMessage);
+				}
+			}
+		}
+
+		private async Task UnscheduleReminderAsync(string id)
+		{
+			await SensusContext.Current.CallbackScheduler.UnscheduleCallbackAsync(id);
+
+			lock (ReminderCallbackIds)
+			{
+				ReminderCallbackIds.Remove(id);
+			}
+		}
+		public async Task UnscheduleRemindersAsync()
+		{
+			foreach (string id in ReminderCallbackIds.ToList())
+			{
+				await UnscheduleReminderAsync(id);
 			}
 		}
 
@@ -1056,6 +1355,8 @@ namespace Sensus.Probes.User.Scripts
 				return;
 			}
 
+			await ScheduleRemindersAsync(script);
+
 			// check with the survey agent if there is one
 			if (Probe.Agent != null)
 			{
@@ -1063,7 +1364,7 @@ namespace Sensus.Probes.User.Scripts
 
 				if (deliverFutureTime.Item1)
 				{
-					Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.AgentAccepted, script.RunTime.Value, script), CancellationToken.None);
+					Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.AgentAccepted, script.RunTime.Value, script, null), CancellationToken.None);
 				}
 				else
 				{
@@ -1071,13 +1372,13 @@ namespace Sensus.Probes.User.Scripts
 					{
 						SensusServiceHelper.Get().Logger.Log("Agent has declined survey without deferral.", LoggingLevel.Normal, GetType());
 
-						Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.AgentDeclined, script.RunTime.Value, script), CancellationToken.None);
+						Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.AgentDeclined, script.RunTime.Value, script, null), CancellationToken.None);
 					}
 					else if (deliverFutureTime.Item2.Value > DateTimeOffset.UtcNow)
 					{
 						SensusServiceHelper.Get().Logger.Log("Agent has deferred survey until:  " + deliverFutureTime.Item2.Value, LoggingLevel.Normal, GetType());
 
-						Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.AgentDeferred, script.RunTime.Value, script), CancellationToken.None);
+						Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.AgentDeferred, script.RunTime.Value, script, null), CancellationToken.None);
 
 						// check whether we need to expire the rescheduled script at some future point
 						DateTime? expiration = null;
@@ -1118,7 +1419,7 @@ namespace Sensus.Probes.User.Scripts
 
 			// let the script agent know and store a datum to record the event
 			await (Probe.Agent?.ObserveAsync(script, ScriptState.Delivered) ?? Task.CompletedTask);
-			Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Delivered, script.RunTime.Value, script), CancellationToken.None);
+			Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Delivered, script.RunTime.Value, script, null), CancellationToken.None);
 		}
 
 		private string GetCopyName()
@@ -1154,14 +1455,19 @@ namespace Sensus.Probes.User.Scripts
 			return Name + " - Copy";
 		}
 
-		public ScriptRunner Copy()
+		public async Task<ScriptRunner> CopyAsync()
 		{
+			JsonIgnoreContractResolver resolver = new JsonIgnoreContractResolver();
+
+			resolver.Ignore((ScriptRunner x) => x.ScheduledCallbackTimes);
+
 			JsonSerializerSettings settings = new JsonSerializerSettings
 			{
 				PreserveReferencesHandling = PreserveReferencesHandling.None,
 				ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
 				TypeNameHandling = TypeNameHandling.All,
 				ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+				ContractResolver = resolver
 			};
 
 			try
@@ -1173,7 +1479,8 @@ namespace Sensus.Probes.User.Scripts
 				copy.Probe = Probe;
 
 				copy.Name = GetCopyName();
-				copy.HasSubmitted = false;
+
+				await copy.ResetAsync();
 
 				foreach (InputGroup inputGroup in copy.Script.InputGroups)
 				{
@@ -1185,8 +1492,11 @@ namespace Sensus.Probes.User.Scripts
 			catch (Exception ex)
 			{
 				string message = $"Failed to copy script runner:  {ex.Message}";
+
 				SensusServiceHelper.Get().Logger.Log(message, LoggingLevel.Normal, GetType());
+
 				SensusException.Report(message, ex);
+
 				return null;
 			}
 			finally

@@ -15,7 +15,6 @@
 using Newtonsoft.Json;
 using System;
 using Sensus.Exceptions;
-using Microsoft.AppCenter.Analytics;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Serialization;
@@ -106,8 +105,6 @@ namespace Sensus.DataStores
 			{
 				{ "Running", _running.ToString() }
 			};
-
-			Analytics.TrackEvent(eventName, properties);
 
 			events.Add(new AnalyticsTrackedEvent(eventName, properties));
 

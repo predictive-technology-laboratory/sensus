@@ -13,13 +13,12 @@
 // limitations under the License.
 
 using Xamarin.Forms;
-using System.Collections.Generic;
 
 namespace Sensus.UI.Inputs
 {
 	public enum ButtonStates
 	{
-		Default,
+		Normal,
 		Correct,
 		Incorrect,
 		Selectable,
@@ -30,7 +29,7 @@ namespace Sensus.UI.Inputs
 	{
 		public ButtonWithValue()
 		{
-			StyleClass = new List<string> { "ButtonWithValue" };
+			
 		}
 
 		public string Value { get; set; }
@@ -40,7 +39,12 @@ namespace Sensus.UI.Inputs
 		public ButtonStates State
 		{
 			get => (ButtonStates)GetValue(StateProperty);
-			set => SetValue(StateProperty, value);
+			set
+			{
+				SetValue(StateProperty, value);
+
+				VisualStateManager.GoToState(this, value.ToString());
+			}
 		}
 	}
 }

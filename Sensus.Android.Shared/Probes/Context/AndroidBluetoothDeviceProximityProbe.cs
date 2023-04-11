@@ -14,7 +14,6 @@
 
 using System;
 using Sensus.Probes.Context;
-using Plugin.Permissions.Abstractions;
 using Android.Bluetooth.LE;
 using Android.Bluetooth;
 using Android.OS;
@@ -29,78 +28,92 @@ using System.Linq;
 using Sensus.Probes;
 using Android.App;
 using Android.Content;
+using Xamarin.Essentials;
 
 namespace Sensus.Android.Probes.Context
 {
-    /// <summary>
-    /// Scans for the presence of other devices nearby that are running the current <see cref="Protocol"/>. When
-    /// encountered, this Probe will read the device ID of other devices. This Probe also advertises the presence 
-    /// of the current device and serves requests for the current device's ID. This Probe reports data in the form 
-    /// of <see cref="BluetoothDeviceProximityDatum"/> objects.
-    /// 
-    /// There are caveats to the conditions under which an Android device running this Probe will detect another
-    /// device:
-    /// 
-    ///   * If the other device is an Android device with Sensus running in the foreground or background, detection is possible.
-    ///   * If the other device is an iOS device with Sensus running in the foreground, detection is possible.
-    ///   * If the other device is an iOS device with Sensus running in the background, detection is not possible.
-    /// 
-    /// NOTE:  The value of <see cref="Protocol.Id"/> running on the other device must equal the value of 
-    /// <see cref="Protocol.Id"/> running on the current device. When a Protocol is created from within the
-    /// Sensus app, it is assigned a unique identifier. This value is maintained or changed depending on what you
-    /// do:
-    /// 
-    ///   * When the newly created Protocol is copied on the current device, a new unique identifier is assigned to
-    ///     it. This breaks the connection between the Protocols.
-    /// 
-    ///   * When the newly created Protocol is shared via the app with another device, its identifier remains 
-    ///     unchanged. This maintains the connection between the Protocols.
-    /// 
-    /// Thus, in order for this <see cref="AndroidBluetoothDeviceProximityProbe"/> to operate properly, you must configure
-    /// your Protocols in one of the two following ways:
-    /// 
-    ///   * Create your Protocol on one platform (either Android or iOS) and then share it with a device from the other
-    ///     platform for customization. The <see cref="Protocol.Id"/> values of these Protocols will remain equal
-    ///     and this <see cref="AndroidBluetoothDeviceProximityProbe"/> will detect encounters across platforms.
-    /// 
-    ///   * Create your Protocols separately on each platform and then set the <see cref="Protocol.Id"/> field on
-    ///     one platform (using the "Set Study Identifier" button) to match the <see cref="Protocol.Id"/> value
-    ///     of the other platform (obtained via "Copy Study Identifier").
-    /// 
-    /// See the iOS subclass of <see cref="BluetoothDeviceProximityProbe"/> for additional information.
-    /// </summary>
-    public class AndroidBluetoothDeviceProximityProbe : BluetoothDeviceProximityProbe
-    {
-        private AndroidBluetoothClientScannerCallback _bluetoothScannerCallback;
-        private AndroidBluetoothServerAdvertisingCallback _bluetoothAdvertiserCallback;
-        private BluetoothGattService _deviceIdService;
-        private BluetoothGattCharacteristic _deviceIdCharacteristic;
+	/// <summary>
+	/// Scans for the presence of other devices nearby that are running the current <see cref="Protocol"/>. When
+	/// encountered, this Probe will read the device ID of other devices. This Probe also advertises the presence 
+	/// of the current device and serves requests for the current device's ID. This Probe reports data in the form 
+	/// of <see cref="BluetoothDeviceProximityDatum"/> objects.
+	/// 
+	/// There are caveats to the conditions under which an Android device running this Probe will detect another
+	/// device:
+	/// 
+	///   * If the other device is an Android device with Sensus running in the foreground or background, detection is possible.
+	///   * If the other device is an iOS device with Sensus running in the foreground, detection is possible.
+	///   * If the other device is an iOS device with Sensus running in the background, detection is not possible.
+	/// 
+	/// NOTE:  The value of <see cref="Protocol.Id"/> running on the other device must equal the value of 
+	/// <see cref="Protocol.Id"/> running on the current device. When a Protocol is created from within the
+	/// Sensus app, it is assigned a unique identifier. This value is maintained or changed depending on what you
+	/// do:
+	/// 
+	///   * When the newly created Protocol is copied on the current device, a new unique identifier is assigned to
+	///     it. This breaks the connection between the Protocols.
+	/// 
+	///   * When the newly created Protocol is shared via the app with another device, its identifier remains 
+	///     unchanged. This maintains the connection between the Protocols.
+	/// 
+	/// Thus, in order for this <see cref="AndroidBluetoothDeviceProximityProbe"/> to operate properly, you must configure
+	/// your Protocols in one of the two following ways:
+	/// 
+	///   * Create your Protocol on one platform (either Android or iOS) and then share it with a device from the other
+	///     platform for customization. The <see cref="Protocol.Id"/> values of these Protocols will remain equal
+	///     and this <see cref="AndroidBluetoothDeviceProximityProbe"/> will detect encounters across platforms.
+	/// 
+	///   * Create your Protocols separately on each platform and then set the <see cref="Protocol.Id"/> field on
+	///     one platform (using the "Set Study Identifier" button) to match the <see cref="Protocol.Id"/> value
+	///     of the other platform (obtained via "Copy Study Identifier").
+	/// 
+	/// See the iOS subclass of <see cref="BluetoothDeviceProximityProbe"/> for additional information.
+	/// </summary>
+	public class AndroidBluetoothDeviceProximityProbe : BluetoothDeviceProximityProbe
+	{
+		private AndroidBluetoothClientScannerCallback _bluetoothScannerCallback;
+		private AndroidBluetoothServerAdvertisingCallback _bluetoothAdvertiserCallback;
+		private BluetoothAdapter _bluetoothAdapter;
+		private BluetoothGattService _deviceIdService;
+		private BluetoothGattCharacteristic _deviceIdCharacteristic;
 		private AndroidBluetoothDeviceReceiver _bluetoothBroadcastReceiver;
+		[JsonIgnore]
+		public override int DefaultPollingSleepDurationMS => (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
 
-        [JsonIgnore]
-        public override int DefaultPollingSleepDurationMS => (int)TimeSpan.FromMinutes(1).TotalMilliseconds;
+		protected override async Task InitializeAsync()
+		{
+			await base.InitializeAsync();
 
-        protected override async Task InitializeAsync()
-        {
-            await base.InitializeAsync();
+			// BLE requires location permissions
+			if (await SensusServiceHelper.Get().ObtainLocationPermissionAsync() != PermissionStatus.Granted)
+			{
+				// throw standard exception instead of NotSupportedException, since the user might decide to enable location in the future
+				// and we'd like the probe to be restarted at that time.
+				string error = "Geolocation is not permitted on this device. Cannot start Bluetooth probe.";
 
-            // BLE requires location permissions
-            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
-            {
-                // throw standard exception instead of NotSupportedException, since the user might decide to enable location in the future
-                // and we'd like the probe to be restarted at that time.
-                string error = "Geolocation is not permitted on this device. Cannot start Bluetooth probe.";
-                await SensusServiceHelper.Get().FlashNotificationAsync(error);
-                throw new Exception(error);
-            }
+				await SensusServiceHelper.Get().FlashNotificationAsync(error);
 
-            _deviceIdCharacteristic = new BluetoothGattCharacteristic(UUID.FromString(DEVICE_ID_CHARACTERISTIC_UUID), GattProperty.Read, GattPermission.Read);
-            _deviceIdCharacteristic.SetValue(Encoding.UTF8.GetBytes(SensusServiceHelper.Get().DeviceId));
+				throw new Exception(error);
+			}
 
-            _deviceIdService = new BluetoothGattService(UUID.FromString(Protocol.Id), GattServiceType.Primary);
-            _deviceIdService.AddCharacteristic(_deviceIdCharacteristic);
+			_bluetoothAdapter = AndroidSensusServiceHelper.BluetoothManager?.Adapter;
 
-            _bluetoothAdvertiserCallback = new AndroidBluetoothServerAdvertisingCallback(_deviceIdService, _deviceIdCharacteristic);
+			if ((_bluetoothAdapter?.IsEnabled ?? false) == false)
+			{
+				string error = "Bluetooth is not enabled. Cannot start Bluetooth probe.";
+
+				await SensusServiceHelper.Get().FlashNotificationAsync(error);
+
+				throw new Exception(error);
+			}
+
+			_deviceIdCharacteristic = new BluetoothGattCharacteristic(UUID.FromString(DEVICE_ID_CHARACTERISTIC_UUID), GattProperty.Read, GattPermission.Read);
+			_deviceIdCharacteristic.SetValue(Encoding.UTF8.GetBytes(SensusServiceHelper.Get().DeviceId));
+
+			_deviceIdService = new BluetoothGattService(UUID.FromString(Protocol.Id), GattServiceType.Primary);
+			_deviceIdService.AddCharacteristic(_deviceIdCharacteristic);
+
+			_bluetoothAdvertiserCallback = new AndroidBluetoothServerAdvertisingCallback(_deviceIdService, _deviceIdCharacteristic);
 
 			if (ScanMode.HasFlag(BluetoothScanModes.Classic))
 			{
@@ -122,30 +135,27 @@ namespace Sensus.Android.Probes.Context
 
 		#region central -- scan
 		protected override async Task ScanAsync(CancellationToken cancellationToken)
-        {
-            // start a scan if bluetooth is present and enabled
-            if (BluetoothAdapter.DefaultAdapter?.IsEnabled ?? false)
-            {
-                try
-                {
+		{
+			// start a scan if bluetooth is present and enabled
+			if (_bluetoothAdapter?.IsEnabled ?? false)
+			{
+				try
+				{
 					if (ScanMode.HasFlag(BluetoothScanModes.LE))
 					{
 						List<ScanFilter> scanFilters = new List<ScanFilter>();
 
 						if (DiscoverAll == false)
 						{
-							ScanFilter scanFilter = new ScanFilter.Builder()
-															  .SetServiceUuid(new ParcelUuid(_deviceIdService.Uuid))
-															  .Build();
+							ScanFilter scanFilter = new ScanFilter.Builder().SetServiceUuid(new ParcelUuid(_deviceIdService.Uuid)).Build();
 
 							scanFilters.Add(scanFilter);
 						}
 
-						ScanSettings.Builder scanSettingsBuilder = new ScanSettings.Builder()
-																				   .SetScanMode(global::Android.Bluetooth.LE.ScanMode.Balanced);
+						ScanSettings.Builder scanSettingsBuilder = new ScanSettings.Builder().SetScanMode(global::Android.Bluetooth.LE.ScanMode.Balanced);
 
 						// return batched scan results periodically if supported on the BLE chip
-						if (BluetoothAdapter.DefaultAdapter.IsOffloadedScanBatchingSupported)
+						if (_bluetoothAdapter.IsOffloadedScanBatchingSupported)
 						{
 							scanSettingsBuilder.SetReportDelay((long)(ScanDurationMS / 2.0));
 						}
@@ -153,50 +163,50 @@ namespace Sensus.Android.Probes.Context
 						// start a fresh manager delegate to collect/read results
 						_bluetoothScannerCallback = new AndroidBluetoothClientScannerCallback(_deviceIdService, _deviceIdCharacteristic, this);
 
-						BluetoothAdapter.DefaultAdapter.BluetoothLeScanner.StartScan(scanFilters, scanSettingsBuilder.Build(), _bluetoothScannerCallback);
+						_bluetoothAdapter.BluetoothLeScanner.StartScan(scanFilters, scanSettingsBuilder.Build(), _bluetoothScannerCallback);
 					}
 
 					if (ScanMode.HasFlag(BluetoothScanModes.Classic))
 					{
-						BluetoothAdapter.DefaultAdapter.StartDiscovery();
+						_bluetoothAdapter.StartDiscovery();
 					}
 
 					TaskCompletionSource<bool> scanCompletionSource = new TaskCompletionSource<bool>();
 
-                    cancellationToken.Register(() =>
-                    {
-                        try
-                        {
+					cancellationToken.Register(() =>
+					{
+						try
+						{
 							if (ScanMode.HasFlag(BluetoothScanModes.LE))
 							{
-								BluetoothAdapter.DefaultAdapter.BluetoothLeScanner.StopScan(_bluetoothScannerCallback);
+								_bluetoothAdapter.BluetoothLeScanner.StopScan(_bluetoothScannerCallback);
 							}
-							else if (ScanMode.HasFlag(BluetoothScanModes.Classic) && BluetoothAdapter.DefaultAdapter.IsDiscovering)
+							else if (ScanMode.HasFlag(BluetoothScanModes.Classic) && _bluetoothAdapter.IsDiscovering)
 							{
-								BluetoothAdapter.DefaultAdapter.CancelDiscovery();
+								_bluetoothAdapter.CancelDiscovery();
 							}
-                        }
-                        catch (Exception ex)
-                        {
-                            SensusServiceHelper.Get().Logger.Log("Exception while stopping scan:  " + ex.Message, LoggingLevel.Normal, GetType());
-                        }
-                        finally
-                        {
-                            scanCompletionSource.TrySetResult(true);
-                        }
-                    });
+						}
+						catch (Exception ex)
+						{
+							SensusServiceHelper.Get().Logger.Log("Exception while stopping scan:  " + ex.Message, LoggingLevel.Normal, GetType());
+						}
+						finally
+						{
+							scanCompletionSource.TrySetResult(true);
+						}
+					});
 
-                    await scanCompletionSource.Task;
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Exception while scanning:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
-            }
-        }
+					await scanCompletionSource.Task;
+				}
+				catch (Exception ex)
+				{
+					SensusServiceHelper.Get().Logger.Log("Exception while scanning:  " + ex.Message, LoggingLevel.Normal, GetType());
+				}
+			}
+		}
 
-        protected async override Task<List<BluetoothDeviceProximityDatum>> ReadPeripheralCharacteristicValuesAsync(CancellationToken cancellationToken)
-        {
+		protected async override Task<List<BluetoothDeviceProximityDatum>> ReadPeripheralCharacteristicValuesAsync(CancellationToken cancellationToken)
+		{
 			if (ScanMode == BluetoothScanModes.LE)
 			{
 				return await _bluetoothScannerCallback.ReadPeripheralCharacteristicValuesAsync(cancellationToken);
@@ -261,66 +271,66 @@ namespace Sensus.Android.Probes.Context
 
 			return bluetoothDeviceProximityData;
 		}
-        #endregion
+		#endregion
 
-        #region peripheral -- advertise
-        protected override void StartAdvertising()
-        {
-            try
-            {
-                if (BluetoothAdapter.DefaultAdapter?.IsMultipleAdvertisementSupported ?? false)
-                {
-                    AdvertiseSettings advertisingSettings = new AdvertiseSettings.Builder()
-                                                                                 .SetAdvertiseMode(AdvertiseMode.Balanced)
-                                                                                 .SetTxPowerLevel(AdvertiseTx.PowerLow)
-                                                                                 .SetConnectable(true)
-                                                                                 .Build();
+		#region peripheral -- advertise
+		protected override void StartAdvertising()
+		{
+			try
+			{
+				if (_bluetoothAdapter?.IsMultipleAdvertisementSupported ?? false)
+				{
+					AdvertiseSettings advertisingSettings = new AdvertiseSettings.Builder()
+																				 .SetAdvertiseMode(AdvertiseMode.Balanced)
+																				 .SetTxPowerLevel(AdvertiseTx.PowerLow)
+																				 .SetConnectable(true)
+																				 .Build();
 
-                    AdvertiseData advertisingData = new AdvertiseData.Builder()
-                                                                     .SetIncludeDeviceName(false)
-                                                                     .AddServiceUuid(new ParcelUuid(_deviceIdService.Uuid))
-                                                                     .Build();
+					AdvertiseData advertisingData = new AdvertiseData.Builder()
+																	 .SetIncludeDeviceName(false)
+																	 .AddServiceUuid(new ParcelUuid(_deviceIdService.Uuid))
+																	 .Build();
 
-                    BluetoothAdapter.DefaultAdapter.BluetoothLeAdvertiser.StartAdvertising(advertisingSettings, advertisingData, _bluetoothAdvertiserCallback);
-                }
-                else
-                {
-                    throw new Exception("BLE advertising is not available.");
-                }
-            }
-            catch (Exception ex)
-            {
-                SensusServiceHelper.Get().Logger.Log("Exception while starting advertiser:  " + ex.Message, LoggingLevel.Normal, GetType());
-            }
-        }
+					_bluetoothAdapter?.BluetoothLeAdvertiser.StartAdvertising(advertisingSettings, advertisingData, _bluetoothAdvertiserCallback);
+				}
+				else
+				{
+					throw new Exception("BLE advertising is not available.");
+				}
+			}
+			catch (Exception ex)
+			{
+				SensusServiceHelper.Get().Logger.Log("Exception while starting advertiser:  " + ex.Message, LoggingLevel.Normal, GetType());
+			}
+		}
 
-        protected override void StopAdvertising()
-        {
-            try
-            {
-                BluetoothAdapter.DefaultAdapter?.BluetoothLeAdvertiser.StopAdvertising(_bluetoothAdvertiserCallback);
-            }
-            catch (Exception ex)
-            {
-                SensusServiceHelper.Get().Logger.Log("Exception while stopping advertising:  " + ex.Message, LoggingLevel.Normal, GetType());
-            }
+		protected override void StopAdvertising()
+		{
+			try
+			{
+				_bluetoothAdapter?.BluetoothLeAdvertiser.StopAdvertising(_bluetoothAdvertiserCallback);
+			}
+			catch (Exception ex)
+			{
+				SensusServiceHelper.Get().Logger.Log("Exception while stopping advertising:  " + ex.Message, LoggingLevel.Normal, GetType());
+			}
 
-            _bluetoothAdvertiserCallback.CloseServer();
-        }
+			_bluetoothAdvertiserCallback.CloseServer();
+		}
 
-        public override async Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
-        {
-            HealthTestResult result = await base.TestHealthAsync(events);
+		public override async Task<HealthTestResult> TestHealthAsync(List<AnalyticsTrackedEvent> events)
+		{
+			HealthTestResult result = await base.TestHealthAsync(events);
 
-            if (State == ProbeState.Running)
-            {
-                // if the user disables/enables BT manually, we will no longer be advertising the service. start advertising
-                // on each health test to ensure we're advertising.
-                StartAdvertising();
-            }
+			if (State == ProbeState.Running)
+			{
+				// if the user disables/enables BT manually, we will no longer be advertising the service. start advertising
+				// on each health test to ensure we're advertising.
+				StartAdvertising();
+			}
 
-            return result;
-        }
-        #endregion
-    }
+			return result;
+		}
+		#endregion
+	}
 }

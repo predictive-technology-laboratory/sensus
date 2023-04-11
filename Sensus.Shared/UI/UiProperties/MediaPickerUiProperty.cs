@@ -1,5 +1,5 @@
-﻿using Plugin.Media;
-using Plugin.Media.Abstractions;
+﻿//using Plugin.Media;
+//using Plugin.Media.Abstractions;
 using Sensus.Exceptions;
 using Sensus.UI.Inputs;
 using System;
@@ -8,6 +8,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace Sensus.UI.UiProperties
@@ -134,7 +135,7 @@ namespace Sensus.UI.UiProperties
 				Children = { urlLabel, urlEntry, cacheLayout }
 			};
 
-			async Task setMediaObjectAsync(MediaFile file)
+			async Task setMediaObjectAsync(FileResult file)
 			{
 				if (file != null)
 				{
@@ -143,7 +144,7 @@ namespace Sensus.UI.UiProperties
 
 					try
 					{
-						MediaObject media = await MediaObject.FromFileAsync(file.Path, file.GetStream(), SensusServiceHelper.Get().GetMimeType(file.Path), input.CachePath);
+						MediaObject media = await MediaObject.FromFileAsync(file.FullPath, await file.OpenReadAsync(), SensusServiceHelper.Get().GetMimeType(file.FullPath), input.CachePath);
 
 						setMediaObject(media);
 					}
@@ -270,42 +271,25 @@ namespace Sensus.UI.UiProperties
 					}
 					else if (source == CAPTURE_IMAGE)
 					{
-						MediaFile file = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
-						{
-							CustomPhotoSize = 50,
-							CompressionQuality = 50,
-							SaveMetaData = false,
-							SaveToAlbum = true
-						});
+						FileResult file = await MediaPicker.CapturePhotoAsync();
 
 						await setMediaObjectAsync(file);
 					}
 					else if (source == CHOOSE_IMAGE)
 					{
-						MediaFile file = await CrossMedia.Current.PickPhotoAsync(new PickMediaOptions()
-						{
-							CustomPhotoSize = 50,
-							CompressionQuality = 50,
-							SaveMetaData = false
-						});
+						FileResult file = await MediaPicker.PickPhotoAsync();
 
 						await setMediaObjectAsync(file);
 					}
 					else if (source == CAPTURE_VIDEO)
 					{
-						MediaFile file = await CrossMedia.Current.TakeVideoAsync(new StoreVideoOptions
-						{
-							CustomPhotoSize = 50,
-							CompressionQuality = 50,
-							SaveMetaData = false,
-							SaveToAlbum = true
-						});
+						FileResult file = await MediaPicker.CaptureVideoAsync();
 
 						await setMediaObjectAsync(file);
 					}
 					else if (source == CHOOSE_VIDEO)
 					{
-						MediaFile file = await CrossMedia.Current.PickVideoAsync();
+						FileResult file = await MediaPicker.PickVideoAsync();
 
 						await setMediaObjectAsync(file);
 					}
@@ -365,25 +349,19 @@ namespace Sensus.UI.UiProperties
 				}
 			};
 
-			if (CrossMedia.Current.IsTakePhotoSupported)
+			if (MediaPicker.IsCaptureSupported)
 			{
 				buttons.Add(CAPTURE_IMAGE);
 			}
 
-			if (CrossMedia.Current.IsPickPhotoSupported)
-			{
-				buttons.Add(CHOOSE_IMAGE);
-			}
+			buttons.Add(CHOOSE_IMAGE);
 
-			if (CrossMedia.Current.IsTakeVideoSupported)
+			if (MediaPicker.IsCaptureSupported)
 			{
 				buttons.Add(CAPTURE_VIDEO);
 			}
 
-			if (CrossMedia.Current.IsPickVideoSupported)
-			{
-				buttons.Add(CHOOSE_VIDEO);
-			}
+			buttons.Add(CHOOSE_VIDEO);
 
 			buttons.Add(URL);
 			buttons.Add(URL_CACHED);

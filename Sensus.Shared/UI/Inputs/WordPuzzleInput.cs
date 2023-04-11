@@ -79,172 +79,164 @@ namespace Sensus.UI.Inputs
 
 		public override View GetView(int index)
 		{
-			if (base.GetView(index) == null && Words.Count > 0)
+			List<string> words = Words.Where(x => string.IsNullOrWhiteSpace(x) == false).ToList();
+
+			if (base.GetView(index) == null)
 			{
-				_value = new List<string>();
-				_missingLetterIndexes = new HashSet<int>();
+				_value = new();
+				_missingLetterIndexes = new();
 
-				Random random = new Random();
-				string word = Words[random.Next(Words.Count)].ToLower();
-
-				List<(int Index, string Letter)> choices = new List<(int, string)>();
-
-				int missingLetterCount = Math.Min(MissingLetterCount, ChoiceCount - 1);
-
-				while (choices.Count < ChoiceCount)
+				if (words.Count > 0)
 				{
-					if (choices.Count < missingLetterCount)
-					{
-						int missingLetterIndex = random.Next(word.Length);
-						string missingLetter = word[missingLetterIndex].ToString().ToUpper();
+					Random random = new();
+					string word = words[random.Next(words.Count)].ToLower();
 
-						if (choices.Any(x => x.Index == missingLetterIndex) == false && choices.Any(x => x.Letter == missingLetter) == false)
+					List<(int Index, string Letter)> choices = new();
+
+					int choiceCount = Math.Min(ChoiceCount, word.Length);
+					int missingLetterCount = Math.Max(Math.Min(MissingLetterCount, word.Length), 1);
+
+					while (choices.Count < choiceCount)
+					{
+						if (choices.Count < missingLetterCount)
 						{
-							_missingLetterIndexes.Add(missingLetterIndex);
+							int missingLetterIndex = random.Next(word.Length);
+							string missingLetter = word[missingLetterIndex].ToString().ToUpper();
 
-							choices.Add((missingLetterIndex, missingLetter));
-						}
-					}
-					else
-					{
-						string missingLetter = ((char)('a' + random.Next(0, 26))).ToString().ToUpper();
-
-						if (choices.Any(x => x.Letter == missingLetter) == false)
-						{
-							choices.Add((-1, missingLetter));
-						}
-					}
-				}
-
-				choices = choices.OrderBy(x => random.Next()).ToList();
-
-				ButtonGridView wordGrid = new ButtonGridView(ColumnCount, null)
-				{
-					HorizontalOptions = LayoutOptions.FillAndExpand
-				};
-
-				for (int letterIndex = 0; letterIndex < word.Length; letterIndex++)
-				{
-					string letter = word[letterIndex].ToString();
-
-					if (choices.Any(x => x.Index == letterIndex))
-					{
-						ButtonWithValue wordButton = wordGrid.AddButton("", "");
-
-						wordButton.StyleClass = new[] { "MissingLetterButton" };
-					}
-					else
-					{
-						wordGrid.AddButton(letter.ToUpper(), letter);
-					}
-				}
-
-				wordGrid.Arrange();
-
-				ButtonWithValue[] wordButtons = wordGrid.Buttons.ToArray();
-
-				_choiceGrid = new ButtonGridView(0, null)
-				{
-					HorizontalOptions = LayoutOptions.FillAndExpand
-				};
-
-				if (LeaveIncorrectValue == false)
-				{
-					DelayEnded += (s, e) =>
-					{
-						foreach (ButtonWithValue otherButton in _choiceGrid.Buttons)
-						{
-							if (otherButton.State == ButtonStates.Incorrect)
+							if (choices.Any(x => x.Index == missingLetterIndex) == false && choices.Any(x => x.Letter == missingLetter) == false)
 							{
-								otherButton.State = ButtonStates.Default;
+								_missingLetterIndexes.Add(missingLetterIndex);
+
+								choices.Add((missingLetterIndex, missingLetter));
 							}
 						}
-					};
-				}
-
-				foreach ((int letterIndex, string choice) in choices)
-				{
-					ButtonWithValue button = _choiceGrid.AddButton(choice.ToUpper(), choice);
-
-					if (letterIndex < 0)
-					{
-						button.Clicked += (s, e) =>
+						else
 						{
-							if (Correct == false)
-							{
-								_value = _value.Union(new[] { button.Value }).OrderBy(x => x).ToList();
+							string missingLetter = ((char)('a' + random.Next(0, 26))).ToString().ToUpper();
 
+							if (choices.Any(x => x.Letter == missingLetter) == false)
+							{
+								choices.Add((-1, missingLetter));
+							}
+						}
+					}
+
+					choices = choices.OrderBy(x => random.Next()).ToList();
+
+					ButtonGridView wordGrid = new(ColumnCount, null)
+					{
+						HorizontalOptions = LayoutOptions.FillAndExpand
+					};
+
+					for (int letterIndex = 0; letterIndex < word.Length; letterIndex++)
+					{
+						string letter = word[letterIndex].ToString();
+
+						if (choices.Any(x => x.Index == letterIndex))
+						{
+							ButtonWithValue wordButton = wordGrid.AddButton("", "");
+
+							wordButton.StyleClass = new[] { "MissingLetterButton" };
+						}
+						else
+						{
+							wordGrid.AddButton(letter.ToUpper(), letter);
+						}
+					}
+
+					wordGrid.Arrange();
+
+					ButtonWithValue[] wordButtons = wordGrid.Buttons.ToArray();
+
+					_choiceGrid = new(0, null)
+					{
+						HorizontalOptions = LayoutOptions.FillAndExpand
+					};
+
+					if (LeaveIncorrectValue == false)
+					{
+						DelayEnded += (s, e) =>
+						{
+							Device.BeginInvokeOnMainThread(() =>
+							{
 								foreach (ButtonWithValue otherButton in _choiceGrid.Buttons)
 								{
-									otherButton.State = ButtonStates.Default;
+									if (otherButton.State == ButtonStates.Incorrect)
+									{
+										otherButton.State = ButtonStates.Normal;
+									}
 								}
+							});
+						};
+					}
 
-								button.State = ButtonStates.Incorrect;
+					foreach ((int letterIndex, string choice) in choices)
+					{
+						ButtonWithValue button = _choiceGrid.AddButton(choice.ToUpper(), choice);
 
-								if (_value.Count >= MissingLetterCount)
+						if (letterIndex < 0)
+						{
+							button.Clicked += (s, e) =>
+							{
+								if (Correct == false)
+								{
+									List<string> correctValues = _value;
+									
+									_value = _value.Union(new[] { button.Value }).OrderBy(x => x).ToList();
+
+									button.State = ButtonStates.Incorrect;
+
+									Complete = true;
+
+									_value = correctValues;
+								}
+							};
+						}
+						else
+						{
+							button.Clicked += (s, e) =>
+							{
+								_value = _value.Union(new[] { button.Value }).OrderBy(x => x).ToList();
+								_missingLetterIndexes.Remove(letterIndex);
+
+								button.State = ButtonStates.Correct;
+
+								wordButtons[letterIndex].State = ButtonStates.Correct;
+
+								wordButtons[letterIndex].Text = choice.ToUpper();
+
+								if (_missingLetterIndexes.Count == 0)
 								{
 									Complete = true;
 								}
-								else
-								{
-									Attempts += 1;
-								}
-
-								SetFeedback(false);
-							}
-						};
+							};
+						}
 					}
-					else
+
+					Label label = new()
 					{
-						button.Clicked += (s, e) =>
-						{
-							_value = _value.Union(new[] { button.Value }).OrderBy(x => x).ToList();
-							_missingLetterIndexes.Remove(letterIndex);
+						Text = "Select a Tile:",
+						HorizontalTextAlignment = TextAlignment.Center
+					};
 
-							foreach (ButtonWithValue otherButton in _choiceGrid.Buttons)
-							{
-								otherButton.State = ButtonStates.Default;
-							}
-
-							button.State = ButtonStates.Correct;
-
-							wordButtons[letterIndex].State = ButtonStates.Correct;
-
-							wordButtons[letterIndex].Text = choice.ToUpper();
-
-							if (_value.Count >= MissingLetterCount)
-							{
-								Complete = true;
-							}
-							else
-							{
-								Attempts += 1;
-							}
-
-							SetFeedback(true);
-						};
+					if (_missingLetterIndexes.Count > 1)
+					{
+						label.Text = "Select Tiles:";
 					}
+
+					_choiceGrid.Arrange();
+
+					StackLayout puzzleLayout = new()
+					{
+						Children = { wordGrid, label, _choiceGrid }
+					};
+
+					base.SetView(puzzleLayout);
 				}
-
-				Label label = new Label()
+				else
 				{
-					Text = "Select a Tile:",
-					HorizontalTextAlignment = TextAlignment.Center
-				};
-
-				if (MissingLetterCount > 1)
-				{
-					label.Text = "Select Tiles:";
+					Complete = true;
 				}
-
-				_choiceGrid.Arrange();
-
-				StackLayout puzzleLayout = new StackLayout()
-				{
-					Children = { wordGrid, label, _choiceGrid }
-				};
-
-				base.SetView(puzzleLayout);
 			}
 
 			return base.GetView(index);
@@ -252,7 +244,7 @@ namespace Sensus.UI.Inputs
 
 		public override void Reset()
 		{
-			_value = new List<string>();
+			_value = new();
 
 			base.Reset();
 		}

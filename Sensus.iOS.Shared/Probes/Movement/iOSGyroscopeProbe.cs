@@ -16,51 +16,51 @@ using System;
 using Sensus.Probes.Movement;
 using CoreMotion;
 using Foundation;
-using Plugin.Permissions.Abstractions;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 
 namespace Sensus.iOS.Probes.Movement
 {
-    public class iOSGyroscopeProbe : GyroscopeProbe
-    {
-        private CMMotionManager _motionManager;
+	public class iOSGyroscopeProbe : GyroscopeProbe
+	{
+		private CMMotionManager _motionManager;
 
-        protected override async Task InitializeAsync()
-        {
-            await base.InitializeAsync();
+		protected override async Task InitializeAsync()
+		{
+			await base.InitializeAsync();
 
-            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Sensors) == PermissionStatus.Granted)
-            {
-                _motionManager = new CMMotionManager();
-            }
-            else
-            {
-                // throw standard exception instead of NotSupportedException, since the user might decide to enable sensors in the future
-                // and we'd like the probe to be restarted at that time.
-                string error = "This device does not contain an gyroscope, or the user has denied access to it. Cannot start gyroscope probe.";
-                await SensusServiceHelper.Get().FlashNotificationAsync(error);
-                throw new Exception(error);
-            }
-        }
+			if (await SensusServiceHelper.Get().ObtainPermissionAsync<Permissions.Sensors>() == PermissionStatus.Granted)
+			{
+				_motionManager = new CMMotionManager();
+			}
+			else
+			{
+				// throw standard exception instead of NotSupportedException, since the user might decide to enable sensors in the future
+				// and we'd like the probe to be restarted at that time.
+				string error = "This device does not contain an gyroscope, or the user has denied access to it. Cannot start gyroscope probe.";
+				await SensusServiceHelper.Get().FlashNotificationAsync(error);
+				throw new Exception(error);
+			}
+		}
 
-        protected override async Task StartListeningAsync()
-        {
-            await base.StartListeningAsync();
+		protected override async Task StartListeningAsync()
+		{
+			await base.StartListeningAsync();
 
-            _motionManager?.StartGyroUpdates(new NSOperationQueue(), async (data, error) =>
-            {
-                if (data != null && error == null)
-                {
-                    await StoreDatumAsync(new GyroscopeDatum(DateTimeOffset.UtcNow, data.RotationRate.x, data.RotationRate.y, data.RotationRate.z));
-                }
-            });
-        }
+			_motionManager?.StartGyroUpdates(new NSOperationQueue(), async (data, error) =>
+			{
+				if (data != null && error == null)
+				{
+					await StoreDatumAsync(new GyroscopeDatum(DateTimeOffset.UtcNow, data.RotationRate.x, data.RotationRate.y, data.RotationRate.z));
+				}
+			});
+		}
 
-        protected override async Task StopListeningAsync()
-        {
-            await base.StopListeningAsync();
+		protected override async Task StopListeningAsync()
+		{
+			await base.StopListeningAsync();
 
-            _motionManager?.StopGyroUpdates();
-        }
-    }
+			_motionManager?.StopGyroUpdates();
+		}
+	}
 }

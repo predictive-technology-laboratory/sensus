@@ -12,24 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Threading.Tasks;
-using Estimote.Android.Indoor;
+using Xamarin.Forms;
 
-namespace Sensus.Android.Probes.Location
+namespace Sensus.UI
 {
-    public class AndroidEstimoteIndoorPositionUpdateListener : Java.Lang.Object, IOnPositionUpdateListener
-    {
-        public event Func<LocationPosition, Task> UpdatedPositionAsync;
+	public class DarkModeCompatibleTextCell : TextCell
+	{
+		public DarkModeCompatibleTextCell()
+		{
+			Application.Current.Resources.TryGetValue("TextColor", out object textColor);
+			Application.Current.Resources.TryGetValue("LessDimmedColor", out object detailColor);
 
-        public async void OnPositionOutsideLocation()
-        {
-            await (UpdatedPositionAsync?.Invoke(null) ?? Task.CompletedTask);
-        }
-
-        public async void OnPositionUpdate(LocationPosition position)
-        {
-            await (UpdatedPositionAsync?.Invoke(position) ?? Task.CompletedTask);
-        }
-    }
+			TextColor = (Color)textColor;
+			DetailColor = (Color)detailColor;
+		}
+	}
 }

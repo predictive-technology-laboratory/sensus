@@ -91,6 +91,9 @@ namespace Sensus.UI.Inputs
 		public ScoreInput()
 		{
 			_inputs = new List<Input>();
+
+			StoreCompletionRecords = false;
+			Required = false;
 		}
 
 		public override object Value
@@ -225,17 +228,26 @@ namespace Sensus.UI.Inputs
 			}
 		}
 
+		private float _scoreOffset;
+		private float _correctScoreOffset;
+
+		public void OffsetScore(float scoreOffset, float correctScoreOffset)
+		{
+			_scoreOffset = scoreOffset;
+			_correctScoreOffset = correctScoreOffset;
+		}
+
 		public void SetScore()
 		{
 			if (ScoreMethod == ScoreMethods.Total)
 			{
-				Score = _inputs.Sum(x => x.Score);
-				CorrectScore = _inputs.Sum(x => x.CorrectScore);
+				Score = _scoreOffset + _inputs.Sum(x => x.Score);
+				CorrectScore = _correctScoreOffset + _inputs.Sum(x => x.CorrectScore);
 			}
 			else if (ScoreMethod == ScoreMethods.Average)
 			{
-				Score = _inputs.Average(x => x.Score);
-				CorrectScore = _inputs.Average(x => x.CorrectScore);
+				Score = (_scoreOffset + _inputs.Average(x => x.Score)) / 2;
+				CorrectScore = (_correctScoreOffset + _inputs.Average(x => x.CorrectScore)) / 2;
 			}
 
 			if (Score == CorrectScore || (Score > 0 && RequireCorrectValue == false))
@@ -261,7 +273,7 @@ namespace Sensus.UI.Inputs
 
 		protected override void SetScore(float score)
 		{
-			// The ScoreInput does not need to set it's score when set as complete
+			// The ScoreInput does not need to set its score when set as complete
 		}
 
 		private void ScoreChanged(object sender, PropertyChangedEventArgs e)

@@ -26,127 +26,132 @@ using Sensus.Notifications;
 
 namespace Sensus.iOS.Callbacks
 {
-    public abstract class iOSCallbackScheduler : CallbackScheduler
-    {
-        /// <summary>
-        /// The callback notification horizon threshold. When using notifications to schedule the timing of
-        /// callbacks, we must decide when the delay of a callback execution necessitates a notification 
-        /// rather than executing immediately. This is in part a practical question, in that executing a 
-        /// callback immediately rather than using a notification can improve performance -- imagine the
-        /// app coming to the foreground and executing the callback right away versus deferring it to a 
-        /// future notification. This is also an iOS API consideration, as the iOS system will not schedule 
-        /// a notification if its fire date is in the past by the time it gets around to doing the scheduling.
-        /// Whatever the value, it needs to be less than the 
-        /// <see cref="Sensus.Probes.PollingProbe.DefaultPollingSleepDurationMS"/> value.
-        /// </summary>
-        public static readonly TimeSpan CALLBACK_NOTIFICATION_HORIZON_THRESHOLD = TimeSpan.FromSeconds(2);
+	public abstract class iOSCallbackScheduler : CallbackScheduler
+	{
+		/// <summary>
+		/// The callback notification horizon threshold. When using notifications to schedule the timing of
+		/// callbacks, we must decide when the delay of a callback execution necessitates a notification 
+		/// rather than executing immediately. This is in part a practical question, in that executing a 
+		/// callback immediately rather than using a notification can improve performance -- imagine the
+		/// app coming to the foreground and executing the callback right away versus deferring it to a 
+		/// future notification. This is also an iOS API consideration, as the iOS system will not schedule 
+		/// a notification if its fire date is in the past by the time it gets around to doing the scheduling.
+		/// Whatever the value, it needs to be less than the 
+		/// <see cref="Sensus.Probes.PollingProbe.DefaultPollingSleepDurationMS"/> value.
+		/// </summary>
+		public static readonly TimeSpan CALLBACK_NOTIFICATION_HORIZON_THRESHOLD = TimeSpan.FromSeconds(2);
 
-        public abstract List<string> CallbackIds { get; }
+		public abstract List<string> CallbackIds { get; }
 
-        /// <summary>
-        /// Updates the callbacks when the app is activated. This services any callbacks that should have already been 
-        /// serviced or will be serviced in the near future. This also reissues all silent notifications, which would 
-        /// have been canceled when the app went into the background.
-        /// </summary>
-        /// <returns>Async task.</returns>
-        public async Task UpdateCallbacksOnActivationAsync()
-        {
+		/// <summary>
+		/// Updates the callbacks when the app is activated. This services any callbacks that should have already been 
+		/// serviced or will be serviced in the near future. This also reissues all silent notifications, which would 
+		/// have been canceled when the app went into the background.
+		/// </summary>
+		/// <returns>Async task.</returns>
+		public async Task UpdateCallbacksOnActivationAsync()
+		{
 			IEnumerable<ScheduledCallback> callbacks = CallbackIds
 				.Select(x => TryGetCallback(x))
 				.Where(x => x != null)
 				.OrderBy(x => x.Priority);
 
-            foreach (ScheduledCallback callback in callbacks)
-            {
-                //ScheduledCallback callback = TryGetCallback(callbackId);
+			foreach (ScheduledCallback callback in callbacks)
+			{
+				//ScheduledCallback callback = TryGetCallback(callbackId);
 
-                if (callback == null)
-                {
-                    continue;
-                }
-
-                // service any callback that should have already been serviced or will soon be serviced
-                if (callback.NextExecution.Value < DateTime.Now + CALLBACK_NOTIFICATION_HORIZON_THRESHOLD)
+				if (callback == null)
 				{
-                    iOSNotifier notifier = SensusContext.Current.Notifier as iOSNotifier;
-                    notifier.CancelNotification(callback.Id);
-                    await RaiseCallbackAsync(callback, callback.InvocationId);
-                }
-                else
-                {
-                    SensusServiceHelper.Get().Logger.Log("Non-silent callback notification " + callback.Id + " has upcoming trigger time of " + callback.NextExecution, LoggingLevel.Normal, GetType());
-                }
-            }
-        }
+					continue;
+				}
+
+				// service any callback that should have already been serviced or will soon be serviced
+				if (callback.NextExecution.Value < DateTime.Now + CALLBACK_NOTIFICATION_HORIZON_THRESHOLD)
+				{
+					iOSNotifier notifier = SensusContext.Current.Notifier as iOSNotifier;
+					notifier.CancelNotification(callback.Id);
+					await RaiseCallbackAsync(callback, callback.InvocationId);
+				}
+				else
+				{
+					SensusServiceHelper.Get().Logger.Log("Non-silent callback notification " + callback.Id + " has upcoming trigger time of " + callback.NextExecution, LoggingLevel.Normal, GetType());
+				}
+			}
+		}
 
 		protected abstract Task ReissueSilentNotificationAsync(string id);
 
 		public NSMutableDictionary GetCallbackInfo(ScheduledCallback callback)
-        {
-            // we've seen cases where the UserInfo dictionary cannot be serialized because one of its values is null. if this happens, the 
-            // callback won't be serviced, and things won't return to normal until Sensus is activated by the user and the callbacks are 
-            // refreshed. don't create the UserInfo dictionary if we've got null values.
-            if (callback.Id == null)
-            {
-                SensusException.Report("Failed to get callback information bundle due to null callback ID.");
-                return null;
-            }
+		{
+			// we've seen cases where the UserInfo dictionary cannot be serialized because one of its values is null. if this happens, the 
+			// callback won't be serviced, and things won't return to normal until Sensus is activated by the user and the callbacks are 
+			// refreshed. don't create the UserInfo dictionary if we've got null values.
+			if (callback.Id == null)
+			{
+				SensusException.Report("Failed to get callback information bundle due to null callback ID.");
+				return null;
+			}
 
-            return new NSMutableDictionary(new NSDictionary(SENSUS_CALLBACK_KEY, true,
-                                                            iOSNotifier.NOTIFICATION_ID_KEY, callback.Id,
-                                                            SENSUS_CALLBACK_INVOCATION_ID_KEY, callback.InvocationId));
-        }
+			return new NSMutableDictionary(new NSDictionary(SENSUS_CALLBACK_KEY, true,
+															iOSNotifier.NOTIFICATION_ID_KEY, callback.Id,
+															SENSUS_CALLBACK_INVOCATION_ID_KEY, callback.InvocationId));
+		}
 
-        public ScheduledCallback TryGetCallback(NSDictionary callbackInfo)
-        {
-            if (IsCallback(callbackInfo))
-            {
-                return TryGetCallback((callbackInfo.ValueForKey(new NSString(iOSNotifier.NOTIFICATION_ID_KEY)) as NSString)?.ToString());
-            }
-            else
-            {
-                return null;
-            }
-        }
+		public ScheduledCallback TryGetCallback(NSDictionary callbackInfo)
+		{
+			if (IsCallback(callbackInfo))
+			{
+				return TryGetCallback((callbackInfo.ValueForKey(new NSString(iOSNotifier.NOTIFICATION_ID_KEY)) as NSString)?.ToString());
+			}
+			else
+			{
+				return null;
+			}
+		}
 
-        public bool IsCallback(NSDictionary callbackInfo)
-        {
-            NSNumber isCallback = callbackInfo?.ValueForKey(new NSString(SENSUS_CALLBACK_KEY)) as NSNumber;
-            return isCallback?.BoolValue ?? false;
-        }
+		public bool IsCallback(NSDictionary callbackInfo)
+		{
+			NSNumber isCallback = callbackInfo?.ValueForKey(new NSString(SENSUS_CALLBACK_KEY)) as NSNumber;
+			return isCallback?.BoolValue ?? false;
+		}
 
-        public async Task RaiseCallbackAsync(NSDictionary callbackInfo)
-        {
-            ScheduledCallback callback = TryGetCallback(callbackInfo);
-            string invocationId = callbackInfo?.ValueForKey(new NSString(SENSUS_CALLBACK_INVOCATION_ID_KEY)) as NSString;
-            await RaiseCallbackAsync(callback, invocationId);
-        }
+		public async Task RaiseCallbackAsync(NSDictionary callbackInfo)
+		{
+			ScheduledCallback callback = TryGetCallback(callbackInfo);
+			string invocationId = callbackInfo?.ValueForKey(new NSString(SENSUS_CALLBACK_INVOCATION_ID_KEY)) as NSString;
+			await RaiseCallbackAsync(callback, invocationId);
+		}
 
-        public override async Task RaiseCallbackAsync(ScheduledCallback callback, string invocationId)
-        {
-            // start a background task for raising the callback
-            nint raiseCallbackTaskId = -1;
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-            {
-                SensusServiceHelper.Get().Logger.Log("Starting background task for callback.", LoggingLevel.Normal, GetType());
+		public override async Task RaiseCallbackAsync(ScheduledCallback callback, string invocationId)
+		{
+			// start a background task for raising the callback
+			nint taskId = 0;
 
-                raiseCallbackTaskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
-                {
-                    // if we're out of time running in the background, cancel the callback.
-                    CancelRaisedCallback(callback);
-                });
-            });
+			SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+			{
+				SensusServiceHelper.Get().Logger.Log("Starting background task for callback.", LoggingLevel.Normal, GetType());
 
-            await base.RaiseCallbackAsync(callback, invocationId);
+				taskId = UIApplication.SharedApplication.BeginBackgroundTask(() =>
+				{
+					// if we're out of time running in the background, cancel the callback.
+					CancelRaisedCallback(callback);
 
-            // end the background task for raising the callback
-            SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
-            {
-                SensusServiceHelper.Get().Logger.Log("Ending background task for callback.", LoggingLevel.Normal, GetType());
+					SensusServiceHelper.Get().Logger.Log("Ran out of time while raising callback.", LoggingLevel.Normal, GetType());
 
-                UIApplication.SharedApplication.EndBackgroundTask(raiseCallbackTaskId);
-            });
-        }
+					UIApplication.SharedApplication.EndBackgroundTask(taskId);
+				});
+			});
+
+			await base.RaiseCallbackAsync(callback, invocationId);
+
+			// end the background task for raising the callback
+			SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
+			{
+				SensusServiceHelper.Get().Logger.Log("Ending background task for callback.", LoggingLevel.Normal, GetType());
+
+				UIApplication.SharedApplication.EndBackgroundTask(taskId);
+			});
+		}
 
 		/// <summary>
 		/// Cancels the silent notifications (e.g., those for health test) when the app is going into the background.

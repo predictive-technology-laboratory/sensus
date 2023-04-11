@@ -34,9 +34,7 @@ using Sensus.Probes.Location;
 using Sensus.Probes.User.Scripts;
 using Sensus.Notifications;
 
-using Plugin.Permissions;
 using Plugin.Geolocator.Abstractions;
-using Plugin.Permissions.Abstractions;
 using Sensus.Callbacks;
 using ZXing;
 using ZXing.Net.Mobile.Forms;
@@ -46,11 +44,10 @@ using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
 using Sensus.DataStores.Remote;
-using Plugin.FilePicker;
-using Plugin.FilePicker.Abstractions;
-using Plugin.ContactService.Shared;
 using System.Text.RegularExpressions;
 using System.Net.Http;
+using Xamarin.Essentials;
+using Contact = Plugin.ContactService.Shared.Contact;
 
 namespace Sensus
 {
@@ -356,7 +353,7 @@ namespace Sensus
 
 		public static async Task<Contact> GetContactAsync(string phoneNumber)
 		{
-			if (await Get().ObtainPermissionAsync(Permission.Contacts) == PermissionStatus.Granted)
+			if (await Get().ObtainPermissionAsync<Permissions.ContactsRead>() == PermissionStatus.Granted)
 			{
 				IList<Contact> contacts = await Plugin.ContactService.CrossContactService.Current.GetContactListAsync();
 
@@ -502,16 +499,34 @@ namespace Sensus
 		public abstract string DeviceId { get; }
 
 		[JsonIgnore]
-		public abstract string OperatingSystem { get; }
+		public virtual string DeviceManufacturer
+		{
+			get
+			{
+				return DeviceInfo.Manufacturer;
+			}
+		}
+
+		[JsonIgnore]
+		public virtual string DeviceModel
+		{
+			get
+			{
+				return DeviceInfo.Model;
+			}
+		}
+
+		[JsonIgnore]
+		public virtual string OperatingSystem
+		{
+			get
+			{
+				return $"{DeviceInfo.Platform} {DeviceInfo.VersionString}";
+			}
+		}
 
 		[JsonIgnore]
 		public abstract string Version { get; }
-
-		[JsonIgnore]
-		public abstract string DeviceManufacturer { get; }
-
-		[JsonIgnore]
-		public abstract string DeviceModel { get; }
 
 		#region iOS GPS listener settings
 
@@ -785,49 +800,50 @@ namespace Sensus
 
 		#endregion
 
-		public Task SaveAsync()
+		public virtual Task SaveAsync()
 		{
 			return Task.Run(() =>
 			{
+				if (_saving)
+				{
+					_logger.Log("Already saving. Waiting to enter critical section.", LoggingLevel.Normal, GetType());
+				}
+
 				lock (_saveLocker)
 				{
-					if (_saving)
+					_logger.Log("Starting to save. Entered critical section.", LoggingLevel.Normal, GetType());
+
+					_saving = true;
+
+					try
 					{
-						_logger.Log("Already saving. Aborting save.", LoggingLevel.Normal, GetType());
-						return;
+						_logger.Log("Serializing service helper.", LoggingLevel.Normal, GetType());
+
+						string serviceHelperJSON = JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS);
+
+						// once upon a time, we made the poor decision to encode protocols as unicode (UTF-16). can't switch to UTF-8 now...
+						byte[] encryptedBytes = SensusContext.Current.SymmetricEncryption.Encrypt(serviceHelperJSON, Encoding.Unicode);
+						File.WriteAllBytes(SERIALIZATION_PATH, encryptedBytes);
+
+						_logger.Log("Serialized service helper with " + _registeredProtocols.Count + " protocols.", LoggingLevel.Normal, GetType());
+
+						// ensure that all logged messages make it into the file.
+						_logger.CommitMessageBuffer();
 					}
-					else
+					catch (Exception ex)
 					{
-						_saving = true;
+						string message = "Exception while serializing service helper:  " + ex;
+						SensusException.Report(message, ex);
+						_logger.Log(message, LoggingLevel.Normal, GetType());
 					}
-				}
-
-				try
-				{
-					_logger.Log("Serializing service helper.", LoggingLevel.Normal, GetType());
-
-					string serviceHelperJSON = JsonConvert.SerializeObject(this, JSON_SERIALIZER_SETTINGS);
-
-					// once upon a time, we made the poor decision to encode protocols as unicode (UTF-16). can't switch to UTF-8 now...
-					byte[] encryptedBytes = SensusContext.Current.SymmetricEncryption.Encrypt(serviceHelperJSON, Encoding.Unicode);
-					File.WriteAllBytes(SERIALIZATION_PATH, encryptedBytes);
-
-					_logger.Log("Serialized service helper with " + _registeredProtocols.Count + " protocols.", LoggingLevel.Normal, GetType());
-
-					// ensure that all logged messages make it into the file.
-					_logger.CommitMessageBuffer();
-				}
-				catch (Exception ex)
-				{
-					string message = "Exception while serializing service helper:  " + ex;
-					SensusException.Report(message, ex);
-					_logger.Log(message, LoggingLevel.Normal, GetType());
-				}
-				finally
-				{
-					lock (_saveLocker)
+					finally
 					{
-						_saving = false;
+						lock (_saveLocker)
+						{
+							_saving = false;
+
+							_logger.Log("Done saving. Exiting critical section.", LoggingLevel.Normal, GetType());
+						}
 					}
 				}
 			});
@@ -1055,7 +1071,7 @@ namespace Sensus
 				await RemoveExpiredScriptsAsync();
 
 				// update the pending surveys notification
-				await IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.BadgeTextAlert, script.Runner.Probe.Protocol);
+				await IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.BadgeTextAlert, script.Runner.Probe.Protocol, script.Runner.NotificationMessage);
 
 				// save the app state. if the app crashes we want to keep the surveys around so they can be 
 				// taken. this will not result in duplicate surveys in cases where the script probe restarts
@@ -1068,7 +1084,7 @@ namespace Sensus
 				}
 				catch (Exception ex)
 				{
-					SensusException.Report("Exception while saving app state after adding survey:  " + ex.Message, ex);
+					SensusException.Report("Exception while saving app state after adding survey: " + ex.Message, ex);
 				}
 			}
 		}
@@ -1088,7 +1104,7 @@ namespace Sensus
 				{
 					// let the script agent know and store a datum to record the event
 					await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Expired) ?? Task.CompletedTask);
-					script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Expired, DateTimeOffset.UtcNow, script), CancellationToken.None);
+					script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Expired, DateTimeOffset.UtcNow, script, script.Runner.SavedState?.SessionId), CancellationToken.None);
 
 					if (RemoveScripts(script))
 					{
@@ -1106,13 +1122,13 @@ namespace Sensus
 			{
 				// let the script agent know and store a datum to record the event
 				await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Deleted) ?? Task.CompletedTask);
-				script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Deleted, DateTimeOffset.UtcNow, script), CancellationToken.None);
+				script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Deleted, DateTimeOffset.UtcNow, script, script.Runner.SavedState?.SessionId), CancellationToken.None);
 			}
 
 			return RemoveScripts(_scriptsToRun.ToArray());
 		}
 
-		public async Task IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode notificationMode, Protocol protocol)
+		public async Task IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode notificationMode, Protocol protocol, string notificationMessage = null)
 		{
 			// clear any existing notifications/badges
 			CancelPendingSurveysNotification();
@@ -1123,11 +1139,6 @@ namespace Sensus
 
 				if (numScriptsToRun > 0 && notificationMode != PendingSurveyNotificationMode.None)
 				{
-					string s = numScriptsToRun == 1 ? "" : "s";
-					string pendingSurveysTitle = numScriptsToRun == 0 ? null : $"You have {numScriptsToRun} pending survey{s}.";
-					DateTime? nextExpirationDate = _scriptsToRun.Select(script => script.ExpirationDate).Where(expirationDate => expirationDate.HasValue).OrderBy(expirationDate => expirationDate).FirstOrDefault();
-					string nextExpirationMessage = nextExpirationDate == null ? (numScriptsToRun == 1 ? "This survey does" : "These surveys do") + " not expire." : "Next expiration:  " + nextExpirationDate.Value.ToShortDateString() + " at " + nextExpirationDate.Value.ToShortTimeString();
-
 					string notificationId = null;
 					bool alertUser = false;
 
@@ -1138,20 +1149,36 @@ namespace Sensus
 					else if (notificationMode == PendingSurveyNotificationMode.BadgeText)
 					{
 						notificationId = Notifier.PENDING_SURVEY_TEXT_NOTIFICATION_ID;
+
 						alertUser = false;
 					}
 					else if (notificationMode == PendingSurveyNotificationMode.BadgeTextAlert)
 					{
 						notificationId = Notifier.PENDING_SURVEY_TEXT_NOTIFICATION_ID;
+
 						alertUser = true;
 					}
 					else
 					{
-						SensusException.Report("Unrecognized pending survey notification mode:  " + notificationMode);
+						SensusException.Report("Unrecognized pending survey notification mode: " + notificationMode);
+
 						return;
 					}
 
-					await SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, notificationId, alertUser, protocol, numScriptsToRun, NotificationUserResponseAction.DisplayPendingSurveys, null);
+					string s = numScriptsToRun == 1 ? "" : "s";
+					DateTime? nextExpirationDate = _scriptsToRun.Select(script => script.ExpirationDate).Where(expirationDate => expirationDate.HasValue).OrderBy(expirationDate => expirationDate).FirstOrDefault();
+					string nextExpirationMessage = nextExpirationDate == null ? (numScriptsToRun == 1 ? "This survey does" : "These surveys do") + " not expire." : "Next expiration:  " + nextExpirationDate.Value.ToShortDateString() + " at " + nextExpirationDate.Value.ToShortTimeString();
+
+					if (string.IsNullOrWhiteSpace(notificationMessage))
+					{
+						string pendingSurveysTitle = numScriptsToRun == 0 ? null : $"You have {numScriptsToRun} pending survey{s}.";
+
+						await SensusContext.Current.Notifier.IssueNotificationAsync(pendingSurveysTitle, nextExpirationMessage, notificationId, alertUser, protocol, numScriptsToRun, NotificationUserResponseAction.DisplayPendingSurveys, null);
+					}
+					else
+					{
+						await SensusContext.Current.Notifier.IssueNotificationAsync(notificationMessage, nextExpirationMessage, notificationId, alertUser, protocol, numScriptsToRun, NotificationUserResponseAction.DisplayPendingSurveys, null);
+					}
 				}
 			});
 		}
@@ -1195,7 +1222,7 @@ namespace Sensus
 				// we've seen exceptions where we don't ask for permission, leaving this up to the ZXing library
 				// to take care of. the library does ask for permission, but if it's denied we get an exception
 				// kicked back. ask explicitly here, and bail out if permission is not granted.
-				if (await ObtainPermissionAsync(Permission.Camera) != PermissionStatus.Granted)
+				if (await ObtainPermissionAsync<Permissions.Camera>() != PermissionStatus.Granted)
 				{
 					resultCompletionSource.TrySetResult(null);
 					return;
@@ -1277,17 +1304,22 @@ namespace Sensus
 
 			try
 			{
-				FileData data = await CrossFilePicker.Current.PickFile();
+				FileResult result = await FilePicker.PickAsync();
 
-				if (data != null)
+				if (result != null)
 				{
-					text = Encoding.UTF8.GetString(data.DataArray);
+					using Stream stream = await result.OpenReadAsync();
+					using StreamReader reader = new(stream);
+
+					text = await reader.ReadToEndAsync();
 				}
 			}
 			catch (Exception ex)
 			{
 				string message = "Error choosing file: " + ex.Message;
+
 				Logger.Log(message, LoggingLevel.Normal, GetType());
+
 				await FlashNotificationAsync(message);
 			}
 
@@ -1353,7 +1385,7 @@ namespace Sensus
 
 			// keep a stack of input groups that were displayed so that the user can navigate backward. not all groups are displayed due to display
 			// conditions, so we can't simply decrement the index to navigate backwards.
-			Stack<int> inputGroupBackStack = new Stack<int>();
+			Stack<int> inputGroupBackStack = new();
 
 			// assign inputs to scoreinputs by scoregroup
 			IEnumerable<Input> allInputs = inputGroups.SelectMany(x => x.Inputs);
@@ -1368,12 +1400,12 @@ namespace Sensus
 				return x.ScoreGroup;
 			});
 
-			foreach (ScoreInput scoreInput in allInputs.OfType<ScoreInput>())
+			foreach (ScoreInput scoreInput in allScoreInputs)
 			{
 				scoreInput.ClearInputs();
 			}
 
-			IEnumerable<ScoreInput> groupedScoreInputs = allInputs.OfType<ScoreInput>().Where(x => string.IsNullOrWhiteSpace(x.ScoreGroup) == false);
+			IEnumerable<ScoreInput> groupedScoreInputs = allScoreInputs.Where(x => string.IsNullOrWhiteSpace(x.ScoreGroup) == false);
 
 			// if the score group key is null, then the ScoreKeeperInputs accumulates the score of the other ScoreInputs in the collection of InputGroups
 			foreach (ScoreInput scoreInput in scoreInputLookup[null])
@@ -1389,6 +1421,17 @@ namespace Sensus
 				if (savedState.InputGroupStack.Any())
 				{
 					startInputGroupIndex = savedState.InputGroupStack.FirstOrDefault() + 1;
+				}
+
+				savedState.Scores ??= new();
+				savedState.CorrectScores ??= new();
+
+				foreach (ScoreInput scoreInput in allScoreInputs)
+				{
+					savedState.Scores.TryGetValue(scoreInput.ScoreGroup, out float score);
+					savedState.CorrectScores.TryGetValue(scoreInput.ScoreGroup, out float correctScore);
+
+					scoreInput.OffsetScore(score, correctScore);
 				}
 			}
 
@@ -1424,7 +1467,7 @@ namespace Sensus
 					{
 						int stepNumber = inputGroupIndex + 1;
 
-						InputGroupPage inputGroupPage = new InputGroupPage(inputGroup, stepNumber, inputGroups.Count(), inputGroupBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, confirmNavigation, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, title, savedState != null);
+						InputGroupPage inputGroupPage = new(inputGroup, stepNumber, inputGroups.Count(), inputGroupBackStack.Count > 0, showCancelButton, nextButtonText, cancellationToken, confirmNavigation, cancelConfirmation, incompleteSubmissionConfirmation, submitConfirmation, displayProgress, title, savedState != null);
 
 						// do not display prompts page under the following conditions:
 						//
@@ -1438,18 +1481,30 @@ namespace Sensus
 							// if we're on the final input group and no inputs were shown, then we're at the end and we're ready to submit the 
 							// users' responses. first check that the user is ready to submit. if the user isn't ready then move back to the previous 
 							// input group in the backstack, if there is one.
-							if (inputGroupIndex >= inputGroups.Count() - 1 &&                                                     // this is the final input group
-								inputGroupBackStack.Count > 0 &&                                                             // there is an input group to go back to (the current one was not displayed)
-								!string.IsNullOrWhiteSpace(submitConfirmation) &&                                               // we have a submit confirmation
-								confirmNavigation &&                                                                            // we should confirm submission
-								!(await Application.Current.MainPage.DisplayAlert("Confirm", submitConfirmation, "Yes", "No"))) // user is not ready to submit
+							if (inputGroupPage.IsLastPage)
 							{
-								inputGroupIndex = inputGroupBackStack.Pop() - 1;
+								if (await inputGroupPage.ConfirmForwardNavigationAsync())
+								{
+									lastNavigationResult = InputGroupPage.NavigationResult.Submit;
+								}
+								else if (inputGroupBackStack.Count > 0)
+								{
+									inputGroupIndex = inputGroupBackStack.Pop() - 1;
+								}
 							}
 						}
 						// display the page if we've not been canceled
 						else if (!cancellationToken.GetValueOrDefault().IsCancellationRequested)
 						{
+							if (savedState != null)
+							{
+								foreach (ScoreInput scoreInput in allScoreInputs)
+								{
+									savedState.Scores[scoreInput.ScoreGroup] = scoreInput.Score;
+									savedState.CorrectScores[scoreInput.ScoreGroup] = scoreInput.CorrectScore;
+								}
+							}
+
 							foreach (Input input in inputGroup.Inputs)
 							{
 								if (input is not ScoreInput && string.IsNullOrWhiteSpace(input.ScoreGroup) == false)
@@ -1487,7 +1542,7 @@ namespace Sensus
 							}
 
 							// save the state to file
-							if (savedState != null)
+							if (savedState != null && savedState.InputGroupStack.Count > 0)
 							{
 								await savedState.SaveAsync();
 							}
@@ -1500,7 +1555,10 @@ namespace Sensus
 								firstPageDisplay = false;
 							}
 
-							lastNavigationResult = await inputGroupPage.ResponseTask;
+							lastNavigationResult = await inputGroupPage.WaitForNavigationAsync();
+
+							// set returnPage back in case it was cleared by being interrupted
+							returnPage = inputGroupPage.ReturnPage;
 
 							await inputGroupPage.DisposeAsync();
 
@@ -1537,7 +1595,7 @@ namespace Sensus
 
 			if (useDetailPage)
 			{
-				if (app.DetailPage == currentPage && lastNavigationResult != InputGroupPage.NavigationResult.Paused)
+				if (app.DetailPage == currentPage && returnPage != null)
 				{
 					app.DetailPage = returnPage;
 				}
@@ -1627,7 +1685,7 @@ namespace Sensus
 		{
 			SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
 			{
-				if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
+				if (await ObtainLocationPermissionAsync() != PermissionStatus.Granted)
 				{
 					await FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
 				}
@@ -1649,7 +1707,7 @@ namespace Sensus
 		{
 			SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
 			{
-				if (await ObtainPermissionAsync(Permission.Location) != PermissionStatus.Granted)
+				if (await ObtainLocationPermissionAsync() != PermissionStatus.Granted)
 				{
 					await FlashNotificationAsync("Geolocation is not permitted on this device. Cannot display map.");
 				}
@@ -1746,116 +1804,134 @@ namespace Sensus
 			return convertedJSON.ToString();
 		}
 
-		public async Task<PermissionStatus> ObtainPermissionAsync(Permission permission)
+		public async Task<PermissionStatus> ObtainPermissionAsync<TPermission>() where TPermission : Permissions.BasePermission, new()
 		{
 			return await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
 			{
-				if (await CrossPermissions.Current.CheckPermissionStatusAsync(permission) == PermissionStatus.Granted)
-				{
-					return PermissionStatus.Granted;
-				}
-
-				// if the user has previously denied our permission request, then we should be given an opportunity to
-				// display a rationale for the request. if the user has selected the "don't ask again" option, then
-				// we will not be able to display the rationale and all requests for the permission will fail.
-				if (await CrossPermissions.Current.ShouldShowRequestPermissionRationaleAsync(permission))
-				{
-					string rationale = null;
-
-					if (permission == Permission.Calendar)
-					{
-						rationale = "Sensus collects calendar information for studies you enroll in.";
-					}
-					else if (permission == Permission.Camera)
-					{
-						rationale = "Sensus uses the camera to scan barcodes. Sensus will not record images or video.";
-					}
-					else if (permission == Permission.Contacts)
-					{
-						rationale = "Sensus collects calendar information for studies you enroll in.";
-					}
-					else if (permission == Permission.Location)
-					{
-						rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
-					}
-					else if (permission == Permission.LocationAlways)
-					{
-						rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
-					}
-					else if (permission == Permission.LocationWhenInUse)
-					{
-						rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
-					}
-					else if (permission == Permission.MediaLibrary)
-					{
-						rationale = "Sensus collects media for studies you enroll in.";
-					}
-					else if (permission == Permission.Microphone)
-					{
-						rationale = "Sensus uses the microphone to collect sound level information for studies you enroll in. Sensus will not record audio.";
-					}
-					else if (permission == Permission.Phone)
-					{
-						rationale = "Sensus collects call information for studies you enroll in. Sensus will not record audio from calls.";
-					}
-					else if (permission == Permission.Photos)
-					{
-						rationale = "Sensus collects photos for studies you enroll in.";
-					}
-					else if (permission == Permission.Reminders)
-					{
-						rationale = "Sensus collects reminder information for studies you enroll in.";
-					}
-					else if (permission == Permission.Sensors)
-					{
-						rationale = "Sensus uses movement sensors to collect information for studies you enroll in.";
-					}
-					else if (permission == Permission.Sms)
-					{
-						rationale = "Sensus collects text messages for studies you enroll in.";
-					}
-					else if (permission == Permission.Speech)
-					{
-						rationale = "Sensus uses the microphone for studies you enroll in.";
-					}
-					else if (permission == Permission.Storage)
-					{
-						rationale = "Sensus must be able to write to your device's storage for proper operation.";
-					}
-					else if (permission == Permission.Contacts)
-					{
-						rationale = "Sensus collects Contact information.";
-					}
-					else
-					{
-						SensusException.Report("Missing rationale for permission request:  " + permission);
-					}
-
-					if (rationale != null)
-					{
-						await Application.Current.MainPage.DisplayAlert("Permission Request", $"On the next screen, Sensus will request access to your device's {permission.ToString().ToUpper()}. {rationale}", "OK");
-					}
-				}
-
 				try
 				{
-					PermissionStatus permissionStatus;
+					PermissionStatus status = await Permissions.CheckStatusAsync<TPermission>();
 
-					// it's happened that the returned dictionary doesn't contain an entry for the requested permission, so check for that.
-					if (!(await CrossPermissions.Current.RequestPermissionsAsync(permission)).TryGetValue(permission, out permissionStatus))
+					if (status != PermissionStatus.Granted)
 					{
-						throw new Exception($"Permission status not returned for request:  {permission}");
+						await ShowPermissionRationale<TPermission>();
+
+						status = await Permissions.RequestAsync<TPermission>();
 					}
 
-					return permissionStatus;
+					return status;
 				}
 				catch (Exception ex)
 				{
-					_logger.Log($"Failed to obtain permission:  {ex.Message}", LoggingLevel.Normal, GetType());
+					_logger.Log($"Failed to obtain permission: {ex.Message}", LoggingLevel.Normal, GetType());
 
 					return PermissionStatus.Unknown;
 				}
 			});
+		}
+
+		public async Task<PermissionStatus> ObtainLocationPermissionAsync()
+		{
+			PermissionStatus status = await ObtainPermissionAsync<Permissions.LocationWhenInUse>();
+
+			if (status == PermissionStatus.Granted)
+			{
+				return await ObtainPermissionAsync<Permissions.LocationAlways>();
+			}
+
+			else return status;
+		}
+
+		protected virtual string GetPlatformRationale<TPermission>()
+		{
+			return null;
+		}
+		public async Task ShowPermissionRationale<TPermission>() where TPermission : Permissions.BasePermission, new()
+		{
+			if (Permissions.ShouldShowRationale<TPermission>())
+			{
+				string rationale;
+				Type permission = typeof(TPermission);
+
+				if (permission == typeof(Permissions.CalendarRead))
+				{
+					rationale = "Sensus collects calendar information for studies you enroll in.";
+				}
+				else if (permission == typeof(Permissions.Camera))
+				{
+					rationale = "Sensus uses the camera to scan barcodes. Sensus will not record images or video.";
+				}
+				else if (permission == typeof(Permissions.ContactsRead))
+				{
+					rationale = "Sensus collects calendar information for studies you enroll in.";
+				}
+				//else if (permission == typeof(Permissions.Location))
+				//{
+				//	rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
+				//}
+				else if (permission == typeof(Permissions.LocationAlways))
+				{
+					rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
+				}
+				else if (permission == typeof(Permissions.LocationWhenInUse))
+				{
+					rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
+				}
+				else if (permission == typeof(Permissions.Media))
+				{
+					rationale = "Sensus collects media for studies you enroll in.";
+				}
+				else if (permission == typeof(Permissions.Microphone))
+				{
+					rationale = "Sensus uses the microphone to collect sound level information for studies you enroll in. Sensus will not record audio.";
+				}
+				else if (permission == typeof(Permissions.Phone))
+				{
+					rationale = "Sensus collects call information for studies you enroll in. Sensus will not record audio from calls.";
+				}
+				else if (permission == typeof(Permissions.Photos))
+				{
+					rationale = "Sensus collects photos for studies you enroll in.";
+				}
+				else if (permission == typeof(Permissions.Reminders))
+				{
+					rationale = "Sensus collects reminder information for studies you enroll in.";
+				}
+				else if (permission == typeof(Permissions.Sensors))
+				{
+					rationale = "Sensus uses movement sensors to collect information for studies you enroll in.";
+				}
+				else if (permission == typeof(Permissions.Sms))
+				{
+					rationale = "Sensus collects text messages for studies you enroll in.";
+				}
+				else if (permission == typeof(Permissions.Speech))
+				{
+					rationale = "Sensus uses the microphone for studies you enroll in.";
+				}
+				else if (permission == typeof(Permissions.StorageRead))
+				{
+					rationale = "Sensus must be able to read your device's storage for proper operation.";
+				}
+				else if (permission == typeof(Permissions.StorageWrite))
+				{
+					rationale = "Sensus must be able to write to your device's storage for proper operation.";
+				}
+				else
+				{
+					rationale = GetPlatformRationale<TPermission>();
+
+					if (rationale == null)
+					{
+						_logger.Log("Missing rationale for permission request: " + permission.Name, LoggingLevel.Normal, GetType());
+					}
+				}
+
+				if (rationale != null)
+				{
+					await Application.Current.MainPage.DisplayAlert("Permission Request", $"Sensus will request {permission.Name} permission. {rationale}", "OK");
+				}
+			}
 		}
 
 		public async Task UpdatePushNotificationRegistrationsAsync(CancellationToken cancellationToken)
@@ -2051,20 +2127,32 @@ namespace Sensus
 
 			// let the script agent know and store a datum to record the event
 			await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Opened) ?? Task.CompletedTask);
-			script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Opened, DateTimeOffset.UtcNow, script), CancellationToken.None);
+			script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Opened, DateTimeOffset.UtcNow, script, script.Runner.SavedState?.SessionId), CancellationToken.None);
+
+			await script.Runner.UnscheduleRemindersAsync();
 
 			// determine what happens with the script state.
 			SavedScriptState savedState = await ScriptRunner.ManageStateAsync(script);
 
-			PromptForInputsResult result = await PromptForInputsAsync(script.RunTime, script.Runner.Name, script.InputGroups, null, script.Runner.AllowCancel, null, script.Runner.ConfirmNavigation, null, script.Runner.IncompleteSubmissionConfirmation, script.Runner.SubmitConfirmation, script.Runner.DisplayProgress, script.Runner.UseDetailPage, null, savedState);
+			if (savedState?.Restored ?? false)
+			{
+				script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Restored, DateTimeOffset.UtcNow, script, savedState.SessionId), CancellationToken.None);
+			}
+
+			foreach (InputGroup inputGroup in script.InputGroups)
+			{
+				inputGroup.ScriptRunner = script.Runner;
+			}
+
+			PromptForInputsResult result = await PromptForInputsAsync(script.RunTime, script.Runner.Name, script.InputGroups, null, script.Runner.AllowCancel, null, script.Runner.ConfirmNavigation, script.Runner.CancelConfirmation, script.Runner.IncompleteSubmissionConfirmation, script.Runner.SubmitConfirmation, script.Runner.DisplayProgress, script.Runner.UseDetailPage, null, savedState);
 
 			if (result.NavigationResult == InputGroupPage.NavigationResult.Paused)
 			{
 				Logger.Log("\"" + script.Runner.Name + "\" was paused.", LoggingLevel.Normal, typeof(Script));
 
 				await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Cancelled) ?? Task.CompletedTask);
-				// temporary ScriptState value until the Nuget package is updated
-				script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Paused, DateTimeOffset.UtcNow, script), CancellationToken.None);
+
+				script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Paused, DateTimeOffset.UtcNow, script, savedState?.SessionId), CancellationToken.None);
 
 				if (savedState != null && result.InputGroups != null)
 				{
@@ -2094,6 +2182,7 @@ namespace Sensus
 																				input.GroupId,
 																				input.Id,
 																				script.Id,
+																				savedState.SessionId,
 																				input.LabelText,
 																				input.Name,
 																				input.Value,
@@ -2123,13 +2212,13 @@ namespace Sensus
 				{
 					// let the script agent know and store a datum to record the event
 					await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Cancelled) ?? Task.CompletedTask);
-					script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Cancelled, DateTimeOffset.UtcNow, script), CancellationToken.None);
+					script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Cancelled, DateTimeOffset.UtcNow, script, savedState?.SessionId), CancellationToken.None);
 				}
 				else if (result.NavigationResult == InputGroupPage.NavigationResult.Submit)
 				{
 					// let the script agent know and store a datum to record the event
 					await (script.Runner.Probe.Agent?.ObserveAsync(script, ScriptState.Submitted) ?? Task.CompletedTask);
-					script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Submitted, DateTimeOffset.UtcNow, script), CancellationToken.None);
+					script.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Submitted, DateTimeOffset.UtcNow, script, savedState?.SessionId), CancellationToken.None);
 
 					// track times when script is completely valid and wasn't cancelled by the user
 					if (script.Valid)
@@ -2141,6 +2230,7 @@ namespace Sensus
 							script.Runner.CompletionTimes.RemoveAll(completionTime => completionTime < script.Runner.Probe.Protocol.ParticipationHorizon);
 						}
 
+						// if KeepUntilCompleted is true then we need to remove it now that it has been completed
 						if (script.Runner.KeepUntilCompleted)
 						{
 							if (RemoveScripts(script))
@@ -2156,69 +2246,88 @@ namespace Sensus
 					}
 
 					script.Runner.HasSubmitted = true;
+
+					await script.Runner.ScheduleDepedentScriptsAsync();
+
+					try
+					{
+						await SaveAsync();
+					}
+					catch (Exception ex)
+					{
+						SensusException.Report($"Exception while saving app state after submitting {script.Runner.Script.Id}: " + ex.Message, ex);
+					}
 				}
 
 				// process/store all inputs in the script
 				bool inputStored = false;
-				foreach (InputGroup inputGroup in script.InputGroups)
+
+				if (result.InputGroups != null)
 				{
-					foreach (Input input in inputGroup.Inputs)
+					foreach (InputGroup inputGroup in result.InputGroups)
 					{
-						if (result.NavigationResult == InputGroupPage.NavigationResult.Cancel)
+						foreach (Input input in inputGroup.Inputs)
 						{
-							input.Reset();
-						}
-						else if (input.Store)
-						{
-							if (input.Complete == false && savedState != null)
+							if (result.NavigationResult == InputGroupPage.NavigationResult.Cancel)
 							{
-								if (savedState.SavedInputs.TryGetValue($"{inputGroup.Id}.{input.Id}", out ScriptDatum savedInput))
+								input.Reset();
+							}
+							else if (input.Store)
+							{
+								if (input.Complete == false && savedState != null)
 								{
-									savedInput.SubmissionTimestamp = input.SubmissionTimestamp ?? DateTimeOffset.UtcNow;
-									savedInput.Latitude = input.Latitude;
-									savedInput.Longitude = input.Longitude;
-									savedInput.LocationTimestamp = input.LocationUpdateTimestamp;
+									if (savedState.SavedInputs.TryGetValue($"{inputGroup.Id}.{input.Id}", out ScriptDatum savedInput))
+									{
+										savedInput.SubmissionTimestamp = input.SubmissionTimestamp ?? DateTimeOffset.UtcNow;
+										savedInput.Latitude = input.Latitude;
+										savedInput.Longitude = input.Longitude;
+										savedInput.LocationTimestamp = input.LocationUpdateTimestamp;
 
-									await script.Runner.Probe.StoreDatumAsync(savedInput, CancellationToken.None);
+										await script.Runner.Probe.StoreDatumAsync(savedInput, CancellationToken.None);
+									}
 								}
-							}
-							else if (input.Display)
-							{
-								// the _script.Id allows us to link the data to the script that the user created. it never changes. on the other hand, the script
-								// that is passed into this method is always a copy of the user-created script. the script.Id allows us to link the various data
-								// collected from the user into a single logical response. each run of the script has its own script.Id so that responses can be
-								// grouped across runs. this is the difference between scriptId and runId in the following line.
-								await script.Runner.Probe.StoreDatumAsync(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow),
-																								  script.Runner.Script.Id,
-																								  script.Runner.Name,
-																								  input.GroupId,
-																								  input.Id,
-																								  script.Id,
-																								  input.LabelText,
-																								  input.Name,
-																								  input.Value,
-																								  script.CurrentDatum?.Id,
-																								  input.Latitude,
-																								  input.Longitude,
-																								  input.LocationUpdateTimestamp,
-																								  script.RunTime.Value,
-																								  input.CompletionRecords,
-																								  input.SubmissionTimestamp.Value,
-																								  manualRun), CancellationToken.None);
-							}
+								else if (input.Display)
+								{
+									// the _script.Id allows us to link the data to the script that the user created. it never changes. on the other hand, the script
+									// that is passed into this method is always a copy of the user-created script. the script.Id allows us to link the various data
+									// collected from the user into a single logical response. each run of the script has its own script.Id so that responses can be
+									// grouped across runs. this is the difference between scriptId and runId in the following line.
+									await script.Runner.Probe.StoreDatumAsync(new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow),
+																									script.Runner.Script.Id,
+																									script.Runner.Name,
+																									input.GroupId,
+																									input.Id,
+																									script.Id,
+																									savedState?.SessionId,
+																									input.LabelText,
+																									input.Name,
+																									input.Value,
+																									script.CurrentDatum?.Id,
+																									input.Latitude,
+																									input.Longitude,
+																									input.LocationUpdateTimestamp,
+																									script.RunTime.Value,
+																									input.CompletionRecords,
+																									input.SubmissionTimestamp ?? DateTimeOffset.UtcNow,
+																									manualRun), CancellationToken.None);
+								}
 
-							inputStored = true;
+								inputStored = true;
+							}
 						}
 					}
 				}
 
 				// remove the submitted script. this should be done before the script is marked 
 				// as not submitting in order to prevent the user from reopening it.
-				if (result.NavigationResult != InputGroupPage.NavigationResult.Cancel && script.Runner.KeepUntilCompleted == false)
+				if (result.NavigationResult != InputGroupPage.NavigationResult.Cancel)
 				{
-					if (RemoveScripts(script))
+					if (script.Runner.KeepUntilCompleted == false)
 					{
-						await IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.Badge, script.Runner.Probe.Protocol);
+						if (RemoveScripts(script))
+						{
+							await IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.Badge, script.Runner.Probe.Protocol);
+						}
 					}
 
 					submitted = true;
@@ -2237,6 +2346,18 @@ namespace Sensus
 				}
 
 				Logger.Log("\"" + script.Runner.Name + "\" has completed processing.", LoggingLevel.Normal, typeof(Script));
+			}
+
+			// if the script wasn't removed from the list of available scripts then it needs to be reset.
+			if (_scriptsToRun.Contains(script))
+			{
+				foreach (InputGroup inputGroup in script.InputGroups)
+				{
+					foreach (Input input in inputGroup.Inputs)
+					{
+						input.Reset();
+					}
+				}
 			}
 
 			return submitted;

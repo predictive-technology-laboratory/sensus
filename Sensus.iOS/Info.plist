@@ -141,6 +141,7 @@
 		<string>bluetooth-central</string>
 		<string>bluetooth-peripheral</string>
 		<string>remote-notification</string>
+		<string>processing</string>
 	</array>
 	<key>CFBundleName</key>
 	<string>Sensus</string>
@@ -169,10 +170,14 @@
 	<key>CFBundleShortVersionString</key>
 	<string>17.0.0</string>
 	<key>CFBundleVersion</key>
-	<string>202203241552</string>
+	<string>202304110001</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Sensus uses Bluetooth to collect information for studies you enroll in.</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>edu.virginia.sie.ptl.sensus.Maintenance</string>
+	</array>
 </dict>
 </plist>

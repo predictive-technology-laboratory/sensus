@@ -13,7 +13,7 @@
 // limitations under the License.
 
 using Foundation;
-using Plugin.Permissions.Abstractions;
+
 using Sensus.Exceptions;
 using Sensus.Probes.Location;
 using System;
@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Text;
 using UIKit;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 
 namespace Sensus.iOS.Probes.Location
 {
@@ -36,7 +37,7 @@ namespace Sensus.iOS.Probes.Location
         {
             await base.InitializeAsync();
 
-            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Sensors) == PermissionStatus.Granted)
+            if (await SensusServiceHelper.Get().ObtainPermissionAsync<Permissions.Sensors>() == PermissionStatus.Granted)
             {
                 // enable proximity monitoring, is set to false by default, and if the device cannot monitor proximity, then it will remain false.
                 UIDevice.CurrentDevice.ProximityMonitoringEnabled = true;

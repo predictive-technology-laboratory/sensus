@@ -23,7 +23,6 @@ namespace Sensus.UI.Inputs
 		public ReadOnlyTextInput()
 		{
 			StoreCompletionRecords = false;
-			Complete = true;
 			Required = false;
 		}
 
@@ -69,6 +68,8 @@ namespace Sensus.UI.Inputs
 					Children = { label, textLabel }
 				});
 			}
+
+			Complete = true;
 
 			return base.GetView(index);
 		}

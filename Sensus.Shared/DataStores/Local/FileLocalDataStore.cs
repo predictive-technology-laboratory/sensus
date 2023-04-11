@@ -22,7 +22,6 @@ using System.Text;
 using System.IO.Compression;
 using Sensus.UI.UiProperties;
 using System.Linq;
-using Microsoft.AppCenter.Analytics;
 using System.Collections.Generic;
 using Sensus.Extensions;
 using ICSharpCode.SharpZipLib.Tar;
@@ -93,7 +92,7 @@ namespace Sensus.DataStores.Local
 		/// Step 2:  A file on disk without a file extension, written with data from the in-memory buffer.
 		/// </summary>
 		private string _currentPath;
-		private BufferedStream _currentFile;
+		private Stream _currentFile;
 		private int _currentFileBufferSizeBytes;
 		private Task _writeBufferedDataToFileTask;
 		private List<Datum> _toWriteBuffer;
@@ -163,6 +162,13 @@ namespace Sensus.DataStores.Local
 				_compressionLevel = value;
 			}
 		}
+
+		/// <summary>
+		/// Gets or sets whether <see cref="Probes.Probe"/> data will be held buffered in memory or written immediately to file.
+		/// </summary>
+		/// <value><see langword="true" /> to skip buffering.</value>
+		[OnOffUiProperty("Do Not Use Buffer:", true, 2)]
+		public bool DoNotUseBuffer { get; set; }
 
 		/// <summary>
 		/// Gets or sets the buffer size in bytes. All <see cref="Probes.Probe"/>d data will be held in memory until the buffer is filled, at which time
@@ -371,7 +377,17 @@ namespace Sensus.DataStores.Local
 					try
 					{
 						_currentPath = Path.Combine(StorageDirectory, Guid.NewGuid().ToString());
-						_currentFile = new BufferedStream(new FileStream(_currentPath, FileMode.CreateNew, FileAccess.Write), _currentFileBufferSizeBytes);
+
+						if (DoNotUseBuffer)
+						{
+							_currentFile = new FileStream(_currentPath, FileMode.CreateNew, FileAccess.Write);
+						}
+						else
+						{
+							// TODO: check into whether this is necessary at all. It seems as if the funcitonality of BufferedStream has been moved into Streams like FileStream
+							_currentFile = new BufferedStream(new FileStream(_currentPath, FileMode.CreateNew, FileAccess.Write), _currentFileBufferSizeBytes);
+						}
+
 						_totalDataWrittenToCurrentFile = 0;
 						_totalFilesOpened++;
 					}
@@ -396,13 +412,81 @@ namespace Sensus.DataStores.Local
 			}
 		}
 
-		public override void WriteDatum(Datum datum, CancellationToken cancellationToken)
+		private void WriteDatumImmediately(Datum datum, CancellationToken cancellationToken)
 		{
-			if (!Running)
+			Task.Run(async () =>
 			{
-				return;
-			}
+				bool startNewFile = false;
+				bool checkSize = false;
 
+				lock (_fileLocker)
+				{
+					// it's possible to stop the datastore and dispose the file before entering this lock, in 
+					// which case we won't have a file to write to. check the file.
+					if (_currentFile != null)
+					{
+						#region write JSON for datum to file
+						string datumJSON = null;
+						try
+						{
+							datumJSON = datum.GetJSON(Protocol.JsonAnonymizer, false);
+						}
+						catch (Exception ex)
+						{
+							SensusException.Report("Failed to get JSON for datum.", ex);
+						}
+
+						if (datumJSON != null)
+						{
+							try
+							{
+								byte[] datumJsonBytes = Encoding.UTF8.GetBytes((_totalDataWrittenToCurrentFile == 0 ? "" : ",") + Environment.NewLine + datumJSON);
+								_currentFile.Write(datumJsonBytes, 0, datumJsonBytes.Length);
+								_totalDataWrittenToCurrentFile++;
+								_totalDataWritten++;
+
+								_currentFile.Flush();
+
+								// periodically check the size of the current file
+								if (_totalDataWrittenToCurrentFile % DATA_WRITES_PER_SIZE_CHECK == 0)
+								{
+									checkSize = true;
+								}
+							}
+							catch (Exception writeException)
+							{
+								SensusException.Report("Exception while writing datum JSON bytes to file: " + writeException.Message, writeException);
+
+								startNewFile = true;
+							}
+						}
+						#endregion
+					}
+
+					if (checkSize)
+					{
+						// must do the check within the lock, since other callers might be trying to close the file and null the path.
+						if (SensusServiceHelper.GetFileSizeMB(_currentPath) >= MAX_FILE_SIZE_MB)
+						{
+							startNewFile = true;
+						}
+					}
+				}
+
+				if (startNewFile)
+				{
+					StartNewFile(cancellationToken);
+				}
+
+				if (checkSize)
+				{
+					await WriteToRemoteIfTooLargeAsync(cancellationToken);
+				}
+
+			}, cancellationToken);
+		}
+		private void WriteDatumBuffered(Datum datum, CancellationToken cancellationToken)
+		{
 			lock (_dataBuffer)
 			{
 				_dataBuffer.Add(datum);
@@ -482,7 +566,7 @@ namespace Sensus.DataStores.Local
 													}
 													catch (Exception writeException)
 													{
-														SensusException.Report("Exception while writing datum JSON bytes to file:  " + writeException.Message, writeException);
+														SensusException.Report("Exception while writing datum JSON bytes to file: " + writeException.Message, writeException);
 														startNewFile = true;
 														break;
 													}
@@ -533,6 +617,22 @@ namespace Sensus.DataStores.Local
 						}
 					});
 				}
+			}
+		}
+		public override void WriteDatum(Datum datum, CancellationToken cancellationToken)
+		{
+			if (!Running)
+			{
+				return;
+			}
+
+			if (DoNotUseBuffer)
+			{
+				WriteDatumImmediately(datum, cancellationToken);
+			}
+			else
+			{
+				WriteDatumBuffered(datum, cancellationToken);
 			}
 		}
 
@@ -797,6 +897,63 @@ namespace Sensus.DataStores.Local
 			return path;
 		}
 
+		private byte[] CheckFile(byte[] bytes, string path, out bool incomplete)
+		{
+			incomplete = false;
+
+			if (bytes.Last() != (byte)']')
+			{
+				string fileName = Path.GetFileName(path);
+
+				incomplete = true;
+
+				try
+				{
+					string json = Encoding.UTF8.GetString(bytes);
+
+					using (StringWriter writer = new StringWriter())
+					{
+						using (JsonTextWriter jsonWriter = new JsonTextWriter(writer) { AutoCompleteOnClose = true })
+						{
+							using (StringReader reader = new StringReader(json))
+							{
+								using (JsonTextReader jsonReader = new JsonTextReader(reader))
+								{
+									try
+									{
+										jsonWriter.WriteToken(jsonReader);
+									}
+									catch (JsonException)
+									{
+										if (jsonReader.TokenType == JsonToken.PropertyName)
+										{
+											jsonWriter.WriteToken(JsonToken.Null, null);
+										}
+
+										SensusServiceHelper.Get().Logger.Log($"Partial data file found and repaired: '{fileName}'", LoggingLevel.Normal, GetType());
+									}
+
+									if (jsonWriter.WriteState == WriteState.Object)
+									{
+										jsonWriter.WriteToken(JsonToken.PropertyName, "IncompleteDatum");
+										jsonWriter.WriteToken(JsonToken.Boolean, true);
+									}
+								}
+							}
+						}
+
+						return Encoding.UTF8.GetBytes(writer.ToString());
+					}
+				}
+				catch (Exception e)
+				{
+					SensusServiceHelper.Get().Logger.Log($"Partial data file found: '{fileName}'. It could not be repaired: {e.Message}", LoggingLevel.Normal, GetType());
+				}
+			}
+
+			return bytes;
+		}
+
 		private void PreparePathForRemoteAsync(string path, CancellationToken cancellationToken)
 		{
 			try
@@ -809,7 +966,16 @@ namespace Sensus.DataStores.Local
 
 						if (bytes.Length > 0)
 						{
-							string preparedPath = Path.Combine(Path.GetDirectoryName(path), Guid.NewGuid() + JSON_FILE_EXTENSION);
+							string incompleteSuffix = "";
+
+							bytes = CheckFile(bytes, path, out bool incomplete);
+
+							if (incomplete)
+							{
+								incompleteSuffix = "-incomplete";
+							}
+
+							string preparedPath = Path.Combine(Path.GetDirectoryName(path), Guid.NewGuid() + incompleteSuffix + JSON_FILE_EXTENSION);
 
 							if (_compressionLevel != CompressionLevel.NoCompression)
 							{
@@ -821,11 +987,6 @@ namespace Sensus.DataStores.Local
 								bytes = compressedStream.ToArray();
 
 								compressedStream.Position = 0;
-
-								if (Encoding.Default.GetString(compressor.Decompress(compressedStream)) is string decompressed && decompressed.EndsWith("]") == false)
-								{
-									SensusServiceHelper.Get().Logger.Log("Partial file compression", LoggingLevel.Normal, GetType());
-								}
 							}
 
 							if (_encrypt)
@@ -953,8 +1114,6 @@ namespace Sensus.DataStores.Local
 				{ "Paths Unprepared For Remote", Convert.ToString(_pathsUnpreparedForRemote.Count) },
 				{ "Prepared Files Size MB", Convert.ToString(Math.Round(GetSizeMB(), 0)) }
 			};
-
-			Analytics.TrackEvent(eventName, properties);
 
 			events.Add(new AnalyticsTrackedEvent(eventName, properties));
 

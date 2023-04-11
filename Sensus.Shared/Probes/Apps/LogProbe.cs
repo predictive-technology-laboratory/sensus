@@ -15,9 +15,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Syncfusion.SfChart.XForms;
@@ -27,64 +25,41 @@ namespace Sensus.Probes.Apps
 	/// <summary>
 	/// Collects keystroke information as <see cref="LogDatum"/>
 	/// </summary>
-	public class LogProbe : PollingProbe
+	public class LogProbe : PollingProbe, ILogProbe
 	{
-		private class LogProbeTextWriter : TextWriter
+		private class LogProbeDatumWriter : TextWriter
 		{
 			public override Encoding Encoding => Encoding.Default;
-			private readonly StringBuilder _buffer;
-			private readonly List<LogDatum> _data;
+			private readonly object _writeLock;
 
-			public LogProbeTextWriter(List<LogDatum> data)
+			public LogProbeDatumWriter(object writeLock)
 			{
-				_buffer = new StringBuilder();
-				_data = data;
+				_writeLock = writeLock;
 			}
 
-			public override void Write(char value)
-			{
-				lock (_buffer)
-				{
-					_buffer.Append(value);
-				}
-			}
+			public string LogPath { get; set; }
 
 			public override void WriteLine(string value)
 			{
-				base.Write(value);
-				WriteLine();
-			}
+				string path = Path.Combine(LogPath, $"{Guid.NewGuid()}.txt");
 
-			public override void WriteLine()
-			{
-				string line = null;
-				DateTimeOffset timestamp = DateTimeOffset.UtcNow;
-
-				lock (_buffer)
+				while (File.Exists(path))
 				{
-					line = _buffer.ToString();
-					string lineTimestamp = Regex.Match(line, @"^.*?(?=:\s+)").Value;
-
-					if (string.IsNullOrEmpty(lineTimestamp) == false && DateTime.TryParse(lineTimestamp, out DateTime localTimestamp))
-					{
-						timestamp = TimeZoneInfo.ConvertTimeToUtc(localTimestamp);
-					}
-
-					_buffer.Clear();
+					path = Path.Combine(LogPath, $"{Guid.NewGuid()}.txt");
 				}
 
-				lock (_data)
+				lock (_writeLock)
 				{
-					if (string.IsNullOrEmpty(line) == false)
-					{
-						_data.Add(new LogDatum(line, timestamp));
-					}
+					using StreamWriter writer = new(path);
+
+					writer.Write(value);
 				}
 			}
 		}
 
-		private readonly List<LogDatum> _data;
-		private readonly LogProbeTextWriter _writer;
+		private readonly object _writeLocker;
+		private string _path;
+		private readonly LogProbeDatumWriter _writer;
 
 		public override int DefaultPollingSleepDurationMS => (int)TimeSpan.FromHours(1).TotalMilliseconds;
 
@@ -94,8 +69,8 @@ namespace Sensus.Probes.Apps
 
 		public LogProbe()
 		{
-			_data = new List<LogDatum>();
-			_writer = new LogProbeTextWriter(_data);
+			_writeLocker = new();
+			_writer = new(_writeLocker);
 		}
 
 		protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
@@ -118,14 +93,23 @@ namespace Sensus.Probes.Apps
 			throw new NotImplementedException();
 		}
 
+		public void AttachToLogger()
+		{
+			if (SensusServiceHelper.Get().Logger is Logger logger)
+			{
+				_path = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), Protocol.Id), nameof(LogProbe));
+
+				_writer.LogPath = _path;
+
+				Directory.CreateDirectory(_path);
+
+				logger.AddOtherOutput(_writer);
+			}
+		}
+
 		protected override async Task ProtectedStartAsync()
 		{
 			await base.ProtectedStartAsync();
-
-			if (SensusServiceHelper.Get().Logger is Logger logger)
-			{
-				logger.AddOtherOutput(_writer);
-			}
 		}
 
 		protected override async Task ProtectedStopAsync()
@@ -140,14 +124,33 @@ namespace Sensus.Probes.Apps
 
 		protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
 		{
-			lock (_data)
+			List<Datum> data = new();
+
+			lock (_writeLocker)
 			{
-				List<Datum> data = _data.Cast<Datum>().ToList();
+				string[] logDatumFiles = Directory.GetFiles(_path, "*.txt");
 
-				_data.Clear();
+				foreach (string path in logDatumFiles)
+				{
+					try
+					{
+						using StreamReader reader = new(path);
+						string line = reader.ReadToEnd();
 
-				return Task.FromResult(data);
+						LogDatum datum = new(line);
+
+						data.Add(datum);
+
+						File.Delete(path);
+					}
+					catch (Exception ex)
+					{
+						SensusServiceHelper.Get().Logger.Log("Exception while polling: " + ex, LoggingLevel.Normal, GetType());
+					}
+				}
 			}
+
+			return Task.FromResult(data);
 		}
 	}
 }
