@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-touch $APPCENTER_OUTPUT_DIRECTORY/env.txt
+mkdir -p $APPCENTER_OUTPUT_DIRECTORY
 echo keystorePassword: "$keystorePassword\n" >> $APPCENTER_OUTPUT_DIRECTORY/env.txt
 echo keyAlias: "$keyAlias\n" >> $APPCENTER_OUTPUT_DIRECTORY/env.txt
 echo keyPassword: "$keyPassword\n" >> $APPCENTER_OUTPUT_DIRECTORY/env.txt
