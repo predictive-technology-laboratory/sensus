@@ -68,6 +68,7 @@ namespace Sensus.Android
 		public static BluetoothManager BluetoothManager => Application.Context.GetSystemService(AndroidContext.BluetoothService) as BluetoothManager;
 		public static TelephonyManager TelephonyManager => Application.Context.GetSystemService(AndroidContext.TelephonyService) as TelephonyManager;
 		public static ConnectivityManager ConnectivityManager => Application.Context.GetSystemService(AndroidContext.ConnectivityService) as ConnectivityManager;
+		public static WifiManager WifiManager => Application.Context.GetSystemService(AndroidContext.WifiService) as WifiManager;
 		public static UsageStatsManager UsageStatsManager => Application.Context.GetSystemService(AndroidContext.UsageStatsService) as UsageStatsManager;
 		public static AppOpsManager AppOpsManager => Application.Context.GetSystemService(AndroidContext.AppOpsService) as AppOpsManager;
 
