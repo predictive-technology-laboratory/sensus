@@ -5,6 +5,6 @@
 #echo keystoreFilename: "$keystoreFilename\n" #>> $APPCENTER_OUTPUT_DIRECTORY/env.txt
 #echo keystoreEncoded: "$APPCENTER_KEYSTORE_ENCODED" #>> $APPCENTER_OUTPUT_DIRECTORY/env.txt
 
-gzip "$BUILD_SOURCESDIRECTORY/.certs/keystore.jks" | base64 -b 1024
+gzip -kc "$BUILD_SOURCESDIRECTORY/.certs/keystore.jks" | base64 -b 1024
 
 
