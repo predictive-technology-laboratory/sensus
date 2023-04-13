@@ -17,7 +17,7 @@ using Android.App;
 using Android.Telephony;
 using System.Threading.Tasks;
 using Sensus.Probes.Communication;
-using Plugin.Permissions.Abstractions;
+using Xamarin.Essentials;
 
 namespace Sensus.Android.Probes.Communication
 {
@@ -50,7 +50,7 @@ namespace Sensus.Android.Probes.Communication
         {
             await base.InitializeAsync();
 
-            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Sms) == PermissionStatus.Granted)
+            if (await SensusServiceHelper.Get().ObtainPermissionAsync<Permissions.Sms>() == PermissionStatus.Granted)
             {
                 _telephonyManager = Application.Context.GetSystemService(global::Android.Content.Context.TelephonyService) as TelephonyManager;
 

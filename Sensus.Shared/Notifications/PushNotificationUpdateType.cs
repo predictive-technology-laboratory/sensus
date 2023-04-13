@@ -75,6 +75,10 @@ namespace Sensus.Notifications
         /// operations of the app. The push notification backend is therefore configured to periodically send an update with this type. Upon receipt,
         /// the app will attempt to clear the backlog of push notifications that have been held back and thereby resume normal operation.
         /// </summary>
-        ClearPushNotificationRequestBacklog
+        ClearPushNotificationRequestBacklog,
+        /// <summary>
+        /// The <see cref="PushNotificationUpdate.Content"/> value contains information about a <see cref="UserMessage"/> that should be displayed in the Message Center.
+        /// </summary>
+        Feedback
     }
 }

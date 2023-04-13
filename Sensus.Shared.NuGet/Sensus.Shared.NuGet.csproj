@@ -29,17 +29,7 @@
     <Compile Remove="Class1.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Extensions\" />
-    <Folder Include="Adaptation\" />
-    <Folder Include="Probes\Location\" />
-    <Folder Include="Probes\Context\" />
-    <Folder Include="Probes\Device\" />
-    <Folder Include="Probes\Network\" />
-    <Folder Include="Probes\User\" />
-    <Folder Include="Probes\User\Scripts\" />
-    <Folder Include="Probes\Communication\" />
-  </ItemGroup>
+  <Import Project="..\Sensus.Shared.Core\Sensus.Shared.Core.projitems" Label="Shared" />
 </Project>

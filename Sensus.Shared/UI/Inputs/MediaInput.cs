@@ -1,4 +1,18 @@
-﻿using Newtonsoft.Json;
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+using Sensus.Probes.User.Scripts;
 using Sensus.UI.UiProperties;
 using System;
 using System.Collections.Generic;
@@ -9,104 +23,156 @@ namespace Sensus.UI.Inputs
 {
 	public class MediaInput : Input
 	{
-        private struct MediaEvent
-        {
-            public DateTimeOffset Timestamp { get; set; }
-            public int Position { get; set; }
-            public string Event { get; set; }
-        }
+		private struct MediaEvent
+		{
+			public DateTimeOffset Timestamp { get; set; }
+			public int Position { get; set; }
+			public string Event { get; set; }
+		}
 
-        private List<MediaEvent> _events;
-        private Label _label;
-        private MediaView _mediaView;
+		private List<MediaEvent> _events;
+		private Label _label;
+		private MediaView _mediaView;
 
 		public override object Value
-        {
-            get
-            {
-                return _events;
-            }
-        }
+		{
+			get
+			{
+				return _events;
+			}
+		}
 
 		public override bool Enabled { get; set; }
 
 		public override string DefaultName => "Media";
 
-        public override View GetView(int index)
-        {
-            if (base.GetView(index) == null)
-            {
-                _label = CreateLabel(index);
-                _label.VerticalTextAlignment = TextAlignment.Center;
+		public override View GetView(int index)
+		{
+			if (base.GetView(index) == null)
+			{
+				_label = CreateLabel(index);
+				_label.VerticalTextAlignment = TextAlignment.Center;
 
-                _mediaView = new MediaView()
-                {
-                    HorizontalOptions = LayoutOptions.FillAndExpand,
-                    VerticalOptions = LayoutOptions.FillAndExpand
-                };
+				_mediaView = new MediaView()
+				{
+					HorizontalOptions = LayoutOptions.FillAndExpand,
+					VerticalOptions = LayoutOptions.FillAndExpand,
+				};
 
-                base.SetView(new StackLayout
-                {
-                    Orientation = StackOrientation.Vertical,
-                    HorizontalOptions = LayoutOptions.CenterAndExpand,
-                    Children = { _label, _mediaView }
-                });
+				double height = -1;
+				
+				if (Height > 0)
+				{
+					height = Height.Value;
+				}
 
-                _events = new List<MediaEvent>();
+				base.SetView(new StackLayout
+				{
+					Orientation = StackOrientation.Vertical,
+					HorizontalOptions = LayoutOptions.FillAndExpand,
+					HeightRequest = height,
+					Children = { _label, _mediaView }
+				});
 
-                if (Media.Type.ToLower().StartsWith("image"))
-                {
-                    _events.Add(new MediaEvent { Timestamp = DateTimeOffset.UtcNow, Position = 0, Event = "View" });
+				_events = new List<MediaEvent>();
 
-                    Complete = true;
-                }
-                else if (Media.Type.ToLower().StartsWith("video"))
-                {
-                    // the MediaView should be set after SetView is called
-                    _mediaView.VideoEvent += (o, e) =>
-                    {
-                        _events.Add(new MediaEvent { Timestamp = DateTimeOffset.UtcNow, Position = (int)e.Position.TotalMilliseconds, Event = e.Event });
+				if (Media != null)
+				{
+					if (Media.Type.ToLower().StartsWith("image"))
+					{
+						_events.Add(new MediaEvent { Timestamp = DateTimeOffset.UtcNow, Position = 0, Event = "View" });
 
-                        if (e.Event == VideoPlayer.END)
-                        {
-                            Complete = true;
-                        }
-                    };
-                }
-            }
-            else
-            {
-                _label.Text = GetLabelText(index);  // if the view was already initialized, just update the label since the index might have changed.
-            }
+						Complete = true;
+					}
+					else if (Media.Type.ToLower().StartsWith("video"))
+					{
+						// the MediaView should be set after SetView is called
+						_mediaView.VideoEvent += (o, e) =>
+						{
+							_events.Add(new MediaEvent { Timestamp = DateTimeOffset.UtcNow, Position = (int)e.Position.TotalMilliseconds, Event = e.Event });
 
-            return base.GetView(index);
-        }
+							if (e.Event == VideoPlayer.END)
+							{
+								Complete = true;
+							}
+						};
+					}
+				}
+				else
+				{
+					_mediaView.Content = new Label() { Text = "There is no media to display", TextColor = Color.Red };
 
-        [MediaPickerUiProperty("Media:", true, 7)]
-        public MediaObject Media { get; set; }
+					if (Required == false)
+					{
+						Complete = true;
+					}
+				}
+			}
+			else
+			{
+				_label.Text = GetLabelText(index); // if the view was already initialized, just update the label since the index might have changed.
+			}
 
-        public bool HasMedia
-        {
-            get
-            {
-                return Media != null && string.IsNullOrWhiteSpace(Media.Data) == false;
-            }
-        }
+			return base.GetView(index);
+		}
 
-        public async Task InitializeMediaAsync()
-        {
-            if (HasMedia)
-            {
-                await _mediaView.SetMediaAsync(Media);
-            }
-        }
+		[MediaPickerUiProperty("Media:", true, 7)]
+		public MediaObject Media { get; set; }
 
-        public async Task DisposeMediaAsync()
-        {
-            if (HasMedia)
-            {
-                await _mediaView.DisposeMediaAsync();
-            }
-        }
-    }
+		[EntryIntegerUiProperty("Height:", true, 8, false)]
+		public int? Height { get; set; }
+
+		public string CachePath { get; set; }
+
+		public void SetCachePath(ScriptRunner scriptRunner)
+		{
+			CachePath = MediaObject.GetProtocolCachePath(scriptRunner);
+		}
+
+		public void ClearCache()
+		{
+			if (Media != null)
+			{
+				Media.ClearCache();
+			}
+		}
+
+		public bool HasMedia
+		{
+			get
+			{
+				return Media != null && string.IsNullOrWhiteSpace(Media.Data) == false;
+			}
+		}
+
+		public async Task InitializeMediaAsync()
+		{
+			if (HasMedia)
+			{
+				await _mediaView.SetMediaAsync(Media);
+			}
+		}
+
+		public async Task DisposeMediaAsync()
+		{
+			if (HasMedia)
+			{
+				await _mediaView.DisposeMediaAsync();
+			}
+		}
+
+		public override async Task PrepareAsync()
+		{
+			await InitializeMediaAsync();
+
+			await base.PrepareAsync();
+		}
+
+		public override async Task DisposeAsync(InputGroupPage.NavigationResult result)
+		{
+			await DisposeMediaAsync();
+
+			await base.DisposeAsync(result);
+		}
+	}
 }

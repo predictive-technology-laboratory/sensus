@@ -22,133 +22,119 @@ using Sensus.Notifications;
 
 namespace Sensus.Android.Callbacks
 {
-    public class AndroidCallbackScheduler : CallbackScheduler
-    {
-        private AndroidSensusService _service;
+	public class AndroidCallbackScheduler : CallbackScheduler
+	{
+		private AndroidSensusService _service;
 
-        public AndroidCallbackScheduler(AndroidSensusService service)
-        {
-            _service = service;
-        }
+		public AndroidCallbackScheduler(AndroidSensusService service)
+		{
+			_service = service;
+		}
 
-        protected override Task RequestLocalInvocationAsync(ScheduledCallback callback)
-        {
-            Intent callbackIntent = CreateCallbackIntent(callback);
-            PendingIntent callbackPendingIntent = CreateCallbackPendingIntent(callbackIntent);
-            ScheduleCallbackAlarm(callback, callbackPendingIntent);
-            SensusServiceHelper.Get().Logger.Log("Callback " + callback.Id + " scheduled for " + callback.NextExecution + " " + (callback.RepeatDelay.HasValue ? "(repeating)" : "(one-time)") + ".", LoggingLevel.Normal, GetType());
-            return Task.CompletedTask;
-        }
+		protected override Task RequestLocalInvocationAsync(ScheduledCallback callback)
+		{
+			Intent callbackIntent = CreateCallbackIntent(callback);
+			PendingIntent callbackPendingIntent = CreateCallbackPendingIntent(callbackIntent);
+			ScheduleCallbackAlarm(callback, callbackPendingIntent);
+			SensusServiceHelper.Get().Logger.Log("Callback " + callback.Id + " scheduled for " + callback.NextExecution + " " + (callback.RepeatDelay.HasValue ? "(repeating)" : "(one-time)") + ".", LoggingLevel.Normal, GetType());
+			return Task.CompletedTask;
+		}
 
-        private Intent CreateCallbackIntent(ScheduledCallback callback)
-        {
-            Intent callbackIntent = new Intent(_service, typeof(AndroidSensusService));
-            callbackIntent.SetAction(callback.Id);
-            callbackIntent.PutExtra(SENSUS_CALLBACK_KEY, true);
-            callbackIntent.PutExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY, callback.InvocationId);
-            return callbackIntent;
-        }
+		private Intent CreateCallbackIntent(ScheduledCallback callback)
+		{
+			Intent callbackIntent = new Intent(_service, typeof(AndroidSensusService));
+			callbackIntent.SetAction(callback.Id);
+			callbackIntent.PutExtra(SENSUS_CALLBACK_KEY, true);
+			callbackIntent.PutExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY, callback.InvocationId);
+			return callbackIntent;
+		}
 
-        private PendingIntent CreateCallbackPendingIntent(Intent callbackIntent)
-        {
-            // intent extras are not considered when checking equality. thus, the only way we'll get equal pending intents is
-            // if the intent action (i.e., callback id) is the same. this should not happen, but if it does we should probably
-            // cancel the previously issued (current) intent with the one we are here constructing and are about to pass to the
-            // alarm manager. see the following for more information:
-            //
-            // https://developer.android.com/reference/android/app/PendingIntent.html 
-            //
-            return PendingIntent.GetService(_service, 0, callbackIntent, PendingIntentFlags.CancelCurrent);
-        }
+		private PendingIntent CreateCallbackPendingIntent(Intent callbackIntent)
+		{
+			// intent extras are not considered when checking equality. thus, the only way we'll get equal pending intents is
+			// if the intent action (i.e., callback id) is the same. this should not happen, but if it does we should probably
+			// cancel the previously issued (current) intent with the one we are here constructing and are about to pass to the
+			// alarm manager. see the following for more information:
+			//
+			// https://developer.android.com/reference/android/app/PendingIntent.html 
+			//
+			return PendingIntent.GetService(_service, 0, callbackIntent, PendingIntentFlags.CancelCurrent | PendingIntentFlags.Immutable);
+		}
 
-        private void ScheduleCallbackAlarm(ScheduledCallback callback, PendingIntent callbackPendingIntent)
-        {
-            AlarmManager alarmManager = _service.GetSystemService(global::Android.Content.Context.AlarmService) as AlarmManager;
+		private void ScheduleCallbackAlarm(ScheduledCallback callback, PendingIntent callbackPendingIntent)
+		{
+			AlarmManager alarmManager = _service.GetSystemService(global::Android.Content.Context.AlarmService) as AlarmManager;
 
-            // cancel the current alarm for this callback id. this deals with the situations where (1) sensus schedules callbacks
-            // and is subsequently restarted, or (2) a probe is restarted after scheduling callbacks (e.g., script runner). in 
-            // these situations, the originally scheduled callbacks will remain in the alarm manager, and we'll begin piling up
-            // additional, duplicate alarms. we need to be careful to avoid duplicate alarms, and this is how we manage it.
-            alarmManager.Cancel(callbackPendingIntent);
+			// cancel the current alarm for this callback id. this deals with the situations where (1) sensus schedules callbacks
+			// and is subsequently restarted, or (2) a probe is restarted after scheduling callbacks (e.g., script runner). in 
+			// these situations, the originally scheduled callbacks will remain in the alarm manager, and we'll begin piling up
+			// additional, duplicate alarms. we need to be careful to avoid duplicate alarms, and this is how we manage it.
+			alarmManager.Cancel(callbackPendingIntent);
 
-            long callbackTimeMS = callback.NextExecution.Value.ToJavaCurrentTimeMillis();
+			long callbackTimeMS = callback.NextExecution.Value.ToJavaCurrentTimeMillis();
 
-            // see the Backwards Compatibility article for more information
-#if __ANDROID_23__
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
-            {
-                alarmManager.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API level 23 added "while idle" option, making things even tighter.
-            }
-            else if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
-            {
-                alarmManager.SetExact(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API level 19 differentiated Set (loose) from SetExact (tight)
-            }
-            else
-#endif
-            {
-                alarmManager.Set(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);  // API 1-18 treats Set as a tight alarm
-            }
+			alarmManager.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, callbackTimeMS, callbackPendingIntent);
 
-            SensusServiceHelper.Get().Logger.Log("Alarm scheduled for callback " + callback.Id + " at " + callback.NextExecution.Value + ".", LoggingLevel.Normal, GetType());
-        }
+			SensusServiceHelper.Get().Logger.Log("Alarm scheduled for callback " + callback.Id + " at " + callback.NextExecution.Value + ".", LoggingLevel.Normal, GetType());
+		}
 
-        public ScheduledCallback TryGetCallback(Intent intent)
-        {
-            if (IsCallback(intent))
-            {
-                return TryGetCallback(intent.Action);
-            }
-            else
-            {
-                return null;
-            }
-        }
+		public ScheduledCallback TryGetCallback(Intent intent)
+		{
+			if (IsCallback(intent))
+			{
+				return TryGetCallback(intent.Action);
+			}
+			else
+			{
+				return null;
+			}
+		}
 
-        public bool IsCallback(Intent intent)
-        {
-            return intent.GetBooleanExtra(SENSUS_CALLBACK_KEY, false);
-        }
+		public bool IsCallback(Intent intent)
+		{
+			return intent.GetBooleanExtra(SENSUS_CALLBACK_KEY, false);
+		}
 
-        public async Task RaiseCallbackAsync(Intent intent)
-        {
-            ScheduledCallback callback = TryGetCallback(intent.Action);
+		public async Task RaiseCallbackAsync(Intent intent)
+		{
+			ScheduledCallback callback = TryGetCallback(intent.Action);
 
-            if (callback == null)
-            {
-                return;
-            }
+			if (callback == null)
+			{
+				return;
+			}
 
-            SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
+			SensusServiceHelper serviceHelper = SensusServiceHelper.Get();
 
-            // if the user removes the main activity from the switcher, the service's process will be killed and restarted without notice, and 
-            // we'll have no opportunity to unschedule repeating callbacks. when the service is restarted we'll reinitialize the service
-            // helper, restart the repeating callbacks, and we'll then have duplicate repeating callbacks. handle the invalid callbacks below.
-            // if the callback is present, it's fine. if it's not, then unschedule it.
-            if (ContainsCallback(callback))
-            {
-                string invocationId = intent.GetStringExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY);
+			// if the user removes the main activity from the switcher, the service's process will be killed and restarted without notice, and 
+			// we'll have no opportunity to unschedule repeating callbacks. when the service is restarted we'll reinitialize the service
+			// helper, restart the repeating callbacks, and we'll then have duplicate repeating callbacks. handle the invalid callbacks below.
+			// if the callback is present, it's fine. if it's not, then unschedule it.
+			if (ContainsCallback(callback))
+			{
+				string invocationId = intent.GetStringExtra(SENSUS_CALLBACK_INVOCATION_ID_KEY);
 
-                await RaiseCallbackAsync(callback, invocationId);
-            }
-            else
-            {
-                await UnscheduleCallbackAsync(callback);
-            }
-        }
+				await RaiseCallbackAsync(callback, invocationId);
+			}
+			else
+			{
+				await UnscheduleCallbackAsync(callback);
+			}
+		}
 
-        protected override void CancelLocalInvocation(ScheduledCallback callback)
-        {
-            // we don't need a reference to the original pending intent in order to cancel the alarm. we just need a pending intent
-            // with the same request code and underlying intent with the same action. extras are not considered, and we don't use
-            // the other intent fields (data, categories, etc.). see the following for more information:
-            //
-            // https://developer.android.com/reference/android/app/PendingIntent.html 
-            //
-            Intent callbackIntent = CreateCallbackIntent(callback);
-            PendingIntent callbackPendingIntent = CreateCallbackPendingIntent(callbackIntent);
-            AlarmManager alarmManager = _service.GetSystemService(global::Android.Content.Context.AlarmService) as AlarmManager;
-            alarmManager.Cancel(callbackPendingIntent);
-            SensusServiceHelper.Get().Logger.Log("Unscheduled alarm for callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
-        }
-    }
+		protected override void CancelLocalInvocation(ScheduledCallback callback)
+		{
+			// we don't need a reference to the original pending intent in order to cancel the alarm. we just need a pending intent
+			// with the same request code and underlying intent with the same action. extras are not considered, and we don't use
+			// the other intent fields (data, categories, etc.). see the following for more information:
+			//
+			// https://developer.android.com/reference/android/app/PendingIntent.html 
+			//
+			Intent callbackIntent = CreateCallbackIntent(callback);
+			PendingIntent callbackPendingIntent = CreateCallbackPendingIntent(callbackIntent);
+			AlarmManager alarmManager = _service.GetSystemService(global::Android.Content.Context.AlarmService) as AlarmManager;
+			alarmManager.Cancel(callbackPendingIntent);
+			SensusServiceHelper.Get().Logger.Log("Unscheduled alarm for callback " + callback.Id + ".", LoggingLevel.Normal, GetType());
+		}
+	}
 }

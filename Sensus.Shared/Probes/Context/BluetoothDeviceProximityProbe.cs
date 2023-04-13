@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Microsoft.AppCenter.Analytics;
 using Newtonsoft.Json;
 using Sensus.Extensions;
 using Sensus.UI.UiProperties;
@@ -113,7 +112,6 @@ namespace Sensus.Probes.Context
 		public BluetoothScanModes ScanMode { get; set; }
 		[OnOffUiProperty("Discover all devices:", true, 7)]
 		public bool DiscoverAll { get; set; }
-
 
 		[JsonIgnore]
 		public int ReadAttemptCount { get; set; }
@@ -224,8 +222,6 @@ namespace Sensus.Probes.Context
 			{
 				{ "Read Success", ReadSuccessCount.RoundToWholePercentageOf(ReadAttemptCount, 5).ToString()}
 			};
-
-			Analytics.TrackEvent(eventName, properties);
 
 			events.Add(new AnalyticsTrackedEvent(eventName, properties));
 

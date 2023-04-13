@@ -27,22 +27,19 @@ namespace Sensus.UI
 	{
 		protected override void SetUpScriptList()
 		{
-			_scriptList.ItemTemplate = new DataTemplate(typeof(TextCell));
+			_scriptList.ItemTemplate = new DataTemplate(typeof(DarkModeCompatibleTextCell));
 
 			_scriptList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(Script.Caption));
 			_scriptList.ItemsSource = new ObservableCollection<Script>(_scripts);
-
 		}
 
-		public static IEnumerable<Script> GetProtocolScripts(Protocol protocol)
+		public static IEnumerable<Script> GetUserInitiatedScripts(Protocol protocol)
 		{
-			return protocol.Probes.OfType<ScriptProbe>()
-				.SelectMany(x => x.ScriptRunners)
-				.Where(x => x.Enabled && x.AllowUserInitiation && x.Script.InputGroups.SelectMany(y => y.Inputs).Any())
-				.Select(x => x.Script);
+			//return protocol.Probes.OfType<ScriptProbe>().SelectMany(x => x.UserInitiatedScripts);
+			return protocol.Probes.OfType<ScriptProbe>().SelectMany(x => x.ScriptRunners.Where(y => y.Enabled && y.AllowUserInitiation).Select(y => y.Script));
 		}
 
-		public UserInitiatedScriptsPage(Protocol protocol) : base(GetProtocolScripts(protocol), true)
+		public UserInitiatedScriptsPage(Protocol protocol) : base(GetUserInitiatedScripts(protocol), true)
 		{
 			Title = $"{protocol.Name} Surveys";
 
@@ -63,19 +60,22 @@ namespace Sensus.UI
 
 		protected override async Task<bool> RunScriptAsync(Script script)
 		{
+			script = script.Copy(true);
+
 			script.RunTime = DateTimeOffset.UtcNow;
 
-			if (await base.RunScriptAsync(script))
-			{
-				foreach (Input input in script.InputGroups.SelectMany(x => x.Inputs))
-				{
-					input.Reset();
-				}
+			return await base.RunScriptAsync(script);
 
-				return true;
-			}
+			//script.RunTime = DateTimeOffset.UtcNow;
 
-			return false;
+			//bool submitted = await base.RunScriptAsync(script);
+
+			//foreach (Input input in script.InputGroups.SelectMany(x => x.Inputs))
+			//{
+			//	input.Reset();
+			//}
+
+			//return submitted;
 		}
 	}
 }

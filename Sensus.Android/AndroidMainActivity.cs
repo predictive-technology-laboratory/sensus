@@ -29,13 +29,9 @@ using Plugin.CurrentActivity;
 using System.Threading.Tasks;
 using Sensus.Exceptions;
 using Sensus.Notifications;
-using Sensus.Android.Notifications;
-using Sensus.Android.Probes.Apps;
+using Xamarin.Essentials;
+using Platform = Xamarin.Essentials.Platform;
 //using Sensus.Android.Probes.Apps.Accessibility;
-
-#if __ANDROID_23__
-using Plugin.Permissions;
-#endif
 
 namespace Sensus.Android
 {
@@ -73,15 +69,9 @@ namespace Sensus.Android
 
 			Forms.Init(this, savedInstanceState);
 			FormsMaps.Init(this, savedInstanceState);
-			ZXing.Net.Mobile.Forms.Android.Platform.Init();
+			Platform.Init(this, savedInstanceState);
 
-			// initialize the current activity plugin here as well as in the service,
-			// since this activity will be starting the service after it is created.
-			// only initializing the plugin in the service was keeping the plugin from
-			// being properly initialized, presumably because the plugin missed the 
-			// lifecycle events of the activity. we want the plugin to have be 
-			// initialized regardless of how the app comes to be created.
-			CrossCurrentActivity.Current.Init(this, savedInstanceState);
+			ZXing.Net.Mobile.Forms.Android.Platform.Init();
 
 #if UI_TESTING
             Forms.ViewInitialized += (sender, e) =>
@@ -145,7 +135,7 @@ namespace Sensus.Android
 
 			// temporarily hide UI while we bind to service. allowing the user to click around before the service helper is initialized 
 			// may result in a crash.
-			(Xamarin.Forms.Application.Current as App).MasterPage.IsVisible = false;
+			(Xamarin.Forms.Application.Current as App).FlyoutPage.IsVisible = false;
 			(Xamarin.Forms.Application.Current as App).DetailPage.IsVisible = false;
 
 			// ensure the service is bound any time the activity is resumed
@@ -176,7 +166,7 @@ namespace Sensus.Android
 				{
 					SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
 					{
-						(Xamarin.Forms.Application.Current as App).MasterPage.IsVisible = true;
+						(Xamarin.Forms.Application.Current as App).FlyoutPage.IsVisible = true;
 						(Xamarin.Forms.Application.Current as App).DetailPage.IsVisible = true;
 					});
 				}
@@ -190,6 +180,8 @@ namespace Sensus.Android
 		{
 			Console.Error.WriteLine("--------------------------- Pausing activity ---------------------------");
 
+			App.InterruptScript();
+
 			base.OnPause();
 
 			// we disconnect from the service within onpause because onresume always blocks the user while rebinding
@@ -201,6 +193,8 @@ namespace Sensus.Android
 		protected override async void OnStop()
 		{
 			Console.Error.WriteLine("--------------------------- Stopping activity ---------------------------");
+
+			App.InterruptScript();
 
 			base.OnStop();
 
@@ -215,6 +209,8 @@ namespace Sensus.Android
 		protected override void OnDestroy()
 		{
 			Console.Error.WriteLine("--------------------------- Destroying activity ---------------------------");
+
+			App.InterruptScript();
 
 			base.OnDestroy();
 
@@ -261,8 +257,6 @@ namespace Sensus.Android
 			{
 				if (hasFocus)
 				{
-					serviceHelper.StopWaitingForFocus();
-
 					serviceHelper.SetFocusedMainActivity(this);
 				}
 				else
@@ -407,13 +401,13 @@ namespace Sensus.Android
 			}
 		}
 
-#if __ANDROID_23__
 		public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
 		{
-			PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+			//PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 			ZXing.Net.Mobile.Android.PermissionsHandler.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+
+			Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 		}
-#endif
 
 		#endregion
 	}

@@ -13,51 +13,63 @@
 // limitations under the License.
 
 using System;
+using System.Threading.Tasks;
 using Syncfusion.SfChart.XForms;
+using Xamarin.Essentials;
 
 namespace Sensus.Probes.Network
 {
-    /// <summary>
-    /// Probes information about WLAN access points.
-    /// </summary>
-    public abstract class PollingWlanProbe : PollingProbe
-    {
-        public sealed override string DisplayName
-        {
-            get { return "Wireless LAN Binding"; }
-        }
+	/// <summary>
+	/// Probes information about WLAN access points.
+	/// </summary>
+	public abstract class PollingWlanProbe : PollingProbe
+	{
+		public sealed override string DisplayName
+		{
+			get { return "Wireless LAN Binding"; }
+		}
 
-        public sealed override Type DatumType
-        {
-            get { return typeof(WlanDatum); }
-        }
+		public sealed override Type DatumType
+		{
+			get { return typeof(WlanDatum); }
+		}
 
-        public sealed override int DefaultPollingSleepDurationMS
-        {
-            get
-            {
-                return 60000 * 15; // every 15 minutes
-            }
-        }
+		public sealed override int DefaultPollingSleepDurationMS
+		{
+			get
+			{
+				return 60000 * 15; // every 15 minutes
+			}
+		}
 
-        protected override ChartSeries GetChartSeries()
-        {
-            return null;
-        }
+		protected override async Task InitializeAsync()
+		{
+			await base.InitializeAsync();
 
-        protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
-        {
-            return null;
-        }
+			if ((await SensusServiceHelper.Get().ObtainPermissionAsync<Permissions.NetworkState>()) != PermissionStatus.Granted)
+			{
+				throw new PermissionException($"Failed to get {nameof(Permissions.NetworkState)} permission");
+			}
+		}
 
-        protected override ChartAxis GetChartPrimaryAxis()
-        {
-            throw new NotImplementedException();
-        }
+		protected override ChartSeries GetChartSeries()
+		{
+			return null;
+		}
 
-        protected override RangeAxisBase GetChartSecondaryAxis()
-        {
-            throw new NotImplementedException();
-        }
-    }
+		protected override ChartDataPoint GetChartDataPointFromDatum(Datum datum)
+		{
+			return null;
+		}
+
+		protected override ChartAxis GetChartPrimaryAxis()
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override RangeAxisBase GetChartSecondaryAxis()
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

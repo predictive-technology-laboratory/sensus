@@ -109,6 +109,8 @@
 			<array>
 				<string>edu.virginia.sie.ptl.sensus.protocol</string>
 			</array>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
 		</dict>
 	</array>
 	<key>UTExportedTypeDeclarations</key>
@@ -139,6 +141,7 @@
 		<string>bluetooth-central</string>
 		<string>bluetooth-peripheral</string>
 		<string>remote-notification</string>
+		<string>processing</string>
 	</array>
 	<key>CFBundleName</key>
 	<string>Sensus</string>
@@ -165,10 +168,16 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Sensus uses the camera to scan participation barcodes. Sensus will not record images or video.</string>
 	<key>CFBundleShortVersionString</key>
-	<string>15.18.0</string>
+	<string>17.0.0</string>
 	<key>CFBundleVersion</key>
-	<string>1.1.1</string>
+	<string>202304110001</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Sensus uses Bluetooth to collect information for studies you enroll in.</string>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>edu.virginia.sie.ptl.sensus.Maintenance</string>
+	</array>
 </dict>
 </plist>

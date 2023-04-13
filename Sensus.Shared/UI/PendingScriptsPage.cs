@@ -22,54 +22,34 @@ using Sensus.Notifications;
 
 namespace Sensus.UI
 {
-    public class PendingScriptsPage : RunScriptsPage
-    {
-        private class ViewVisibleValueConverter : IValueConverter
-        {
-            public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-            {
-                if (value == null)
-                {
-                    return false;
-                }
+	public class PendingScriptsPage : RunScriptsPage
+	{
+		/// <summary>
+		/// Enables tap-and-hold to remove a pending survey.
+		/// </summary>
+		private class PendingScriptTextCell : DarkModeCompatibleTextCell
+		{
+			public PendingScriptTextCell()
+			{
+				MenuItem deleteMenuItem = new MenuItem { Text = "Delete", IsDestructive = true };
+				deleteMenuItem.SetBinding(MenuItem.CommandParameterProperty, ".");
+				deleteMenuItem.Clicked += async (sender, e) =>
+				{
+					Script scriptToDelete = (sender as MenuItem).CommandParameter as Script;
 
-                int count = (int)value;
-                bool zeroMeansVisible = (bool)parameter;
-                return (count == 0) == zeroMeansVisible;
-            }
+					if (SensusServiceHelper.Get().RemoveScripts(scriptToDelete))
+					{
+						await SensusServiceHelper.Get().IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.Badge, scriptToDelete.Runner.Probe.Protocol);
+					}
 
-            public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-            {
-                return value;
-            }
-        }
+					// let the script agent know and store a datum to record the event
+					await (scriptToDelete.Runner.Probe.Agent?.ObserveAsync(scriptToDelete, ScriptState.Deleted) ?? Task.CompletedTask);
+					scriptToDelete.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Deleted, DateTimeOffset.UtcNow, scriptToDelete, scriptToDelete.Runner.SavedState?.SessionId), CancellationToken.None);
+				};
 
-        /// <summary>
-        /// Enables tap-and-hold to remove a pending survey.
-        /// </summary>
-        private class PendingScriptTextCell : TextCell
-        {
-            public PendingScriptTextCell()
-            {
-                MenuItem deleteMenuItem = new MenuItem { Text = "Delete", IsDestructive = true };
-                deleteMenuItem.SetBinding(MenuItem.CommandParameterProperty, ".");
-                deleteMenuItem.Clicked += async (sender, e) =>
-                {
-                    Script scriptToDelete = (sender as MenuItem).CommandParameter as Script;
-
-                    if (SensusServiceHelper.Get().RemoveScripts(scriptToDelete))
-                    {
-                        await SensusServiceHelper.Get().IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.Badge, scriptToDelete.Runner.Probe.Protocol);
-                    }
-
-                    // let the script agent know and store a datum to record the event
-                    await (scriptToDelete.Runner.Probe.Agent?.ObserveAsync(scriptToDelete, ScriptState.Deleted) ?? Task.CompletedTask);
-                    scriptToDelete.Runner.Probe.Protocol.LocalDataStore.WriteDatum(new ScriptStateDatum(ScriptState.Deleted, DateTimeOffset.UtcNow, scriptToDelete), CancellationToken.None);
-                };
-
-                ContextActions.Add(deleteMenuItem);
-            }
-        }
+				ContextActions.Add(deleteMenuItem);
+			}
+		}
 
 		protected override void SetUpScriptList()
 		{
@@ -81,59 +61,57 @@ namespace Sensus.UI
 		}
 
 		public PendingScriptsPage() : base(SensusServiceHelper.Get().ScriptsToRun, false)
-        {
-            Title = "Pending Surveys";
+		{
+			Title = "Pending Surveys";
 
+			//SetUpScriptList();
 
-			SetUpScriptList();
+			// display an informative message when there are no surveys
+			Label noSurveysLabel = new Label
+			{
+				Text = "You have no pending surveys.",
+				TextColor = Color.Accent,
+				FontSize = 20,
+				VerticalOptions = LayoutOptions.Center,
+				HorizontalOptions = LayoutOptions.Center,
+				BindingContext = _scripts
+			};
 
+			noSurveysLabel.SetBinding(IsVisibleProperty, new Binding("Count", converter: new ViewVisibleValueConverter(), converterParameter: true));
 
-            // display an informative message when there are no surveys
-            Label noSurveysLabel = new Label
-            {
-                Text = "You have no pending surveys.",
-                TextColor = Color.Accent,
-                FontSize = 20,
-                VerticalOptions = LayoutOptions.Center,
-                HorizontalOptions = LayoutOptions.Center,
-                BindingContext = SensusServiceHelper.Get().ScriptsToRun
-            };
+			_contentGrid.Children.Add(noSurveysLabel, 0, 0);
 
-            noSurveysLabel.SetBinding(IsVisibleProperty, new Binding("Count", converter: new ViewVisibleValueConverter(), converterParameter: true));
+			ToolbarItems.Add(new ToolbarItem("Clear", null, async () =>
+			{
+				if (await DisplayAlert("Clear all surveys?", "This action cannot be undone.", "Clear", "Cancel"))
+				{
+					if (await SensusServiceHelper.Get().ClearScriptsAsync())
+					{
+						await SensusServiceHelper.Get().IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.None, null);
+					}
+				}
+			}));
 
-            _contentGrid.Children.Add(noSurveysLabel, 0, 0);
+			// use timer to update available surveys
+			System.Timers.Timer filterTimer = new System.Timers.Timer(1000);
 
-            ToolbarItems.Add(new ToolbarItem("Clear", null, async () =>
-            {
-                if (await DisplayAlert("Clear all surveys?", "This action cannot be undone.", "Clear", "Cancel"))
-                {
-                    if (await SensusServiceHelper.Get().ClearScriptsAsync())
-                    {
-                        await SensusServiceHelper.Get().IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.None, null);
-                    }
-                }
-            }));
+			filterTimer.Elapsed += async (sender, e) =>
+			{
+				if (await SensusServiceHelper.Get().RemoveExpiredScriptsAsync())
+				{
+					await SensusServiceHelper.Get().IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.Badge, null);
+				}
+			};
 
-            // use timer to update available surveys
-            System.Timers.Timer filterTimer = new System.Timers.Timer(1000);
+			Appearing += (sender, e) =>
+			{
+				filterTimer.Start();
+			};
 
-            filterTimer.Elapsed += async (sender, e) =>
-            {
-                if (await SensusServiceHelper.Get().RemoveExpiredScriptsAsync())
-                {
-                    await SensusServiceHelper.Get().IssuePendingSurveysNotificationAsync(PendingSurveyNotificationMode.Badge, null);
-                }
-            };
-
-            Appearing += (sender, e) =>
-            {
-                filterTimer.Start();
-            };
-
-            Disappearing += (sender, e) =>
-            {
-                filterTimer.Stop();
-            };
-        }
-    }
+			Disappearing += (sender, e) =>
+			{
+				filterTimer.Stop();
+			};
+		}
+	}
 }

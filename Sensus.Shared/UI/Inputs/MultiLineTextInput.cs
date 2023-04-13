@@ -18,145 +18,159 @@ using Sensus.UI.UiProperties;
 
 namespace Sensus.UI.Inputs
 {
-    public class MultiLineTextInput : Input
-    {
-        private Editor _editor;
-        private Keyboard _keyboard;
-        private Label _label;
-        private bool _hasFocused;
-        private int _height;
+	public class MultiLineTextInput : Input
+	{
+		private Editor _editor;
+		private Keyboard _keyboard;
+		private Label _label;
+		private bool _hasFocused;
+		private int _height;
 
-        /// <summary>
-        /// Height in pixels of the multi-line text input.
-        /// </summary>
-        /// <value>The height.</value>
-        [EntryIntegerUiProperty(null, true, 5, true)]
-        public int Height
-        {
-            get
-            {
-                return _height;
-            }
-            set
-            {
-                if (value < 100)
-                {
-                    value = 100;
-                }
+		/// <summary>
+		/// Height in pixels of the multi-line text input.
+		/// </summary>
+		/// <value>The height.</value>
+		[EntryIntegerUiProperty(null, true, 5, true)]
+		public int Height
+		{
+			get
+			{
+				return _height;
+			}
+			set
+			{
+				if (value < 100)
+				{
+					value = 100;
+				}
 
-                _height = value;
-            }
-        }
+				_height = value;
+			}
+		}
 
-        public override object Value
-        {
-            get
-            {
-                return _editor == null || !_hasFocused || string.IsNullOrWhiteSpace(_editor.Text) ? null : _editor.Text;
-            }
-        }
+		[OnOffUiProperty("Complete on text change:", true, 6)]
+		public bool CompleteOnTextChange { get; set; }
 
-        [JsonIgnore]
-        public override bool Enabled
-        {
-            get
-            {
-                return _editor.IsEnabled;
-            }
-            set
-            {
-                _editor.IsEnabled = value;
-            }
-        }
+		public override object Value
+		{
+			get
+			{
+				return _editor == null || !_hasFocused || string.IsNullOrWhiteSpace(_editor.Text) ? null : _editor.Text;
+			}
+		}
 
-        public override string DefaultName
-        {
-            get
-            {
-                return "Multi-Line Text Entry";
-            }
-        }
+		[JsonIgnore]
+		public override bool Enabled
+		{
+			get
+			{
+				return _editor.IsEnabled;
+			}
+			set
+			{
+				_editor.IsEnabled = value;
+			}
+		}
 
-        public MultiLineTextInput()
-        {
-        }
+		public override string DefaultName
+		{
+			get
+			{
+				return "Multi-Line Text Entry";
+			}
+		}
 
-        public MultiLineTextInput(string labelText, Keyboard keyboard)
-            : base(labelText)
-        {
-            Construct(keyboard);
-        }
+		public MultiLineTextInput()
+		{
+		}
 
-        public MultiLineTextInput(string labelText, string name, Keyboard keyboard)
-            : base(labelText, name)
-        {
-            Construct(keyboard);
-        }
+		public MultiLineTextInput(string labelText, Keyboard keyboard)
+			: base(labelText)
+		{
+			Construct(keyboard);
+		}
 
-        private void Construct(Keyboard keyboard)
-        {
-            _keyboard = keyboard;
-            _height = 100;
-        }
+		public MultiLineTextInput(string labelText, string name, Keyboard keyboard)
+			: base(labelText, name)
+		{
+			Construct(keyboard);
+		}
 
-        public override View GetView(int index)
-        {
-            if (base.GetView(index) == null)
-            {
-                _editor = new Editor
-                {
-                    Text = "Provide response here.",
-                    FontSize = 20,
-                    Keyboard = _keyboard,
-                    HorizontalOptions = LayoutOptions.FillAndExpand,
-                    HeightRequest = _height
+		private void Construct(Keyboard keyboard)
+		{
+			_keyboard = keyboard;
+			_height = 100;
+			CompleteOnTextChange = false;
+		}
 
-                    // set the style ID on the view so that we can retrieve it when UI testing
+		public override View GetView(int index)
+		{
+			if (base.GetView(index) == null)
+			{
+				_editor = new Editor
+				{
+					Text = "Provide response here.",
+					FontSize = 20,
+					Keyboard = _keyboard,
+					HorizontalOptions = LayoutOptions.FillAndExpand,
+					HeightRequest = _height
+
+					// set the style ID on the view so that we can retrieve it when UI testing
 #if UI_TESTING
                     , StyleId = Name
 #endif
-                };
+				};
 
-                Color defaultTextColor = _editor.TextColor;
-                _editor.TextColor = Color.Gray;
-                _hasFocused = false;
-                _editor.Focused += (o, e) =>
-                {
-                    if (!_hasFocused)
-                    {
-                        _editor.Text = "";
-                        _editor.TextColor = defaultTextColor;
-                        _hasFocused = true;
-                    }
-                };
+				Color defaultTextColor = _editor.TextColor;
+				_editor.TextColor = Color.Gray;
+				_hasFocused = false;
+				_editor.Focused += (o, e) =>
+				{
+					if (!_hasFocused)
+					{
+						_editor.Text = "";
+						_editor.TextColor = defaultTextColor;
+						_hasFocused = true;
+					}
+				};
 
-                _editor.TextChanged += (o, e) =>
-                {
-                    Complete = Value != null;
-                };
+				if (CompleteOnTextChange)
+				{
+					_editor.TextChanged += (o, e) =>
+					{
+						Complete = Value != null;
+					};
+				}
+				else
+				{
+					_editor.Unfocused += (o, e) =>
+					{
+						Complete = Value != null;
+					};
+				}
 
-                _label = CreateLabel(index);
+				_label = CreateLabel(index);
 
-                base.SetView(new StackLayout
-                {
-                    Orientation = StackOrientation.Vertical,
-                    VerticalOptions = LayoutOptions.Start,
-                    Children = { _label, _editor }
-                });
-            }
-            else
-            {
-                // if the view was already initialized, just update the label since the index might have changed.
-                _label.Text = GetLabelText(index);
+				base.SetView(new StackLayout
+				{
+					Orientation = StackOrientation.Vertical,
+					VerticalOptions = LayoutOptions.Start,
+					Children = { _label, _editor }
+				});
+			}
+			else
+			{
+				// if the view was already initialized, just update the label since the index might have changed.
+				_label.Text = GetLabelText(index);
 
-                // if the view is not enabled, there should be no tip text since the user can't do anything with the entry.
-                if (!Enabled && !_hasFocused)
-                {
-                    _editor.Text = "";
-                }
-            }
+				// if the view is not enabled, there should be no tip text since the user can't do anything with the entry.
+				if (!Enabled && !_hasFocused)
+				{
+					_editor.Text = "";
+				}
+			}
 
-            return base.GetView(index);
-        }
-    }
+			return base.GetView(index);
+		}
+	}
 }

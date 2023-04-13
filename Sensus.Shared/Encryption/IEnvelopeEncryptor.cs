@@ -21,5 +21,6 @@ namespace Sensus.Encryption
     public interface IEnvelopeEncryptor
     {
         Task EnvelopeAsync(byte[] unencryptedBytes, int symmetricKeySizeBits, int symmetricInitializationVectorSizeBits, Stream encryptedOutputStream, CancellationToken cancellationToken);
+        void Envelope(byte[] unencryptedBytes, int symmetricKeySizeBits, int symmetricInitializationVectorSizeBits, Stream encryptedOutputStream, CancellationToken cancellationToken);
     }
 }

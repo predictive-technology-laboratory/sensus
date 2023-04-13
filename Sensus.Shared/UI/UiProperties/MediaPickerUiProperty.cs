@@ -1,13 +1,14 @@
-﻿using Plugin.Media;
-using Plugin.Media.Abstractions;
-using Sensus.Context;
+﻿//using Plugin.Media;
+//using Plugin.Media.Abstractions;
 using Sensus.Exceptions;
+using Sensus.UI.Inputs;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace Sensus.UI.UiProperties
@@ -25,63 +26,26 @@ namespace Sensus.UI.UiProperties
 		public const string CAPTURE_VIDEO = "Capture Video";
 		public const string CHOOSE_VIDEO = "Choose Video";
 		public const string URL = "Url";
-		public const string FROM_URL = "From Url";
+		public const string URL_CACHED = "Url (Cached)";
+		public const string URL_EMBEDDED = "Url (Embed)";
 		public const string NONE = "None";
 		public const string CHOOSE = "Choose...";
-
-		private async Task<MediaObject> GetMediaObjectAsync(MediaFile file)
-		{
-			MediaObject media = new MediaObject();
-
-			byte[] data = await SensusServiceHelper.ReadAllBytesAsync(file.GetStream());
-
-			media.Data = Convert.ToBase64String(data);
-			media.Type = SensusServiceHelper.Get().GetMimeType(file.Path);
-			media.Embeded = true;
-
-			return media;
-		}
-
-		private async Task<MediaObject> GetMediaObjectAsync(string data, bool embed)
-		{
-			MediaObject media = new MediaObject();
-
-			string mimeType = SensusServiceHelper.Get().GetMimeType(data);
-
-			if (embed)
-			{
-				using (HttpClient client = new HttpClient())
-				{
-					using (HttpResponseMessage response = await client.GetAsync(data))
-					{
-						if (string.IsNullOrEmpty(mimeType))
-						{
-							mimeType = response.Content.Headers.ContentType.MediaType.ToLower();
-						}
-
-						data = Convert.ToBase64String(await response.Content.ReadAsByteArrayAsync());
-					}
-				}
-			}
-
-			media.Data = data;
-			media.Type = mimeType;
-			media.Embeded = embed;
-
-			return media;
-		}
 
 		private string GetButtonText(MediaObject media)
 		{
 			if (media != null && string.IsNullOrWhiteSpace(media.Data) == false)
 			{
-				if (media.Embeded)
+				if (media.StorageMethod == MediaStorageMethods.Embed)
 				{
 					// using the byte count of the base64 string since it is what gets serialized to Unicode. 
 					// The file size is likely smaller by almost half due to the base64 string being encoded in Unicode, but it would not represent the actual amount of data being stored.
 					int size = Encoding.Unicode.GetByteCount(media.Data);
 
 					return $"{media.Type} ({size} B)";
+				}
+				else if (media.StorageMethod == MediaStorageMethods.Cache)
+				{
+					return URL_CACHED;
 				}
 				else
 				{
@@ -105,7 +69,8 @@ namespace Sensus.UI.UiProperties
 			List<string> buttons = new List<string>();
 			StackLayout urlLayout = new StackLayout();
 			MediaObject currentMedia = (MediaObject)property.GetValue(o);
-			bool embed = false;
+			MediaStorageMethods storageMethod = currentMedia?.StorageMethod ?? MediaStorageMethods.URL;
+			MediaInput input = (MediaInput)o;
 
 			Button sourceButton = new Button()
 			{
@@ -126,29 +91,88 @@ namespace Sensus.UI.UiProperties
 				HorizontalOptions = LayoutOptions.FillAndExpand
 			};
 
+			Label cacheLabel = new Label
+			{
+				Text = "Cache Mode:",
+				FontSize = 20
+			};
+
+			Picker cachePicker = new Picker()
+			{
+				Title = "Select Cache Mode",
+				HorizontalOptions = LayoutOptions.FillAndExpand
+			};
+
+			foreach (string cacheMode in Enum.GetNames(typeof(MediaCacheModes)))
+			{
+				cachePicker.Items.Add(cacheMode);
+			}
+
+			if (currentMedia != null)
+			{
+				cachePicker.SelectedItem = currentMedia.CacheMode.ToString();
+			}
+
+			cachePicker.SelectedIndexChanged += (s, e) =>
+			{
+				Enum.TryParse(typeof(MediaCacheModes), (string)cachePicker.SelectedItem, out object result);
+
+				if (currentMedia != null)
+				{
+					currentMedia.CacheMode = (MediaCacheModes)result;
+				}
+			};
+
+			StackLayout cacheLayout = new StackLayout()
+			{
+				IsVisible = false,
+				Children = { cacheLabel, cachePicker }
+			};
+
 			StackLayout urlStack = new StackLayout
 			{
 				IsVisible = false,
-				Children = { urlLabel, urlEntry }
+				Children = { urlLabel, urlEntry, cacheLayout }
 			};
 
-			async Task setMediaObjectAsync(MediaFile file)
+			async Task setMediaObjectAsync(FileResult file)
 			{
 				if (file != null)
 				{
 					sourceButton.IsEnabled = false;
 					sourceButton.Text = "Processing...";
 
-					MediaObject media = await GetMediaObjectAsync(file);
+					try
+					{
+						MediaObject media = await MediaObject.FromFileAsync(file.FullPath, await file.OpenReadAsync(), SensusServiceHelper.Get().GetMimeType(file.FullPath), input.CachePath);
 
-					setMediaObject(media);
+						setMediaObject(media);
+					}
+					catch (Exception exception)
+					{
+						await SensusServiceHelper.Get().FlashNotificationAsync($"Failed to attach media to the {o.GetType().Name}");
+
+						SensusServiceHelper.Get().Logger.Log("Failed to attach media: " + exception.Message, LoggingLevel.Normal, GetType());
+					}
+
 					sourceButton.IsEnabled = true;
 				}
 			}
 
 			void setMediaObject(MediaObject media)
 			{
+				if (currentMedia != null)
+				{
+					currentMedia.ClearCache();
+				}
+
+				currentMedia = media;
 				property.SetValue(o, media);
+
+				if (media.StorageMethod == MediaStorageMethods.Cache)
+				{
+					cachePicker.SelectedItem = currentMedia.CacheMode.ToString();
+				}
 
 				Device.BeginInvokeOnMainThread(() =>
 				{
@@ -159,13 +183,18 @@ namespace Sensus.UI.UiProperties
 						buttons.Insert(0, PREVIEW);
 					}
 
-					if (media.Embeded)
+					if (media.StorageMethod == MediaStorageMethods.Embed)
 					{
 						urlStack.IsVisible = false;
 					}
 					else
 					{
 						urlStack.IsVisible = true;
+
+						if (media.StorageMethod == MediaStorageMethods.Cache)
+						{
+							cacheLayout.IsVisible = true;
+						}
 					}
 				});
 			}
@@ -174,15 +203,37 @@ namespace Sensus.UI.UiProperties
 			{
 				try
 				{
-					MediaObject media = await GetMediaObjectAsync(urlEntry.Text, embed);
+					string mimeType = SensusServiceHelper.Get().GetMimeType(urlEntry.Text);
 
-					setMediaObject(media);
+					if (mimeType?.StartsWith("video") == true && storageMethod == MediaStorageMethods.Embed)
+					{
+						storageMethod = MediaStorageMethods.Cache;
+
+						sourceButton.Text = URL_CACHED;
+
+						await SensusServiceHelper.Get().FlashNotificationAsync($"You cannot embed videos. The video will be cached instead.");
+					}
+
+					MediaObject media = await MediaObject.FromUrlAsync(urlEntry.Text, mimeType, storageMethod, input.CachePath);
+
+					if (media.Type.StartsWith("video") && storageMethod == MediaStorageMethods.Embed)
+					{
+						storageMethod = MediaStorageMethods.Cache;
+
+						sourceButton.Text = URL_CACHED;
+
+						await SensusServiceHelper.Get().FlashNotificationAsync($"You cannot embed videos. The video will be cached instead.");
+					}
+					else
+					{
+						setMediaObject(media);
+					}
 				}
 				catch (Exception exception)
 				{
 					await SensusServiceHelper.Get().FlashNotificationAsync($"Failed to attach media to the {o.GetType().Name}");
 
-					SensusException.Report(exception);
+					SensusServiceHelper.Get().Logger.Log("Failed to attach media: " + exception.Message, LoggingLevel.Normal, GetType());
 				}
 			};
 
@@ -190,10 +241,15 @@ namespace Sensus.UI.UiProperties
 			{
 				buttons.Add(PREVIEW);
 
-				if (currentMedia.Embeded == false)
+				if (currentMedia.StorageMethod != MediaStorageMethods.Embed)
 				{
 					urlEntry.Text = currentMedia.Data;
 					urlStack.IsVisible = true;
+
+					if (currentMedia.StorageMethod == MediaStorageMethods.Cache)
+					{
+						cacheLayout.IsVisible = true;
+					}
 				}
 			}
 
@@ -207,66 +263,77 @@ namespace Sensus.UI.UiProperties
 					{
 						INavigation navigation = (Application.Current as App).DetailPage.Navigation;
 
-						await navigation.PushAsync(new MediaPreviewPage((MediaObject)property.GetValue(o)), true);
+						MediaObject media = (MediaObject)property.GetValue(o);
+
+						await media.CacheMediaAsync();
+
+						await navigation.PushAsync(new MediaPreviewPage(media), true);
 					}
 					else if (source == CAPTURE_IMAGE)
 					{
-						MediaFile file = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
-						{
-							CustomPhotoSize = 50,
-							CompressionQuality = 50,
-							SaveMetaData = false,
-							SaveToAlbum = true
-						});
+						FileResult file = await MediaPicker.CapturePhotoAsync();
 
 						await setMediaObjectAsync(file);
 					}
 					else if (source == CHOOSE_IMAGE)
 					{
-						MediaFile file = await CrossMedia.Current.PickPhotoAsync(new PickMediaOptions()
-						{
-							CustomPhotoSize = 50,
-							CompressionQuality = 50,
-							SaveMetaData = false
-						});
+						FileResult file = await MediaPicker.PickPhotoAsync();
 
 						await setMediaObjectAsync(file);
 					}
 					else if (source == CAPTURE_VIDEO)
 					{
-						MediaFile file = await CrossMedia.Current.TakeVideoAsync(new StoreVideoOptions
-						{
-							CustomPhotoSize = 50,
-							CompressionQuality = 50,
-							SaveMetaData = false,
-							SaveToAlbum = true
-						});
+						FileResult file = await MediaPicker.CaptureVideoAsync();
 
 						await setMediaObjectAsync(file);
 					}
 					else if (source == CHOOSE_VIDEO)
 					{
-						MediaFile file = await CrossMedia.Current.PickVideoAsync();
+						FileResult file = await MediaPicker.PickVideoAsync();
 
 						await setMediaObjectAsync(file);
 					}
 					else if (source == URL)
 					{
-						embed = false;
+						storageMethod = MediaStorageMethods.URL;
+
+						sourceButton.Text = URL;
 
 						urlStack.IsVisible = true;
 						urlEntry.Focus();
+
+						cacheLayout.IsVisible = false;
 					}
-					else if (source == FROM_URL)
+					else if (source == URL_CACHED)
 					{
-						embed = true;
+						storageMethod = MediaStorageMethods.Cache;
+
+						sourceButton.Text = URL_CACHED;
 
 						urlStack.IsVisible = true;
 						urlEntry.Focus();
+
+						cacheLayout.IsVisible = true;
+					}
+					else if (source == URL_EMBEDDED)
+					{
+						storageMethod = MediaStorageMethods.Embed;
+
+						sourceButton.Text = URL_EMBEDDED;
+
+						urlStack.IsVisible = true;
+						urlEntry.Focus();
+
+						cacheLayout.IsVisible = false;
 					}
 					else if (source == NONE)
 					{
 						buttons.Remove(PREVIEW);
+
+						if (currentMedia != null)
+						{
+							currentMedia.ClearCache();
+						}
 
 						property.SetValue(o, null);
 
@@ -282,28 +349,23 @@ namespace Sensus.UI.UiProperties
 				}
 			};
 
-			if (CrossMedia.Current.IsTakePhotoSupported)
+			if (MediaPicker.IsCaptureSupported)
 			{
 				buttons.Add(CAPTURE_IMAGE);
 			}
 
-			if (CrossMedia.Current.IsPickPhotoSupported)
-			{
-				buttons.Add(CHOOSE_IMAGE);
-			}
+			buttons.Add(CHOOSE_IMAGE);
 
-			if (CrossMedia.Current.IsTakeVideoSupported)
+			if (MediaPicker.IsCaptureSupported)
 			{
 				buttons.Add(CAPTURE_VIDEO);
 			}
 
-			if (CrossMedia.Current.IsPickVideoSupported)
-			{
-				buttons.Add(CHOOSE_VIDEO);
-			}
+			buttons.Add(CHOOSE_VIDEO);
 
 			buttons.Add(URL);
-			buttons.Add(FROM_URL);
+			buttons.Add(URL_CACHED);
+			buttons.Add(URL_EMBEDDED);
 			buttons.Add(NONE);
 
 			StackLayout layout = new StackLayout()

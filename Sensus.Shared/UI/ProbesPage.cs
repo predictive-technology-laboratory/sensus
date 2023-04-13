@@ -16,61 +16,65 @@ using System;
 using Sensus.Probes;
 using Sensus.Exceptions;
 using Xamarin.Forms;
+using System.Collections.ObjectModel;
 
 namespace Sensus.UI
 {
-    public abstract class ProbesPage : ContentPage
-    {
-        private class ProbeTextColorValueConverter : IValueConverter
-        {
-            public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                return (bool)value ? Color.Green : Color.Red;
-            }
+	public abstract class ProbesPage : ContentPage
+	{
+		private class ProbeTextColorValueConverter : IValueConverter
+		{
+			public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+			{
+				Application.Current.Resources.TryGetValue("ProbeOnColor", out object onColor);
+				Application.Current.Resources.TryGetValue("ProbeOffColor", out object offColor);
 
-            public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-            {
-                SensusException.Report("Invalid call to " + GetType().FullName + ".ConvertBack.");
-                return null;
-            }
-        }
+				return (bool)value ? (onColor ?? Color.Green) : (offColor ?? Color.Red);
+			}
 
-        private Protocol _protocol;
-        private ListView _probesList;
+			public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+			{
+				SensusException.Report("Invalid call to " + GetType().FullName + ".ConvertBack.");
+				return null;
+			}
+		}
 
-        protected Protocol Protocol
-        {
-            get
-            {
-                return _protocol;
-            }
-        }
+		private Protocol _protocol;
+		private ListView _probesList;
 
-        protected ListView ProbesList
-        {
-            get
-            {
-                return _probesList;
-            }
-        }
+		protected Protocol Protocol
+		{
+			get
+			{
+				return _protocol;
+			}
+		}
 
-        public ProbesPage(Protocol protocol, string title)
-        {
-            _protocol = protocol;
+		protected ListView ProbesList
+		{
+			get
+			{
+				return _probesList;
+			}
+		}
 
-            Title = title;
+		public ProbesPage(Protocol protocol, string title)
+		{
+			_protocol = protocol;
 
-            _probesList = new ListView(ListViewCachingStrategy.RecycleElement);
-            _probesList.ItemTemplate = new DataTemplate(typeof(TextCell));
-            _probesList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(Probe.Caption));
-            _probesList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding(nameof(Probe.Enabled), converter: new ProbeTextColorValueConverter()));
-            _probesList.ItemTemplate.SetBinding(TextCell.DetailProperty, nameof(Probe.SubCaption));
-            _probesList.ItemsSource = _protocol.Probes;
-            _probesList.ItemTapped += ProbeTappedAsync;
+			Title = title;
 
-            Content = _probesList;
-        }
+			_probesList = new ListView(ListViewCachingStrategy.RecycleElement);
+			_probesList.ItemTemplate = new DataTemplate(typeof(DarkModeCompatibleTextCell));
+			_probesList.ItemTemplate.SetBinding(TextCell.TextProperty, nameof(Probe.Caption));
+			_probesList.ItemTemplate.SetBinding(TextCell.TextColorProperty, new Binding(nameof(Probe.Enabled), converter: new ProbeTextColorValueConverter()));
+			_probesList.ItemTemplate.SetBinding(TextCell.DetailProperty, nameof(Probe.SubCaption));
+			_probesList.ItemsSource = new ObservableCollection<Probe>(_protocol.Probes);
+			_probesList.ItemTapped += ProbeTappedAsync;
 
-        protected abstract void ProbeTappedAsync(object sender, ItemTappedEventArgs e);
-    }
+			Content = _probesList;
+		}
+
+		protected abstract void ProbeTappedAsync(object sender, ItemTappedEventArgs e);
+	}
 }

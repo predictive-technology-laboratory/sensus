@@ -23,144 +23,159 @@ using System.Threading;
 
 namespace Sensus.Encryption
 {
-    public class AsymmetricEncryption : IEncryptor, IEnvelopeEncryptor
-    {
-        private RSAParameters _rsaPublicParameters;
-        private RSAParameters _rsaPrivateParameters;
+	public class AsymmetricEncryption : IEncryptor, IEnvelopeEncryptor
+	{
+		private RSAParameters _rsaPublicParameters;
+		private RSAParameters _rsaPrivateParameters;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="T:Sensus.Encryption.AsymmetricEncryption"/> class.
-        /// </summary>
-        /// <param name="publicKeyString">Public key string. Can be generated following the generation of the private key (see below)
-        /// using the following command:
-        /// 
-        ///   openssl rsa -in private.pem -outform PEM -pubout -out public.pem
-        /// 
-        /// </param>
-        public AsymmetricEncryption(string publicKeyString)
-            : this(publicKeyString, null)
-        {
-        }
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:Sensus.Encryption.AsymmetricEncryption"/> class.
+		/// </summary>
+		/// <param name="publicKeyString">Public key string. Can be generated following the generation of the private key (see below)
+		/// using the following command:
+		/// 
+		///   openssl rsa -in private.pem -outform PEM -pubout -out public.pem
+		/// 
+		/// </param>
+		public AsymmetricEncryption(string publicKeyString)
+			: this(publicKeyString, null)
+		{
+		}
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="T:Sensus.Encryption.AsymmetricEncryption"/> class.
-        /// </summary>
-        /// <param name="publicKeyString">Public key string. Can be generated following the generation of the private key (see below)
-        /// using the following command:
-        /// 
-        ///   openssl rsa -in private.pem -outform PEM -pubout -out public.pem
-        /// 
-        /// </param>
-        /// <param name="privateKeyString">Private key string. Only necessary if you want to be able to decrypt using this object. Can 
-        /// be generated with the following commands:
-        /// 
-        ///   openssl genrsa -des3 -out private.pem 2048
-        ///   openssl pkcs8 -topk8 -nocrypt -in private.pem
-        /// 
-        /// </param>
-        public AsymmetricEncryption(string publicKeyString, string privateKeyString)
-        {
-            // the following is adapted from http://stackoverflow.com/questions/9283716/c-sharp-net-crypto-using-base64-encoded-public-key-to-verify-rsa-signature/9290086#9290086
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:Sensus.Encryption.AsymmetricEncryption"/> class.
+		/// </summary>
+		/// <param name="publicKeyString">Public key string. Can be generated following the generation of the private key (see below)
+		/// using the following command:
+		/// 
+		///   openssl rsa -in private.pem -outform PEM -pubout -out public.pem
+		/// 
+		/// </param>
+		/// <param name="privateKeyString">Private key string. Only necessary if you want to be able to decrypt using this object. Can 
+		/// be generated with the following commands:
+		/// 
+		///   openssl genrsa -des3 -out private.pem 2048
+		///   openssl pkcs8 -topk8 -nocrypt -in private.pem
+		/// 
+		/// </param>
+		public AsymmetricEncryption(string publicKeyString, string privateKeyString)
+		{
+			// the following is adapted from http://stackoverflow.com/questions/9283716/c-sharp-net-crypto-using-base64-encoded-public-key-to-verify-rsa-signature/9290086#9290086
 
-            if (publicKeyString != null)
-            {
-                byte[] publicKeyBytes = Convert.FromBase64String(publicKeyString);
-                RsaKeyParameters rsaKeyParameters = PublicKeyFactory.CreateKey(publicKeyBytes) as RsaKeyParameters;
+			if (publicKeyString != null)
+			{
+				byte[] publicKeyBytes = Convert.FromBase64String(publicKeyString);
+				RsaKeyParameters rsaKeyParameters = PublicKeyFactory.CreateKey(publicKeyBytes) as RsaKeyParameters;
 
-                _rsaPublicParameters = new RSAParameters();
-                _rsaPublicParameters.Modulus = rsaKeyParameters.Modulus.ToByteArrayUnsigned();
-                _rsaPublicParameters.Exponent = rsaKeyParameters.Exponent.ToByteArrayUnsigned();
-            }
+				_rsaPublicParameters = new RSAParameters();
+				_rsaPublicParameters.Modulus = rsaKeyParameters.Modulus.ToByteArrayUnsigned();
+				_rsaPublicParameters.Exponent = rsaKeyParameters.Exponent.ToByteArrayUnsigned();
+			}
 
-            if (privateKeyString != null)
-            {
-                byte[] privateKeyBytes = Convert.FromBase64String(privateKeyString);
-                RsaPrivateCrtKeyParameters privateKeyParameters = PrivateKeyFactory.CreateKey(privateKeyBytes) as RsaPrivateCrtKeyParameters;
+			if (privateKeyString != null)
+			{
+				byte[] privateKeyBytes = Convert.FromBase64String(privateKeyString);
+				RsaPrivateCrtKeyParameters privateKeyParameters = PrivateKeyFactory.CreateKey(privateKeyBytes) as RsaPrivateCrtKeyParameters;
 
-                _rsaPrivateParameters = new RSAParameters();
-                _rsaPrivateParameters.DP = privateKeyParameters.DP.ToByteArrayUnsigned();
-                _rsaPrivateParameters.DQ = privateKeyParameters.DQ.ToByteArrayUnsigned();
-                _rsaPrivateParameters.P = privateKeyParameters.P.ToByteArrayUnsigned();
-                _rsaPrivateParameters.Q = privateKeyParameters.Q.ToByteArrayUnsigned();
-                _rsaPrivateParameters.InverseQ = privateKeyParameters.QInv.ToByteArrayUnsigned();
-                _rsaPrivateParameters.Modulus = privateKeyParameters.Modulus.ToByteArrayUnsigned();
-                _rsaPrivateParameters.Exponent = privateKeyParameters.PublicExponent.ToByteArrayUnsigned();
-            }
-        }
+				_rsaPrivateParameters = new RSAParameters();
+				_rsaPrivateParameters.DP = privateKeyParameters.DP.ToByteArrayUnsigned();
+				_rsaPrivateParameters.DQ = privateKeyParameters.DQ.ToByteArrayUnsigned();
+				_rsaPrivateParameters.P = privateKeyParameters.P.ToByteArrayUnsigned();
+				_rsaPrivateParameters.Q = privateKeyParameters.Q.ToByteArrayUnsigned();
+				_rsaPrivateParameters.InverseQ = privateKeyParameters.QInv.ToByteArrayUnsigned();
+				_rsaPrivateParameters.Modulus = privateKeyParameters.Modulus.ToByteArrayUnsigned();
+				_rsaPrivateParameters.Exponent = privateKeyParameters.PublicExponent.ToByteArrayUnsigned();
+			}
+		}
 
-        public byte[] Encrypt(string unencryptedValue, Encoding encoding)
-        {
-            return Encrypt(encoding.GetBytes(unencryptedValue));
-        }
+		public byte[] Encrypt(string unencryptedValue, Encoding encoding)
+		{
+			return Encrypt(encoding.GetBytes(unencryptedValue));
+		}
 
-        public byte[] Encrypt(byte[] unencryptedBytes)
-        {
-            using (RSACryptoServiceProvider encrypter = new RSACryptoServiceProvider())
-            {
-                encrypter.ImportParameters(_rsaPublicParameters);
-                return encrypter.Encrypt(unencryptedBytes, false);
-            }
-        }
+		public byte[] Encrypt(byte[] unencryptedBytes)
+		{
+			using (RSACryptoServiceProvider encrypter = new RSACryptoServiceProvider())
+			{
+				encrypter.ImportParameters(_rsaPublicParameters);
+				return encrypter.Encrypt(unencryptedBytes, false);
+			}
+		}
 
-        public byte[] DecryptToBytes(byte[] encryptedBytes)
-        {
-            using (RSACryptoServiceProvider decrypter = new RSACryptoServiceProvider())
-            {
-                decrypter.ImportParameters(_rsaPrivateParameters);
-                return decrypter.Decrypt(encryptedBytes, false);
-            }
-        }
+		public byte[] DecryptToBytes(byte[] encryptedBytes)
+		{
+			using (RSACryptoServiceProvider decrypter = new RSACryptoServiceProvider())
+			{
+				decrypter.ImportParameters(_rsaPrivateParameters);
+				return decrypter.Decrypt(encryptedBytes, false);
+			}
+		}
 
-        public string DecryptToString(byte[] encryptedBytes, Encoding encoding)
-        {
-            return encoding.GetString(DecryptToBytes(encryptedBytes));
-        }
+		public string DecryptToString(byte[] encryptedBytes, Encoding encoding)
+		{
+			return encoding.GetString(DecryptToBytes(encryptedBytes));
+		}
 
-        /// <summary>
-        /// Encrypts bytes asymmetrically via symmetric encryption. Since asymmetric encryption does not support large data sizes, the approach
-        /// is to generate a symmetric encryption key that is designed for large data sizes, encrypt the data with the symmetric key, encrypt
-        /// the symmetric key with the asymmetric key, and send everything to output.
-        /// </summary>
-        /// <param name="unencryptedBytes">Unencrypted bytes.</param>
-        /// <param name="symmetricKeySizeBits">Symmetric key size in bits.</param>
-        /// <param name="symmetricInitializationVectorSizeBits">Symmetric initialization vector size in bits.</param>
-        /// <param name="encryptedOutputStream">Encrypted output stream.</param>
-        /// <param name="cancellationToken">Cancellation token.</param>
-        public Task EnvelopeAsync(byte[] unencryptedBytes, int symmetricKeySizeBits, int symmetricInitializationVectorSizeBits, Stream encryptedOutputStream, CancellationToken cancellationToken)
-        {
-            using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
-            {
-                // generate new symmetric key and initialization vector
-                aes.KeySize = symmetricKeySizeBits;
-                aes.BlockSize = symmetricInitializationVectorSizeBits;
-                aes.GenerateKey();
-                aes.GenerateIV();
+		/// <summary>
+		/// Encrypts bytes asymmetrically via symmetric encryption. Since asymmetric encryption does not support large data sizes, the approach
+		/// is to generate a symmetric encryption key that is designed for large data sizes, encrypt the data with the symmetric key, encrypt
+		/// the symmetric key with the asymmetric key, and send everything to output.
+		/// </summary>
+		/// <param name="unencryptedBytes">Unencrypted bytes.</param>
+		/// <param name="symmetricKeySizeBits">Symmetric key size in bits.</param>
+		/// <param name="symmetricInitializationVectorSizeBits">Symmetric initialization vector size in bits.</param>
+		/// <param name="encryptedOutputStream">Encrypted output stream.</param>
+		/// <param name="cancellationToken">Cancellation token.</param>
+		public Task EnvelopeAsync(byte[] unencryptedBytes, int symmetricKeySizeBits, int symmetricInitializationVectorSizeBits, Stream encryptedOutputStream, CancellationToken cancellationToken)
+		{
+			Envelope(unencryptedBytes, symmetricKeySizeBits, symmetricInitializationVectorSizeBits, encryptedOutputStream, cancellationToken);
 
-                // encrypt the data symmetrically
-                SymmetricEncryption symmetricEncryption = new SymmetricEncryption(aes.Key, aes.IV);
-                byte[] encryptedBytes = symmetricEncryption.Encrypt(unencryptedBytes);
+			return Task.CompletedTask;
+		}
 
-                // encrypt the symmetric key and initialization vector asymmetrically
-                byte[] encryptedKeyBytes = Encrypt(aes.Key);
-                byte[] encryptedIVBytes = Encrypt(aes.IV);
+		/// <summary>
+		/// Encrypts bytes asymmetrically via symmetric encryption. Since asymmetric encryption does not support large data sizes, the approach
+		/// is to generate a symmetric encryption key that is designed for large data sizes, encrypt the data with the symmetric key, encrypt
+		/// the symmetric key with the asymmetric key, and send everything to output.
+		/// </summary>
+		/// <param name="unencryptedBytes">Unencrypted bytes.</param>
+		/// <param name="symmetricKeySizeBits">Symmetric key size in bits.</param>
+		/// <param name="symmetricInitializationVectorSizeBits">Symmetric initialization vector size in bits.</param>
+		/// <param name="encryptedOutputStream">Encrypted output stream.</param>
+		/// <param name="cancellationToken">Cancellation token.</param>
+		public void Envelope(byte[] unencryptedBytes, int symmetricKeySizeBits, int symmetricInitializationVectorSizeBits, Stream encryptedOutputStream, CancellationToken cancellationToken)
+		{
+			using (AesCryptoServiceProvider aes = new AesCryptoServiceProvider())
+			{
+				// generate new symmetric key and initialization vector
+				aes.KeySize = symmetricKeySizeBits;
+				aes.BlockSize = symmetricInitializationVectorSizeBits;
+				aes.GenerateKey();
+				aes.GenerateIV();
 
-                // write the encrypted output stream
+				// encrypt the data symmetrically
+				SymmetricEncryption symmetricEncryption = new SymmetricEncryption(aes.Key, aes.IV);
+				byte[] encryptedBytes = symmetricEncryption.Encrypt(unencryptedBytes);
 
-                // ...encrypted symmetric key length and bytes
-                byte[] encryptedKeyBytesLength = BitConverter.GetBytes(encryptedKeyBytes.Length);
-                encryptedOutputStream.Write(encryptedKeyBytesLength, 0, encryptedKeyBytesLength.Length);
-                encryptedOutputStream.Write(encryptedKeyBytes, 0, encryptedKeyBytes.Length);
+				// encrypt the symmetric key and initialization vector asymmetrically
+				byte[] encryptedKeyBytes = Encrypt(aes.Key);
+				byte[] encryptedIVBytes = Encrypt(aes.IV);
 
-                // ...encrypted initialization vector length and bytes
-                byte[] encryptedIVBytesLength = BitConverter.GetBytes(encryptedIVBytes.Length);
-                encryptedOutputStream.Write(encryptedIVBytesLength, 0, encryptedIVBytesLength.Length);
-                encryptedOutputStream.Write(encryptedIVBytes, 0, encryptedIVBytes.Length);
+				// write the encrypted output stream
 
-                // ...encrypted bytes
-                encryptedOutputStream.Write(encryptedBytes, 0, encryptedBytes.Length);
-            }
+				// ...encrypted symmetric key length and bytes
+				byte[] encryptedKeyBytesLength = BitConverter.GetBytes(encryptedKeyBytes.Length);
+				encryptedOutputStream.Write(encryptedKeyBytesLength, 0, encryptedKeyBytesLength.Length);
+				encryptedOutputStream.Write(encryptedKeyBytes, 0, encryptedKeyBytes.Length);
 
-            return Task.CompletedTask;
-        }
-    }
+				// ...encrypted initialization vector length and bytes
+				byte[] encryptedIVBytesLength = BitConverter.GetBytes(encryptedIVBytes.Length);
+				encryptedOutputStream.Write(encryptedIVBytesLength, 0, encryptedIVBytesLength.Length);
+				encryptedOutputStream.Write(encryptedIVBytes, 0, encryptedIVBytes.Length);
+
+				// ...encrypted bytes
+				encryptedOutputStream.Write(encryptedBytes, 0, encryptedBytes.Length);
+			}
+		}
+	}
 }

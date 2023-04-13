@@ -20,146 +20,147 @@ using System.Linq;
 
 namespace Sensus
 {
-    public class Logger : ILogger
-    {
-        private const int MAX_LOG_SIZE_MEGABYTES = 20;
+	public class Logger : ILogger
+	{
+		private const int MAX_LOG_SIZE_MEGABYTES = 20;
 
-        private string _path;
-        private LoggingLevel _level;
-        private List<string> _messageBuffer;
+		private string _path;
+		private LoggingLevel _level;
+		private List<string> _messageBuffer;
 		private List<TextWriter> _otherOutputs;
-        private Regex _extraWhiteSpace;
 
-        public LoggingLevel Level
-        {
-            get { return _level; }
-            set { _level = value; }
-        }
+		public LoggingLevel Level
+		{
+			get { return _level; }
+			set { _level = value; }
+		}
 
-        public Logger(string path, LoggingLevel level, params TextWriter[] otherOutputs)
-        {
-            _path = path;
-            _level = level;
-            _messageBuffer = new List<string>();
-            _extraWhiteSpace = new Regex(@"\s\s+");
+		public Logger(string path, LoggingLevel level, params TextWriter[] otherOutputs)
+		{
+			_path = path;
+			_level = level;
+			_messageBuffer = new List<string>();
 
 			_otherOutputs = otherOutputs?.ToList() ?? new List<TextWriter>();
-        }
+		}
 
-        public void Log(string message, LoggingLevel level, Type callingType, bool throwException = false)
-        {
-            // if we're throwing an exception, use the caller's version of the message instead of our modified version below.
-            Exception ex = null;
-            if (throwException)
-            {
-                ex = new Exception(message);
-            }
-            
-            if (level <= _level)
-            {
-                if (!string.IsNullOrWhiteSpace(message))
-                {
-                    // add timestamp and calling type type
-                    message = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + ":  " + (callingType == null ? "" : "[" + callingType.Name + "] ") + message;
+		public void Log(string message, LoggingLevel level, Type callingType, bool throwException = false)
+		{
+			// if we're throwing an exception, use the caller's version of the message instead of our modified version below.
+			Exception ex = null;
+			if (throwException)
+			{
+				ex = new Exception(message);
+			}
 
-                    lock (_messageBuffer)
-                    {
-                        _messageBuffer.Add(message);
+			if (level <= _level)
+			{
+				if (!string.IsNullOrWhiteSpace(message))
+				{
+					// add timestamp and calling type type
+					message = DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + ":  " + (callingType == null ? "" : "[" + callingType.Name + "] ") + message;
 
-                        if (_otherOutputs != null)
-                        {
-                            foreach (TextWriter otherOutput in _otherOutputs)
-                            {
-                                try
-                                {
-                                    otherOutput.WriteLine(message);
-                                }
-                                catch (Exception writeException)
-                                {
-                                    Console.Error.WriteLine("Failed to write to output:  " + writeException.Message);
-                                }
-                            }
-                        }
+					lock (_messageBuffer)
+					{
+						_messageBuffer.Add(message);
 
-                        // append buffer to file periodically
-                        if (_messageBuffer.Count % 100 == 0)
-                        {
-                            try
-                            {
-                                CommitMessageBuffer();
-                            }
-                            catch (Exception commitException)
-                            {
-                                // try switching the log path to a random file, since access violations might prevent us from writing the current _path (e.g., in the case of crashes)
-                                _path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), Guid.NewGuid().ToString() + ".txt");
-                                _messageBuffer.Add("Switched log path to \"" + _path + "\" due to exception:  " + commitException.Message);
-                            }
-                        }
-                    }
-                }
-            }
+						if (_otherOutputs != null)
+						{
+							lock (_otherOutputs)
+							{
+								foreach (TextWriter otherOutput in _otherOutputs)
+								{
+									try
+									{
+										otherOutput.WriteLine(message);
+									}
+									catch (Exception writeException)
+									{
+										Console.Error.WriteLine("Failed to write to output:  " + writeException.Message);
+									}
+								}
+							}
+						}
 
-            if (ex != null)
-            {
-                throw ex;
-            }
-        }
+						// append buffer to file periodically
+						if (_messageBuffer.Count % 100 == 0)
+						{
+							try
+							{
+								CommitMessageBuffer();
+							}
+							catch (Exception commitException)
+							{
+								// try switching the log path to a random file, since access violations might prevent us from writing the current _path (e.g., in the case of crashes)
+								_path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), Guid.NewGuid().ToString() + ".txt");
+								_messageBuffer.Add("Switched log path to \"" + _path + "\" due to exception:  " + commitException.Message);
+							}
+						}
+					}
+				}
+			}
 
-        public void CommitMessageBuffer()
-        {
-            lock (_messageBuffer)
-            {
-                if (_messageBuffer.Count > 0)
-                {
-                    try
-                    {
-                        using (StreamWriter file = new StreamWriter(_path, true))
-                        {
-                            foreach (string bufferedMessage in _messageBuffer)
-                            {
-                                file.WriteLine(bufferedMessage);
-                            }
-                        }
+			if (ex != null)
+			{
+				throw ex;
+			}
+		}
 
-                        // keep log file under a certain size by reading the most recent MAX_LOG_SIZE_MEGABYTES.
-                        long currSizeBytes = new FileInfo(_path).Length;
-                        if (currSizeBytes > MAX_LOG_SIZE_MEGABYTES * 1024 * 1024)
-                        {
-                            int newSizeBytes = (MAX_LOG_SIZE_MEGABYTES - 5) * 1024 * 1024;
-                            byte[] newBytes = new byte[newSizeBytes];
+		public void CommitMessageBuffer()
+		{
+			lock (_messageBuffer)
+			{
+				if (_messageBuffer.Count > 0)
+				{
+					try
+					{
+						using (StreamWriter file = new StreamWriter(_path, true))
+						{
+							foreach (string bufferedMessage in _messageBuffer)
+							{
+								file.WriteLine(bufferedMessage);
+							}
+						}
 
-                            using (FileStream file = new FileStream(_path, FileMode.Open, FileAccess.Read))
-                            {
-                                file.Position = currSizeBytes - newSizeBytes;
-                                file.Read(newBytes, 0, newSizeBytes);
-                            }
+						// keep log file under a certain size by reading the most recent MAX_LOG_SIZE_MEGABYTES.
+						long currSizeBytes = new FileInfo(_path).Length;
+						if (currSizeBytes > MAX_LOG_SIZE_MEGABYTES * 1024 * 1024)
+						{
+							int newSizeBytes = (MAX_LOG_SIZE_MEGABYTES - 5) * 1024 * 1024;
+							byte[] newBytes = new byte[newSizeBytes];
 
-                            File.Delete(_path);
-                            File.WriteAllBytes(_path, newBytes);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Log("Error committing message buffer:  " + ex.Message, LoggingLevel.Normal, GetType());
-                    }
+							using (FileStream file = new FileStream(_path, FileMode.Open, FileAccess.Read))
+							{
+								file.Position = currSizeBytes - newSizeBytes;
+								file.Read(newBytes, 0, newSizeBytes);
+							}
 
-                    _messageBuffer.Clear();
-                }
-            }
-        }
+							File.Delete(_path);
+							File.WriteAllBytes(_path, newBytes);
+						}
+					}
+					catch (Exception ex)
+					{
+						Log("Error committing message buffer:  " + ex.Message, LoggingLevel.Normal, GetType());
+					}
 
-        public List<string> Read(int maxLines, bool mostRecentFirst)
-        {
-            lock (_messageBuffer)
-            {
-                CommitMessageBuffer();
+					_messageBuffer.Clear();
+				}
+			}
+		}
 
-                List<string> lines = new List<string>();
+		public List<string> Read(int maxLines, bool mostRecentFirst)
+		{
+			lock (_messageBuffer)
+			{
+				CommitMessageBuffer();
 
-                try
-                {
-                    using (StreamReader file = new StreamReader(_path))
-                    {
+				List<string> lines = new List<string>();
+
+				try
+				{
+					using (StreamReader file = new StreamReader(_path))
+					{
 						if (maxLines > 0)
 						{
 							int numLines = 0;
@@ -179,66 +180,69 @@ namespace Sensus
 						}
 
 						string line;
-                        while ((line = file.ReadLine()) != null)
-                        {
-                            lines.Add(line);
-                        }
+						while ((line = file.ReadLine()) != null)
+						{
+							lines.Add(line);
+						}
 
-                    }
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Error reading log file:  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
+					}
+				}
+				catch (Exception ex)
+				{
+					SensusServiceHelper.Get().Logger.Log("Error reading log file:  " + ex.Message, LoggingLevel.Normal, GetType());
+				}
 
-                if (mostRecentFirst)
-                {
-                    lines.Reverse();
-                }
+				if (mostRecentFirst)
+				{
+					lines.Reverse();
+				}
 
-                return lines;
-            }
-        }
+				return lines;
+			}
+		}
 
-        public void CopyTo(string path)
-        {
-            lock (_messageBuffer)
-            {
-                CommitMessageBuffer();
+		public void CopyTo(string path)
+		{
+			lock (_messageBuffer)
+			{
+				CommitMessageBuffer();
 
-                try
-                {
-                    File.Copy(_path, path);
-                }
-                catch (Exception ex)
-                {
-                    SensusServiceHelper.Get().Logger.Log("Failed to copy log file to \"" + path + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
-                }
-            }
-        }
+				try
+				{
+					File.Copy(_path, path);
+				}
+				catch (Exception ex)
+				{
+					SensusServiceHelper.Get().Logger.Log("Failed to copy log file to \"" + path + "\":  " + ex.Message, LoggingLevel.Normal, GetType());
+				}
+			}
+		}
 
-        public virtual void Clear()
-        {
-            lock (_messageBuffer)
-            {
-                try
-                {
-                    File.Delete(_path);
-                }
-                catch (Exception)
-                {
+		public virtual void Clear()
+		{
+			lock (_messageBuffer)
+			{
+				try
+				{
+					File.Delete(_path);
+				}
+				catch (Exception)
+				{
 
-                }
+				}
 
-                _messageBuffer.Clear();
-            }
-        }
+				_messageBuffer.Clear();
+			}
+		}
 
 		public void AddOtherOutput(TextWriter writer)
 		{
-			lock(_otherOutputs)
+			lock (_otherOutputs)
 			{
-				_otherOutputs.Add(writer);
+				if (_otherOutputs.Contains(writer) == false)
+				{
+					_otherOutputs.Add(writer);
+				}
 			}
 		}
 

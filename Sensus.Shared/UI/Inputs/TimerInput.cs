@@ -1,8 +1,23 @@
-﻿using Newtonsoft.Json;
+﻿// Copyright 2014 The Rector & Visitors of the University of Virginia
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+using Newtonsoft.Json;
 using Sensus.Context;
 using Sensus.UI.UiProperties;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Timers;
 using Xamarin.Forms;
 using static Sensus.UI.InputGroupPage;
@@ -16,7 +31,6 @@ namespace Sensus.UI.Inputs
 		private const string USER_PAUSED = "UserPaused";
 		private const string USER_STOPPED = "UserStopped";
 		private const string USER_SUBMITTED = "UserSubmitted";
-
 
 		private struct TimerEvent
 		{
@@ -77,14 +91,11 @@ namespace Sensus.UI.Inputs
 
 		public TimerInput()
 		{
-			_timer = new Timer(1);
 
-			_timer.Elapsed += TimerElapsed;
 		}
 
 		private void TimerElapsed(object sender, ElapsedEventArgs e)
 		{
-			/*SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(*/
 			Device.BeginInvokeOnMainThread(() =>
 			{
 				_elapsedTime += 1;
@@ -144,7 +155,7 @@ namespace Sensus.UI.Inputs
 		[OnOffUiProperty("Show Stop Button:", true, 19)]
 		public bool ShowStopButton { get; set; }
 
-		public override void OnDisappearing(NavigationResult result)
+		public override Task DisposeAsync(NavigationResult result)
 		{
 			if (_timer.Enabled)
 			{
@@ -157,12 +168,18 @@ namespace Sensus.UI.Inputs
 					Complete = true;
 				}
 			}
+
+			return base.DisposeAsync(result);
 		}
 
 		public override View GetView(int index)
 		{
 			if (base.GetView(index) == null)
 			{
+				_timer = new Timer(1);
+
+				_timer.Elapsed += TimerElapsed;
+
 				_elapsedTime = 0;
 				_events = new List<TimerEvent>();
 
@@ -212,13 +229,6 @@ namespace Sensus.UI.Inputs
 					controlButtons.Children.Add(_startButton);
 				}
 				
-				if (ShowStartButton == false)
-				{
-					_timer.Start();
-
-					_events.Add(new TimerEvent { Timestamp = DateTimeOffset.UtcNow, ElapsedTime = _elapsedTime, Event = STARTED });
-				}
-
 				if (ShowPauseButton)
 				{
 					_pauseButton = new Button
@@ -294,7 +304,36 @@ namespace Sensus.UI.Inputs
 				_label.Text = GetLabelText(index);  // if the view was already initialized, just update the label since the index might have changed.
 			}
 
+			if (ShowStartButton == false && DisplayDelay <= 0)
+			{
+				StartTimer();
+			}
+
 			return base.GetView(index);
+		}
+
+		private void StartTimer()
+		{
+			_timer.Start();
+
+			_events.Add(new TimerEvent { Timestamp = DateTimeOffset.UtcNow, ElapsedTime = _elapsedTime, Event = STARTED });
+		}
+
+		protected override Task OnDisplayedAfterDelay()
+		{
+			StartTimer();
+
+			return base.OnDisplayedAfterDelay();
+		}
+
+		public override void Reset()
+		{
+			if (_events != null)
+			{
+				_events.Clear();
+			}
+
+			base.Reset();
 		}
 	}
 }

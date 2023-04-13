@@ -23,35 +23,20 @@ using System.Linq;
 
 namespace Sensus.Android.Probes.Device
 {
-    public class AndroidScreenProbe : ScreenProbe
-    {
-        private PowerManager _powerManager;
+	public class AndroidScreenProbe : ScreenProbe
+	{
+		private PowerManager _powerManager;
 
-        public AndroidScreenProbe()
-        {
-            _powerManager = Application.Context.GetSystemService(global::Android.Content.Context.PowerService) as PowerManager;
-        }
+		public AndroidScreenProbe()
+		{
+			_powerManager = Application.Context.GetSystemService(global::Android.Content.Context.PowerService) as PowerManager;
+		}
 
-        protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
-        {
-            bool screenOn;
+		protected override Task<List<Datum>> PollAsync(CancellationToken cancellationToken)
+		{
+			bool screenOn = _powerManager.IsInteractive;
 
-            // see the Backwards Compatibility article for more information
-#if __ANDROID_20__
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.Lollipop)
-            {
-                screenOn = _powerManager.IsInteractive;  // API level 20
-            }
-            else
-#endif
-            {
-                // ignore deprecation warning
-#pragma warning disable 618
-                screenOn = _powerManager.IsScreenOn;
-#pragma warning restore 618
-            }
-
-            return Task.FromResult(new Datum[] { new ScreenDatum(DateTimeOffset.UtcNow, screenOn) }.ToList());
-        }
-    }
+			return Task.FromResult(new Datum[] { new ScreenDatum(DateTimeOffset.UtcNow, screenOn) }.ToList());
+		}
+	}
 }

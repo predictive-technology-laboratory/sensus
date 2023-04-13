@@ -15,85 +15,93 @@
 using Xamarin.Forms;
 using Newtonsoft.Json;
 using Sensus.UI.UiProperties;
+using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
+using TimePicker = Xamarin.Forms.TimePicker;
+using iOSPlatform = Xamarin.Forms.PlatformConfiguration.iOS;
 using System;
 
 namespace Sensus.UI.Inputs
 {
-    public class TimeInput : Input, IVariableDefiningInput
-    {
-		private TimePicker _timePicker;
-        private Label _label;
-        private bool _hasFocused;
-        private string _definedVariable;
+	public class TimeInput : Input, IVariableDefiningInput
+	{
+		private ConstrainedTimePicker _timePicker;
+		private Label _label;
+		private bool _hasFocused;
+		private string _definedVariable;
 
-        /// <summary>
-        /// The name of the variable in <see cref="Protocol.VariableValueUiProperty"/> that this input should
-        /// define the value for. For example, if you wanted this input to supply the value for a variable
-        /// named `study-name`, then set this field to `study-name` and the user's selection will be used as
-        /// the value for this variable. 
-        /// </summary>
-        /// <value>The defined variable.</value>
-        [EntryStringUiProperty("Define Variable:", true, 15, false)]
-        public string DefinedVariable
-        {
-            get
-            {
-                return _definedVariable;
-            }
-            set
-            {
-                _definedVariable = value?.Trim();
-            }
-        }
+		/// <summary>
+		/// The name of the variable in <see cref="Protocol.VariableValueUiProperty"/> that this input should
+		/// define the value for. For example, if you wanted this input to supply the value for a variable
+		/// named `study-name`, then set this field to `study-name` and the user's selection will be used as
+		/// the value for this variable. 
+		/// </summary>
+		/// <value>The defined variable.</value>
+		[EntryStringUiProperty("Define Variable:", true, 15, false)]
+		public string DefinedVariable
+		{
+			get
+			{
+				return _definedVariable;
+			}
+			set
+			{
+				_definedVariable = value?.Trim();
+			}
+		}
 
-        public override object Value
-        {
-            get
-            {
+		[TimeUiProperty("Minimum Time (iOS):", true, 18, false)]
+		public TimeSpan? MinimumTime { get; set; }
+		[TimeUiProperty("Maximum Time (iOS):", true, 19, false)]
+		public TimeSpan? MaximumTime { get; set; }
+
+		public override object Value
+		{
+			get
+			{
 				return _timePicker == null || _hasFocused == false ? null : _timePicker?.Time;
-            }
-        }
+			}
+		}
 
-        [JsonIgnore]
-        public override bool Enabled
-        {
-            get
-            {
-                return _timePicker.IsEnabled;
-            }
-            set
-            {
+		[JsonIgnore]
+		public override bool Enabled
+		{
+			get
+			{
+				return _timePicker.IsEnabled;
+			}
+			set
+			{
 				_timePicker.IsEnabled = value;
-            }
-        }
+			}
+		}
 
-        public override string DefaultName
-        {
-            get
-            {
-                return "Picker (Time)";
-            }
-        }
+		public override string DefaultName
+		{
+			get
+			{
+				return "Picker (Time)";
+			}
+		}
 
-        public TimeInput()
-        {
-        }
+		public TimeInput()
+		{
+		}
 
-        public TimeInput(string labelText)
-            : base(labelText)
-        {
-        }
+		public TimeInput(string labelText)
+			: base(labelText)
+		{
+		}
 
-        public TimeInput(string labelText, string name)
-            : base(labelText, name)
-        {
-        }
+		public TimeInput(string labelText, string name)
+			: base(labelText, name)
+		{
+		}
 
-        public override View GetView(int index)
-        {
-            if (base.GetView(index) == null)
-            {
-				_timePicker = new TimePicker
+		public override View GetView(int index)
+		{
+			if (base.GetView(index) == null)
+			{
+				_timePicker = new ConstrainedTimePicker
 				{
 					HorizontalOptions = LayoutOptions.FillAndExpand,
 
@@ -102,6 +110,18 @@ namespace Sensus.UI.Inputs
                     , StyleId = Name
 #endif
 				};
+
+				if (MinimumTime != null)
+				{
+					_timePicker.MinimumTime = MinimumTime.Value;
+				}
+
+				if (MaximumTime != null)
+				{
+					_timePicker.MaximumTime = MaximumTime.Value;
+				}
+
+				_timePicker.On<iOSPlatform>().SetUpdateMode(UpdateMode.WhenFinished);
 
 				Color defaultTextColor = _timePicker.TextColor;
 				_timePicker.TextColor = Color.Gray;
@@ -127,19 +147,19 @@ namespace Sensus.UI.Inputs
 				_label = CreateLabel(index);
 				_label.VerticalTextAlignment = TextAlignment.Center;
 
-                base.SetView(new StackLayout
-                {
-                    Orientation = StackOrientation.Horizontal,
-                    HorizontalOptions = LayoutOptions.FillAndExpand,
-                    Children = { _label, _timePicker }
-                });
-            }
-            else
-            {
-                _label.Text = GetLabelText(index);  // if the view was already initialized, just update the label since the index might have changed.
-            }
+				base.SetView(new StackLayout
+				{
+					Orientation = StackOrientation.Horizontal,
+					HorizontalOptions = LayoutOptions.FillAndExpand,
+					Children = { _label, _timePicker }
+				});
+			}
+			else
+			{
+				_label.Text = GetLabelText(index);  // if the view was already initialized, just update the label since the index might have changed.
+			}
 
-            return base.GetView(index);
-        }
-    }
+			return base.GetView(index);
+		}
+	}
 }

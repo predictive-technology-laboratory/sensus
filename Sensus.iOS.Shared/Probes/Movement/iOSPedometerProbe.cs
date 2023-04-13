@@ -4,8 +4,9 @@ using System.Text;
 using System.Threading.Tasks;
 using CoreMotion;
 using Foundation;
-using Plugin.Permissions.Abstractions;
+
 using Sensus.Probes.Movement;
+using Xamarin.Essentials;
 
 namespace Sensus.iOS.Probes.Movement
 {
@@ -17,7 +18,7 @@ namespace Sensus.iOS.Probes.Movement
         {
             await base.InitializeAsync();
 
-            if (await SensusServiceHelper.Get().ObtainPermissionAsync(Permission.Sensors) == PermissionStatus.Granted)
+            if (await SensusServiceHelper.Get().ObtainPermissionAsync<Permissions.Sensors>() == PermissionStatus.Granted)
             {
                 _motionManager = new CMPedometer();
             }

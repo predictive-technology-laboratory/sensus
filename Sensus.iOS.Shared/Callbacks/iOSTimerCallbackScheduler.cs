@@ -7,6 +7,7 @@ using Foundation;
 using Sensus.Callbacks;
 using Sensus.Context;
 using Sensus.iOS.Notifications.UNUserNotifications;
+using Sensus.Probes.Location;
 using Sensus.Probes.User.Scripts;
 using UserNotifications;
 
@@ -84,9 +85,11 @@ namespace Sensus.iOS.Callbacks
 			await Task.CompletedTask;
 		}
 
-		public async Task RequestNotificationsAsync(bool gpsIsRunning)
+		// if the callback scheduler is timer-based and gps is not running then we need to request remote notifications
+		public async Task RequestNotificationsAsync()
 		{
 			UNUserNotificationNotifier notifier = SensusContext.Current.Notifier as UNUserNotificationNotifier;
+			bool gpsIsRunning = GpsReceiver.Get().ListeningForChanges;
 
 			foreach (string id in CallbackIds)
 			{
@@ -94,13 +97,14 @@ namespace Sensus.iOS.Callbacks
 				{
 					using (NSMutableDictionary callbackInfo = GetCallbackInfo(callback))
 					{
-						if (callbackInfo != null)
+						if (callbackInfo != null && callback.NextExecution.HasValue)
 						{
 							if (callback.Silent == false)
 							{
 								await notifier.IssueNotificationAsync(callback.Protocol?.Name ?? "Alert", callback.UserNotificationMessage, callback.Id, true, callback.Protocol, null, callback.NotificationUserResponseAction, callback.NotificationUserResponseMessage, callback.NextExecution.Value, callbackInfo);
 							}
-							else
+
+							if (gpsIsRunning == false)
 							{
 								await RequestRemoteInvocationAsync(callback);
 							}
