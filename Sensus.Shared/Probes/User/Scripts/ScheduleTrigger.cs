@@ -21,6 +21,8 @@ namespace Sensus.Probes.User.Scripts
 {
 	public class ScheduleTrigger
 	{
+		private const int DAYS_IN_WEEK = 7;
+
 		private readonly List<TriggerWindow> _windows;
 		private int _nonDowTriggerIntervalDays;
 
@@ -138,6 +140,9 @@ namespace Sensus.Probes.User.Scripts
 				// and giving an opportunity for the health test to schedule additional surveys.
 				int numDays = Math.Max(7, Math.Max(_nonDowTriggerIntervalDays, 7 + TriggerIntervalDays) + 1); // super tricky corner case:  if the interval is greater than 7 days and the current day matches the interval check below, but the current time follows the window, then the current day won't be scheduled nor will any other. so add a day to the interval so that two days will match.
 
+				// align the trigger interval with 7 days for triggers that use a DOW so that the interval aligns with that DOW every time
+				int alignedTriggerIntervalDays = (TriggerIntervalDays - 1) + (DAYS_IN_WEEK - ((TriggerIntervalDays - 1) % DAYS_IN_WEEK));
+
 				intervalBaseDate = intervalBaseDate.Date;
 
 				for (int dayOffset = 0; dayOffset < numDays; ++dayOffset)
@@ -160,21 +165,16 @@ namespace Sensus.Probes.User.Scripts
 								// calculate the interval's starting date, the next DOW after the installDate
 								// this process might seem kind of "backwards" in that we already have the triggerDate and the DOW that it falls on, so we
 								// are checking to see if it aligns with the interval based on the InstallDate.
-								DateTime intervalDate = intervalBaseDate.AddDays(7).AddDays(-(int)intervalBaseDate.AddDays(7 - (int)triggerDateDOW).DayOfWeek);
-
-								// force the triggerInterval to align with 7 days. TriggerIntervalDays that are not multiples of 7 will get aligned with a multiple of 7.
-								// this means that when using both a DOW and a TriggerIntervalDays, the trigger interval represents a minimum interval meaning the actual
-								// interval will be the next largest multiple of 7 to properly align with the specified DOW
-								int triggerIntervalDays = TriggerIntervalDays + 7 - TriggerIntervalDays % 7;
+								DateTime intervalDate = intervalBaseDate.AddDays(DAYS_IN_WEEK).AddDays(-(int)intervalBaseDate.AddDays(DAYS_IN_WEEK - (int)triggerDateDOW).DayOfWeek);
 
 								// theck to see if the triggerDate aligns with the interval, if so then the script should be scheduled for that day
 								// NOTE: the Windows and their alignment with TriggerIntervalDays are isolated from each other so the script may be scheduled more often
 								// than TriggerIntervalDays due to multiple Windows having different DOWs.
-								int intervalDays = (triggerDate - intervalDate).Days;
+								int triggerDays = (triggerDate - intervalDate).Days;
 
-								if (intervalDays % triggerIntervalDays == 0)
+								if (triggerDays % alignedTriggerIntervalDays == 0)
 								{
-									if (intervalDays > 0 || TriggerIntervalInclusive)
+									if (triggerDays > 0 || TriggerIntervalInclusive)
 									{
 										scheduleWindowForCurrentDate = true;
 									}
