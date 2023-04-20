@@ -170,7 +170,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>17.0.0</string>
 	<key>CFBundleVersion</key>
-	<string>202304110001</string>
+	<string>202304200001</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Sensus uses Bluetooth to collect information for studies you enroll in.</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
