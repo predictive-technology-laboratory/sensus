@@ -1541,7 +1541,7 @@ namespace Sensus
 								await navigation.PushModalAsync(currentPage, firstPageDisplay);
 							}
 
-							// save the state to file
+							// save the state before presenting the InputGroup so that it will be what is presented if the state is restored
 							if (savedState != null && savedState.InputGroupStack.Count > 0)
 							{
 								await savedState.SaveAsync();
@@ -1556,6 +1556,12 @@ namespace Sensus
 							}
 
 							lastNavigationResult = await inputGroupPage.WaitForNavigationAsync();
+
+							// save the inputs from the InputGroup
+							if (savedState != null)
+							{
+								await savedState.SaveAsync(inputGroup);
+							}
 
 							// set returnPage back in case it was cleared by being interrupted
 							returnPage = inputGroupPage.ReturnPage;
@@ -2164,39 +2170,6 @@ namespace Sensus
 
 						savedState = null;
 					}
-					else
-					{
-						InputGroup[] inputGroups = result.InputGroups.ToArray();
-
-						foreach (int index in savedState.InputGroupStack)
-						{
-							InputGroup inputGroup = inputGroups[index];
-
-							foreach (Input input in inputGroup.Inputs)
-							{
-								string key = $"{inputGroup.Id}.{input.Id}";
-
-								savedState.SavedInputs[key] = new ScriptDatum(input.CompletionTimestamp.GetValueOrDefault(DateTimeOffset.UtcNow),
-																				script.Runner.Script.Id,
-																				script.Runner.Name,
-																				input.GroupId,
-																				input.Id,
-																				script.Id,
-																				savedState.SessionId,
-																				input.LabelText,
-																				input.Name,
-																				input.Value,
-																				script.CurrentDatum?.Id,
-																				input.Latitude,
-																				input.Longitude,
-																				input.LocationUpdateTimestamp,
-																				script.RunTime.Value,
-																				input.CompletionRecords,
-																				DateTimeOffset.UtcNow, // save this now, but overwrite it when the script is actually submitted
-																				manualRun);
-							}
-						}
-					}
 				}
 
 				script.Submitting = false;
@@ -2278,10 +2251,11 @@ namespace Sensus
 								{
 									if (savedState.SavedInputs.TryGetValue($"{inputGroup.Id}.{input.Id}", out ScriptDatum savedInput))
 									{
-										savedInput.SubmissionTimestamp = input.SubmissionTimestamp ?? DateTimeOffset.UtcNow;
 										savedInput.Latitude = input.Latitude;
 										savedInput.Longitude = input.Longitude;
 										savedInput.LocationTimestamp = input.LocationUpdateTimestamp;
+										savedInput.SubmissionTimestamp = input.SubmissionTimestamp ?? DateTimeOffset.UtcNow;
+										savedInput.ManualRun = manualRun;
 
 										await script.Runner.Probe.StoreDatumAsync(savedInput, CancellationToken.None);
 									}
