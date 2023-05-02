@@ -111,14 +111,21 @@ namespace Sensus.Probes.User.Scripts
 								{
 									string json = await reader.ReadToEndAsync();
 
-									JsonSerializerSettings settings = new JsonSerializerSettings
+									if (string.IsNullOrWhiteSpace(json) == false)
 									{
-										ObjectCreationHandling = ObjectCreationHandling.Replace
-									};
+										JsonSerializerSettings settings = new JsonSerializerSettings
+										{
+											ObjectCreationHandling = ObjectCreationHandling.Replace
+										};
 
-									runner.SavedState = JsonConvert.DeserializeObject<SavedScriptState>(json, settings);
+										runner.SavedState = JsonConvert.DeserializeObject<SavedScriptState>(json, settings);
 
-									runner.SavedState.SavePath = savePath;
+										runner.SavedState.SavePath = savePath;
+									}
+									else
+									{
+										runner.SavedState = new SavedScriptState(savePath);
+									}
 								}
 							}
 
@@ -149,6 +156,8 @@ namespace Sensus.Probes.User.Scripts
 						runner.SavedState = new SavedScriptState(savePath);
 					}
 
+					runner.SavedState.Script = script;
+
 					return runner.SavedState;
 				}
 				catch (Exception e)
@@ -159,7 +168,7 @@ namespace Sensus.Probes.User.Scripts
 
 					if (runner.SaveState)
 					{
-						return new SavedScriptState(savePath);
+						return new SavedScriptState(savePath) { Script = script };
 					}
 				}
 			}
