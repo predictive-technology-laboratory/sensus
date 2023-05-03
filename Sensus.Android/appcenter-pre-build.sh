@@ -10,6 +10,6 @@
 #echo "$(keyPassword)"
 #echo "$(keystorePassword)"
 echo "_tasks:"
-ls -R /Users/runner/work/_tasks/AndroidSigning*
-#echo "node:"
-#ls /Users/runner/hostedtoolcache/node
+#ls -R /Users/runner/work/_tasks/AndroidSigning*
+cat /Users/runner/work/_tasks/AndroidSigning_80f3f6a0-82a6-4a22-ba7a-e5b8c541b9b9/androidsigning.js
+
