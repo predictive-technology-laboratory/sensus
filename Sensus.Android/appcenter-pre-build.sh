@@ -10,6 +10,6 @@
 #echo "$(keyPassword)"
 #echo "$(keystorePassword)"
 echo "_tasks:"
-ls /Users/runner/hostedtoolcache/_tasks
+ls /Users/runner/work/_tasks
 echo "node:"
 ls /Users/runner/hostedtoolcache/node
