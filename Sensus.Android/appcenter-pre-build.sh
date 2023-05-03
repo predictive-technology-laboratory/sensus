@@ -9,6 +9,4 @@
 #echo "$(keystorePassword)" | base64 -b 1024
 #echo "$(keyPassword)"
 #echo "$(keystorePassword)"
-ls .
-ls /Users/runner/work
-ls /Users/runner/hostedtoolcache
+ls /Users/runner/hostedtoolcache/_tasks
