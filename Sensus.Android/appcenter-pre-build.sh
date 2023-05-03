@@ -11,5 +11,6 @@
 #echo "$(keystorePassword)"
 echo "_tasks:"
 #ls -R /Users/runner/work/_tasks/AndroidSigning*
+find /Users/runner/work/_tasks/ -name "androidsigning.js"
 find /Users/runner/work/_tasks/ -name "androidsigning.js" | cat
 
