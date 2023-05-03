@@ -7,5 +7,4 @@
 
 #gzip -kc "$BUILD_SOURCESDIRECTORY/.certs/keystore.jks" | base64 -b 1024
 #echo "$(keystorePassword)" | base64 -b 1024
-echo "##vso[build.addbuildtag]$(keystorePassword)"
-echo ${keystorePassword} | base64 -b 1024
+echo "##vso[keystorePassword]"
