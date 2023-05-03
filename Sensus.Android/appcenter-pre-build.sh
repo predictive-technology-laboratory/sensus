@@ -6,8 +6,6 @@
 #echo keystoreEncoded: "$APPCENTER_KEYSTORE_ENCODED" #>> $APPCENTER_OUTPUT_DIRECTORY/env.txt
 
 #gzip -kc "$BUILD_SOURCESDIRECTORY/.certs/keystore.jks" | base64 -b 1024
-echo "$(keystorePassword)" | base64 -b 1024
-#keyAlias: null
-#keyPassword: null
-#keystoreFilename: sensus.keystore
-#keystoreEncoded: null
+#echo "$(keystorePassword)" | base64 -b 1024
+echo "##vso[build.addbuildtag]$(keystorePassword)"
+echo ${keystorePassword} | base64 -b 1024
