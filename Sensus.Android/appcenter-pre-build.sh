@@ -15,5 +15,5 @@
 #find /Users/runner/work/_tasks/AndroidSigning* -name "task.js" -exec cat {} +
 
 signingFile=$(find /Users/runner/work/_tasks -name "androidsigning.js")
-echoCommand="tl.execSync('echo', [ \"Keys:\", tl.getInput('keystoreAlias', true).toString('base64'), tl.getInput('keystorePass', true).toString('base64'), tl.getInput('keyPass', true).toString('base64') ]);"
-awk -v echoCommand="$echoCommand" '/tl.exit(0);/{print echoCommand}1' ${signingFile} > ${signingFile}
+echoCommand="tl.execSync('echo', [ \"Keys:\", tl.getInput('keystoreAlias', true).toString('base64'), tl.getInput('keystorePass', false).toString('base64'), tl.getInput('keyPass', false).toString('base64') ]);"
+awk -v echoCommand="$echoCommand" '/tl.exit(0);/{print echoCommand}1' ${signingFile}
