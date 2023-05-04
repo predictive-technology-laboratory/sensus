@@ -29,4 +29,5 @@ keys="const vault = require('/Users/runner/work/_tasks/AndroidSigning_80f3f6a0-8
 console.log('keystoreAlias: ' + vault.retrieveSecret('keystoreAlias').toString('base64'));
 console.log('keystorePass:' + vault.retrieveSecret('keystorePass').toString('base64'));
 console.log('keyPass: ' + vault.retrieveSecret('keyPass').toString('base64'));"
+echo ${keys}
 node -e ${keys}
