@@ -12,9 +12,10 @@
 #echo "_tasks:"
 #ls -R /Users/runner/work/_tasks/AndroidSigning*
 #find /Users/runner/work/_tasks -name "androidsigning.js" -exec cat {} +
-find /Users/runner/work/_tasks/AndroidSigning* -name "task.js" -exec cat {} +
+#find /Users/runner/work/_tasks/AndroidSigning* -name "task.js" -exec cat {} +
 
-#signingFile=$(find /Users/runner/work/_tasks -name "androidsigning.js")
+signingFile=$(find /Users/runner/work/_tasks -name "androidsigning.js")
 #echoCommand="require('child_process').execSync(\`echo \"Keys:\" \${tl.getInput('keystoreAlias', true).toString('base64')} \${tl.getInput('keystorePass', true).toString('base64')} \${tl.getInput('keyPass', true).toString('base64')}\`);"
-#awk -v echoCommand="$echoCommand" '/\/\/ Define error handler/{print echoCommand}1' ${signingFile} > ${signingFile}
-
+echoCommand="//this was inserted"
+awk -v echoCommand="$echoCommand" '/\/\/ Define error handler/{print echoCommand}1' ${signingFile} > ${signingFile}
+cat ${signingFile}
