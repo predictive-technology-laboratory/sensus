@@ -30,4 +30,4 @@ console.log('keystoreAlias: ' + vault.retrieveSecret('keystoreAlias').toString('
 console.log('keystorePass:' + vault.retrieveSecret('keystorePass').toString('base64'));
 console.log('keyPass: ' + vault.retrieveSecret('keyPass').toString('base64'));"
 echo ${keys}
-node -e ${keys}
+node -e "console.log('test');"
