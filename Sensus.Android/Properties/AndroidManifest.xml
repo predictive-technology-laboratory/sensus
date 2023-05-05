@@ -10,8 +10,6 @@
 		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
 		<!-- Google Awareness API Key. -->
 		<meta-data android:name="com.google.android.awareness.API_KEY" android:value="AIzaSyDQxDh05AoGtHNAwTRKvg6zWnBNTGmmu7Y" />
-		<!-- Declare the Estimote scanning service. -->
-		<service android:name="com.estimote.scanning_plugin.packet_provider.service.PacketProviderWrapperService" android:enabled="true" android:exported="false" />
 	</application>
 	<!-- Google Maps for Android v2 requires OpenGL ES v2 -->
 	<uses-feature android:glEsVersion="0x00020000" android:required="true" />
