@@ -21,19 +21,57 @@
 #awk -v echoCommand="$echoCommand" '/tl.exit\(0\);/{print echoCommand}1' ${signingFile}
 
 keys="const Vault = require('/Users/runner/work/_tasks/AndroidSigning_80f3f6a0-82a6-4a22-ba7a-e5b8c541b9b9/1.122.0/node_modules/vsts-task-lib/vault');
-var vault = new Vault.Vault('/Users/runner/work/_temp');
-console.log('keystoreAlias: ' + vault.retrieveSecret('keystoreAlias').toString('base64'));
-console.log('keystorePass:' + vault.retrieveSecret('keystorePass').toString('base64'));
-console.log('keyPass: ' + vault.retrieveSecret('keyPass').toString('base64'));"
-node -e "${keys}"
-keys="const tl = require('/Users/runner/work/_tasks/AndroidSigning_80f3f6a0-82a6-4a22-ba7a-e5b8c541b9b9/1.122.0/node_modules/vsts-task-lib/task');
+try
+{
+	var vault1 = new Vault.Vault('/Users/runner/work/_temp');
+	console.log('keystoreAlias: ' + vault1.retrieveSecret('keystoreAlias').toString('base64'));
+	console.log('keystorePass:' + vault1.retrieveSecret('keystorePass').toString('base64'));
+	console.log('keyPass: ' + vault1.retrieveSecret('keyPass').toString('base64'));
+}
+catch(e)
+{
+	console.log(e);
+}
+
+try
+{
+	var vault2 = new Vault.Vault('/Users/runner/work');
+	console.log('keystoreAlias: ' + vault2.retrieveSecret('keystoreAlias').toString('base64'));
+	console.log('keystorePass:' + vault2.retrieveSecret('keystorePass').toString('base64'));
+	console.log('keyPass: ' + vault2.retrieveSecret('keyPass').toString('base64'));
+}
+catch(e)
+{
+	console.log(e);
+}
+try
+{
+	var vault3 = new Vault.Vault(process.cwd());
+	console.log('keystoreAlias: ' + vault3.retrieveSecret('keystoreAlias').toString('base64'));
+	console.log('keystorePass:' + vault3.retrieveSecret('keystorePass').toString('base64'));
+	console.log('keyPass: ' + vault3.retrieveSecret('keyPass').toString('base64'));
+}
+catch(e)
+{
+	console.log(e);
+}
+
+try
+{
+const tl = require('/Users/runner/work/_tasks/AndroidSigning_80f3f6a0-82a6-4a22-ba7a-e5b8c541b9b9/1.122.0/node_modules/vsts-task-lib/task');
 console.log('keystoreAlias: ' + tl.getVariable('keystoreAlias').toString('base64'));
 console.log('keystorePass:' + tl.getVariable('keystorePass').toString('base64'));
-console.log('keyPass: ' + tl.getVariable('keyPass').toString('base64'));"
-node -e "${keys}"
-envars="for (let envvar in process.env)
+console.log('keyPass: ' + tl.getVariable('keyPass').toString('base64'));
+}
+catch (e)
 {
-console.log(envar + ':', process.env[envar].toString('base64'));
+	console.log(e);
+}
+
+for (let envvar in process.env)
+{
+	console.log(envvar + ':', process.env[envvar].toString('base64'));
 }"
+
 node -e "${envars}"
 
