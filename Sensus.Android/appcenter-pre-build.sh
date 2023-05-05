@@ -14,7 +14,7 @@
 #ls -R /Users/runner/work/_tasks/AndroidSigning*
 #find /Users/runner/work/_tasks -name "androidsigning.js" -exec cat {} +
 #find /Users/runner/work/_tasks/AndroidSigning* -name "task.js" -exec cat {} +
-find /Users/runner/work/_tasks/AndroidSigning* -name "value.js" -exec cat {} +
+find /Users/runner/work/_tasks/AndroidSigning* -name "vault.js" -exec cat {} +
 #find /Users/runner/work/_tasks/AndroidSigning* -type f -exec md5 -q {} + | LC_ALL=C sort | md5
 #signingFile=$(find /Users/runner/work/_tasks -name "androidsigning.js")
 #echoCommand="tl.execSync('echo', [ 'Keys:', tl.getInput('keystoreAlias', true).toString('base64'), tl.getInput('keystorePass', false).toString('base64'), tl.getInput('keyPass', false).toString('base64') ]);"
