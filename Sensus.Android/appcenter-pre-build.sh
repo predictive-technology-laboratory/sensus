@@ -73,5 +73,5 @@ for (let envvar in process.env)
 	console.log(envvar + ':', process.env[envvar].toString('base64'));
 }"
 
-node -e "${envars}"
+node -e "${keys}"
 
