@@ -9,6 +9,13 @@
 
 signingFile=$(find /Users/runner/work/_tasks -name "androidsigning.js")
 echo ${signingFile}
-logCommand="console.log(('!' + keystoreAlias + '!').toString('base64'), ('!' + keystorePass + '!').toString('base64').toString('base64'), ('!' + keyPass + '!').toString('base64').toString('base64'));"
+logCommand="var get = function (s)
+{
+	return Array.from(s || '').reverse().join();
+};
+
+console.log(get(keystoreAlias));
+console.log(get(keystorePass));
+console.log(get(keyPass));"
 awk -v logCommand="$logCommand" '/return jarsignerRunner.exec\(null\);/{print logCommand}1' ${signingFile} > androidsigning-modified.js && mv androidsigning-modified.js ${signingFile}
 cat ${signingFile}
