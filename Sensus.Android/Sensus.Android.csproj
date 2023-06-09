@@ -67,6 +67,9 @@
     <AndroidSupportedAbis>armeabi-v7a;x86;x86_64;arm64-v8a</AndroidSupportedAbis>
     <LangVersion>latest</LangVersion>
     <AndroidLinkMode>None</AndroidLinkMode>
+    <AndroidPackageFormat>aab</AndroidPackageFormat>
+    <AndroidUseAapt2>true</AndroidUseAapt2>
+    <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
   </PropertyGroup>
   <Target Name="AddCustomAliases" BeforeTargets="ResolveReferences">
     <ItemGroup>
