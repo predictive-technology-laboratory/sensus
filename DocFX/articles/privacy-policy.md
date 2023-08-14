@@ -16,6 +16,13 @@ You may quit a study and/or uninstall Sensus at any time. Be aware that Sensus i
 can use Sensus to design a study, which they can then share with others. Studies have the ability to collect personal 
 information, and you should exercise caution when loading any study that you receive.
 
+## Data Types
+
+The types of data collected by a study generally includes data collected from the surveys that you complete, but may also 
+include data such as location, movement, activity/health/fitness information, Bluetooth and WiFi information, app usage 
+statistics, calendar metadata, as well as environmental data from any sensors available on your device. 
+Data types that are not listed in the summary displayed before starting a study will not be collected by that study.
+
 ## Data Use
 
 Data collected in studies run by the University of Virginia are used according to the policies set forth during the consent 

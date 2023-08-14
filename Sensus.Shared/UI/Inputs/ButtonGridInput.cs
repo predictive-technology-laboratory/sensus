@@ -28,6 +28,7 @@ namespace Sensus.UI.Inputs
 		private object _value;
 		private string _otherResponseValue;
 
+		protected Label _label;
 		protected ButtonGridView _grid;
 
 		private ButtonStates _defaultState;
@@ -36,6 +37,7 @@ namespace Sensus.UI.Inputs
 		{
 			Buttons = new List<string>();
 			ColumnCount = 1;
+			Selectable = true;
 			MaxSelectionCount = 1;
 
 			_defaultState = ButtonStates.Normal;
@@ -230,6 +232,10 @@ namespace Sensus.UI.Inputs
 
 								button.State = ButtonStates.Selectable;
 							}
+							else
+							{
+								button.State = ButtonStates.Selected;
+							}
 						}
 
 						_value = selectedButtons.Select(x => x.Value).ToArray();
@@ -325,7 +331,12 @@ namespace Sensus.UI.Inputs
 
 				_grid.Arrange();
 
-				View input = _grid;
+				_label = CreateLabel(index);
+
+				StackLayout view = new()
+				{
+					Children = { _label, _grid }
+				};
 
 				if (Selectable && otherValues.Any())
 				{
@@ -361,13 +372,10 @@ namespace Sensus.UI.Inputs
 						Children = { otherLabel, otherEditor }
 					};
 
-					input = new StackLayout
-					{
-						Children = { _grid, otherLayout }
-					};
+					view.Children.Add(otherLayout);
 				}
 
-				base.SetView(input);
+				base.SetView(view);
 			}
 
 			return base.GetView(index);

@@ -31,7 +31,7 @@ using Sensus.Exceptions;
 using Sensus.Notifications;
 using Xamarin.Essentials;
 using Platform = Xamarin.Essentials.Platform;
-//using Sensus.Android.Probes.Apps.Accessibility;
+using XamarinApplication = Xamarin.Forms.Application;
 
 namespace Sensus.Android
 {
@@ -60,8 +60,6 @@ namespace Sensus.Android
 
 			_activityResultWait = new ManualResetEvent(false);
 			_serviceBindWait = new ManualResetEvent(false);
-
-
 
 			Window.AddFlags(global::Android.Views.WindowManagerFlags.DismissKeyguard);
 			Window.AddFlags(global::Android.Views.WindowManagerFlags.ShowWhenLocked);
@@ -135,8 +133,18 @@ namespace Sensus.Android
 
 			// temporarily hide UI while we bind to service. allowing the user to click around before the service helper is initialized 
 			// may result in a crash.
-			(Xamarin.Forms.Application.Current as App).FlyoutPage.IsVisible = false;
-			(Xamarin.Forms.Application.Current as App).DetailPage.IsVisible = false;
+			if (XamarinApplication.Current is App app)
+			{
+				if (app.FlyoutPage != null)
+				{
+					app.FlyoutPage.IsVisible = false;
+				}
+
+				if (app.DetailPage != null)
+				{
+					app.DetailPage.IsVisible = false;
+				}
+			}
 
 			// ensure the service is bound any time the activity is resumed
 			BindService(AndroidSensusService.GetServiceIntent(false), _serviceConnection, Bind.AboveClient);
@@ -166,8 +174,18 @@ namespace Sensus.Android
 				{
 					SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(() =>
 					{
-						(Xamarin.Forms.Application.Current as App).FlyoutPage.IsVisible = true;
-						(Xamarin.Forms.Application.Current as App).DetailPage.IsVisible = true;
+						if (XamarinApplication.Current is App app)
+						{
+							if (app.FlyoutPage != null)
+							{
+								app.FlyoutPage.IsVisible = true;
+							}
+
+							if (app.DetailPage != null)
+							{
+								app.DetailPage.IsVisible = true;
+							}
+						}
 					});
 				}
 				catch (Exception)
