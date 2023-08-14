@@ -20,7 +20,7 @@ information, and you should exercise caution when loading any study that you rec
 
 The types of data collected by a study generally includes data collected from the surveys that you complete, but may also 
 include data such as location, movement, activity/health/fitness information, Bluetooth and WiFi information, app usage 
-statistics, calendar, SMS and telephony usage, as well as environmental data from any sensors available on your device. 
+statistics, calendar metadata, as well as environmental data from any sensors available on your device. 
 Data types that are not listed in the summary displayed before starting a study will not be collected by that study.
 
 ## Data Use
