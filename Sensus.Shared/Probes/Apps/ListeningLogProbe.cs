@@ -46,7 +46,7 @@ namespace Sensus.Probes.Apps
 
 		protected override bool DefaultKeepDeviceAwake => false;
 
-		protected override string DeviceAwakeWarning => "This setting should not be enabled. It does not affect iOS and will unnecessarily reduce battery life on Android.";
+		protected override string DeviceAwakeWarning => "";
 
 		protected override string DeviceAsleepWarning => "";
 
@@ -123,7 +123,7 @@ namespace Sensus.Probes.Apps
 				}
 				catch
 				{
-					// we can't log this exception since it would cause this method to be called again and might lead to 
+					// we can't log this exception since it would cause this method to be called again and might cause an infinite loop
 				}
 			}
 		}

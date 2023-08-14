@@ -31,13 +31,13 @@ namespace Sensus.UI
 			}
 			set
 			{
-				if (value != null)
-				{
-					value.Parent = null;
-				}
-
 				if (MainPage is FlyoutPage flyoutPage)
 				{
+					if (value != null)
+					{
+						value.Parent = null;
+					}
+
 					flyoutPage.Detail = value;
 				}
 			}
