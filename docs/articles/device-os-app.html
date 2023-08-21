@@ -1,21 +1,20 @@
 ﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
-  
+
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Device, Operating System, and App Changes | Sensus Documentation </title>
-    <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Device, Operating System, and App Changes | Sensus Documentation ">
-    <meta name="generator" content="docfx 2.38.1.0">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Device, Operating System, and App Changes | Sensus Documentation </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Device, Operating System, and App Changes | Sensus Documentation ">
     
-    <link rel="shortcut icon" href="../images/favicon.ico">
-    <link rel="stylesheet" href="../styles/docfx.vendor.css">
-    <link rel="stylesheet" href="../styles/docfx.css">
-    <link rel="stylesheet" href="../styles/main.css">
-    <meta property="docfx:navrel" content="../toc.html">
-    <meta property="docfx:tocrel" content="toc.html">
+      <link rel="shortcut icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
     
     <meta property="docfx:rel" content="../">
     
@@ -23,7 +22,7 @@
   <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
-        
+
         <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
           <div class="container">
             <div class="navbar-header">
@@ -33,7 +32,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              
+
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../images/group-of-members-users-icon.png" alt="">
               </a>
@@ -47,7 +46,7 @@
             </div>
           </div>
         </nav>
-        
+
         <div class="subnav navbar navbar-default">
           <div class="container hide-when-search" id="breadcrumb">
             <ul class="breadcrumb">
@@ -57,17 +56,17 @@
         </div>
       </header>
       <div class="container body-content">
-        
+
         <div id="search-results">
-          <div class="search-list"></div>
+          <div class="search-list">Search Results for <span></span></div>
           <div class="sr-items">
             <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
           </div>
-          <ul id="pagination"></ul>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
         </div>
       </div>
       <div role="main" class="container body-content hide-when-search">
-        
+
         <div class="sidenav hide-when-search">
           <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
           <div class="sidetoggle collapse" id="sidetoggle">
@@ -79,48 +78,49 @@
             <article class="content wrap" id="_content" data-uid="device_os_app">
 <h1 id="device-operating-system-and-app-changes">Device, Operating System, and App Changes</h1>
 
-<p>The SensusMobile app is designed to run for extended durations on users&#39; devices. Inevitably, users
+<p>The SensusMobile app is designed to run for extended durations on users' devices. Inevitably, users
 will choose to restart their device, update their operating system (e.g. a new version of Android or iOS),
 or update the SensusMobile app itself. This article sets expectations for how the app will behave in response
 to these actions.</p>
 <h2 id="android">Android</h2>
-<p>SensusMobile for Android will automatically restart in response to the above actions without any user interaction. 
-When starting up, SensusMobile will resume any studies that were running prior to the above actions. This may surprise 
-users, as the study start-up procedure will bring SensusMobile to the foreground potentially interrupting the user&#39;s task. 
+<p>SensusMobile for Android will automatically restart in response to the above actions without any user interaction.
+When starting up, SensusMobile will resume any studies that were running prior to the above actions. This may surprise
+users, as the study start-up procedure will bring SensusMobile to the foreground potentially interrupting the user's task.
 Users should be made aware of this possibility when joining SensusMobile studies.</p>
 <h3 id="ios">iOS</h3>
 <p>SensusMobile will respond to the above actions in different ways depending on whether
 <a class="xref" href="push-notifications.html">push notifications</a> are enabled.</p>
 <ul>
-<li><p>If push notifications are not enabled, then SensusMobile will not automatically start or issue any 
-notifications following the above actions. When the user chooses to open SensusMobile, the app will 
+<li><p>If push notifications are not enabled, then SensusMobile will not automatically start or issue any
+notifications following the above actions. When the user chooses to open SensusMobile, the app will
 resume studies that were previously running.</p>
 </li>
-<li><p>If push notifications are enabled, then SensusMobile will be started in the background upon receipt 
+<li><p>If push notifications are enabled, then SensusMobile will be started in the background upon receipt
 of the first push notification that arrives after the device is restarted. Upon starting, SensusMobile
 will resume studies that were running when the device restarted.</p>
 </li>
 </ul>
 </article>
           </div>
-          
+
           <div class="hidden-sm col-md-2" role="complementary">
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/DocFX/articles/device-os-app.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/master/docfx/articles/device-os-app.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+                <h5>In This Article</h5>
+                <div></div>
               </nav>
             </div>
           </div>
         </div>
       </div>
-      
+
       <footer>
         <div class="grad-bottom"></div>
         <div class="footer">
@@ -128,14 +128,14 @@ will resume studies that were running when the device restarted.</p>
             <span class="pull-right">
               <a href="#top">Back to top</a>
             </span>
-            Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
-            
+      Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
+      
           </div>
         </div>
       </footer>
     </div>
-    
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
   </body>

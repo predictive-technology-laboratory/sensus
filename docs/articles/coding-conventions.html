@@ -1,21 +1,20 @@
 ﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
-  
+
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Coding Conventions | Sensus Documentation </title>
-    <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Coding Conventions | Sensus Documentation ">
-    <meta name="generator" content="docfx 2.38.1.0">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Coding Conventions | Sensus Documentation </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Coding Conventions | Sensus Documentation ">
     
-    <link rel="shortcut icon" href="../images/favicon.ico">
-    <link rel="stylesheet" href="../styles/docfx.vendor.css">
-    <link rel="stylesheet" href="../styles/docfx.css">
-    <link rel="stylesheet" href="../styles/main.css">
-    <meta property="docfx:navrel" content="../toc.html">
-    <meta property="docfx:tocrel" content="toc.html">
+      <link rel="shortcut icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
     
     <meta property="docfx:rel" content="../">
     
@@ -23,7 +22,7 @@
   <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
-        
+
         <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
           <div class="container">
             <div class="navbar-header">
@@ -33,7 +32,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              
+
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../images/group-of-members-users-icon.png" alt="">
               </a>
@@ -47,7 +46,7 @@
             </div>
           </div>
         </nav>
-        
+
         <div class="subnav navbar navbar-default">
           <div class="container hide-when-search" id="breadcrumb">
             <ul class="breadcrumb">
@@ -57,17 +56,17 @@
         </div>
       </header>
       <div class="container body-content">
-        
+
         <div id="search-results">
-          <div class="search-list"></div>
+          <div class="search-list">Search Results for <span></span></div>
           <div class="sr-items">
             <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
           </div>
-          <ul id="pagination"></ul>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
         </div>
       </div>
       <div role="main" class="container body-content hide-when-search">
-        
+
         <div class="sidenav hide-when-search">
           <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
           <div class="sidetoggle collapse" id="sidetoggle">
@@ -79,7 +78,7 @@
             <article class="content wrap" id="_content" data-uid="coding_conventions">
 <h1 id="coding-conventions">Coding Conventions</h1>
 
-<p>The following snippet (full file <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Android/AndroidSensusServiceHelper.cs">here</a>) 
+<p>The following snippet (full file <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Sensus.Android/AndroidSensusServiceHelper.cs">here</a>)
 demonstrates many of the coding conventions within Sensus. These must be strictly adhered to.</p>
 <p>The start of every source code file must contain the following copyright notice:</p>
 <pre><code>// Copyright 2014 The Rector &amp; Visitors of the University of Virginia
@@ -95,68 +94,77 @@ demonstrates many of the coding conventions within Sensus. These must be strictl
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-</code></pre><p>Next is a blank line followed by the <code>using</code> declarations:</p>
+</code></pre>
+<p>Next is a blank line followed by the <code>using</code> declarations:</p>
 <pre><code>using System;
 ...
-</code></pre><p>Next are the <code>namespace</code> and <code>class</code> declarations (note the upper-camel-casing):</p>
+</code></pre>
+<p>Next are the <code>namespace</code> and <code>class</code> declarations (note the upper-camel-casing):</p>
 <pre><code>namespace Sensus.Android
 {
     public class AndroidSensusServiceHelper : SensusServiceHelper
     {
-</code></pre><p>Next are any <code>static</code> or <code>const</code> fields, which must be in all capital letters:</p>
+</code></pre>
+<p>Next are any <code>static</code> or <code>const</code> fields, which must be in all capital letters:</p>
 <pre><code>        public const string MAIN_ACTIVITY_WILL_BE_SET = &quot;MAIN-ACTIVITY-WILL-BE-SET&quot;;
         ...
-</code></pre><p>Next are any <code>private</code> members, which must be explicitly denoted as <code>private</code>, use lower-camel-casing, and be prefixed with an underscore:</p>
+</code></pre>
+<p>Next are any <code>private</code> members, which must be explicitly denoted as <code>private</code>, use lower-camel-casing, and be prefixed with an underscore:</p>
 <pre><code>        private AndroidSensusService _service;
         ...
-</code></pre><p>Next are any properties, which must use upper-camel-casing and be identical to the private member except without the underscore:</p>
+</code></pre>
+<p>Next are any properties, which must use upper-camel-casing and be identical to the private member except without the underscore:</p>
 <pre><code>        [JsonIgnore]
         public AndroidSensusService Service
         {
             get { return _service; }
         }
         ...
-</code></pre><p>Next are any constructors:</p>
+</code></pre>
+<p>Next are any constructors:</p>
 <pre><code>        public AndroidSensusServiceHelper()
         {
             _mainActivityWait = new ManualResetEvent(false);   
         }
-</code></pre><p>Next are any methods:</p>
+</code></pre>
+<p>Next are any methods:</p>
 <pre><code>        protected override void InitializeXamarinInsights()
         {
-            Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY, Application.Context);  // can&#39;t reference _service here since this method is called from the base class constructor, before the service is set.
+            Insights.Initialize(XAMARIN_INSIGHTS_APP_KEY, Application.Context);  // can't reference _service here since this method is called from the base class constructor, before the service is set.
         }
         ... 
     }
 }
-</code></pre><p>Some miscellaneous conventions and guidelines:</p>
+</code></pre>
+<p>Some miscellaneous conventions and guidelines:</p>
 <ul>
 <li>Always reference private variables within a class rather than their properties.</li>
-<li>Use grammatically appropriate variable names. For example, a list of <code>string</code> objects representing names should be declared 
+<li>Use grammatically appropriate variable names. For example, a list of <code>string</code> objects representing names should be declared
 as <code>List&lt;string&gt; names</code>, and the associated <code>foreach</code> statement should be <code>foreach(string name in names)</code>.</li>
 <li>Do not update packages while you work. Such changes will often create conflicts with other developers.</li>
 <li>Do not submit code that is commented out.</li>
 </ul>
 </article>
           </div>
-          
+
           <div class="hidden-sm col-md-2" role="complementary">
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/DocFX/articles/coding-conventions.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/master/docfx/articles/coding-conventions.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+                <h5>In This Article</h5>
+                <div></div>
               </nav>
             </div>
           </div>
         </div>
       </div>
-      
+
       <footer>
         <div class="grad-bottom"></div>
         <div class="footer">
@@ -164,14 +172,14 @@ as <code>List&lt;string&gt; names</code>, and the associated <code>foreach</code
             <span class="pull-right">
               <a href="#top">Back to top</a>
             </span>
-            Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
-            
+      Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
+      
           </div>
         </div>
       </footer>
     </div>
-    
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
   </body>

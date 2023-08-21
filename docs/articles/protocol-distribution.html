@@ -1,21 +1,20 @@
 ﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
-  
+
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Protocol Distribution | Sensus Documentation </title>
-    <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Protocol Distribution | Sensus Documentation ">
-    <meta name="generator" content="docfx 2.38.1.0">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Protocol Distribution | Sensus Documentation </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Protocol Distribution | Sensus Documentation ">
     
-    <link rel="shortcut icon" href="../images/favicon.ico">
-    <link rel="stylesheet" href="../styles/docfx.vendor.css">
-    <link rel="stylesheet" href="../styles/docfx.css">
-    <link rel="stylesheet" href="../styles/main.css">
-    <meta property="docfx:navrel" content="../toc.html">
-    <meta property="docfx:tocrel" content="toc.html">
+      <link rel="shortcut icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
     
     <meta property="docfx:rel" content="../">
     
@@ -23,7 +22,7 @@
   <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
-        
+
         <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
           <div class="container">
             <div class="navbar-header">
@@ -33,7 +32,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              
+
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../images/group-of-members-users-icon.png" alt="">
               </a>
@@ -47,7 +46,7 @@
             </div>
           </div>
         </nav>
-        
+
         <div class="subnav navbar navbar-default">
           <div class="container hide-when-search" id="breadcrumb">
             <ul class="breadcrumb">
@@ -57,17 +56,17 @@
         </div>
       </header>
       <div class="container body-content">
-        
+
         <div id="search-results">
-          <div class="search-list"></div>
+          <div class="search-list">Search Results for <span></span></div>
           <div class="sr-items">
             <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
           </div>
-          <ul id="pagination"></ul>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
         </div>
       </div>
       <div role="main" class="container body-content hide-when-search">
-        
+
         <div class="sidenav hide-when-search">
           <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
           <div class="sidetoggle collapse" id="sidetoggle">
@@ -79,75 +78,77 @@
             <article class="content wrap" id="_content" data-uid="protocol_distribution">
 <h1 id="protocol-distribution">Protocol Distribution</h1>
 
-<p>Once a Protocol has been configured for Sensus, it must be distributed to participant devices. First, you must obtain 
-the Protocol .json file (e.g., by tapping the Protocol within the Sensus app, selecting Share, and sending 
+<p>Once a Protocol has been configured for Sensus, it must be distributed to participant devices. First, you must obtain
+the Protocol .json file (e.g., by tapping the Protocol within the Sensus app, selecting Share, and sending
 the Protocol to yourself via email). You can then distribute the Protocol .json file in one of several ways:</p>
 <ol>
-<li><p>Email attachment:  You can send the Protocol .json file to participants via email attachment. Upon receipt the 
-participant will tap the attachment to load it into Sensus. Note that not all email apps are compatible with this 
+<li><p>Email attachment:  You can send the Protocol .json file to participants via email attachment. Upon receipt the
+participant will tap the attachment to load it into Sensus. Note that not all email apps are compatible with this
 approach.</p>
 </li>
-<li><p>Via HTTPS URL:  You can post the Protocol .json file to web-accessible server (e.g., Dropbox) and distribute the 
-file&#39;s URL to participants. From within the Sensus app, the participant can add the Protocol by URL.</p>
+<li><p>Via HTTPS URL:  You can post the Protocol .json file to web-accessible server (e.g., Dropbox) and distribute the
+file's URL to participants. From within the Sensus app, the participant can add the Protocol by URL.</p>
 </li>
-<li><p>Via QR-coded HTTPS URL:  This is similar to the previous approach, but relies on the Sensus QR code scanner to 
-obtain the URL of the protocol. This supports a convenient use case in which participants are provided a printed 
-paper containing the QR code. The user need only open the Sensus app and add the Protocol using the built-in QR 
+<li><p>Via QR-coded HTTPS URL:  This is similar to the previous approach, but relies on the Sensus QR code scanner to
+obtain the URL of the protocol. This supports a convenient use case in which participants are provided a printed
+paper containing the QR code. The user need only open the Sensus app and add the Protocol using the built-in QR
 code scanner. The content of the QR code must be exactly as follows:</p>
 <pre><code>sensus-protocol:URL
-</code></pre><p>where URL is the HTTPS URL location of the Protocol file to download.</p>
+</code></pre>
+<p>where URL is the HTTPS URL location of the Protocol file to download.</p>
 </li>
 </ol>
 <h2 id="common-distribution-issues">Common Distribution Issues</h2>
 <ul>
-<li>If participants are using an iPhone with the Gmail app, they will not be able to load protocols via email attachment 
-or URL embedded within an email. Instead, they will need to copy (press and hold) the URL in their email, open Safari, 
-and paste the URL into the address bar. This is a limitation of iOS, and we have not found a solution for it. Please 
+<li>If participants are using an iPhone with the Gmail app, they will not be able to load protocols via email attachment
+or URL embedded within an email. Instead, they will need to copy (press and hold) the URL in their email, open Safari,
+and paste the URL into the address bar. This is a limitation of iOS, and we have not found a solution for it. Please
 email us at uva.ptl@gmail.com if you encounter this problem.</li>
 </ul>
 <h2 id="locking-and-unlocking-a-protocol">Locking and Unlocking a Protocol</h2>
-<p>As the experimenter, you can lock a Protocol (i.e., make it read-only) by tapping the Protocol, selecting &quot;Lock&quot;, and 
-entering a password. Recipients of the Protocol will be able to load the locked Protocol into Sensus and start/stop it; 
-however, they will not be able to edit the Protocol&#39;s configuration without the password.</p>
+<p>As the experimenter, you can lock a Protocol (i.e., make it read-only) by tapping the Protocol, selecting &quot;Lock&quot;, and
+entering a password. Recipients of the Protocol will be able to load the locked Protocol into Sensus and start/stop it;
+however, they will not be able to edit the Protocol's configuration without the password.</p>
 <h2 id="preventing-protocol-sharing">Preventing Protocol Sharing</h2>
-<p>As the experimenter, you might wish to supply a Protocol to study participants via a webpage that you maintain. This 
-can be achieved by following the tips above (sharing the file with yourself and posting it to a webpage accessible to 
-your study participants). Furthermore, you might wish to ensure that participants cannot share the Protocol from their 
-Sensus app after they have loaded it and joined the study. That is, you may wish to ensure that participants only join 
-your study by loading the Protocol from an HTTPS hyperlink served up from your study&#39;s webpage. This might be necessary, 
-for example, if your website provides consent information that participants must view before joining the study. To 
-accomplish this, disable <a class="xref" href="../api/Sensus.Protocol.html#Sensus_Protocol_Shareable">Shareable</a> and then lock the Protocol with a password. You can then post 
-the Protocol to your study&#39;s website for loading into Sensus via HTTPS hyperlink, but study participants will not be able 
+<p>As the experimenter, you might wish to supply a Protocol to study participants via a webpage that you maintain. This
+can be achieved by following the tips above (sharing the file with yourself and posting it to a webpage accessible to
+your study participants). Furthermore, you might wish to ensure that participants cannot share the Protocol from their
+Sensus app after they have loaded it and joined the study. That is, you may wish to ensure that participants only join
+your study by loading the Protocol from an HTTPS hyperlink served up from your study's webpage. This might be necessary,
+for example, if your website provides consent information that participants must view before joining the study. To
+accomplish this, disable &lt;xref:Sensus.Protocol.Shareable&gt; and then lock the Protocol with a password. You can then post
+the Protocol to your study's website for loading into Sensus via HTTPS hyperlink, but study participants will not be able
 to directly share the loaded Protocol with others.</p>
-<h2 id="changing-a-protocols-encryption-key">Changing A Protocol&#39;s Encryption Key</h2>
+<h2 id="changing-a-protocols-encryption-key">Changing A Protocol's Encryption Key</h2>
 <p>For security, Sensus protocols are encrypted prior to leaving a device. Upon receipt at another device, Sensus decrypts
-the protocol and loads it. As Sensus has grown, others have <a class="xref" href="redeploying-sensus.html">redeployed</a> the Sensus codebase as alternative 
-applications. Because the encryption/decryption key is specific to a particular application, protocols are not compatible 
-between application deployments by default. If you possess the key for an app, then you can make a protocol residing in 
-another app compatible with yours by setting the protocol&#39;s encryption key. To do this, edit the protocol and select 
-Change Encryption Key. Then enter the key for your app. The protocol will be reencrypted and the resulting file will be 
-shared. You should be able to load the shared file into your app after changing the encryption key. Read more about 
-encryption keys <a class="xref" href="../api/Sensus.SensusServiceHelper.html#Sensus_SensusServiceHelper_ENCRYPTION_KEY">here</a>.</p>
+the protocol and loads it. As Sensus has grown, others have <a class="xref" href="redeploying-sensus.html">redeployed</a> the Sensus codebase as alternative
+applications. Because the encryption/decryption key is specific to a particular application, protocols are not compatible
+between application deployments by default. If you possess the key for an app, then you can make a protocol residing in
+another app compatible with yours by setting the protocol's encryption key. To do this, edit the protocol and select
+Change Encryption Key. Then enter the key for your app. The protocol will be reencrypted and the resulting file will be
+shared. You should be able to load the shared file into your app after changing the encryption key. Read more about
+encryption keys <a href="xref:Sensus.SensusServiceHelper.ENCRYPTION_KEY">here</a>.</p>
 </article>
           </div>
-          
+
           <div class="hidden-sm col-md-2" role="complementary">
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/DocFX/articles/protocol-distribution.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/master/docfx/articles/protocol-distribution.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+                <h5>In This Article</h5>
+                <div></div>
               </nav>
             </div>
           </div>
         </div>
       </div>
-      
+
       <footer>
         <div class="grad-bottom"></div>
         <div class="footer">
@@ -155,14 +156,14 @@ encryption keys <a class="xref" href="../api/Sensus.SensusServiceHelper.html#Sen
             <span class="pull-right">
               <a href="#top">Back to top</a>
             </span>
-            Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
-            
+      Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
+      
           </div>
         </div>
       </footer>
     </div>
-    
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
   </body>

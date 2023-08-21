@@ -1,21 +1,20 @@
 ﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
-  
+
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Tagging | Sensus Documentation </title>
-    <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Tagging | Sensus Documentation ">
-    <meta name="generator" content="docfx 2.38.1.0">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Tagging | Sensus Documentation </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Tagging | Sensus Documentation ">
     
-    <link rel="shortcut icon" href="../images/favicon.ico">
-    <link rel="stylesheet" href="../styles/docfx.vendor.css">
-    <link rel="stylesheet" href="../styles/docfx.css">
-    <link rel="stylesheet" href="../styles/main.css">
-    <meta property="docfx:navrel" content="../toc.html">
-    <meta property="docfx:tocrel" content="toc.html">
+      <link rel="shortcut icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
     
     <meta property="docfx:rel" content="../">
     
@@ -23,7 +22,7 @@
   <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
-        
+
         <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
           <div class="container">
             <div class="navbar-header">
@@ -33,7 +32,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              
+
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../images/group-of-members-users-icon.png" alt="">
               </a>
@@ -47,7 +46,7 @@
             </div>
           </div>
         </nav>
-        
+
         <div class="subnav navbar navbar-default">
           <div class="container hide-when-search" id="breadcrumb">
             <ul class="breadcrumb">
@@ -57,17 +56,17 @@
         </div>
       </header>
       <div class="container body-content">
-        
+
         <div id="search-results">
-          <div class="search-list"></div>
+          <div class="search-list">Search Results for <span></span></div>
           <div class="sr-items">
             <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
           </div>
-          <ul id="pagination"></ul>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
         </div>
       </div>
       <div role="main" class="container body-content hide-when-search">
-        
+
         <div class="sidenav hide-when-search">
           <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
           <div class="sidetoggle collapse" id="sidetoggle">
@@ -81,14 +80,14 @@
 
 <p>Experimenters and researchers often desire to generate manually tagged data to support the creation of supervised
 machine learning models. For example, if one were interested in generating accelerometry data while walking
-in order to create a walking recognition model, then each <a class="xref" href="../api/Sensus.Probes.Movement.AccelerometerDatum.html">AccelerometerDatum</a>
-would need to be tagged with ground truth labels (walking and not walking) in order to be used for supervised machine learning. 
+in order to create a walking recognition model, then each &lt;xref:Sensus.Probes.Movement.AccelerometerDatum&gt;
+would need to be tagged with ground truth labels (walking and not walking) in order to be used for supervised machine learning.
 Furthermore, the experimenter would need many replications of the activity to obtain representative data. Sensus supports this tagging
 process in a straightforward way that alleviates most of the tedious work associated with keeping track of the readings
 taken during such activities. Configure tagging as follows:</p>
 <ol>
-<li>Allow tagging for the protocol by enabling <a class="xref" href="../api/Sensus.Protocol.html#Sensus_Protocol_AllowTagging">AllowTagging</a>.</li>
-<li>Enter a list of tags in the <a class="xref" href="../api/Sensus.Protocol.html#Sensus_Protocol_AvailableTags">AvailableTags</a> field. These tags should describe the target 
+<li>Allow tagging for the protocol by enabling &lt;xref:Sensus.Protocol.AllowTagging&gt;.</li>
+<li>Enter a list of tags in the &lt;xref:Sensus.Protocol.AvailableTags&gt; field. These tags should describe the target
 activities. Ultimately, these tags will likely become the class labels to be predicted using supervised machine learning.</li>
 <li>Start the protocol.</li>
 <li>Tap the protocol and select &quot;Tag Data&quot;.</li>
@@ -97,46 +96,48 @@ activities. Ultimately, these tags will likely become the class labels to be pre
 <li>Engage in the target activity.</li>
 <li>Press the Stop button and confirm the tagging.</li>
 </ol>
-<p>Immediately upon pressing the Start button, each <a class="xref" href="../api/Sensus.Datum.html">Datum</a> that is stored will have the following
+<p>Immediately upon pressing the Start button, each &lt;xref:Sensus.Datum&gt; that is stored will have the following
 two fields set:</p>
 <ol>
-<li><a class="xref" href="../api/Sensus.Datum.html#Sensus_Datum_TaggedEventId">TaggedEventId</a>:  A unique identifier for the tagging session that begins
-with tapping the Start button and ends with tapping the Stop button. All <a class="xref" href="../api/Sensus.Datum.html">Datum</a> objects collected during 
-this interval will have the same <a class="xref" href="../api/Sensus.Datum.html#Sensus_Datum_TaggedEventId">TaggedEventId</a>.</li>
-<li><a class="xref" href="../api/Sensus.Datum.html#Sensus_Datum_TaggedEventTags">TaggedEventTags</a>:  The tags selected above.</li>
+<li>&lt;xref:Sensus.Datum.TaggedEventId&gt;:  A unique identifier for the tagging session that begins
+with tapping the Start button and ends with tapping the Stop button. All &lt;xref:Sensus.Datum&gt; objects collected during
+this interval will have the same &lt;xref:Sensus.Datum.TaggedEventId&gt;.</li>
+<li>&lt;xref:Sensus.Datum.TaggedEventTags&gt;:  The tags selected above.</li>
 </ol>
-<p>Immediately upon pressing the Stop button, data will cease to be tagged and the above two fields will have empty 
-values for all subsequent <a class="xref" href="../api/Sensus.Datum.html">Datum</a> objects. Note that the protocol will continuously collect data before 
-the tagging starts and after the tagging ends. The only effect of tagging is to set the two fields above for all 
+<p>Immediately upon pressing the Stop button, data will cease to be tagged and the above two fields will have empty
+values for all subsequent &lt;xref:Sensus.Datum&gt; objects. Note that the protocol will continuously collect data before
+the tagging starts and after the tagging ends. The only effect of tagging is to set the two fields above for all
 data within the start-stop interval.</p>
 <p>After you have generated one or more taggings, tap the export button to send yourself a CSV file summarizing the tagged data.
 The format of the CSV file is as follows:</p>
 <pre><code>tagged-event-id   start  end     tags
 XXXX              XXXX   XXXX    A|B
-</code></pre><p>The example above shows a single tagged event with placeholder values for the identifier and start/end times. This 
-event indicates that two tags (A and B) were applied to all data generated during this interval. The CSV file does 
-not contain the actual raw data, which will be stored either locally (if you have 
-<a class="xref" href="local-only-storage.html">configured local-only storage</a>) or in your <a class="xref" href="../api/Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a>.</p>
+</code></pre>
+<p>The example above shows a single tagged event with placeholder values for the identifier and start/end times. This
+event indicates that two tags (A and B) were applied to all data generated during this interval. The CSV file does
+not contain the actual raw data, which will be stored either locally (if you have
+<a class="xref" href="local-only-storage.html">configured local-only storage</a>) or in your &lt;xref:Sensus.DataStores.Remote.RemoteDataStore&gt;.</p>
 </article>
           </div>
-          
+
           <div class="hidden-sm col-md-2" role="complementary">
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/DocFX/articles/tagging-mode.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/master/docfx/articles/tagging-mode.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+                <h5>In This Article</h5>
+                <div></div>
               </nav>
             </div>
           </div>
         </div>
       </div>
-      
+
       <footer>
         <div class="grad-bottom"></div>
         <div class="footer">
@@ -144,14 +145,14 @@ not contain the actual raw data, which will be stored either locally (if you hav
             <span class="pull-right">
               <a href="#top">Back to top</a>
             </span>
-            Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
-            
+      Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
+      
           </div>
         </div>
       </footer>
     </div>
-    
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
   </body>

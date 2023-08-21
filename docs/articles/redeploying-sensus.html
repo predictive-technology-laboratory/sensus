@@ -1,21 +1,20 @@
 ﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
-  
+
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Redeploying Sensus | Sensus Documentation </title>
-    <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Redeploying Sensus | Sensus Documentation ">
-    <meta name="generator" content="docfx 2.38.1.0">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Redeploying Sensus | Sensus Documentation </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Redeploying Sensus | Sensus Documentation ">
     
-    <link rel="shortcut icon" href="../images/favicon.ico">
-    <link rel="stylesheet" href="../styles/docfx.vendor.css">
-    <link rel="stylesheet" href="../styles/docfx.css">
-    <link rel="stylesheet" href="../styles/main.css">
-    <meta property="docfx:navrel" content="../toc.html">
-    <meta property="docfx:tocrel" content="toc.html">
+      <link rel="shortcut icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
     
     <meta property="docfx:rel" content="../">
     
@@ -23,7 +22,7 @@
   <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
-        
+
         <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
           <div class="container">
             <div class="navbar-header">
@@ -33,7 +32,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              
+
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../images/group-of-members-users-icon.png" alt="">
               </a>
@@ -47,7 +46,7 @@
             </div>
           </div>
         </nav>
-        
+
         <div class="subnav navbar navbar-default">
           <div class="container hide-when-search" id="breadcrumb">
             <ul class="breadcrumb">
@@ -57,17 +56,17 @@
         </div>
       </header>
       <div class="container body-content">
-        
+
         <div id="search-results">
-          <div class="search-list"></div>
+          <div class="search-list">Search Results for <span></span></div>
           <div class="sr-items">
             <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
           </div>
-          <ul id="pagination"></ul>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
         </div>
       </div>
       <div role="main" class="container body-content hide-when-search">
-        
+
         <div class="sidenav hide-when-search">
           <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
           <div class="sidetoggle collapse" id="sidetoggle">
@@ -79,7 +78,7 @@
             <article class="content wrap" id="_content" data-uid="redeploying">
 <h1 id="redeploying-sensus">Redeploying Sensus</h1>
 
-<p>The Sensus license allows you to download/modify the source code and redeploy the app 
+<p>The Sensus license allows you to download/modify the source code and redeploy the app
 under your own branding and for your own purposes. This process will
 require you to create various serices that Sensus relies on for proper operation.</p>
 <h2 id="icons">Icons</h2>
@@ -88,13 +87,13 @@ require you to create various serices that Sensus relies on for proper operation
 <li>iOS:  Replace the <code>Sensus.iOS/Images.xcassets</code> content with your own icons.</li>
 </ul>
 <h2 id="packages-and-licenses">Packages and Licenses</h2>
-<p>The Sensus team has negotiated the open-source use of the <a href="https://help.syncfusion.com/wpf/sfchart/getting-started">SfChart</a> 
+<p>The Sensus team has negotiated the open-source use of the <a href="https://help.syncfusion.com/wpf/sfchart/getting-started">SfChart</a>
 library provided by Syncfusion. These files are contained <a href="https://github.com/predictive-technology-laboratory/sensus/tree/develop/dependencies/Syncfusion">here</a>
-and referenced in the respective Sensus.Android and Sensus.iOS applications. As this is a commercial 
-library, you will need to purchase a license for this library or remove it from your app prior to deployment. This is the 
+and referenced in the respective Sensus.Android and Sensus.iOS applications. As this is a commercial
+library, you will need to purchase a license for this library or remove it from your app prior to deployment. This is the
 only commercial library that Sensus uses, and it is not essential to proper functioning of the app. It only provides
 in-app visualization of certain data streams.</p>
-<p>You should carefully inspect the terms and conditions associated with other libraries and packages consumed by 
+<p>You should carefully inspect the terms and conditions associated with other libraries and packages consumed by
 Sensus to ensure that your intended use is compliant.</p>
 <h2 id="keys-and-ids">Keys and IDs</h2>
 <p>Edit the following fields of <code>Sensus.SensusServiceHelper.cs</code> (in the <code>Sensus.Shared</code> project):</p>
@@ -127,14 +126,17 @@ Sensus to ensure that your intended use is compliant.</p>
         /// The build ID, used to tag each &lt;see cref=&quot;Datum&quot;/&gt;. This is an arbitrary string value, and it is optional.
         /// &lt;/summary&gt;
         public const string BUILD_ID = &quot;&quot;;
-</code></pre><h2 id="sensus-android">Sensus Android</h2>
+</code></pre>
+<h2 id="sensus-android">Sensus Android</h2>
 <p>Sensus Android consumes services provided by Google Cloud Platform. Since these services and their authorized consumers are tied
 to the unique fingerprint of each Android APK, you will need to create your own Google Cloud account and associated
 services and then associate these servies with your app before compiling and deploying it.</p>
 <ol>
-<li>Create a new <a href="https://console.cloud.google.com">Google Cloud Platform</a> account and a new project in the account.</li>
-<li>Create a new <a href="https://firebase.google.com/">Firebase</a> project, add your Android app to the project, and download 
-the <code>google-services.json</code> file into the Sensus.Android project, replacing the current one.</li>
+<li><p>Create a new <a href="https://console.cloud.google.com">Google Cloud Platform</a> account and a new project in the account.</p>
+</li>
+<li><p>Create a new <a href="https://firebase.google.com/">Firebase</a> project, add your Android app to the project, and download
+the <code>google-services.json</code> file into the Sensus.Android project, replacing the current one.</p>
+</li>
 <li><p>Return to the Google Cloud Platform console and enable the following APIs:</p>
 <ul>
 <li>Awareness API</li>
@@ -142,10 +144,10 @@ the <code>google-services.json</code> file into the Sensus.Android project, repl
 </ul>
 </li>
 <li><p>View your Google Cloud Platform credentials. You should see three credentials that were auto-created (server,
-browser, and Android). Edit the Android credential and restrict the credential to your Android app&#39;s SHA-1 signature. 
+browser, and Android). Edit the Android credential and restrict the credential to your Android app's SHA-1 signature.
 Also restrict this credential to use the following APIs:</p>
 <ul>
-<li>Awareness API  </li>
+<li>Awareness API</li>
 <li>Maps SDK for Android</li>
 <li>Firebase Services API</li>
 </ul>
@@ -159,14 +161,19 @@ Also restrict this credential to use the following APIs:</p>
 <ul>
 <li><p>Edit the following line:</p>
 <pre><code>&lt;manifest xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot; android:installLocation=&quot;auto&quot; package=&quot;edu.virginia.sie.ptl.sensus&quot; android:versionName=&quot;XXXX&quot; android:versionCode=&quot;XXXX&quot;&gt;`
-</code></pre><p>To use your package name, version name, and version code.</p>
+</code></pre>
+<p>To use your package name, version name, and version code.</p>
 </li>
 <li><p>Edit the following values to use your app/package name.</p>
 <pre><code>&lt;application android:label=&quot;Sensus&quot;
-</code></pre><pre><code>android:authorities=&quot;edu.virginia.sie.ptl.sensus.fileprovider&quot;
-</code></pre><pre><code>&lt;uses-permission android:name=&quot;edu.virginia.sie.ptl.sensus.permission.MAPS_RECEIVE&quot; /&gt;
-</code></pre><pre><code>&lt;permission android:name=&quot;edu.virginia.sie.ptl.sensus.permission.MAPS_RECEIVE&quot; android:protectionLevel=&quot;signature&quot; /&gt;
-</code></pre></li>
+</code></pre>
+<pre><code>android:authorities=&quot;edu.virginia.sie.ptl.sensus.fileprovider&quot;
+</code></pre>
+<pre><code>&lt;uses-permission android:name=&quot;edu.virginia.sie.ptl.sensus.permission.MAPS_RECEIVE&quot; /&gt;
+</code></pre>
+<pre><code>&lt;permission android:name=&quot;edu.virginia.sie.ptl.sensus.permission.MAPS_RECEIVE&quot; android:protectionLevel=&quot;signature&quot; /&gt;
+</code></pre>
+</li>
 </ul>
 </li>
 </ol>
@@ -197,24 +204,25 @@ certificates in a known and secure location. You will use them to configure <a c
 </ol>
 </article>
           </div>
-          
+
           <div class="hidden-sm col-md-2" role="complementary">
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/aspl-agent/DocFX/articles/redeploying-sensus.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/master/docfx/articles/redeploying-sensus.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+                <h5>In This Article</h5>
+                <div></div>
               </nav>
             </div>
           </div>
         </div>
       </div>
-      
+
       <footer>
         <div class="grad-bottom"></div>
         <div class="footer">
@@ -222,14 +230,14 @@ certificates in a known and secure location. You will use them to configure <a c
             <span class="pull-right">
               <a href="#top">Back to top</a>
             </span>
-            Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
-            
+      Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
+      
           </div>
         </div>
       </footer>
     </div>
-    
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
   </body>

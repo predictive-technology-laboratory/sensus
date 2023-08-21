@@ -1,21 +1,20 @@
 ﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
-  
+
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>SensusR | Sensus Documentation </title>
-    <meta name="viewport" content="width=device-width">
-    <meta name="title" content="SensusR | Sensus Documentation ">
-    <meta name="generator" content="docfx 2.38.1.0">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>SensusR | Sensus Documentation </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="SensusR | Sensus Documentation ">
     
-    <link rel="shortcut icon" href="../images/favicon.ico">
-    <link rel="stylesheet" href="../styles/docfx.vendor.css">
-    <link rel="stylesheet" href="../styles/docfx.css">
-    <link rel="stylesheet" href="../styles/main.css">
-    <meta property="docfx:navrel" content="../toc.html">
-    <meta property="docfx:tocrel" content="toc.html">
+      <link rel="shortcut icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
     
     <meta property="docfx:rel" content="../">
     
@@ -23,7 +22,7 @@
   <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
-        
+
         <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
           <div class="container">
             <div class="navbar-header">
@@ -33,7 +32,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              
+
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../images/group-of-members-users-icon.png" alt="">
               </a>
@@ -47,7 +46,7 @@
             </div>
           </div>
         </nav>
-        
+
         <div class="subnav navbar navbar-default">
           <div class="container hide-when-search" id="breadcrumb">
             <ul class="breadcrumb">
@@ -57,17 +56,17 @@
         </div>
       </header>
       <div class="container body-content">
-        
+
         <div id="search-results">
-          <div class="search-list"></div>
+          <div class="search-list">Search Results for <span></span></div>
           <div class="sr-items">
             <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
           </div>
-          <ul id="pagination"></ul>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
         </div>
       </div>
       <div role="main" class="container body-content hide-when-search">
-        
+
         <div class="sidenav hide-when-search">
           <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
           <div class="sidetoggle collapse" id="sidetoggle">
@@ -79,64 +78,66 @@
             <article class="content wrap" id="_content" data-uid="sensus_r">
 <h1 id="sensusr">SensusR</h1>
 
-<p>SensusR is a package written for the <a href="http://www.r-project.org">R Statistical Computing Environment</a>. The purpose of SensusR 
+<p>SensusR is a package written for the <a href="http://www.r-project.org">R Statistical Computing Environment</a>. The purpose of SensusR
 is to make ingest, analysis, and visualization of Sensus data straightforward.</p>
 <h2 id="installing-sensusr">Installing SensusR</h2>
 <p>There are several options for installing SensusR.</p>
 <h3 id="from-cran">From CRAN</h3>
-<p>SensusR is available directly through <a href="http://cran.r-project.org/web/packages/SensusR/index.html">CRAN</a>, but you should 
+<p>SensusR is available directly through <a href="http://cran.r-project.org/web/packages/SensusR/index.html">CRAN</a>, but you should
 probably install it via the usual method (<code>install.packages</code> on the command line or through the menu system in RStudio).</p>
 <h3 id="from-source">From Source</h3>
-<p>You can also obtain source packages for SensusR directly from the Sensus 
-GitHub <a href="https://github.com/MatthewGerber/sensus/tree/master/SensusR/Releases">repository</a>. If you download one of these 
+<p>You can also obtain source packages for SensusR directly from the Sensus
+GitHub <a href="https://github.com/MatthewGerber/sensus/tree/master/SensusR/Releases">repository</a>. If you download one of these
 source archives, use the following command to install the package, editing the path appropriately for your machine:</p>
 <pre><code>install.packages(&quot;/path/to/SensusR_VERSION.tar.gz&quot;, repos = NULL, type = &quot;source&quot;)
-</code></pre><p>In the above command, VERSION is the SensusR version that you are installing. After installation, call <code>library(SensusR)</code> to 
+</code></pre>
+<p>In the above command, VERSION is the SensusR version that you are installing. After installation, call <code>library(SensusR)</code> to
 load the package and see the package help for details on available functions and their use. Some notes on these releases follow:</p>
 <ul>
-<li>2.1.0:  In order to plot location data, you&#39;ll need to reinstall the <code>ggmap</code> package from source with <code>install.packages(&quot;ggmap&quot;, type = &quot;source&quot;)</code>.</li>
+<li>2.1.0:  In order to plot location data, you'll need to reinstall the <code>ggmap</code> package from source with <code>install.packages(&quot;ggmap&quot;, type = &quot;source&quot;)</code>.</li>
 </ul>
 <h2 id="obtaining-sensus-data">Obtaining Sensus Data</h2>
-<p>The approach to obtaining your Sensus data will depending on how you have configured your <a class="xref" href="../api/Sensus.Protocol.html">Protocol</a>. In particular, 
-it will depend on your choice of <a class="xref" href="../api/Sensus.DataStores.Local.LocalDataStore.html">LocalDataStore</a>, <a class="xref" href="../api/Sensus.DataStores.Remote.RemoteDataStore.html">RemoteDataStore</a>, 
-and configuration of each. We typically use the <a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">AmazonS3RemoteDataStore</a>.</p>
+<p>The approach to obtaining your Sensus data will depending on how you have configured your &lt;xref:Sensus.Protocol&gt;. In particular,
+it will depend on your choice of &lt;xref:Sensus.DataStores.Local.LocalDataStore&gt;, &lt;xref:Sensus.DataStores.Remote.RemoteDataStore&gt;,
+and configuration of each. We typically use the &lt;xref:Sensus.DataStores.Remote.AmazonS3RemoteDataStore&gt;.</p>
 <h2 id="releasing-sensusr">Releasing SensusR</h2>
 <p>The following steps were adapted from <a href="http://www.r-bloggers.com/how-to-check-your-package-with-r-devel">http://www.r-bloggers.com/how-to-check-your-package-with-r-devel</a>.</p>
 <ol>
-<li>Run <code>sudo pkgutil --forget org.r-project.R.XXXX.fw.pkg</code> so that the installer does not overwrite your current R installation. 
+<li>Run <code>sudo pkgutil --forget org.r-project.R.XXXX.fw.pkg</code> so that the installer does not overwrite your current R installation.
 In this command, <code>XXXX</code> is your Mac OS version. This can be found with <code>pkgutil --packages | grep r-project</code>.</li>
-<li>Rename your R.app and R64.app or move them temporarily into another folder, as the installer of R-devel probably will replace 
+<li>Rename your R.app and R64.app or move them temporarily into another folder, as the installer of R-devel probably will replace
 them by new version that are not compatible with your existing stable R version.</li>
-<li>Install <a href="http://r.research.att.com">R-devel</a> if you haven&#39;t already.</li>
+<li>Install <a href="http://r.research.att.com">R-devel</a> if you haven't already.</li>
 <li>Install <a href="http://r.research.att.com/#other">RSwitch</a>.</li>
-<li>Use RSwitch to change to your normal version of R and then build the SensusR source package within RStudio via Build &gt; Build 
+<li>Use RSwitch to change to your normal version of R and then build the SensusR source package within RStudio via Build &gt; Build
 Source Package. Move the resulting package to the <code>SensusR/Releases</code> directory.</li>
 <li>Use RSwitch to change to R-devel.</li>
-<li>Install packages which your own packages depends on. You have to do it from source, as the binaries for the R-devel do not 
-exist. As of SensusR 2.0.0 this command is <code>install.packages(c(&quot;jsonlite&quot;,&quot;lubridate&quot;,&quot;plyr&quot;,&quot;sp&quot;,&quot;ggmap&quot;,&quot;ggplot2&quot;), type = &quot;source&quot;)</code>. Note 
+<li>Install packages which your own packages depends on. You have to do it from source, as the binaries for the R-devel do not
+exist. As of SensusR 2.0.0 this command is <code>install.packages(c(&quot;jsonlite&quot;,&quot;lubridate&quot;,&quot;plyr&quot;,&quot;sp&quot;,&quot;ggmap&quot;,&quot;ggplot2&quot;), type = &quot;source&quot;)</code>. Note
 that ggplot2 requires the jpeg package. In order to install the latter from source you first need to install jpeg via Homebrew using <code>brew install jpeg</code>.</li>
 <li>Check the package:  <code>R CMD check SensusR/Releases/SensusR_2.0.0.tar.gz --as-cran</code></li>
 </ol>
 </article>
           </div>
-          
+
           <div class="hidden-sm col-md-2" role="complementary">
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/DocFX/articles/sensus-r.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/master/docfx/articles/sensus-r.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+                <h5>In This Article</h5>
+                <div></div>
               </nav>
             </div>
           </div>
         </div>
       </div>
-      
+
       <footer>
         <div class="grad-bottom"></div>
         <div class="footer">
@@ -144,14 +145,14 @@ that ggplot2 requires the jpeg package. In order to install the latter from sour
             <span class="pull-right">
               <a href="#top">Back to top</a>
             </span>
-            Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
-            
+      Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
+      
           </div>
         </div>
       </footer>
     </div>
-    
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
   </body>

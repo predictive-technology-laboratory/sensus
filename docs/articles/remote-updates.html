@@ -1,21 +1,20 @@
 ﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
-  
+
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Remote Updates | Sensus Documentation </title>
-    <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Remote Updates | Sensus Documentation ">
-    <meta name="generator" content="docfx 2.38.1.0">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Remote Updates | Sensus Documentation </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Remote Updates | Sensus Documentation ">
     
-    <link rel="shortcut icon" href="../images/favicon.ico">
-    <link rel="stylesheet" href="../styles/docfx.vendor.css">
-    <link rel="stylesheet" href="../styles/docfx.css">
-    <link rel="stylesheet" href="../styles/main.css">
-    <meta property="docfx:navrel" content="../toc.html">
-    <meta property="docfx:tocrel" content="toc.html">
+      <link rel="shortcut icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
     
     <meta property="docfx:rel" content="../">
     
@@ -23,7 +22,7 @@
   <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
-        
+
         <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
           <div class="container">
             <div class="navbar-header">
@@ -33,7 +32,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              
+
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../images/group-of-members-users-icon.png" alt="">
               </a>
@@ -47,7 +46,7 @@
             </div>
           </div>
         </nav>
-        
+
         <div class="subnav navbar navbar-default">
           <div class="container hide-when-search" id="breadcrumb">
             <ul class="breadcrumb">
@@ -57,17 +56,17 @@
         </div>
       </header>
       <div class="container body-content">
-        
+
         <div id="search-results">
-          <div class="search-list"></div>
+          <div class="search-list">Search Results for <span></span></div>
           <div class="sr-items">
             <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
           </div>
-          <ul id="pagination"></ul>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
         </div>
       </div>
       <div role="main" class="container body-content hide-when-search">
-        
+
         <div class="sidenav hide-when-search">
           <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
           <div class="sidetoggle collapse" id="sidetoggle">
@@ -81,48 +80,51 @@
 
 <p>After configuring <a class="xref" href="push-notifications.html">push notifications</a>, it is possible
 to send protocol update commands to devices. This article describes select updates
-that are directly supported (see the 
+that are directly supported (see the
 <a href="https://github.com/predictive-technology-laboratory/sensus/tree/develop/Scripts/ConfigureAWS/ec2-push-notifications/protocol-settings/examples">examples</a>
 directory for a complete list.</p>
 <ul>
-<li><p>Polling delay tolerance:  Use the following command within the home directory of your 
-push notification backend to update the <a class="xref" href="../api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_DelayToleranceBeforeMS">DelayToleranceBeforeMS</a> and
-<a class="xref" href="../api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_DelayToleranceAfterMS">DelayToleranceAfterMS</a> values:</p>
-<pre><code>./list-devices.sh BUCKET | ./set-polling-delay-tolerance.sh BEFORE AFTER MESSAGE
-</code></pre><p>where <code>BUCKET</code> is the S3 bucket name, <code>BEFORE</code> is the new value for <a class="xref" href="../api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_DelayToleranceBeforeMS">DelayToleranceBeforeMS</a>,
-<code>AFTER</code> is the new value for <a class="xref" href="../api/Sensus.Probes.PollingProbe.html#Sensus_Probes_PollingProbe_DelayToleranceAfterMS">DelayToleranceAfterMS</a>, and <code>MESSAGE</code>
-is a message to display to the user to notify them of the update.</p>
-</li>
-<li><p>Probe enable/disable:  Use the following command within the home directory of your
-push notification backend to enable/disable a <a class="xref" href="../api/Sensus.Probes.Probe.html">Probe</a>:</p>
-<pre><code>./list-devices.sh BUCKET | ./enable-disable-probe.sh PROBE ENABLE
-</code></pre><p>where <code>BUCKET</code> is the S3 bucket name, <code>PROBE</code> is the full type name of the <a class="xref" href="../api/Sensus.Probes.Probe.html">Probe</a>
-to enable/disable, and <code>ENABLE</code> is either <code>true</code> or <code>false</code>.</p>
-</li>
+<li>Polling delay tolerance:  Use the following command within the home directory of your
+push notification backend to update the &lt;xref:Sensus.Probes.PollingProbe.DelayToleranceBeforeMS&gt; and
+&lt;xref:Sensus.Probes.PollingProbe.DelayToleranceAfterMS&gt; values:</li>
 </ul>
-<p>The remote update capability is entirely generalized. See the 
+<pre><code>./list-devices.sh BUCKET | ./set-polling-delay-tolerance.sh BEFORE AFTER MESSAGE
+</code></pre>
+<p>where <code>BUCKET</code> is the S3 bucket name, <code>BEFORE</code> is the new value for &lt;xref:Sensus.Probes.PollingProbe.DelayToleranceBeforeMS&gt;,
+<code>AFTER</code> is the new value for &lt;xref:Sensus.Probes.PollingProbe.DelayToleranceAfterMS&gt;, and <code>MESSAGE</code>
+is a message to display to the user to notify them of the update.</p>
+<ul>
+<li>Probe enable/disable:  Use the following command within the home directory of your
+push notification backend to enable/disable a &lt;xref:Sensus.Probes.Probe&gt;:</li>
+</ul>
+<pre><code>./list-devices.sh BUCKET | ./enable-disable-probe.sh PROBE ENABLE
+</code></pre>
+<p>where <code>BUCKET</code> is the S3 bucket name, <code>PROBE</code> is the full type name of the &lt;xref:Sensus.Probes.Probe&gt;
+to enable/disable, and <code>ENABLE</code> is either <code>true</code> or <code>false</code>.</p>
+<p>The remote update capability is entirely generalized. See the
 <a href="https://github.com/predictive-technology-laboratory/sensus/tree/develop/Scripts/ConfigureAWS/ec2-push-notifications/protocol-settings">scripts</a>
 for how to extend the above set of commands to update any settings of interest.</p>
 </article>
           </div>
-          
+
           <div class="hidden-sm col-md-2" role="complementary">
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/DocFX/articles/remote-updates.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/master/docfx/articles/remote-updates.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+                <h5>In This Article</h5>
+                <div></div>
               </nav>
             </div>
           </div>
         </div>
       </div>
-      
+
       <footer>
         <div class="grad-bottom"></div>
         <div class="footer">
@@ -130,14 +132,14 @@ for how to extend the above set of commands to update any settings of interest.<
             <span class="pull-right">
               <a href="#top">Back to top</a>
             </span>
-            Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
-            
+      Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
+      
           </div>
         </div>
       </footer>
     </div>
-    
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
   </body>

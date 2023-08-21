@@ -1,21 +1,20 @@
 ﻿<!DOCTYPE html>
 <!--[if IE]><![endif]-->
 <html>
-  
+
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Push Notifications | Sensus Documentation </title>
-    <meta name="viewport" content="width=device-width">
-    <meta name="title" content="Push Notifications | Sensus Documentation ">
-    <meta name="generator" content="docfx 2.38.1.0">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>Push Notifications | Sensus Documentation </title>
+      <meta name="viewport" content="width=device-width">
+      <meta name="title" content="Push Notifications | Sensus Documentation ">
     
-    <link rel="shortcut icon" href="../images/favicon.ico">
-    <link rel="stylesheet" href="../styles/docfx.vendor.css">
-    <link rel="stylesheet" href="../styles/docfx.css">
-    <link rel="stylesheet" href="../styles/main.css">
-    <meta property="docfx:navrel" content="../toc.html">
-    <meta property="docfx:tocrel" content="toc.html">
+      <link rel="shortcut icon" href="../images/favicon.ico">
+      <link rel="stylesheet" href="../styles/docfx.vendor.min.css">
+      <link rel="stylesheet" href="../styles/docfx.css">
+      <link rel="stylesheet" href="../styles/main.css">
+      <meta property="docfx:navrel" content="../toc.html">
+      <meta property="docfx:tocrel" content="toc.html">
     
     <meta property="docfx:rel" content="../">
     
@@ -23,7 +22,7 @@
   <body data-spy="scroll" data-target="#affix" data-offset="120">
     <div id="wrapper">
       <header>
-        
+
         <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
           <div class="container">
             <div class="navbar-header">
@@ -33,7 +32,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              
+
               <a class="navbar-brand" href="../index.html">
                 <img id="logo" class="svg" src="../images/group-of-members-users-icon.png" alt="">
               </a>
@@ -47,7 +46,7 @@
             </div>
           </div>
         </nav>
-        
+
         <div class="subnav navbar navbar-default">
           <div class="container hide-when-search" id="breadcrumb">
             <ul class="breadcrumb">
@@ -57,17 +56,17 @@
         </div>
       </header>
       <div class="container body-content">
-        
+
         <div id="search-results">
-          <div class="search-list"></div>
+          <div class="search-list">Search Results for <span></span></div>
           <div class="sr-items">
             <p><i class="glyphicon glyphicon-refresh index-loading"></i></p>
           </div>
-          <ul id="pagination"></ul>
+          <ul id="pagination" data-first="First" data-prev="Previous" data-next="Next" data-last="Last"></ul>
         </div>
       </div>
       <div role="main" class="container body-content hide-when-search">
-        
+
         <div class="sidenav hide-when-search">
           <a class="btn toc-toggle collapse" data-toggle="collapse" href="#sidetoggle" aria-expanded="false" aria-controls="sidetoggle">Show / Hide Table of Contents</a>
           <div class="sidetoggle collapse" id="sidetoggle">
@@ -83,20 +82,20 @@
 team will be able to configure push notifications.</p>
 <h2 id="introduction">Introduction</h2>
 <p>Sensus uses push notifications to deliver information to users, to let Sensus know when
-updated information is available, and to generally support quality assurance of collected 
+updated information is available, and to generally support quality assurance of collected
 data. This article describes how to enable push notifications within your Sensus deployment.
 The primary components are as follows:</p>
 <ul>
 <li>Firebase Cloud Messaging:  This is the Android push notification service.</li>
 <li>Apple Push Notification Service:  This is the iOS push notification service.</li>
 <li>Azure Notification Hub:  This is the central manager and distributor of push notifications.
-                         This component takes care of distributing push notifications to the
-                         platform-specific (Android and iOS) push notification services.</li>
+This component takes care of distributing push notifications to the
+platform-specific (Android and iOS) push notification services.</li>
 <li>AWS S3:  This is the backend in which push notifications will be stored for future delivery.</li>
 <li>AWS EC2:  This is the backend processor that will read push notifications from AWS S3 and
-          deliver them to the Azure Notification Hub.</li>
-<li>Sensus Protocol:  This contains settings that let the app know where to register for push 
-                  notifications.</li>
+deliver them to the Azure Notification Hub.</li>
+<li>Sensus Protocol:  This contains settings that let the app know where to register for push
+notifications.</li>
 </ul>
 <p>The following sections explain the configuration of each component.</p>
 <h2 id="firebase-cloud-messaging">Firebase Cloud Messaging</h2>
@@ -106,7 +105,7 @@ The primary components are as follows:</p>
 <h2 id="azure-notification-hub">Azure Notification Hub</h2>
 <ol>
 <li>Create a new Notification Hub within the Azure portal.</li>
-<li>Within the Apple (APNS) settings, upload the the APNS certificate generated from 
+<li>Within the Apple (APNS) settings, upload the the APNS certificate generated from
 the previous steps. Set the Application Mode to Production.</li>
 <li>Within the Google (GCM) settings, enter the API Key that you generated from the
 previous steps.</li>
@@ -116,23 +115,23 @@ in the steps that follow.</li>
 </ol>
 <h2 id="aws-s3">AWS S3</h2>
 <ol>
-<li>Configure your AWS S3 bucket following the <a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">guide</a>. Note the
+<li>Configure your AWS S3 bucket following the <a href="xref:Sensus.DataStores.Remote.AmazonS3RemoteDataStore">guide</a>. Note the
 name of the bucket that results from this step (e.g., test-bucket-293843-234234-23234234).</li>
 </ol>
 <h2 id="aws-ec2">AWS EC2</h2>
 <ol>
-<li>Configure your AWS EC2 instance using the <code>ec2-push-notifications/configure-ec2.sh</code> script within the 
+<li>Configure your AWS EC2 instance using the <code>ec2-push-notifications/configure-ec2.sh</code> script within the
 <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/Scripts/ConfigureAWS.zip">configuration</a>
 archive. This script requires you to install the AWS CLI and the <code>jq</code> command line program. When supplying the bucket
 name, use the name obtained from the previous step.</li>
 </ol>
 <h2 id="sensus-protocol">Sensus Protocol</h2>
 <ol>
-<li>Within your Sensus protocol, set the <a class="xref" href="../api/Sensus.Protocol.html#Sensus_Protocol_PushNotificationsHub">PushNotificationsHub</a> to the Azure Notification
-Hub name, and set the <a class="xref" href="../api/Sensus.Protocol.html#Sensus_Protocol_PushNotificationsSharedAccessSignature">PushNotificationsSharedAccessSignature</a> to
-the <code>DefaultListenSharedAccessSignature</code> connection string value within the hub&#39;s Access Policy.</li>
-<li>Configure the <a class="xref" href="../api/Sensus.DataStores.Remote.AmazonS3RemoteDataStore.html">AWS S3 remote data store</a> using the bucket created above.</li>
-<li>Note that APNS has been observed to throttle push notification delivery rate. Please see the <a class="xref" href="../api/Sensus.Probes.PollingProbe.html">PollingProbe</a>
+<li>Within your Sensus protocol, set the &lt;xref:Sensus.Protocol.PushNotificationsHub&gt; to the Azure Notification
+Hub name, and set the &lt;xref:Sensus.Protocol.PushNotificationsSharedAccessSignature&gt; to
+the <code>DefaultListenSharedAccessSignature</code> connection string value within the hub's Access Policy.</li>
+<li>Configure the <a href="xref:Sensus.DataStores.Remote.AmazonS3RemoteDataStore">AWS S3 remote data store</a> using the bucket created above.</li>
+<li>Note that APNS has been observed to throttle push notification delivery rate. Please see the &lt;xref:Sensus.Probes.PollingProbe&gt;
 documentation for more information on polling rates and push notification throttling.</li>
 </ol>
 <h2 id="next-steps-and-latency-expectations">Next Steps and Latency Expectations</h2>
@@ -141,34 +140,35 @@ installed and started on participant devices. Here are some things you can do:</
 <ul>
 <li><a class="xref" href="remote-updates.html">Remote protocol updates</a></li>
 </ul>
-<p>The Sensus team has observed that push notifications are generally delivered to iOS devices at most once 
+<p>The Sensus team has observed that push notifications are generally delivered to iOS devices at most once
 every 5 minutes. On Android, push notifications are not reliably delivered to the device when it is locked.
-Upon unlock, pending push notifications are generally delivered immediately to Sensus. If a push notification is 
+Upon unlock, pending push notifications are generally delivered immediately to Sensus. If a push notification is
 delivered at a time when the device is unlocked and in use, then the notification will generally be delivered
-immediately to Sensus. As noted in the documentation for <a class="xref" href="../api/Sensus.Probes.PollingProbe.html">PollingProbe</a>s, the protocol&#39;s
-design with respect to notifications should be made conservative to avoid overburdening the device and/or the 
+immediately to Sensus. As noted in the documentation for &lt;xref:Sensus.Probes.PollingProbe&gt;s, the protocol's
+design with respect to notifications should be made conservative to avoid overburdening the device and/or the
 user. The <a class="xref" href="burden-tuning.html">burden tuning</a> article provides more information about push notifications and
 their implications for the user and device.</p>
 </article>
           </div>
-          
+
           <div class="hidden-sm col-md-2" role="complementary">
             <div class="sideaffix">
               <div class="contribution">
                 <ul class="nav">
                   <li>
-                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/develop/DocFX/articles/push-notifications.md/#L1" class="contribution-link">Improve this Doc</a>
+                    <a href="https://github.com/predictive-technology-laboratory/sensus/blob/master/docfx/articles/push-notifications.md/#L1" class="contribution-link">Improve this Doc</a>
                   </li>
                 </ul>
               </div>
               <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
-              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+                <h5>In This Article</h5>
+                <div></div>
               </nav>
             </div>
           </div>
         </div>
       </div>
-      
+
       <footer>
         <div class="grad-bottom"></div>
         <div class="footer">
@@ -176,14 +176,14 @@ their implications for the user and device.</p>
             <span class="pull-right">
               <a href="#top">Back to top</a>
             </span>
-            Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
-            
+      Copyright © 2014-2018 University of Virginia<br>Generated by <strong>DocFX</strong>
+      
           </div>
         </div>
       </footer>
     </div>
-    
-    <script type="text/javascript" src="../styles/docfx.vendor.js"></script>
+
+    <script type="text/javascript" src="../styles/docfx.vendor.min.js"></script>
     <script type="text/javascript" src="../styles/docfx.js"></script>
     <script type="text/javascript" src="../styles/main.js"></script>
   </body>
