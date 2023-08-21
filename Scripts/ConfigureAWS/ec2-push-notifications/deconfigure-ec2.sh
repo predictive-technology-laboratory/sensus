@@ -54,7 +54,9 @@ fi
 echo "Terminating instance..."
 instanceId=$(aws ec2 describe-instances --filters "Name=tag:Name,Values=$1" --output text --query "Reservations[*].Instances[*].InstanceId")
 aws ec2 terminate-instances --instance-ids $instanceId
-aws ec2 wait instance-terminated --instance-ids $instanceId
+if [ $? -eq 0 ]; then
+    aws ec2 wait instance-terminated --instance-ids $instanceId
+fi
 
 # delete key pair and security group
 echo "Deleting key pair and security group..."
