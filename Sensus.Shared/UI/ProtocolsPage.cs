@@ -37,7 +37,7 @@ namespace Sensus.UI
 	/// </summary>
 	public class ProtocolsPage : ContentPage
 	{
-		public static async Task<bool> AuthenticateProtocolAsync(Protocol protocol)
+		private static async Task<bool> AuthenticateProtocolAsync(Protocol protocol)
 		{
 			if (protocol.LockPasswordHash == "")
 			{
@@ -291,7 +291,7 @@ namespace Sensus.UI
 				{
 					try
 					{
-						if (await ConfirmSubmission(selectedProtocol))
+						if (await ConfirmSubmissionAsync(selectedProtocol))
 						{
 							if (await selectedProtocol.RemoteDataStore?.WriteLocalDataStoreAsync(CancellationToken.None, true))
 							{
@@ -458,14 +458,7 @@ namespace Sensus.UI
 				}
 				else if (selectedAction == "Edit")
 				{
-					if (await AuthenticateProtocolAsync(selectedProtocol))
-					{
-						await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
-						{
-							ProtocolPage protocolPage = new ProtocolPage(selectedProtocol);
-							await Navigation.PushAsync(protocolPage);
-						});
-					}
+					await EditProtocolAsync(selectedProtocol);
 				}
 				else if (selectedAction == "Copy")
 				{
@@ -547,7 +540,9 @@ namespace Sensus.UI
 
 				if (action == "New")
 				{
-					await Protocol.CreateAsync("New Study");
+					Protocol protocol = await Protocol.CreateAsync("New Study");
+
+					await EditProtocolAsync(protocol);
 				}
 				else
 				{
@@ -714,47 +709,6 @@ namespace Sensus.UI
 			#endregion
 		}
 
-		public async Task<bool> ConfirmSubmission(Protocol selectedProtocol)
-		{
-			StringBuilder sb = new StringBuilder();
-			bool submit = true;
-
-			sb.AppendLine("The following requirements for submitting this protocol are not met:");
-			sb.AppendLine();
-
-			if (selectedProtocol.RemoteDataStore.RequireWiFi && !SensusServiceHelper.Get().WiFiConnected)
-			{
-				sb.AppendLine("Wifi is not connected.");
-
-				submit = false;
-			}
-
-			if (selectedProtocol.RemoteDataStore.RequireCharging && !SensusServiceHelper.Get().IsCharging)
-			{
-				sb.AppendLine("The device is not charging.");
-
-				submit = false;
-
-			}
-
-			if (selectedProtocol.RemoteDataStore.RequiredBatteryChargeLevelPercent > 0 && SensusServiceHelper.Get().BatteryChargePercent < selectedProtocol.RemoteDataStore.RequiredBatteryChargeLevelPercent)
-			{
-				sb.AppendLine($"The battery charge is less than {selectedProtocol.RemoteDataStore.RequiredBatteryChargeLevelPercent}%.");
-
-				submit = false;
-			}
-
-			if (submit == false)
-			{
-				sb.AppendLine("");
-				sb.AppendLine("Do you still want to submit?");
-
-				submit = await DisplayAlert("Submit?", sb.ToString(), "Yes", "No");
-			}
-
-			return submit;
-		}
-
 		private Tuple<string, string> ParseManagedProtocolURL(string url)
 		{
 
@@ -801,6 +755,59 @@ namespace Sensus.UI
 			}
 
 			return new Tuple<string, string>(baseUrl, participantId);
+		}
+
+		public async Task<bool> ConfirmSubmissionAsync(Protocol selectedProtocol)
+		{
+			StringBuilder sb = new StringBuilder();
+			bool submit = true;
+
+			sb.AppendLine("The following requirements for submitting this protocol are not met:");
+			sb.AppendLine();
+
+			if (selectedProtocol.RemoteDataStore.RequireWiFi && !SensusServiceHelper.Get().WiFiConnected)
+			{
+				sb.AppendLine("Wifi is not connected.");
+
+				submit = false;
+			}
+
+			if (selectedProtocol.RemoteDataStore.RequireCharging && !SensusServiceHelper.Get().IsCharging)
+			{
+				sb.AppendLine("The device is not charging.");
+
+				submit = false;
+
+			}
+
+			if (selectedProtocol.RemoteDataStore.RequiredBatteryChargeLevelPercent > 0 && SensusServiceHelper.Get().BatteryChargePercent < selectedProtocol.RemoteDataStore.RequiredBatteryChargeLevelPercent)
+			{
+				sb.AppendLine($"The battery charge is less than {selectedProtocol.RemoteDataStore.RequiredBatteryChargeLevelPercent}%.");
+
+				submit = false;
+			}
+
+			if (submit == false)
+			{
+				sb.AppendLine("");
+				sb.AppendLine("Do you still want to submit?");
+
+				submit = await DisplayAlert("Submit?", sb.ToString(), "Yes", "No");
+			}
+
+			return submit;
+		}
+		public async Task EditProtocolAsync(Protocol protocol)
+		{
+			if (await AuthenticateProtocolAsync(protocol))
+			{
+				await SensusContext.Current.MainThreadSynchronizer.ExecuteThreadSafe(async () =>
+				{
+					ProtocolPage protocolPage = new ProtocolPage(protocol);
+
+					await Navigation.PushAsync(protocolPage);
+				});
+			}
 		}
 	}
 }
