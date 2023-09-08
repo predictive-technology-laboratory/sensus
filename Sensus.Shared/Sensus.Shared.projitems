@@ -60,7 +60,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\ImageMetadataDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\ImageMetadataProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\KeystrokeDatum.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\KeystrokeProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\LogDatum.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Apps\LogProbe.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Probes\Communication\SmsDatum.cs" />
