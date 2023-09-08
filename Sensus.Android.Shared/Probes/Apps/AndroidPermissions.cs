@@ -143,7 +143,7 @@ namespace Sensus.Android
 
 				try
 				{
-					status = CheckStatus();
+					status = await CheckStatusAsync();
 
 					if (status != PermissionStatus.Granted)
 					{
@@ -205,7 +205,7 @@ namespace Sensus.Android
 								}
 							});
 
-							status = CheckStatus();
+							status = await CheckStatusAsync();
 
 							if (status != PermissionStatus.Granted && (listener.PermissionChanged == false))
 							{
