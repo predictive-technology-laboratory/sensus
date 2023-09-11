@@ -13,8 +13,8 @@ using System.Threading;
 
 namespace Sensus.Android.Probes.Apps
 {
-	[Service(Permission = Manifest.Permission.BindAccessibilityService, Exported = false)]
-	[IntentFilter(new[] { "android.accessibilityservice.AccessibilityService" })]
+	//[Service(Permission = Manifest.Permission.BindAccessibilityService, Exported = false)]
+	//[IntentFilter(new[] { "android.accessibilityservice.AccessibilityService" })]
 	//[MetaData("android.accessibilityservice", Resource = "@xml/accessibilityservice")] // this is currently disabled due to the fact that enabling "touch exploration mode" renders the phone unusable
 	public class AndroidAccessibilityService : AccessibilityService
 	{
