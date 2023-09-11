@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" android:installLocation="auto" package="edu.virginia.sie.ptl.sensus" android:versionName="17.0.1" android:versionCode="2023090601">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" android:installLocation="auto" package="edu.virginia.sie.ptl.sensus" android:versionName="17.0.1" android:versionCode="2023091101">
 	<uses-sdk android:minSdkVersion="26" android:targetSdkVersion="33" />
 	<application android:label="SensusMobile" android:icon="@drawable/ic_launcher" android:theme="@style/SensusTheme" android:hardwareAccelerated="true" tools:replace="android:theme" android:isAccessibilityTool="false">
 		<provider android:name="androidx.core.content.FileProvider" android:authorities="edu.virginia.sie.ptl.sensus.fileprovider" android:grantUriPermissions="true" android:exported="false">
