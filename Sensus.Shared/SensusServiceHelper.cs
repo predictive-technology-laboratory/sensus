@@ -1845,7 +1845,7 @@ namespace Sensus
 				return await ObtainPermissionAsync<Permissions.LocationAlways>();
 			}
 
-			else return status;
+			return status;
 		}
 
 		protected virtual string GetPlatformRationale<TPermission>()
@@ -1877,7 +1877,11 @@ namespace Sensus
 				//}
 				else if (permission == typeof(Permissions.LocationAlways))
 				{
+#if __ANDROID__
+					rationale = "Sensus uses GPS to collect location information for studies you enroll in, even when the app is closed or not in use.";
+#elif __IOS__
 					rationale = "Sensus uses GPS to collect location information for studies you enroll in.";
+#endif
 				}
 				else if (permission == typeof(Permissions.LocationWhenInUse))
 				{
