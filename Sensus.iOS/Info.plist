@@ -168,9 +168,9 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Sensus uses the camera to scan participation barcodes. Sensus will not record images or video.</string>
 	<key>CFBundleShortVersionString</key>
-	<string>17.0.1</string>
+	<string>17.0.2</string>
 	<key>CFBundleVersion</key>
-	<string>202309120001</string>
+	<string>202309130001</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Sensus uses Bluetooth to collect information for studies you enroll in.</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
